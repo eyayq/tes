@@ -21,7 +21,7 @@ jobs:
         with:
           python-version: '3.11'
 
-      - run: pip install requests
+      - run: pip install curl-cffi
 
       - name: Generate playlist
         run: python3 huya.py --output playlist.m3u --max-per-cat 10
