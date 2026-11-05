@@ -1,0 +1,39 @@
+name: Update Huya Playlist
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '*/30 * * * *'   # setiap 30 menit
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - run: pip install requests
+
+      - name: Generate playlist
+        run: python3 huya.py --output playlist.m3u --max-per-cat 10
+
+      - name: Commit & push
+        run: |
+          git config user.name "eyayq[bot]"
+          git config user.email "eyayq[bot]@users.noreply.github.com"
+          if git diff --quiet -- playlist.m3u; then
+            echo "No changes"
+          else
+            git add playlist.m3u
+            git commit -m "auto: update playlist ($(date -u +%Y-%m-%dT%H:%M:%SZ))"
+            git push
+          fi   
