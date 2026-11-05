@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 """
-HUYA M3U PLAYLIST GENERATOR — FULL AUTO
-- curl_cffi (TLS fingerprint impersonation → bypass anti-bot)
-- ThreadPoolExecutor (parallel stream URL fetching)
-- Auto-scrape: semua kategori, rooms, tvg-logo, group-title
+HUYA M3U PLAYLIST GENERATOR — FINAL COMPLETE
+- curl_cffi (TLS fingerprint impersonation)
+- ThreadPoolExecutor (parallel stream fetching)
+- Auto-scrape: semua 150+ kategori dari /g
+- Esports/sports hot matches
+- tvg-logo + group-title otomatis
+- Chinese → English translation
+- Output: playlist.m3u
 """
 
 import re
@@ -19,32 +23,274 @@ from urllib.parse import unquote
 from curl_cffi import requests as cffi_requests
 
 # ─── Konfigurasi ─────────────────────────────────────────────────
-MAX_ROOMS_PER_CATEGORY = 50
+MAX_ROOMS_PER_CATEGORY = 10
 REQUEST_DELAY = 0.2
 TIMEOUT = 15
-MAX_WORKERS = 18          # jumlah thread paralel
-IMPERSONATE = "chrome"   # TLS fingerprint
+MAX_WORKERS = 8
+IMPERSONATE = "chrome"
 
-# Thread-local: setiap thread punya session sendiri (thread-safe)
 _local = threading.local()
 
 
 def get_session():
-    """Ambil atau buat session per-thread."""
     if not hasattr(_local, 'session'):
         _local.session = cffi_requests.Session(impersonate=IMPERSONATE)
     return _local.session
 
 
-# ─── Step 1: Ambil SEMUA kategori ────────────────────────────────
+# ─── Terjemahan Chinese → English ────────────────────────────────
+GAME_TRANSLATION = {
+    # 网游竞技
+    '英雄联盟': 'League of Legends',
+    'CS2': 'CS2',
+    '无畏契约': 'Valorant',
+    '三角洲行动': 'Delta Force',
+    'LOL云顶之弈': 'TFT',
+    'lol云顶之弈': 'TFT',
+    '炉石传说': 'Hearthstone',
+    '穿越火线': 'CrossFire',
+    'DOTA2': 'Dota 2',
+    'Dota2': 'Dota 2',
+    '魔兽世界': 'World of Warcraft',
+    'DOTA1': 'Dota 1',
+    '坦克世界': 'World of Tanks',
+    '守望先锋': 'Overwatch',
+    # 单机热游
+    '天天吃鸡': 'PUBG',
+    '主机游戏': 'Console',
+    '我的世界': 'Minecraft',
+    '失控进化-RUST': 'Rust',
+    '失控进化-Rust': 'Rust',
+    '植物大战僵尸': 'Plants vs Zombies',
+    '部落：上升': 'Clash of Clans',
+    '彩虹六号': 'Rainbow Six',
+    '黑神话悟空': 'Black Myth: Wukong',
+    '黑神话：悟空': 'Black Myth: Wukong',
+    '逃离塔科夫': 'Escape from Tarkov',
+    '恐怖游戏': 'Horror',
+    '互动点播': 'Interactive',
+    # 娱乐天地
+    '体育': 'Sports',
+    '户外': 'Outdoor',
+    '星秀': 'Star Show',
+    '一起看': 'Watch Together',
+    '原创': 'Original',
+    '交友': 'Social',
+    '二次元': 'Anime',
+    '美食': 'Food',
+    '上分': 'Ranking Up',
+    # 手游休闲
+    '王者荣耀': 'Honor of Kings',
+    '和平精英': 'Game for Peace',
+    '金铲铲之战': 'TFT Mobile',
+    '棋牌休闲': 'Board/Card Games',
+    '棋牌综合': 'Board/Card Games',
+    'QQ飞车手游': 'QQ Speed Mobile',
+    'COD手游': 'COD Mobile',
+    '火影忍者手游': 'Naruto Mobile',
+    '蛋仔派对': 'Eggy Party',
+    '王者万象棋': 'HoK Chess',
+    'CF手游': 'CF Mobile',
+    'LOL手游': 'LoL Mobile',
+    '皇室战争': 'Clash Royale',
+    '原神': 'Genshin Impact',
+    '第五人格': 'Identity V',
+    # Lainnya
+    '影之刃零': 'Shadow Blade Zero',
+    'MMORPG': 'MMORPG',
+    '射击综合游戏': 'Shooter',
+    '英雄联盟手游': 'LoL Mobile',
+    '动作游戏': 'Action',
+    '地下城与勇士': 'DNF',
+    '冒险岛': 'MapleStory',
+    '军事游戏': 'Military',
+    '综合手游': 'Mobile General',
+    '永劫无间': 'Naraka',
+    '传奇': 'Legend',
+    '桌游': 'Board Games',
+    '二次元手游': 'Anime Mobile',
+    'QQ飞车': 'QQ Speed',
+    '炉石战棋': 'Hearthstone BG',
+    '魔兽争霸3': 'Warcraft 3',
+    '剑灵': 'Blade & Soul',
+    '欢乐斗地主': 'Happy Landlord',
+    '三国杀': '3 Kingdoms Kill',
+    '幻塔': 'Tower of Fantasy',
+    '英魂之刃': 'Spirit Blade',
+    '颜值': 'Beauty',
+    '方舟': 'ARK',
+    '怀旧游戏': 'Retro',
+    'JJ斗地主': 'JJ Landlord',
+    '逆战': 'Counter-Strike',
+    '音乐': 'Music',
+    '问道': 'Ask the Way',
+    '狼人杀手游': 'Werewolf Mobile',
+    '科技': 'Tech',
+    '欢乐麻将': 'Happy Mahjong',
+    '诛仙3': 'Zhu Xian 3',
+    '战争冲突': 'War',
+    '拳皇15': 'KOF 15',
+    '永劫无间手游': 'Naraka Mobile',
+    '星际争霸': 'StarCraft',
+    '虚拟偶像': 'Virtual Idol',
+    '罗布乐思': 'Roblox',
+    '旅游': 'Travel',
+    '恐鬼症': 'Phasmophobia',
+    '迷你世界': 'Mini World',
+    '梦三国': 'Dream 3K',
+    '天翼决': 'Skyfire',
+    '全球使命': 'Global Mission',
+    '洛克王国：世界': 'Roco Kingdom',
+    '暗区突围': 'Arena Breakout',
+    '中国象棋': 'Chinese Chess',
+    '天天象棋': 'Daily Chinese Chess',
+    '崩坏：星穹铁道': 'Honkai: Star Rail',
+    '热血江湖': 'Hot-Blooded Jianghu',
+    '死亡之夜': 'Night of Death',
+    '台球国度': 'Billiard Kingdom',
+    '鸣潮': 'Wuthering Waves',
+    'CFHD': 'CFHD',
+    '艾尔登法环': 'Elden Ring',
+    '海底大作战': 'Sea Battle',
+    '骑马与砍杀系列': 'Mount & Blade',
+    '极限竞速：地平线': 'Forza Horizon',
+    '鹅鸭杀': 'Goose Goose Duck',
+    '永恒之塔': 'Aion',
+    '暗区突围：无限': 'Arena Breakout: Infinite',
+    '海贼王 寻秘世界': 'One Piece',
+    'Apex英雄': 'Apex Legends',
+    '怪物猎人：荒野': 'Monster Hunter Wilds',
+    '育碧游戏': 'Ubisoft',
+    '全面战争': 'Total War',
+    '指尖四川麻将': 'Sichuan Mahjong',
+    '体育游戏': 'Sports Games',
+    '诛仙世界': 'Zhu Xian World',
+    '明日之后': 'LifeAfter',
+    '黑色沙漠': 'Black Desert',
+    '森林之子': 'Sons of the Forest',
+    '天堂': 'Paradise',
+    '英雄杀': 'Hero Kill',
+    '战争雷霆': 'War Thunder',
+    '绝区零': 'Zenless Zone Zero',
+    '星空': 'Starfield',
+    '鬼谷八荒': 'Ghost Bladestrike',
+    '部落冲突': 'Clash of Clans',
+    '矩阵：零日危机': 'Matrix Zero Day',
+    '只狼：影逝二度': 'Sekiro',
+    '暗黑破坏神': 'Diablo',
+    '风云': 'Storm Riders',
+    '甜蜜之家': 'Sweet Home',
+    '异人之下': 'Under the Skin',
+    '最终幻想7：重制版': 'FF7 Remake',
+    'NBA2KOL系列': 'NBA 2KOL',
+    '盗贼之海': 'Sea of Thieves',
+    '帝国时代4': 'Age of Empires 4',
+    '刺客信条': "Assassin's Creed",
+    '巅峰战舰': 'Naval Artillery',
+    '小游戏': 'Mini Games',
+    '港诡实录': 'HK Horror',
+    '双人成行': 'It Takes Two',
+    '过山车之星': 'Planet Coaster',
+    'FF14': 'FFXIV',
+    '归家异途': 'Home',
+    '全球使命3': 'Global Mission 3',
+    '足球小将': 'Captain Tsubasa',
+    '极品飞车：集结': 'NFS: Heat',
+    '生死狙击': 'Sniper Strike',
+    '命运方舟': 'Lost Ark',
+    '俄罗斯钓鱼4': 'Russian Fishing 4',
+    '格斗游戏': 'Fighting',
+    '决斗之城': 'Duel City',
+    '坦克大战': 'Tank Battle',
+    '环世界': 'RimWorld',
+    '完美世界：诸神之战': 'Perfect World',
+    '博德之门3': "Baldur's Gate 3",
+    '征途': 'Zhengtu',
+    '战锤40K：暗潮': 'WH40K: Darktide',
+    '最终幻想：起源': 'FF: Origin',
+    '天龙八部2': 'Demi-Gods 2',
+    '疾风之刃': 'Blade Storm',
+    '斗战神': 'War of Gods',
+    '泡泡堂': 'BnB',
+    '看门狗：军团': 'Watch Dogs Legion',
+    '创世战车': 'Crossout',
+    'KARDS': 'KARDS',
+    '逃生：试炼': 'Escape: Trial',
+    '荒野乱斗': 'Brawl Stars',
+    '未来之役': 'Future War',
+    '英灵神殿': 'Spirit Temple',
+    '奶块': 'Milk Block',
+    '最终幻想系列': 'Final Fantasy',
+    '重返帝国': 'Return to Empire',
+    '战意': "Conqueror's Blade",
+    '使命召唤系列': 'Call of Duty',
+    '虎牙全明星': 'Huya All-Stars',
+    '球球大作战': 'Ball Battle',
+    '御龙在天': 'Dragon in Sky',
+    # Esports events
+    'KPL年度总决赛': 'KPL Finals',
+    '斯诺克': 'Snooker',
+    'IEM北京2026': 'IEM Beijing 2026',
+    '2026英雄联盟全球总决赛': 'LoL Worlds 2026',
+    '2026QQ飞车手游S联赛秋季赛': 'QQ Speed S League',
+    '2026NBPL秋季赛': 'NBPL Fall 2026',
+    '第四届东亚电竞锦标赛': 'ECEA',
+    '2026虎牙斗象杯': 'Huya Douxiang Cup',
+    '2026CFML秋季赛': 'CFML Fall 2026',
+    '2026王者荣耀中王杯': 'HoK Mid-King Cup',
+    '2026S16': 'LPL S16',
+}
+
+_translation_cache = {}
+
+
+def translate_text(text):
+    if not text:
+        return text
+    if text in _translation_cache:
+        return _translation_cache[text]
+    if text in GAME_TRANSLATION:
+        _translation_cache[text] = GAME_TRANSLATION[text]
+        return GAME_TRANSLATION[text]
+    if re.search(r'[\u4e00-\u9fff]', text):
+        try:
+            from deep_translator import GoogleTranslator
+            result = GoogleTranslator(source='zh-CN', target='en').translate(text)
+            _translation_cache[text] = result
+            return result
+        except Exception:
+            pass
+    _translation_cache[text] = text
+    return text
+
+
+# ─── Step 1: Ambil SEMUA kategori (150+) ─────────────────────────
 def get_all_categories():
     s = get_session()
 
-    # Metode 1: API
+    # Metode 1: Scrape dari /g (ALL categories)
+    try:
+        r = s.get("https://www.huya.com/g", timeout=TIMEOUT)
+        if r.status_code == 200:
+            html = r.text
+            seen = set()
+            categories = []
+            for m in re.finditer(r'href="/g/(\d+)"[^>]*>\s*([^<]+?)\s*</a>', html):
+                gid = int(m.group(1))
+                gname = m.group(2).strip()
+                if gid not in seen and gname and len(gname) > 1:
+                    seen.add(gid)
+                    categories.append({'id': gid, 'name': gname})
+            if len(categories) > 10:
+                return categories
+    except Exception:
+        pass
+
+    # Metode 2: API getLiveGameList
     api = "https://www.huya.com/cache.php?m=LiveList&do=getLiveGameList"
     try:
         r = s.get(api, timeout=TIMEOUT)
-        if r.status_code == 200 and r.headers.get('Content-Type', '').startswith('application/json'):
+        if r.status_code == 200:
             data = r.json()
             categories = []
             for item in data.get('data', []):
@@ -57,34 +303,18 @@ def get_all_categories():
     except Exception:
         pass
 
-    # Metode 2: Scrape HTML
-    try:
-        r = s.get("https://www.huya.com/", timeout=TIMEOUT)
-        html = r.text
-        seen = set()
-        categories = []
-        for m in re.finditer(r'/g/(\d+)"[^>]*>\s*([^<]+)', html):
-            gid = int(m.group(1))
-            gname = m.group(2).strip()
-            if gid not in seen and gname:
-                seen.add(gid)
-                categories.append({'id': gid, 'name': gname})
-        if categories:
-            return categories
-    except Exception:
-        pass
-
-    # Hardcoded fallback
+    # Metode 3: Hardcoded fallback
     return [
-        {'id': 2135, 'name': 'LOL'},
+        {'id': 2135, 'name': '英雄联盟'},
         {'id': 1052, 'name': 'CS2'},
-        {'id': 1059, 'name': 'Dota2'},
-        {'id': 1141, 'name': 'Valorant'},
-        {'id': 1058, 'name': 'PUBG'},
-        {'id': 1056, 'name': 'OW2'},
-        {'id': 1120, 'name': 'Fortnite'},
-        {'id': 1053, 'name': 'Apex'},
-        {'id': 2067, 'name': 'Sports'},
+        {'id': 1141, 'name': '无畏契约'},
+        {'id': 2067, 'name': '体育'},
+        {'id': 2068, 'name': '户外'},
+        {'id': 2134, 'name': '星秀'},
+        {'id': 1058, 'name': '天天吃鸡'},
+        {'id': 2136, 'name': '主机游戏'},
+        {'id': 1059, 'name': 'DOTA2'},
+        {'id': 2137, 'name': '王者荣耀'},
     ]
 
 
@@ -133,7 +363,7 @@ def get_rooms(category_id, max_rooms=MAX_ROOMS_PER_CATEGORY):
     return rooms
 
 
-# ─── Step 2b: Esports/sports matches ─────────────────────────────
+# ─── Step 2b: Esports/sports hot matches ─────────────────────────
 def get_hot_matches():
     s = get_session()
     api = "https://www.huya.com/cache.php?callback=huyaNavHotMatch&do=ajaxGetHotMatch&m=Nav"
@@ -181,7 +411,6 @@ def get_hot_matches():
 
 # ─── Step 3: Decode liveLineUrl → stream URL ─────────────────────
 def decode_live_url(liveline):
-    """Decode liveLineUrl (base64) → real stream URL with wsSecret."""
     try:
         i, b = liveline.split('?', 1)
         r = i.split('/')
@@ -216,17 +445,11 @@ def decode_live_url(liveline):
         return None
 
 
-# ─── Step 4: Ambil stream info per room (dipanggil dari thread) ──
+# ─── Step 4: Ambil stream info per room ──────────────────────────
 def get_stream_info(room_id):
-    """
-    3 metode (urutan prioritas):
-      1. m.huya.com + liveLineUrl (base64) — PALING ANDAL
-      2. mp.huya.com API JSON
-      3. www.huya.com + stream JSON
-    """
     s = get_session()
 
-    # ═══ METODE 1: m.huya.com + liveLineUrl ═══
+    # ═══ METODE 1: m.huya.com + liveLineUrl (PALING ANDAL) ═══
     try:
         r = s.get(f"https://m.huya.com/{room_id}", timeout=TIMEOUT)
         if r.status_code == 200:
@@ -292,7 +515,6 @@ def get_stream_info(room_id):
 
                     stream_url = None
 
-                    # FLV multiLine
                     flv_list = stream.get('flv', {}).get('multiLine', [])
                     if flv_list:
                         for line in reversed(flv_list):
@@ -301,7 +523,6 @@ def get_stream_info(room_id):
                                 stream_url = url.replace('http://', 'https://')
                                 break
 
-                    # baseSteamInfoList
                     if not stream_url:
                         base_list = stream.get('baseSteamInfoList', [])
                         if base_list:
@@ -314,7 +535,6 @@ def get_stream_info(room_id):
                                        if hls_lines else 'huyalive').lower()
                                 stream_url = f"https://{cdn}.hls.huya.com/src/{sname}.m3u8?{anti}"
 
-                    # gameStreamInfoList
                     if not stream_url:
                         glist = stream.get('gameStreamInfoList', [])
                         for gs in glist:
@@ -406,16 +626,12 @@ def get_stream_info(room_id):
 
 # ─── Step 5: Worker untuk ThreadPool ─────────────────────────────
 def fetch_stream_worker(args):
-    """Worker function — dipanggil dari ThreadPoolExecutor."""
     idx, room, cat_name = args
     room_id = room['id']
-    label = room['nick'] or room['introduction'] or room_id
-
     try:
         info = get_stream_info(room_id)
     except Exception as e:
         return (idx, room, cat_name, None, str(e))
-
     return (idx, room, cat_name, info, None)
 
 
@@ -423,7 +639,8 @@ def fetch_stream_worker(args):
 def generate_playlist(output_file, max_per_cat=MAX_ROOMS_PER_CATEGORY,
                       categories_filter=None, max_workers=MAX_WORKERS):
     print("=" * 55)
-    print("  HUYA M3U PLAYLIST GENERATOR (curl_cffi + ThreadPool)")
+    print("  HUYA M3U PLAYLIST GENERATOR (FINAL)")
+    print("  curl_cffi + ThreadPool + Translate")
     print("=" * 55)
 
     # Step 1: Kategori
@@ -443,7 +660,8 @@ def generate_playlist(output_file, max_per_cat=MAX_ROOMS_PER_CATEGORY,
         rooms = get_rooms(cat['id'], max_per_cat)
         for room in rooms:
             all_rooms.append((room, cat['name']))
-        print(f"  {cat['name']:<20} → {len(rooms)} rooms")
+        if (i + 1) % 20 == 0 or i == len(categories) - 1:
+            print(f"  Progress: {i+1}/{len(categories)} | total rooms: {len(all_rooms)}")
         time.sleep(REQUEST_DELAY)
 
     # Step 2b: Esports
@@ -455,7 +673,7 @@ def generate_playlist(output_file, max_per_cat=MAX_ROOMS_PER_CATEGORY,
 
     print(f"\n  Total rooms: {len(all_rooms)}")
 
-    # Step 3: Stream URL (PARALEL dengan ThreadPool)
+    # Step 3: Stream URL (PARALEL)
     print(f"\n[3/4] Mengambil stream URL ({max_workers} threads)...")
     results = [None] * len(all_rooms)
 
@@ -470,12 +688,11 @@ def generate_playlist(output_file, max_per_cat=MAX_ROOMS_PER_CATEGORY,
             idx, room, cat_name, info, error = future.result()
             results[idx] = (room, cat_name, info, error)
             done_count += 1
-
-            if done_count % 20 == 0:
+            if done_count % 50 == 0:
                 print(f"  Progress: {done_count}/{len(all_rooms)}")
 
-    # Step 4: Build playlist
-    print(f"\n[4/4] Membangun playlist...")
+    # Step 4: Build playlist + translate
+    print(f"\n[4/4] Membangun playlist + translate...")
     lines = ['#EXTM3U']
     live_count = 0
     offline_count = 0
@@ -489,14 +706,15 @@ def generate_playlist(output_file, max_per_cat=MAX_ROOMS_PER_CATEGORY,
         if error:
             error_count += 1
             continue
-
         if not info:
             offline_count += 1
             continue
 
-        name = info['name']
+        name = translate_text(info['name'])
+        group_title = translate_text(
+            room.get('gameName', '') or info.get('game', '') or cat_name
+        )
         logo = info.get('logo', '') or room.get('screenshot', '')
-        group_title = room.get('gameName', '') or info.get('game', '') or cat_name
 
         extinf = f'#EXTINF:-1'
         if logo:
@@ -521,7 +739,7 @@ def generate_playlist(output_file, max_per_cat=MAX_ROOMS_PER_CATEGORY,
 # ─── Main ────────────────────────────────────────────────────────
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='Huya M3U Playlist Generator (curl_cffi + ThreadPool)')
+        description='Huya M3U Playlist Generator (Final Complete)')
     parser.add_argument('--output', '-o', default='playlist.m3u',
                         help='File output M3U (default: playlist.m3u)')
     parser.add_argument('--max-per-cat', '-m', type=int,
@@ -533,7 +751,12 @@ if __name__ == '__main__':
                         help='Jumlah thread paralel (default: 8)')
     parser.add_argument('--delay', '-d', type=float, default=REQUEST_DELAY,
                         help='Jeda antar request listing (default: 0.2)')
+    parser.add_argument('--no-translate', action='store_true',
+                        help='Nonaktifkan terjemahan (lebih cepat)')
     args = parser.parse_args()
+
+    if args.no_translate:
+        translate_text = lambda x: x or ''
 
     REQUEST_DELAY = args.delay
     generate_playlist(
