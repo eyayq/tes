@@ -1,10 +1,10 @@
-name: Update Huya Playlist
+name: Update
 
 on:
   push:
     branches: [main]
   schedule:
-    - cron: '*/30 * * * *'   # setiap 30 menit
+    - cron: '*/10 * * * *'   # setiap 30 menit
   workflow_dispatch:
 
 permissions:
@@ -21,7 +21,7 @@ jobs:
         with:
           python-version: '3.11'
 
-      - run: pip install curl-cffi deep-translator
+      - run: pip install requests curl-cffi deep-translator
 
       - name: Generate playlist
         run: python3 huya.py --output playlist.m3u --max-per-cat 10
