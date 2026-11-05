@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 """
 HUYA M3U PLAYLIST GENERATOR — FINAL COMPLETE
-- curl_cffi (TLS fingerprint impersonation)
+- HYBRID: requests (listing API) + curl_cffi (room page scrape)
 - ThreadPoolExecutor (parallel stream fetching)
-- Auto-scrape: semua 150+ kategori dari /g
-- Esports/sports hot matches
-- tvg-logo + group-title otomatis
+- Auto-scrape: semua kategori, rooms, esports, tvg-logo, group-title
 - Chinese → English translation
 - Output: playlist.m3u
 """
@@ -20,27 +18,40 @@ import argparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from urllib.parse import unquote
 
+import requests as std_requests
 from curl_cffi import requests as cffi_requests
 
 # ─── Konfigurasi ─────────────────────────────────────────────────
-MAX_ROOMS_PER_CATEGORY = 10
+MAX_ROOMS_PER_CATEGORY = 50
 REQUEST_DELAY = 0.2
 TIMEOUT = 15
-MAX_WORKERS = 8
-IMPERSONATE = "chrome"
+MAX_WORKERS = 10
 
 _local = threading.local()
 
 
-def get_session():
-    if not hasattr(_local, 'session'):
-        _local.session = cffi_requests.Session(impersonate=IMPERSONATE)
-    return _local.session
+def get_listing_session():
+    """Untuk API listing (kategori + rooms) — requests biasa."""
+    if not hasattr(_local, 'listing_session'):
+        _local.listing_session = std_requests.Session()
+        _local.listing_session.headers.update({
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                          "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "Accept": "application/json, text/plain, */*",
+            "Referer": "https://www.huya.com/",
+        })
+    return _local.listing_session
+
+
+def get_scrape_session():
+    """Untuk scrape room page (stream URL) — curl_cffi."""
+    if not hasattr(_local, 'scrape_session'):
+        _local.scrape_session = cffi_requests.Session(impersonate="chrome")
+    return _local.scrape_session
 
 
 # ─── Terjemahan Chinese → English ────────────────────────────────
 GAME_TRANSLATION = {
-    # 网游竞技
     '英雄联盟': 'League of Legends',
     'CS2': 'CS2',
     '无畏契约': 'Valorant',
@@ -55,7 +66,6 @@ GAME_TRANSLATION = {
     'DOTA1': 'Dota 1',
     '坦克世界': 'World of Tanks',
     '守望先锋': 'Overwatch',
-    # 单机热游
     '天天吃鸡': 'PUBG',
     '主机游戏': 'Console',
     '我的世界': 'Minecraft',
@@ -69,7 +79,6 @@ GAME_TRANSLATION = {
     '逃离塔科夫': 'Escape from Tarkov',
     '恐怖游戏': 'Horror',
     '互动点播': 'Interactive',
-    # 娱乐天地
     '体育': 'Sports',
     '户外': 'Outdoor',
     '星秀': 'Star Show',
@@ -79,7 +88,6 @@ GAME_TRANSLATION = {
     '二次元': 'Anime',
     '美食': 'Food',
     '上分': 'Ranking Up',
-    # 手游休闲
     '王者荣耀': 'Honor of Kings',
     '和平精英': 'Game for Peace',
     '金铲铲之战': 'TFT Mobile',
@@ -95,7 +103,6 @@ GAME_TRANSLATION = {
     '皇室战争': 'Clash Royale',
     '原神': 'Genshin Impact',
     '第五人格': 'Identity V',
-    # Lainnya
     '影之刃零': 'Shadow Blade Zero',
     'MMORPG': 'MMORPG',
     '射击综合游戏': 'Shooter',
@@ -264,11 +271,11 @@ def translate_text(text):
     return text
 
 
-# ─── Step 1: Ambil SEMUA kategori (150+) ─────────────────────────
+# ─── Step 1: Ambil SEMUA kategori ────────────────────────────────
 def get_all_categories():
-    s = get_session()
+    s = get_listing_session()
 
-    # Metode 1: Scrape dari /g (ALL categories)
+    # Metode 1: Scrape /g
     try:
         r = s.get("https://www.huya.com/g", timeout=TIMEOUT)
         if r.status_code == 200:
@@ -303,7 +310,7 @@ def get_all_categories():
     except Exception:
         pass
 
-    # Metode 3: Hardcoded fallback
+    # Metode 3: Hardcoded
     return [
         {'id': 2135, 'name': '英雄联盟'},
         {'id': 1052, 'name': 'CS2'},
@@ -320,7 +327,7 @@ def get_all_categories():
 
 # ─── Step 2: Ambil rooms per kategori ────────────────────────────
 def get_rooms(category_id, max_rooms=MAX_ROOMS_PER_CATEGORY):
-    s = get_session()
+    s = get_listing_session()
     rooms = []
     page = 1
 
@@ -365,7 +372,7 @@ def get_rooms(category_id, max_rooms=MAX_ROOMS_PER_CATEGORY):
 
 # ─── Step 2b: Esports/sports hot matches ─────────────────────────
 def get_hot_matches():
-    s = get_session()
+    s = get_listing_session()
     api = "https://www.huya.com/cache.php?callback=huyaNavHotMatch&do=ajaxGetHotMatch&m=Nav"
     try:
         r = s.get(api, timeout=TIMEOUT)
@@ -445,11 +452,11 @@ def decode_live_url(liveline):
         return None
 
 
-# ─── Step 4: Ambil stream info per room ──────────────────────────
+# ─── Step 4: Ambil stream info per room (curl_cffi) ──────────────
 def get_stream_info(room_id):
-    s = get_session()
+    s = get_scrape_session()
 
-    # ═══ METODE 1: m.huya.com + liveLineUrl (PALING ANDAL) ═══
+    # ═══ METODE 1: m.huya.com + liveLineUrl ═══
     try:
         r = s.get(f"https://m.huya.com/{room_id}", timeout=TIMEOUT)
         if r.status_code == 200:
@@ -640,7 +647,8 @@ def generate_playlist(output_file, max_per_cat=MAX_ROOMS_PER_CATEGORY,
                       categories_filter=None, max_workers=MAX_WORKERS):
     print("=" * 55)
     print("  HUYA M3U PLAYLIST GENERATOR (FINAL)")
-    print("  curl_cffi + ThreadPool + Translate")
+    print("  Hybrid: requests (listing) + curl_cffi (scrape)")
+    print("  ThreadPool + Translate")
     print("=" * 55)
 
     # Step 1: Kategori
@@ -739,7 +747,7 @@ def generate_playlist(output_file, max_per_cat=MAX_ROOMS_PER_CATEGORY,
 # ─── Main ────────────────────────────────────────────────────────
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='Huya M3U Playlist Generator (Final Complete)')
+        description='Huya M3U Playlist Generator (Final — Hybrid)')
     parser.add_argument('--output', '-o', default='playlist.m3u',
                         help='File output M3U (default: playlist.m3u)')
     parser.add_argument('--max-per-cat', '-m', type=int,
