@@ -19,10 +19,10 @@ from urllib.parse import unquote
 from curl_cffi import requests as cffi_requests
 
 # ─── Konfigurasi ─────────────────────────────────────────────────
-MAX_ROOMS_PER_CATEGORY = 10
+MAX_ROOMS_PER_CATEGORY = 50
 REQUEST_DELAY = 0.2
 TIMEOUT = 15
-MAX_WORKERS = 8          # jumlah thread paralel
+MAX_WORKERS = 18          # jumlah thread paralel
 IMPERSONATE = "chrome"   # TLS fingerprint
 
 # Thread-local: setiap thread punya session sendiri (thread-safe)
