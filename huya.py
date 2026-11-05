@@ -22,10 +22,10 @@ import requests as std_requests
 from curl_cffi import requests as cffi_requests
 
 # ─── Konfigurasi ─────────────────────────────────────────────────
-MAX_ROOMS_PER_CATEGORY = 50
+MAX_ROOMS_PER_CATEGORY = 10
 REQUEST_DELAY = 0.2
 TIMEOUT = 15
-MAX_WORKERS = 10
+MAX_WORKERS = 8
 
 _local = threading.local()
 
