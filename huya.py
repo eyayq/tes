@@ -25,8 +25,8 @@ sess.headers.update({
 })
 
 # ─── Konfigurasi ─────────────────────────────────────────────────
-MAX_ROOMS_PER_CATEGORY = 5    # batasi room per kategori (hemat waktu)
-REQUEST_DELAY = 0.3           # jeda antar request (detik)
+MAX_ROOMS_PER_CATEGORY = 15    # batasi room per kategori (hemat waktu)
+REQUEST_DELAY = 0.1           # jeda antar request (detik)
 TIMEOUT = 15
 
 
