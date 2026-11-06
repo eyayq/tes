@@ -3,10 +3,11 @@
 DOUYU M3U PLAYLIST GENERATOR — FINAL
 - Open API (open.douyucdn.cn) — TANPA AUTH
 - Auto-scrape 3222 kategori dari /api/RoomApi/game
+- Iterate per kategori (pagination tidak works)
 - coapi.douyucdn.cn (MD5 sign) + getH5PlayV1 (encryption) + hlsH5Preview
 - curl_cffi (Chrome TLS fingerprint)
 - ThreadPoolExecutor (parallel)
-- tvg-logo + group-title otomatis (dari API, bukan hardcoded)
+- tvg-logo + group-title otomatis
 - Chinese → English translation
 - Output: playlist.m3u
 """
@@ -23,8 +24,8 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from curl_cffi import requests as cffi_requests
 
 # ─── Konfigurasi ─────────────────────────────────────────────────
-MAX_ROOMS_TOTAL = 500
-REQUEST_DELAY = 0.3
+MAX_ROOMS_TOTAL = 50
+REQUEST_DELAY = 0.2
 TIMEOUT = 15
 MAX_WORKERS = 18
 PAGE_SIZE = 30
@@ -189,7 +190,6 @@ def translate_text(text):
 
 # ─── Parse response (handle list atau dict) ─────────────────────
 def parse_response(data, key='rooms'):
-    """Handle response yang bisa berupa list atau dict."""
     data_field = data.get('data', [])
     if isinstance(data_field, list):
         return data_field
@@ -200,138 +200,58 @@ def parse_response(data, key='rooms'):
 
 # ─── Step 0: Scrape SEMUA kategori (3222) ───────────────────────
 def get_all_categories():
-    """
-    Scrape semua 3222 kategori dari open.douyucdn.cn/api/RoomApi/game
-    Return: dict {short_name: game_name} untuk lookup
-    """
     s = get_session()
     api = "https://open.douyucdn.cn/api/RoomApi/game"
 
     try:
         r = s.get(api, timeout=TIMEOUT)
         if r.status_code != 200:
-            return {}
+            return []
         data = r.json()
     except Exception:
-        return {}
+        return []
 
     if data.get('error') != 0:
-        return {}
+        return []
 
     games = parse_response(data, key='games')
     if not games:
-        # Coba langsung sebagai list
         games = data.get('data', [])
         if not isinstance(games, list):
-            return {}
+            return []
 
-    # Build lookup: short_name → game_name
-    # short_name = "lol", "CS2", "wzry", dll (dari URL)
-    # game_name = "英雄联盟", "CS2", "王者荣耀", dll
-    game_map = {}
+    categories = []
     for item in games:
         short = item.get('short_name', '')
         name = item.get('game_name', '')
         if short and name:
-            game_map[short.lower()] = name
+            categories.append({'short': short.lower(), 'name': name})
 
-    print(f"  Kategori ditemukan: {len(game_map)}")
-    return game_map
+    return categories
 
 
-# ─── Step 1: Ambil semua rooms (Open API) ────────────────────────
-def get_all_rooms(max_rooms, game_map):
+# ─── Step 1: Ambil rooms per kategori ────────────────────────────
+def get_all_rooms(max_rooms, categories):
     """
-    Ambil rooms dari open.douyucdn.cn/api/RoomApi/live
-    Ekstrak game dari URL: /lol/12345 → "lol" → lookup game_map
+    Iterate per kategori — ambil N room per kategori
+    sampai max_rooms tercapai.
     """
     s = get_session()
     all_rooms = []
     seen_ids = set()
-    page = 1
 
-    while len(all_rooms) < max_rooms:
-        api = (
-            f"https://open.douyucdn.cn/api/RoomApi/live"
-            f"?limit={PAGE_SIZE}&page={page}"
-        )
-        try:
-            r = s.get(api, timeout=TIMEOUT)
-            if r.status_code != 200:
-                break
-            data = r.json()
-        except Exception:
-            break
+    # Hitung per kategori (max 100 kategori)
+    use_cats = categories[:100]
+    per_cat = max(1, max_rooms // len(use_cats))
 
-        if data.get('error') != 0:
-            break
+    print(f"  Strategi: {per_cat} room x {len(use_cats)} kategori")
 
-        rooms = parse_response(data)
-        if not rooms:
-            break
-
-        new_count = 0
-        for item in rooms:
-            room_id = str(item.get('room_id', ''))
-            if not room_id:
-                continue
-            if room_id in seen_ids:
-                continue
-            seen_ids.add(room_id)
-
-            # ★ Ekstrak game dari URL: https://www.douyu.com/lol/12345
-            url = item.get('url', '')
-            game_short = ''
-            if url:
-                # url bisa "/lol/12345" atau "https://www.douyu.com/lol/12345"
-                url_clean = url.replace('https://www.douyu.com', '').replace('http://www.douyu.com', '')
-                parts = url_clean.strip('/').split('/')
-                if len(parts) >= 2:
-                    game_short = parts[0].lower()
-
-            # ★ Lookup: short_name → game_name (dari 3222 kategori)
-            game_name = game_map.get(game_short, '')
-
-            all_rooms.append({
-                'id': room_id,
-                'nick': item.get('nickname', ''),
-                'introduction': item.get('room_name', ''),
-                'screenshot': item.get('room_src', ''),
-                'gameName': game_name or game_short,
-                'viewers': item.get('online', 0),
-            })
-            new_count += 1
-
-        print(f"  Page {page}: +{new_count} new rooms (total: {len(all_rooms)})")
-        page += 1
-        time.sleep(REQUEST_DELAY)
-
-        if new_count == 0:
-            break
-        if len(rooms) < PAGE_SIZE:
-            break
-
-    return all_rooms[:max_rooms]
-
-
-# ─── Step 2: Fallback — per kategori ─────────────────────────────
-def get_rooms_by_category(max_rooms, game_map):
-    s = get_session()
-    all_rooms = []
-    seen_ids = set()
-
-    # Ambil top 30 kategori dari game_map
-    categories = list(game_map.items())[:30]
-    if not categories:
-        return []
-
-    per_cat = max(10, max_rooms // len(categories))
-
-    for short_name, game_name in categories:
+    for i, cat in enumerate(use_cats):
         if len(all_rooms) >= max_rooms:
             break
+
         api = (
-            f"https://open.douyucdn.cn/api/RoomApi/live/{short_name}"
+            f"https://open.douyucdn.cn/api/RoomApi/live/{cat['short']}"
             f"?limit={min(per_cat, 30)}&page=1"
         )
         try:
@@ -346,25 +266,32 @@ def get_rooms_by_category(max_rooms, game_map):
             continue
 
         rooms = parse_response(data)
+        new_count = 0
         for item in rooms:
             room_id = str(item.get('room_id', ''))
             if not room_id or room_id in seen_ids:
                 continue
             seen_ids.add(room_id)
+
             all_rooms.append({
                 'id': room_id,
                 'nick': item.get('nickname', ''),
                 'introduction': item.get('room_name', ''),
                 'screenshot': item.get('room_src', ''),
-                'gameName': game_name,
+                'gameName': cat['name'],
                 'viewers': item.get('online', 0),
             })
+            new_count += 1
+
+        if (i + 1) % 20 == 0:
+            print(f"  Progress: {i+1}/{len(use_cats)} | total rooms: {len(all_rooms)}")
+
         time.sleep(REQUEST_DELAY)
 
     return all_rooms[:max_rooms]
 
 
-# ─── Step 3: Stream URL — Method 1 (coapi, MD5 sign) ────────────
+# ─── Step 2: Stream URL — Method 1 (coapi, MD5 sign) ────────────
 def get_stream_url_method1(room_id):
     s = get_session()
     tt = str(int(time.time()))
@@ -385,17 +312,18 @@ def get_stream_url_method1(room_id):
             data = r.json()
             if data.get('error') == 0:
                 d = data.get('data', {})
-                rtmp_url = d.get('rtmp_url', '')
-                rtmp_live = d.get('rtmp_live', '')
-                if rtmp_url and rtmp_live:
-                    return f"{rtmp_url}/{rtmp_live}"
+                if isinstance(d, dict):
+                    rtmp_url = d.get('rtmp_url', '')
+                    rtmp_live = d.get('rtmp_live', '')
+                    if rtmp_url and rtmp_live:
+                        return f"{rtmp_url}/{rtmp_live}"
     except Exception:
         pass
 
     return None
 
 
-# ─── Step 4: Stream URL — Method 2 (getH5PlayV1) ────────────────
+# ─── Step 3: Stream URL — Method 2 (getH5PlayV1) ────────────────
 def get_stream_url_method2(room_id):
     s = get_session()
     did = uuid.uuid4().hex
@@ -410,6 +338,8 @@ def get_stream_url_method2(room_id):
         if data.get('error') != 0:
             return None
         enc_data = data.get('data', {})
+        if not isinstance(enc_data, dict):
+            return None
     except Exception:
         return None
 
@@ -446,17 +376,18 @@ def get_stream_url_method2(room_id):
             data = r.json()
             if data.get('error') == 0:
                 d = data.get('data', {})
-                rtmp_url = d.get('rtmp_url', '')
-                rtmp_live = d.get('rtmp_live', '')
-                if rtmp_url and rtmp_live:
-                    return f"{rtmp_url}/{rtmp_live}"
+                if isinstance(d, dict):
+                    rtmp_url = d.get('rtmp_url', '')
+                    rtmp_live = d.get('rtmp_live', '')
+                    if rtmp_url and rtmp_live:
+                        return f"{rtmp_url}/{rtmp_live}"
     except Exception:
         pass
 
     return None
 
 
-# ─── Step 5: Stream URL — Method 3 (hlsH5Preview) ───────────────
+# ─── Step 4: Stream URL — Method 3 (hlsH5Preview) ───────────────
 def get_stream_url_method3(room_id):
     s = get_session()
     did = uuid.uuid4().hex
@@ -479,18 +410,19 @@ def get_stream_url_method3(room_id):
             data = r.json()
             if data.get('error') == 0:
                 d = data.get('data', {})
-                rtmp_live = d.get('rtmp_live', '')
-                if rtmp_live:
-                    key_match = re.search(r'(\d+r\w+)', rtmp_live)
-                    if key_match:
-                        return f"http://vplay1a.douyucdn.cn/live/{key_match.group(1)}.flv?uuid={did}"
+                if isinstance(d, dict):
+                    rtmp_live = d.get('rtmp_live', '')
+                    if rtmp_live:
+                        key_match = re.search(r'(\d+r\w+)', rtmp_live)
+                        if key_match:
+                            return f"http://vplay1a.douyucdn.cn/live/{key_match.group(1)}.flv?uuid={did}"
     except Exception:
         pass
 
     return None
 
 
-# ─── Step 6: Get stream URL (try all methods) ───────────────────
+# ─── Step 5: Get stream URL (try all methods) ───────────────────
 def get_stream_url(room_id):
     url = get_stream_url_method1(room_id)
     if url:
@@ -504,7 +436,7 @@ def get_stream_url(room_id):
     return None
 
 
-# ─── Step 7: Worker ──────────────────────────────────────────────
+# ─── Step 6: Worker ──────────────────────────────────────────────
 def fetch_worker(args):
     idx, room = args
     room_id = room['id']
@@ -515,24 +447,25 @@ def fetch_worker(args):
     return (idx, room, stream_url, None)
 
 
-# ─── Step 8: Generate playlist ───────────────────────────────────
+# ─── Step 7: Generate playlist ───────────────────────────────────
 def generate_playlist(output_file, max_rooms, max_workers=MAX_WORKERS):
     print("=" * 55)
     print("  DOUYU M3U PLAYLIST GENERATOR (FINAL)")
     print(f"  {max_rooms} rooms | {max_workers} threads")
     print("=" * 55)
 
-    # Step 0: Scrape semua kategori (3222)
+    # Step 0: Scrape semua kategori
     print("\n[0/3] Scraping semua kategori...")
-    game_map = get_all_categories()
+    categories = get_all_categories()
+    print(f"  Kategori ditemukan: {len(categories)}")
 
-    # Step 1: Ambil semua rooms
-    print("\n[1/3] Mengambil rooms (open API)...")
-    all_rooms = get_all_rooms(max_rooms, game_map)
+    if not categories:
+        print("  [ERROR] Tidak bisa ambil kategori!")
+        return
 
-    if not all_rooms:
-        print("  [WARN] Open API gagal, mencoba per kategori...")
-        all_rooms = get_rooms_by_category(max_rooms, game_map)
+    # Step 1: Ambil rooms per kategori
+    print(f"\n[1/3] Mengambil rooms per kategori...")
+    all_rooms = get_all_rooms(max_rooms, categories)
 
     print(f"\n  Total rooms: {len(all_rooms)}")
 
@@ -577,7 +510,6 @@ def generate_playlist(output_file, max_rooms, max_workers=MAX_WORKERS):
             offline_count += 1
             continue
 
-        # ★ group-title dari game_map (sudah di-scrape dari 3222 kategori)
         game_name = room.get('gameName', '')
         logo = room.get('screenshot', '')
 
@@ -614,7 +546,7 @@ if __name__ == '__main__':
     parser.add_argument('--workers', '-w', type=int, default=MAX_WORKERS,
                         help='Jumlah thread paralel (default: 18)')
     parser.add_argument('--delay', '-d', type=float, default=REQUEST_DELAY,
-                        help='Jeda antar request (default: 0.3)')
+                        help='Jeda antar request (default: 0.2)')
     parser.add_argument('--no-translate', action='store_true',
                         help='Nonaktifkan terjemahan (lebih cepat)')
     args = parser.parse_args()
