@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 TWITCH M3U PLAYLIST GENERATOR — FINAL
-- Helix API (api.twitch.tv/helix/streams) untuk listing — TANPA OAUTH
+- GQL StreamDirectory (tanpa OAuth, hanya Client-ID)
 - GQL PlaybackAccessToken untuk stream URL (m3u8)
 - curl_cffi (Chrome TLS fingerprint)
 - ThreadPoolExecutor (parallel)
@@ -22,12 +22,11 @@ from curl_cffi import requests as cffi_requests
 MAX_CHANNELS = 500
 REQUEST_DELAY = 0.2
 TIMEOUT = 15
-MAX_WORKERS = 18
+MAX_WORKERS = 38
 
 # Twitch public web client ID
 CLIENT_ID = "kimne78kx3ncx6brgo4mv6wki5h1ko"
 GQL_URL = "https://gql.twitch.tv/gql"
-HELEX_URL = "https://api.twitch.tv/helix/streams"
 USHER_URL = "https://usher.ttvnw.net/api/channel/hls/{channel}.m3u8"
 
 # Persisted query hash untuk PlaybackAccessToken
@@ -55,73 +54,138 @@ def gql_request(operations):
         r = s.post(GQL_URL, json=operations, headers=headers, timeout=TIMEOUT)
         if r.status_code == 200:
             return r.json()
-    except Exception:
-        pass
+        else:
+            print(f"  [DEBUG] GQL HTTP {r.status_code}: {r.text[:200]}")
+    except Exception as e:
+        print(f"  [DEBUG] GQL exception: {e}")
     return None
 
 
-# ─── Step 1: Ambil list channels live (Helix API) ───────────────
+# ─── Step 1: Ambil list channels live (GQL StreamDirectory) ─────
 def get_live_channels(max_channels, category=None):
-    """
-    Helix API: GET /helix/streams?first=100&after={cursor}
-    Butuh: Client-ID header (TANPA OAuth)
-    """
     s = get_session()
     all_channels = []
     cursor = ""
     page_size = min(100, max_channels)
 
     while len(all_channels) < max_channels:
-        url = f"{HELEX_URL}?first={page_size}"
-        if cursor:
-            url += f"&after={cursor}"
+        variables = {"limit": page_size, "after": cursor}
         if category:
-            url += f"&game_name={quote(category)}"
+            variables["category"] = category
 
-        headers = {
-            "Client-ID": CLIENT_ID,
-            "Accept": "application/json",
-        }
+        if category:
+            query = (
+                'query StreamDirectory($category: String, $limit: Int, $after: String) {\n'
+                '  streamDirectory(category: $category, first: $limit, after: $after) {\n'
+                '    edges {\n'
+                '      node {\n'
+                '        __typename\n'
+                '        ... on Stream {\n'
+                '          id\n'
+                '          game { displayName }\n'
+                '          viewerCount\n'
+                '          broadcaster {\n'
+                '            login\n'
+                '            displayName\n'
+                '            profileImageURL(width: 180)\n'
+                '          }\n'
+                '          title\n'
+                '        }\n'
+                '      }\n'
+                '    }\n'
+                '    pageInfo { hasNextPage endCursor }\n'
+                '  }\n'
+                '}'
+            )
+        else:
+            query = (
+                'query StreamDirectory($limit: Int, $after: String) {\n'
+                '  streamDirectory(first: $limit, after: $after) {\n'
+                '    edges {\n'
+                '      node {\n'
+                '        __typename\n'
+                '        ... on Stream {\n'
+                '          id\n'
+                '          game { displayName }\n'
+                '          viewerCount\n'
+                '          broadcaster {\n'
+                '            login\n'
+                '            displayName\n'
+                '            profileImageURL(width: 180)\n'
+                '          }\n'
+                '          title\n'
+                '        }\n'
+                '      }\n'
+                '    }\n'
+                '    pageInfo { hasNextPage endCursor }\n'
+                '  }\n'
+                '}'
+            )
 
-        try:
-            r = s.get(url, headers=headers, timeout=TIMEOUT)
-            if r.status_code != 200:
-                print(f"  [WARN] Helix API: HTTP {r.status_code}")
-                break
-            data = r.json()
-        except Exception as e:
-            print(f"  [WARN] Helix API: {e}")
+        operations = [{
+            "operationName": "StreamDirectory",
+            "query": query,
+            "variables": variables,
+        }]
+
+        data = gql_request(operations)
+
+        if not data:
+            print("  [DEBUG] GQL response: None")
             break
 
-        streams = data.get("data", [])
-        if not streams:
+        if len(data) == 0:
+            print("  [DEBUG] GQL response: empty array")
             break
 
-        for st in streams:
-            login = st.get("user_login", "")
+        if "errors" in data[0]:
+            print(f"  [DEBUG] GQL error: {data[0]['errors']}")
+            break
+
+        result = data[0].get("data", {})
+        if not result:
+            print(f"  [DEBUG] GQL data empty. Raw: {json.dumps(data[0])[:500]}")
+            break
+
+        stream_dir = result.get("streamDirectory")
+        if not stream_dir:
+            print(f"  [DEBUG] No streamDirectory. Keys: {list(result.keys())}")
+            break
+
+        edges = stream_dir.get("edges", [])
+        if not edges:
+            print(f"  [DEBUG] No edges. Keys: {list(stream_dir.keys())}")
+            break
+
+        new_count = 0
+        for edge in edges:
+            node = edge.get("node", {})
+            if node.get("__typename") != "Stream":
+                continue
+
+            broadcaster = node.get("broadcaster", {})
+            login = broadcaster.get("login", "")
             if not login:
                 continue
 
             all_channels.append({
-                'id': st.get("id", ""),
+                'id': node.get("id", ""),
                 'login': login,
-                'name': st.get("user_name", login),
-                'game': st.get("game_name", "Twitch"),
-                'title': st.get("title", ""),
-                'viewers': st.get("viewer_count", 0),
-                'logo': f"https://static-cdn.jtvnw.net/jtv_user_pictures/{login}_profile_300x300.png",
+                'name': broadcaster.get("displayName", login),
+                'game': (node.get("game") or {}).get("displayName", "Twitch"),
+                'title': node.get("title", ""),
+                'viewers': node.get("viewerCount", 0),
+                'logo': broadcaster.get("profileImageURL", ""),
             })
+            new_count += 1
 
-        # Pagination
-        next_url = data.get("pagination", {}).get("next", "")
-        if not next_url:
-            break
-        if "after=" in next_url:
-            cursor = next_url.split("after=")[-1].split("&")[0]
-        else:
-            break
+        print(f"  Page: +{new_count} channels (total: {len(all_channels)})")
 
-        print(f"  Page: +{len(streams)} channels (total: {len(all_channels)})")
+        page_info = stream_dir.get("pageInfo", {})
+        if not page_info.get("hasNextPage", False):
+            break
+        cursor = page_info.get("endCursor", "")
+
         time.sleep(REQUEST_DELAY)
 
     return all_channels[:max_channels]
@@ -165,6 +229,9 @@ def get_playback_token(channel_login):
 
     data = gql_request(operations)
     if not data:
+        return None, None
+
+    if "errors" in data[0]:
         return None, None
 
     token_data = data[0].get("data", {}).get("streamPlaybackAccessToken")
@@ -227,13 +294,14 @@ def generate_playlist(output_file, max_channels, max_workers=MAX_WORKERS,
         print(f"  Category: {category}")
     print("=" * 55)
 
-    # Step 1: Ambil list channels live (Helix)
-    print(f"\n[1/3] Mengambil channels live (Helix API)...")
+    # Step 1: Ambil list channels live
+    print(f"\n[1/3] Mengambil channels live (GQL StreamDirectory)...")
     all_channels = get_live_channels(max_channels, category)
     print(f"\n  Total channels: {len(all_channels)}")
 
     if not all_channels:
         print("\n  [ERROR] Tidak ada channels live!")
+        print("  Cek output [DEBUG] di atas untuk diagnosa.")
         return
 
     # Step 2: Stream URL (PARALEL)
