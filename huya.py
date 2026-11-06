@@ -1,26 +1,324 @@
-from curl_cffi import requests
+#!/usr/bin/env python3
+"""
+TWITCH M3U PLAYLIST GENERATOR — FINAL
+- Helix API (app access token)
+- GQL PlaybackAccessToken untuk stream URL (m3u8)
+- curl_cffi (Chrome TLS fingerprint)
+- ThreadPoolExecutor (parallel)
+- Output: playlist.m3u
+"""
+
 import json
+import os
+import time
+import threading
+import argparse
+from urllib.parse import quote
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
-s = requests.Session(impersonate="chrome")
-s.headers.update({
-    "client-id": "kimne78kx3ncx6brgo4mv6wki5h1ko",
-    "content-type": "text/plain;charset=UTF-8",
-    "origin": "https://m.twitch.tv",
-    "referer": "https://m.twitch.tv/",
-    "user-agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Mobile Safari/537.36",
-})
+from curl_cffi import requests as cffi_requests
 
-ops = [{
-    "operationName": "MwebFrontPageQuery",
-    "variables": {"first": 20, "itemsPerRow": 8, "platform": "mobile_web", "requestID": "", "after": ""},
-    "extensions": {
-        "persistedQuery": {
-            "version": 1,
-            "sha256Hash": "9d3a6396104b829d516c9c5a02c89bfe81c4b2453d34143ca2c1f1144d9afe50"
-        }
+# ─── Konfigurasi ─────────────────────────────────────────────────
+MAX_CHANNELS = 2000
+REQUEST_DELAY = 0
+TIMEOUT = 15
+MAX_WORKERS = 98
+
+# Token (dari environment atau hardcoded)
+CLIENT_ID = os.environ.get("TWITCH_CLIENT_ID", "uo6dggojyb8d6soh92zknwmi5ej1q2")
+ACCESS_TOKEN = os.environ.get("TWITCH_ACCESS_TOKEN", "2gbdx6oar67tqtcmt49t3wpcgycthx")
+
+GQL_URL = "https://gql.twitch.tv/gql"
+HELEX_URL = "https://api.twitch.tv/helix/streams"
+USHER_URL = "https://usher.ttvnw.net/api/channel/hls/{channel}.m3u8"
+
+# Public client ID untuk GQL PlaybackAccessToken (tanpa auth)
+GQL_CLIENT_ID = "kimne78kx3ncx6brgo4mv6wki5h1ko"
+PLAYBACK_TOKEN_HASH = "0828119ded1c13477966434e15800ff57ddacf13ba1911c129dc2200705b0712"
+
+_local = threading.local()
+
+
+def get_session():
+    if not hasattr(_local, 'session'):
+        _local.session = cffi_requests.Session(impersonate="chrome")
+    return _local.session
+
+
+# ─── GQL Helper (untuk PlaybackAccessToken) ─────────────────────
+def gql_request(operations):
+    s = get_session()
+    headers = {
+        "Client-ID": GQL_CLIENT_ID,
+        "Content-Type": "application/json",
+        "Origin": "https://www.twitch.tv",
+        "Referer": "https://www.twitch.tv/",
     }
-}]
+    try:
+        r = s.post(GQL_URL, json=operations, headers=headers, timeout=TIMEOUT)
+        if r.status_code == 200:
+            return r.json()
+    except Exception:
+        pass
+    return None
 
-r = s.post("https://gql.twitch.tv/gql", json=ops)
-print(r.status_code)
-print(r.text[:2000])   
+
+# ─── Step 1: Ambil list channels live (Helix API) ───────────────
+def get_live_channels(max_channels, category=None):
+    s = get_session()
+    all_channels = []
+    cursor = ""
+    page_size = min(100, max_channels)
+
+    while len(all_channels) < max_channels:
+        url = f"{HELEX_URL}?first={page_size}"
+        if cursor:
+            url += f"&after={cursor}"
+        if category:
+            url += f"&game_name={quote(category)}"
+
+        headers = {
+            "Client-ID": CLIENT_ID,
+            "Authorization": f"Bearer {ACCESS_TOKEN}",
+            "Accept": "application/json",
+        }
+
+        try:
+            r = s.get(url, headers=headers, timeout=TIMEOUT)
+            if r.status_code != 200:
+                print(f"  [WARN] Helix: HTTP {r.status_code} — {r.text[:200]}")
+                break
+            data = r.json()
+        except Exception as e:
+            print(f"  [WARN] Helix: {e}")
+            break
+
+        streams = data.get("data", [])
+        if not streams:
+            break
+
+        for st in streams:
+            login = st.get("user_login", "")
+            if not login:
+                continue
+
+            all_channels.append({
+                'id': st.get("id", ""),
+                'login': login,
+                'name': st.get("user_name", login),
+                'game': st.get("game_name", "Twitch"),
+                'title': st.get("title", ""),
+                'viewers': st.get("viewer_count", 0),
+                'logo': f"https://static-cdn.jtvnw.net/jtv_user_pictures/{login}_profile_300x300.png",
+            })
+
+        # Pagination
+        next_url = data.get("pagination", {}).get("next", "")
+        if not next_url:
+            break
+        if "after=" in next_url:
+            cursor = next_url.split("after=")[-1].split("&")[0]
+        else:
+            break
+
+        print(f"  Page: +{len(streams)} channels (total: {len(all_channels)})")
+        time.sleep(REQUEST_DELAY)
+
+    return all_channels[:max_channels]
+
+
+# ─── Step 2: Get PlaybackAccessToken per channel ────────────────
+def get_playback_token(channel_login):
+    operations = [{
+        "operationName": "PlaybackAccessToken_Template",
+        "query": (
+            'query PlaybackAccessToken_Template($login: String!, $isLive: Boolean!, '
+            '$vodID: ID!, $isVod: Boolean!, $playerType: String!) {\n'
+            '  streamPlaybackAccessToken(channelName: $login, params: {platform: "web", '
+            'playerBackend: "mediaplayer", playerType: $playerType}) @include(if: $isLive) {\n'
+            '    value\n'
+            '    signature\n'
+            '    __typename\n'
+            '  }\n'
+            '  videoPlaybackAccessToken(id: $vodID, params: {platform: "web", '
+            'playerBackend: "mediaplayer", playerType: $playerType}) @include(if: $isVod) {\n'
+            '    value\n'
+            '    signature\n'
+            '    __typename\n'
+            '  }\n'
+            '}'
+        ),
+        "variables": {
+            "isLive": True,
+            "login": channel_login,
+            "isVod": False,
+            "vodID": "",
+            "playerType": "site",
+        },
+        "extensions": {
+            "persistedQuery": {
+                "version": 1,
+                "sha256Hash": PLAYBACK_TOKEN_HASH,
+            }
+        },
+    }]
+
+    data = gql_request(operations)
+    if not data:
+        return None, None
+
+    if "errors" in data[0]:
+        return None, None
+
+    token_data = data[0].get("data", {}).get("streamPlaybackAccessToken")
+    if not token_data:
+        return None, None
+
+    value = token_data.get("value", "")
+    signature = token_data.get("signature", "")
+
+    if not value or not signature:
+        return None, None
+
+    return value, signature
+
+
+# ─── Step 3: Build stream URL ───────────────────────────────────
+def get_stream_url(channel_login):
+    token, sig = get_playback_token(channel_login)
+    if not token or not sig:
+        return None
+
+    token_encoded = quote(token, safe='')
+    sig_encoded = quote(sig, safe='')
+
+    url = (
+        f"{USHER_URL.format(channel=channel_login)}"
+        f"?allow_source=true"
+        f"&allow_audio_only=true"
+        f"&fast_bread=true"
+        f"&player_backend=mediaplayer"
+        f"&playlist_include_framerate=true"
+        f"&reassignments_supported=true"
+        f"&sig={sig_encoded}"
+        f"&supported_codecs=av1,h265,h264"
+        f"&token={token_encoded}"
+        f"&type=any"
+    )
+
+    return url
+
+
+# ─── Step 4: Worker ──────────────────────────────────────────────
+def fetch_worker(args):
+    idx, channel = args
+    login = channel['login']
+    try:
+        stream_url = get_stream_url(login)
+    except Exception as e:
+        return (idx, channel, None, str(e))
+    return (idx, channel, stream_url, None)
+
+
+# ─── Step 5: Generate playlist ───────────────────────────────────
+def generate_playlist(output_file, max_channels, max_workers=MAX_WORKERS,
+                      category=None):
+    print("=" * 55)
+    print("  TWITCH M3U PLAYLIST GENERATOR (FINAL)")
+    print(f"  {max_channels} channels | {max_workers} threads")
+    if category:
+        print(f"  Category: {category}")
+    print("=" * 55)
+
+    # Step 1: Ambil list channels live (Helix)
+    print(f"\n[1/3] Mengambil channels live (Helix API)...")
+    all_channels = get_live_channels(max_channels, category)
+    print(f"\n  Total channels: {len(all_channels)}")
+
+    if not all_channels:
+        print("\n  [ERROR] Tidak ada channels live!")
+        return
+
+    # Step 2: Stream URL (PARALEL)
+    print(f"\n[2/3] Mengambil stream URL ({max_workers} threads)...")
+    results = [None] * len(all_channels)
+
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        futures = {
+            executor.submit(fetch_worker, (i, ch)): i
+            for i, ch in enumerate(all_channels)
+        }
+
+        done_count = 0
+        for future in as_completed(futures):
+            idx, channel, stream_url, error = future.result()
+            results[idx] = (channel, stream_url, error)
+            done_count += 1
+            if done_count % 50 == 0:
+                print(f"  Progress: {done_count}/{len(all_channels)}")
+
+    # Step 3: Build playlist
+    print(f"\n[3/3] Membangun playlist...")
+    lines = ['#EXTM3U']
+    live_count = 0
+    offline_count = 0
+    error_count = 0
+
+    for item in results:
+        if item is None:
+            continue
+        channel, stream_url, error = item
+
+        if error:
+            error_count += 1
+            continue
+        if not stream_url:
+            offline_count += 1
+            continue
+
+        name = channel['name']
+        game = channel.get('game', 'Twitch')
+        logo = channel.get('logo', '')
+
+        extinf = f'#EXTINF:-1'
+        if logo:
+            extinf += f' tvg-logo="{logo}"'
+        extinf += f' group-title="{game}"'
+        extinf += f',{name}'
+
+        lines.append(extinf)
+        lines.append(stream_url)
+        live_count += 1
+
+    with open(output_file, 'w', encoding='utf-8') as f:
+        f.write('\n'.join(lines) + '\n')
+
+    print(f"\n{'=' * 55}")
+    print(f"  SELESAI: {live_count} live | {offline_count} offline | {error_count} error")
+    print(f"  Output: {output_file}")
+    print(f"{'=' * 55}")
+
+
+# ─── Main ────────────────────────────────────────────────────────
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+        description='Twitch M3U Playlist Generator (Final)')
+    parser.add_argument('--output', '-o', default='playlist.m3u',
+                        help='File output M3U (default: playlist.m3u)')
+    parser.add_argument('--channels', '-c', type=int, default=MAX_CHANNELS,
+                        help=f'Total channel (default: {MAX_CHANNELS})')
+    parser.add_argument('--category', '-g', default=None,
+                        help='Filter kategori (contoh: "Just Chatting")')
+    parser.add_argument('--workers', '-w', type=int, default=MAX_WORKERS,
+                        help='Jumlah thread paralel (default: 18)')
+    parser.add_argument('--delay', '-d', type=float, default=REQUEST_DELAY,
+                        help='Jeda antar request (default: 0.2)')
+    args = parser.parse_args()
+
+    REQUEST_DELAY = args.delay
+    generate_playlist(
+        output_file=args.output,
+        max_channels=args.channels,
+        max_workers=args.workers,
+        category=args.category,
+    )   
