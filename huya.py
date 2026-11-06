@@ -440,6 +440,13 @@ def main():
             name = format_name_slim(m)
 
         match_dt = parse_match_time(m, detail)
+
+        # ★ Filter: upcoming hanya yang tanggal hari ini (UTC / server time)
+        if group == "Upcoming" and match_dt != datetime.max.replace(tzinfo=WIB):
+            match_dt_utc = match_dt.astimezone(timezone.utc)
+            if match_dt_utc.date() != datetime.now(timezone.utc).date():
+                continue
+
         time_str = format_match_time(match_dt)
         if time_str:
             name += f" | {time_str}"
