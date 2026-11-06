@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """
-DOUYU M3U PLAYLIST GENERATOR
-- Open API (open.douyucdn.cn) untuk listing — TANPA AUTH
-- coapi.douyucdn.cn untuk stream URL (MD5 sign)
-- Fallback: getH5PlayV1 (encryption-based)
+DOUYU M3U PLAYLIST GENERATOR — FINAL
+- Open API (open.douyucdn.cn) — TANPA AUTH
+- coapi.douyucdn.cn (MD5 sign) + getH5PlayV1 (encryption) + hlsH5Preview
 - curl_cffi (Chrome TLS fingerprint)
 - ThreadPoolExecutor (parallel)
 - tvg-logo + group-title otomatis
@@ -27,7 +26,7 @@ MAX_ROOMS_TOTAL = 50
 REQUEST_DELAY = 0.3
 TIMEOUT = 15
 MAX_WORKERS = 18
-PAGE_SIZE = 30  # open API max 30/page
+PAGE_SIZE = 30
 
 _local = threading.local()
 
@@ -42,7 +41,7 @@ def get_session():
     return _local.session
 
 
-# ─── Terjemahan ──────────────────────────────────────────────────
+# ─── Terjemahan Chinese → English ────────────────────────────────
 GAME_TRANSLATION = {
     '英雄联盟': 'League of Legends',
     'CS2': 'CS2',
@@ -187,14 +186,19 @@ def translate_text(text):
     return text
 
 
-# ─── Step 1: Ambil semua rooms (Open API — TANPA AUTH) ──────────
+# ─── Parse response (handle list atau dict) ─────────────────────
+def parse_rooms_response(data):
+    """Handle response yang bisa berupa list atau dict."""
+    data_field = data.get('data', [])
+    if isinstance(data_field, list):
+        return data_field
+    elif isinstance(data_field, dict):
+        return data_field.get('rooms', [])
+    return []
+
+
+# ─── Step 1: Ambil semua rooms (Open API) ────────────────────────
 def get_all_rooms(max_rooms=MAX_ROOMS_TOTAL):
-    """
-    Open API: open.douyucdn.cn/api/RoomApi/live
-    - Tidak perlu auth, cookie, atau sign
-    - Max 30 rooms/page
-    - Fields: room_id, room_src, room_name, owner_uid, online, hn, nickname, url
-    """
     s = get_session()
     all_rooms = []
     page = 1
@@ -215,7 +219,7 @@ def get_all_rooms(max_rooms=MAX_ROOMS_TOTAL):
         if data.get('error') != 0:
             break
 
-        rooms = data.get('data', {}).get('rooms', [])
+        rooms = parse_rooms_response(data)
         if not rooms:
             break
 
@@ -229,9 +233,8 @@ def get_all_rooms(max_rooms=MAX_ROOMS_TOTAL):
                 'nick': item.get('nickname', ''),
                 'introduction': item.get('room_name', ''),
                 'screenshot': item.get('room_src', ''),
-                'gameName': '',  # akan diisi dari room info
+                'gameName': item.get('game_name', ''),
                 'viewers': item.get('online', 0),
-                'url': item.get('url', ''),
             })
 
         print(f"  Page {page}: +{len(rooms)} rooms (total: {len(all_rooms)})")
@@ -246,11 +249,9 @@ def get_all_rooms(max_rooms=MAX_ROOMS_TOTAL):
 
 # ─── Step 2: Fallback — per kategori ─────────────────────────────
 def get_rooms_by_category(max_rooms=MAX_ROOMS_TOTAL):
-    """Fallback: ambil per kategori dari open API."""
     s = get_session()
     all_rooms = []
 
-    # Ambil daftar kategori
     api = "https://open.douyucdn.cn/api/RoomApi/game"
     categories = []
     try:
@@ -258,9 +259,14 @@ def get_rooms_by_category(max_rooms=MAX_ROOMS_TOTAL):
         if r.status_code == 200:
             data = r.json()
             if data.get('error') == 0:
-                for item in data.get('data', {}).get('games', []):
-                    cid = item.get('cate_id')
-                    gname = item.get('game_name', '')
+                games = data.get('data', [])
+                if isinstance(games, dict):
+                    games = games.get('games', [])
+                elif not isinstance(games, list):
+                    games = []
+                for item in games:
+                    cid = item.get('cate_id') or item.get('id')
+                    gname = item.get('game_name', '') or item.get('name', '')
                     if cid and gname:
                         categories.append({'id': int(cid), 'name': gname})
     except Exception:
@@ -270,7 +276,6 @@ def get_rooms_by_category(max_rooms=MAX_ROOMS_TOTAL):
         print("  [WARN] Tidak bisa ambil daftar kategori")
         return []
 
-    # Ambil top 30 kategori (paling populer)
     categories = categories[:30]
     per_cat = max(10, max_rooms // len(categories))
 
@@ -292,7 +297,7 @@ def get_rooms_by_category(max_rooms=MAX_ROOMS_TOTAL):
         if data.get('error') != 0:
             continue
 
-        rooms = data.get('data', {}).get('rooms', [])
+        rooms = parse_rooms_response(data)
         for item in rooms:
             room_id = str(item.get('room_id', ''))
             if not room_id:
@@ -304,7 +309,6 @@ def get_rooms_by_category(max_rooms=MAX_ROOMS_TOTAL):
                 'screenshot': item.get('room_src', ''),
                 'gameName': cat['name'],
                 'viewers': item.get('online', 0),
-                'url': item.get('url', ''),
             })
         time.sleep(REQUEST_DELAY)
 
@@ -313,11 +317,6 @@ def get_rooms_by_category(max_rooms=MAX_ROOMS_TOTAL):
 
 # ─── Step 3: Stream URL — Method 1 (coapi, MD5 sign) ────────────
 def get_stream_url_method1(room_id):
-    """
-    coapi.douyucdn.cn — old API, simple MD5 sign, no encryption.
-    signContent = 'lapi/live/thirdPart/getPlay/{rid}?aid=pcclient&rate=0&time={tt}9TUk5fjjUjg9qIMH3sdnh'
-    sign = md5(signContent)
-    """
     s = get_session()
     tt = str(int(time.time()))
 
@@ -347,20 +346,12 @@ def get_stream_url_method1(room_id):
     return None
 
 
-# ─── Step 4: Stream URL — Method 2 (getH5PlayV1, encryption) ────
+# ─── Step 4: Stream URL — Method 2 (getH5PlayV1) ────────────────
 def get_stream_url_method2(room_id):
-    """
-    New method (2026):
-    1. GET /wgapi/livenc/liveweb/websec/getEncryption?did={did}
-    2. f = rand_str; for _ in range(enc_time): f = md5(f + key)
-       auth = md5(f + key + str(rid) + str(ts))
-    3. POST /lapi/live/getH5PlayV1/{rid}
-    """
     s = get_session()
     did = uuid.uuid4().hex
     ts = str(int(time.time()))
 
-    # Step 1: Get encryption key
     enc_api = f"https://www.douyu.com/wgapi/livenc/liveweb/websec/getEncryption?did={did}"
     try:
         r = s.get(enc_api, timeout=TIMEOUT)
@@ -381,13 +372,11 @@ def get_stream_url_method2(room_id):
     if not key or not rand_str:
         return None
 
-    # Step 2: Compute auth
     f = rand_str
     for _ in range(enc_time):
         f = hashlib.md5((f + key).encode('utf-8')).hexdigest()
     auth = hashlib.md5((f + key + str(room_id) + ts).encode('utf-8')).hexdigest()
 
-    # Step 3: POST getH5PlayV1
     api = f"https://www.douyu.com/lapi/live/getH5PlayV1/{room_id}"
     form_data = {
         'enc_data': enc_data_str,
@@ -420,9 +409,6 @@ def get_stream_url_method2(room_id):
 
 # ─── Step 5: Stream URL — Method 3 (hlsH5Preview) ───────────────
 def get_stream_url_method3(room_id):
-    """
-    playweb.douyucdn.cn — preview endpoint (lower quality but simpler).
-    """
     s = get_session()
     did = uuid.uuid4().hex
     t13 = str(int(time.time()))
@@ -446,7 +432,6 @@ def get_stream_url_method3(room_id):
                 d = data.get('data', {})
                 rtmp_live = d.get('rtmp_live', '')
                 if rtmp_live:
-                    # Extract stream key
                     key_match = re.search(r'(\d+r\w+)', rtmp_live)
                     if key_match:
                         return f"http://vplay1a.douyucdn.cn/live/{key_match.group(1)}.flv?uuid={did}"
@@ -458,28 +443,20 @@ def get_stream_url_method3(room_id):
 
 # ─── Step 6: Get stream URL (try all methods) ───────────────────
 def get_stream_url(room_id):
-    """Try 3 methods in order."""
-    # Method 1: coapi (simplest)
     url = get_stream_url_method1(room_id)
     if url:
         return url
-
-    # Method 2: getH5PlayV1 (encryption)
     url = get_stream_url_method2(room_id)
     if url:
         return url
-
-    # Method 3: hlsH5Preview (fallback)
     url = get_stream_url_method3(room_id)
     if url:
         return url
-
     return None
 
 
-# ─── Step 7: Get room info (game name, avatar) ──────────────────
+# ─── Step 7: Get room info ───────────────────────────────────────
 def get_room_info(room_id):
-    """Get room details from open API."""
     s = get_session()
     api = f"https://open.douyucdn.cn/api/RoomApi/room/{room_id}"
     try:
@@ -488,14 +465,15 @@ def get_room_info(room_id):
             data = r.json()
             if data.get('error') == 0:
                 d = data.get('data', {})
-                return {
-                    'gameName': d.get('game_name', ''),
-                    'avatar': d.get('avatar', ''),
-                    'cover': d.get('cover', ''),
-                    'room_name': d.get('room_name', ''),
-                    'nickname': d.get('nickname', ''),
-                    'online': d.get('online', 0),
-                }
+                if isinstance(d, dict):
+                    return {
+                        'gameName': d.get('game_name', ''),
+                        'avatar': d.get('avatar', ''),
+                        'cover': d.get('cover', ''),
+                        'room_name': d.get('room_name', ''),
+                        'nickname': d.get('nickname', ''),
+                        'online': d.get('online', 0),
+                    }
     except Exception:
         pass
     return None
@@ -515,7 +493,7 @@ def fetch_worker(args):
 # ─── Step 9: Generate playlist ───────────────────────────────────
 def generate_playlist(output_file, max_rooms, max_workers=MAX_WORKERS):
     print("=" * 55)
-    print("  DOUYU M3U PLAYLIST GENERATOR")
+    print("  DOUYU M3U PLAYLIST GENERATOR (FINAL)")
     print(f"  {max_rooms} rooms | {max_workers} threads")
     print("=" * 55)
 
@@ -570,7 +548,6 @@ def generate_playlist(output_file, max_rooms, max_workers=MAX_WORKERS):
             offline_count += 1
             continue
 
-        # Get room info untuk game name & avatar (jika belum ada)
         game_name = room.get('gameName', '')
         logo = room.get('screenshot', '')
 
@@ -607,7 +584,7 @@ def generate_playlist(output_file, max_rooms, max_workers=MAX_WORKERS):
 # ─── Main ────────────────────────────────────────────────────────
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='Douyu M3U Playlist Generator')
+        description='Douyu M3U Playlist Generator (Final)')
     parser.add_argument('--output', '-o', default='playlist_douyu.m3u',
                         help='File output M3U (default: playlist_douyu.m3u)')
     parser.add_argument('--rooms', '-r', type=int, default=MAX_ROOMS_TOTAL,
