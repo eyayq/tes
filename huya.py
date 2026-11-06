@@ -1,715 +1,529 @@
-#!/usr/bin/env python3
-"""
-HUYA M3U PLAYLIST GENERATOR — FINAL
-- live.huya.com/liveHttpUI/getLiveList (iGid=0 = ALL categories)
-- curl_cffi (Chrome TLS fingerprint)
-- ThreadPoolExecutor (parallel stream fetching)
-- tvg-logo + group-title dari listing API langsung
-- Chinese → English translation
-- Output: playlist.m3u
-"""
-
-import re
 import json
-import base64
+import re
 import time
-import hashlib
-import threading
-import argparse
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from urllib.parse import unquote
-
+import asyncio
+import base64
+from datetime import datetime, timezone, timedelta
+from urllib.parse import urlparse, quote
+from collections import Counter
 from curl_cffi import requests as cffi_requests
+from playwright.async_api import async_playwright
 
-# ─── Konfigurasi ─────────────────────────────────────────────────
-MAX_ROOMS_TOTAL = 500       # total room yang mau diambil
-REQUEST_DELAY = 0.3
-TIMEOUT = 15
-MAX_WORKERS = 18
-PAGE_SIZE = 120             # rooms per page (max 120)
+# ─── CONFIG ─────────────────────────────────────────────
+OUTPUT_M3U = "playlist.m3u"
+WIB = timezone(timedelta(hours=7))
 
-_local = threading.local()
+API_BASE = "https://api.footypaper.top/api/soccer"
+API_SLIM = f"{API_BASE}/today/slim"
+API_EVENT = f"{API_BASE}/events"
 
+TIMEOUT = 20
+USE_DETAIL = True
+DEBUG = False
+PW_TIMEOUT = 30000
+M3U8_WAIT = 15
 
-def get_session():
-    if not hasattr(_local, 'session'):
-        _local.session = cffi_requests.Session(impersonate="chrome")
-        try:
-            _local.session.get("https://m.huya.com/", timeout=TIMEOUT)
-        except Exception:
-            pass
-    return _local.session
+MAX_WORKERS = 50
+REQUEST_DELAY = 0.1
 
+# ★ PROXY (Cloudflare Worker — pipe)
+PROXY_BASE = "https://pl-gratosv-al.bhns.workers.dev/live/"
+PLAYER_UA = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Mobile Safari/537.36"
 
-# ─── Terjemahan Chinese → English ────────────────────────────────
-GAME_TRANSLATION = {
-    '英雄联盟': 'League of Legends',
-    'CS2': 'CS2',
-    '无畏契约': 'Valorant',
-    '三角洲行动': 'Delta Force',
-    'LOL云顶之弈': 'TFT',
-    'lol云顶之弈': 'TFT',
-    '炉石传说': 'Hearthstone',
-    '穿越火线': 'CrossFire',
-    'DOTA2': 'Dota 2',
-    'Dota2': 'Dota 2',
-    '魔兽世界': 'World of Warcraft',
-    '坦克世界': 'World of Tanks',
-    '守望先锋': 'Overwatch',
-    '天天吃鸡': 'PUBG',
-    '主机游戏': 'Console',
-    '我的世界': 'Minecraft',
-    '失控进化-RUST': 'Rust',
-    '失控进化-Rust': 'Rust',
-    '植物大战僵尸': 'Plants vs Zombies',
-    '彩虹六号': 'Rainbow Six',
-    '黑神话悟空': 'Black Myth: Wukong',
-    '黑神话：悟空': 'Black Myth: Wukong',
-    '逃离塔科夫': 'Escape from Tarkov',
-    '恐怖游戏': 'Horror',
-    '体育': 'Sports',
-    '户外': 'Outdoor',
-    '星秀': 'Star Show',
-    '一起看': 'Watch Together',
-    '原创': 'Original',
-    '交友': 'Social',
-    '二次元': 'Anime',
-    '美食': 'Food',
-    '上分': 'Ranking Up',
-    '王者荣耀': 'Honor of Kings',
-    '和平精英': 'Game for Peace',
-    '金铲铲之战': 'TFT Mobile',
-    '棋牌休闲': 'Board/Card Games',
-    'QQ飞车手游': 'QQ Speed Mobile',
-    'COD手游': 'COD Mobile',
-    '火影忍者手游': 'Naruto Mobile',
-    '蛋仔派对': 'Eggy Party',
-    '王者万象棋': 'HoK Chess',
-    'CF手游': 'CF Mobile',
-    'LOL手游': 'LoL Mobile',
-    '皇室战争': 'Clash Royale',
-    '原神': 'Genshin Impact',
-    '第五人格': 'Identity V',
-    'MMORPG': 'MMORPG',
-    '射击综合游戏': 'Shooter',
-    '英雄联盟手游': 'LoL Mobile',
-    '动作游戏': 'Action',
-    '地下城与勇士': 'DNF',
-    '冒险岛': 'MapleStory',
-    '军事游戏': 'Military',
-    '综合手游': 'Mobile General',
-    '永劫无间': 'Naraka',
-    '桌游': 'Board Games',
-    '二次元手游': 'Anime Mobile',
-    'QQ飞车': 'QQ Speed',
-    '炉石战棋': 'Hearthstone BG',
-    '魔兽争霸3': 'Warcraft 3',
-    '剑灵': 'Blade & Soul',
-    '欢乐斗地主': 'Happy Landlord',
-    '三国杀': '3 Kingdoms Kill',
-    '幻塔': 'Tower of Fantasy',
-    '英魂之刃': 'Spirit Blade',
-    '颜值': 'Beauty',
-    '方舟': 'ARK',
-    '怀旧游戏': 'Retro',
-    'JJ斗地主': 'JJ Landlord',
-    '逆战': 'Counter-Strike',
-    '音乐': 'Music',
-    '科技': 'Tech',
-    '欢乐麻将': 'Happy Mahjong',
-    '拳皇15': 'KOF 15',
-    '永劫无间手游': 'Naraka Mobile',
-    '星际争霸': 'StarCraft',
-    '虚拟偶像': 'Virtual Idol',
-    '罗布乐思': 'Roblox',
-    '旅游': 'Travel',
-    '恐鬼症': 'Phasmophobia',
-    '迷你世界': 'Mini World',
-    '梦三国': 'Dream 3K',
-    '天翼决': 'Skyfire',
-    '全球使命': 'Global Mission',
-    '洛克王国：世界': 'Roco Kingdom',
-    '暗区突围': 'Arena Breakout',
-    '中国象棋': 'Chinese Chess',
-    '天天象棋': 'Daily Chinese Chess',
-    '崩坏：星穹铁道': 'Honkai: Star Rail',
-    '热血江湖': 'Hot-Blooded Jianghu',
-    '死亡之夜': 'Night of Death',
-    '台球国度': 'Billiard Kingdom',
-    '鸣潮': 'Wuthering Waves',
-    'CFHD': 'CFHD',
-    '艾尔登法环': 'Elden Ring',
-    '极限竞速：地平线': 'Forza Horizon',
-    '鹅鸭杀': 'Goose Goose Duck',
-    '永恒之塔': 'Aion',
-    '暗区突围：无限': 'Arena Breakout: Infinite',
-    '海贼王 寻秘世界': 'One Piece',
-    'Apex英雄': 'Apex Legends',
-    '怪物猎人：荒野': 'Monster Hunter Wilds',
-    '育碧游戏': 'Ubisoft',
-    '全面战争': 'Total War',
-    '体育游戏': 'Sports Games',
-    '诛仙世界': 'Zhu Xian World',
-    '明日之后': 'LifeAfter',
-    '黑色沙漠': 'Black Desert',
-    '森林之子': 'Sons of the Forest',
-    '天堂': 'Paradise',
-    '战争雷霆': 'War Thunder',
-    '绝区零': 'Zenless Zone Zero',
-    '部落冲突': 'Clash of Clans',
-    '矩阵：零日危机': 'Matrix Zero Day',
-    '只狼：影逝二度': 'Sekiro',
-    '暗黑破坏神': 'Diablo',
-    '风云': 'Storm Riders',
-    '甜蜜之家': 'Sweet Home',
-    '异人之下': 'Under the Skin',
-    '最终幻想7：重制版': 'FF7 Remake',
-    'NBA2KOL系列': 'NBA 2KOL',
-    '盗贼之海': 'Sea of Thieves',
-    '帝国时代4': 'Age of Empires 4',
-    '刺客信条': "Assassin's Creed",
-    '巅峰战舰': 'Naval Artillery',
-    '小游戏': 'Mini Games',
-    '港诡实录': 'HK Horror',
-    '双人成行': 'It Takes Two',
-    '过山车之星': 'Planet Coaster',
-    'FF14': 'FFXIV',
-    '全球使命3': 'Global Mission 3',
-    '足球小将': 'Captain Tsubasa',
-    '极品飞车：集结': 'NFS: Heat',
-    '生死狙击': 'Sniper Strike',
-    '命运方舟': 'Lost Ark',
-    '俄罗斯钓鱼4': 'Russian Fishing 4',
-    '格斗游戏': 'Fighting',
-    '决斗之城': 'Duel City',
-    '坦克大战': 'Tank Battle',
-    '环世界': 'RimWorld',
-    '完美世界：诸神之战': 'Perfect World',
-    '博德之门3': "Baldur's Gate 3",
-    '征途': 'Zhengtu',
-    '战锤40K：暗潮': 'WH40K: Darktide',
-    '天龙八部2': 'Demi-Gods 2',
-    '疾风之刃': 'Blade Storm',
-    '斗战神': 'War of Gods',
-    '泡泡堂': 'BnB',
-    '看门狗：军团': 'Watch Dogs Legion',
-    'KARDS': 'KARDS',
-    '逃生：试炼': 'Escape: Trial',
-    '荒野乱斗': 'Brawl Stars',
-    '未来之役': 'Future War',
-    '英灵神殿': 'Spirit Temple',
-    '奶块': 'Milk Block',
-    '最终幻想系列': 'Final Fantasy',
-    '重返帝国': 'Return to Empire',
-    '战意': "Conqueror's Blade",
-    '使命召唤系列': 'Call of Duty',
-    '虎牙全明星': 'Huya All-Stars',
-    '球球大作战': 'Ball Battle',
-    '御龙在天': 'Dragon in Sky',
-    '问道': 'Ask the Way',
-    '诛仙3': 'Zhu Xian 3',
-    '战争冲突': 'War',
-    '影之刃零': 'Shadow Blade Zero',
-    '英雄联盟电竞经理': 'LoL Esports Manager',
-    '冒险岛：枫之传说': 'MapleStory',
-    '狼人杀手游': 'Werewolf Mobile',
-    '洛克手游': 'Roco Mobile',
-    '神武4电脑版': 'Shenwu 4',
-    'KPL年度总决赛': 'KPL Finals',
-    '斯诺克': 'Snooker',
-    'IEM北京2026': 'IEM Beijing 2026',
-    '2026英雄联盟全球总决赛': 'LoL Worlds 2026',
-    '2026S16': 'LPL S16',
+HEADERS_API = {
+    "Accept": "application/json, text/plain, */*",
+    "Origin": "https://www.livesports808.to",
+    "Referer": "https://www.livesports808.to/",
 }
 
-_translation_cache = {}
-
-
-def translate_text(text):
-    if not text:
-        return text
-    if text in _translation_cache:
-        return _translation_cache[text]
-    if text in GAME_TRANSLATION:
-        _translation_cache[text] = GAME_TRANSLATION[text]
-        return GAME_TRANSLATION[text]
-    if re.search(r'[\u4e00-\u9fff]', text):
+# ─── API (sync) ─────────────────────────────────────────
+def api_get(url: str, retries: int = 3):
+    for attempt in range(1, retries + 1):
         try:
-            from deep_translator import GoogleTranslator
-            result = GoogleTranslator(source='zh-CN', target='en').translate(text)
-            _translation_cache[text] = result
-            return result
-        except Exception:
-            pass
-    _translation_cache[text] = text
-    return text
-
-
-# ─── Step 1: Ambil SEMUA rooms (iGid=0 = ALL) ────────────────────
-def get_all_rooms(max_rooms=MAX_ROOMS_TOTAL):
-    """
-    Ambil rooms dari live.huya.com — iGid=0 = SEMUA kategori.
-    Paginate: iPageNo=1,2,3... sampai max_rooms tercapai.
-    Setiap room sudah punya: sNick, lProfileRoom, sGameFullName, sScreenshot, sAvatar180
-    """
-    s = get_session()
-    all_rooms = []
-    page = 1
-
-    while len(all_rooms) < max_rooms:
-        api = (
-            f"https://live.huya.com/liveHttpUI/getLiveList"
-            f"?iGid=0&iPageNo={page}&iPageSize={PAGE_SIZE}"
-        )
-        try:
-            r = s.get(api, timeout=TIMEOUT)
-            if r.status_code != 200:
-                break
-            data = r.json()
-        except Exception:
-            break
-
-        vlist = data.get('vList', [])
-        if not vlist:
-            break
-
-        for item in vlist:
-            room_id = str(item.get('lProfileRoom', ''))
-            if not room_id:
-                continue
-
-            # Logo: screenshot (thumbnail stream) atau avatar
-            logo = item.get('sScreenshot', '') or item.get('sAvatar180', '')
-
-            all_rooms.append({
-                'id': room_id,
-                'nick': item.get('sNick', ''),
-                'introduction': item.get('sIntroduction', ''),
-                'screenshot': logo,
-                'gameName': item.get('sGameFullName', ''),  # ← group-title
-                'viewers': item.get('lTotalCount', 0),
-            })
-
-        print(f"  Page {page}: +{len(vlist)} rooms (total: {len(all_rooms)})")
-        page += 1
-        time.sleep(REQUEST_DELAY)
-
-        if len(vlist) < PAGE_SIZE:
-            break  # sudah habis
-
-    return all_rooms[:max_rooms]
-
-
-# ─── Step 2: Fallback — www.huya.com/cache.php ───────────────────
-def get_rooms_fallback(max_rooms=MAX_ROOMS_TOTAL):
-    """Fallback jika live.huya.com gagal."""
-    s = get_session()
-    all_rooms = []
-
-    # Ambil kategori
-    api = "https://www.huya.com/cache.php?m=LiveList&do=getLiveGameList"
-    categories = []
-    try:
-        r = s.get(api, timeout=TIMEOUT)
-        if r.status_code == 200:
-            data = r.json()
-            for item in data.get('data', []):
-                gid = item.get('gameId') or item.get('id')
-                gname = item.get('gameName') or item.get('name', '')
-                if gid and gname:
-                    categories.append({'id': int(gid), 'name': gname})
-    except Exception:
-        pass
-
-    if not categories:
-        categories = [
-            {'id': 2135, 'name': '英雄联盟'},
-            {'id': 1052, 'name': 'CS2'},
-            {'id': 1141, 'name': '无畏契约'},
-            {'id': 2067, 'name': '体育'},
-            {'id': 2068, 'name': '户外'},
-            {'id': 2134, 'name': '星秀'},
-            {'id': 1058, 'name': '天天吃鸡'},
-            {'id': 2136, 'name': '主机游戏'},
-            {'id': 1059, 'name': 'DOTA2'},
-            {'id': 2137, 'name': '王者荣耀'},
-            {'id': 1056, 'name': '和平精英'},
-            {'id': 2138, 'name': '金铲铲之战'},
-            {'id': 1220, 'name': '三角洲行动'},
-        ]
-
-    per_cat = max(10, max_rooms // len(categories))
-
-    for cat in categories:
-        if len(all_rooms) >= max_rooms:
-            break
-        api2 = (
-            f"https://www.huya.com/cache.php"
-            f"?m=LiveList&do=getLiveListByPage"
-            f"&gameId={cat['id']}&tagAll=0&page=1"
-        )
-        try:
-            r = s.get(api2, timeout=TIMEOUT)
-            if r.status_code != 200:
-                continue
-            data = r.json()
-        except Exception:
-            continue
-
-        datas = data.get('data', {}).get('datas', [])
-        for item in datas[:per_cat]:
-            room_id = str(item.get('profileRoom', ''))
-            if not room_id:
-                continue
-            all_rooms.append({
-                'id': room_id,
-                'nick': item.get('nick', ''),
-                'introduction': item.get('introduction', ''),
-                'screenshot': item.get('screenshot', ''),
-                'gameName': item.get('gameName', '') or cat['name'],
-                'viewers': item.get('totalCount', 0),
-            })
-        time.sleep(REQUEST_DELAY)
-
-    return all_rooms[:max_rooms]
-
-
-# ─── Step 3: Esports hot matches ─────────────────────────────────
-def get_hot_matches():
-    s = get_session()
-    api = "https://www.huya.com/cache.php?callback=huyaNavHotMatch&do=ajaxGetHotMatch&m=Nav"
-    try:
-        r = s.get(api, timeout=TIMEOUT)
-        text = r.text
-        start = text.index('(') + 1
-        end = text.rindex(')')
-        data = json.loads(text[start:end])
-    except Exception as e:
-        print(f"  [WARN] huyaNavHotMatch: {e}")
-        return []
-
-    rooms = []
-    for item in data.get('data', {}).get('matchLives', []):
-        room_id = str(item.get('profileRoom', ''))
-        if not room_id:
-            continue
-        rooms.append({
-            'id': room_id,
-            'nick': item.get('roomName', '') or item.get('introduction', ''),
-            'introduction': item.get('introduction', ''),
-            'screenshot': '',
-            'gameName': item.get('name', ''),
-            'viewers': item.get('totalCount', 0),
-        })
-
-    for item in data.get('data', {}).get('matchNotices', []):
-        if item.get('liveState') != 1:
-            continue
-        room_id = str(item.get('profileRoom', ''))
-        if not room_id:
-            continue
-        rooms.append({
-            'id': room_id,
-            'nick': item.get('nick', '') or item.get('title', ''),
-            'introduction': item.get('digest', ''),
-            'screenshot': item.get('picUrl', ''),
-            'gameName': item.get('title', ''),
-            'viewers': 0,
-        })
-
-    return rooms
-
-
-# ─── Step 4: Decode liveLineUrl → stream URL ─────────────────────
-def decode_live_url(liveline):
-    try:
-        i, b = liveline.split('?', 1)
-        r = i.split('/')
-        s_name = re.sub(r'\.(flv|m3u8)', '', r[-1])
-
-        params = {}
-        for kv in b.split('&'):
-            if '=' in kv:
-                k, v = kv.split('=', 1)
-                params[k] = v
-
-        fm = unquote(params.get('fm', ''))
-        if not fm:
-            return None
-
-        u = base64.b64decode(fm).decode('utf-8')
-        hash_prefix = u.split('_')[0]
-        wsTime = params.get('wsTime', '')
-        f = str(int(time.time() * 1e7))
-        t = '0'
-
-        h = '_'.join([hash_prefix, t, s_name, f, wsTime])
-        wsSecret = hashlib.md5(h.encode('utf-8')).hexdigest()
-
-        remaining = {k: v for k, v in params.items() if k not in ('fm', 'wsTime')}
-        query_parts = [f"wsSecret={wsSecret}", f"wsTime={wsTime}", f"u={t}", f"seqid={f}"]
-        for k, v in remaining.items():
-            query_parts.append(f"{k}={v}")
-
-        return f"{i}?{'&'.join(query_parts)}"
-    except Exception:
-        return None
-
-
-# ─── Step 5: Ambil stream info per room ──────────────────────────
-def get_stream_info(room_id):
-    s = get_session()
-
-    # ═══ METODE 1: m.huya.com + liveLineUrl ═══
-    try:
-        r = s.get(f"https://m.huya.com/{room_id}", timeout=TIMEOUT)
-        if r.status_code == 200:
-            html = r.text
-
-            m = re.search(r'ISLIVE\s*=\s*([a-z]+)', html)
-            if m and m.group(1) == 'false':
-                return None
-
-            m = re.search(r'"liveLineUrl"\s*:\s*"([^"]+)"', html)
-            if not m:
-                m = re.search(r'liveLineUrl\s*=\s*"([^"]+)"', html)
-            if m:
-                try:
-                    liveline = base64.b64decode(m.group(1)).decode('utf-8')
-                except Exception:
-                    liveline = ''
-
-                if liveline and 'replay' not in liveline:
-                    stream_url = decode_live_url(liveline)
-                    if stream_url:
-                        return stream_url.replace('http://', 'https://')
-    except Exception:
-        pass
-
-    # ═══ METODE 2: mp.huya.com API JSON ═══
-    try:
-        r = s.get(
-            f"https://mp.huya.com/cache.php?m=Live&do=profileRoom&roomid={room_id}",
-            timeout=TIMEOUT
-        )
-        if r.status_code == 200:
-            data = r.json()
-            d = data.get('data')
-            if d and not isinstance(d, list):
-                stream = d.get('stream')
-                if stream:
-                    live_status = str(d.get('liveStatus', '')).lower()
-                    if live_status and live_status not in ('on', 'live'):
-                        return None
-
-                    stream_url = None
-
-                    flv_list = stream.get('flv', {}).get('multiLine', [])
-                    if flv_list:
-                        for line in reversed(flv_list):
-                            url = line.get('url', '')
-                            if url:
-                                stream_url = url.replace('http://', 'https://')
-                                break
-
-                    if not stream_url:
-                        base_list = stream.get('baseSteamInfoList', [])
-                        if base_list:
-                            base = base_list[0]
-                            sname = base.get('sStreamName', '')
-                            anti = base.get('sFlvAntiCode', '') or base.get('sHlsAntiCode', '')
-                            if sname and anti:
-                                hls_lines = stream.get('hls', {}).get('multiLine', [])
-                                cdn = (hls_lines[0].get('cdnType', 'huyalive')
-                                       if hls_lines else 'huyalive').lower()
-                                stream_url = f"https://{cdn}.hls.huya.com/src/{sname}.m3u8?{anti}"
-
-                    if not stream_url:
-                        glist = stream.get('gameStreamInfoList', [])
-                        for gs in glist:
-                            if gs.get('sFlvUrl') and gs.get('sStreamName'):
-                                stream_url = (
-                                    f"{gs['sFlvUrl']}/{gs['sStreamName']}"
-                                    f".{gs.get('sFlvUrlSuffix', 'flv')}"
-                                    f"?{gs.get('sFlvAntiCode', '')}"
-                                ).replace('http://', 'https://')
-                                break
-
-                    if stream_url:
-                        return stream_url
-    except Exception:
-        pass
-
-    # ═══ METODE 3: www.huya.com ═══
-    try:
-        r = s.get(f"https://www.huya.com/{room_id}", timeout=TIMEOUT)
-        if r.status_code == 200:
-            html = r.text
-
-            m = re.search(r'ISLIVE\s*=\s*([a-z]+)', html)
-            if m and m.group(1) == 'false':
-                return None
-
-            stream_url = None
-            m = re.search(r'"gameStreamInfoList"\s*:\s*(\[.*?\])\s*[,}]', html, re.DOTALL)
-            if m:
-                try:
-                    for gs in json.loads(m.group(1)):
-                        if gs.get('sFlvUrl') and gs.get('sStreamName'):
-                            stream_url = (
-                                f"{gs['sFlvUrl']}/{gs['sStreamName']}"
-                                f".{gs.get('sFlvUrlSuffix', 'flv')}"
-                                f"?{gs.get('sFlvAntiCode', '')}"
-                            ).replace('http://', 'https://')
-                            break
-                except json.JSONDecodeError:
-                    pass
-
-            if not stream_url:
-                m = re.search(r'"?liveLineUrl"?\s*[:=]\s*"([^"]+)"', html)
-                if m:
-                    try:
-                        decoded = base64.b64decode(m.group(1)).decode('utf-8')
-                        if 'replay' not in decoded:
-                            stream_url = decode_live_url(decoded)
-                            if stream_url:
-                                stream_url = stream_url.replace('http://', 'https://')
-                    except Exception:
-                        pass
-
-            if stream_url:
-                return stream_url
-    except Exception:
-        pass
-
+            r = cffi_requests.get(url, headers=HEADERS_API, impersonate="chrome", timeout=TIMEOUT)
+            if r.status_code == 200:
+                return r.json()
+            elif r.status_code == 429:
+                time.sleep(attempt * 2)
+        except Exception as e:
+            if attempt < retries:
+                time.sleep(attempt)
+            else:
+                print(f"    ⚠ {e}")
     return None
 
+def fetch_matches(date: str = None) -> list:
+    if not date:
+        date = datetime.now(WIB).strftime("%Y-%m-%d")
+    data = api_get(f"{API_SLIM}?date={date}")
+    if isinstance(data, list):
+        return data
+    if isinstance(data, dict):
+        for key in ("matches", "data", "today", "list"):
+            if key in data and isinstance(data[key], list):
+                return data[key]
+        if date in data and isinstance(data[date], list):
+            return data[date]
+    return []
 
-# ─── Step 6: Worker ──────────────────────────────────────────────
-def fetch_stream_worker(args):
-    idx, room = args
-    room_id = room['id']
+def fetch_event(match_id: str) -> dict:
+    data = api_get(f"{API_EVENT}/{match_id}", retries=2)
+    return data if isinstance(data, dict) else {}
+
+# ─── CLASSIFY ───────────────────────────────────────────
+def get_match_status(m: dict) -> str:
+    s = str(m.get("s", "")).lower()
+    if s in ("live", "1", "2", "3", "1h", "2h", "ht", "in", "playing", "et", "pen", "bt"):
+        return "live"
+    elif s in ("ft", "aet", "cancelled", "abandoned", "postp", "canc", "walkover"):
+        return "finished"
+    return "upcoming"
+
+# ─── MATCH TIME ─────────────────────────────────────────
+def parse_match_time(m: dict, detail: dict) -> datetime:
+    raw_time = None
+    if detail:
+        for key in ("kickoff_time", "start_time", "time", "date_time", "match_time", "kickoff", "start"):
+            val = detail.get(key)
+            if val:
+                raw_time = val
+                break
+    if not raw_time:
+        for key in ("t", "time", "kickoff", "start", "date_time", "match_time"):
+            val = m.get(key)
+            if val:
+                raw_time = val
+                break
+
+    dt = None
+    if raw_time:
+        raw_str = str(raw_time)
+        tz_match = re.search(r'([+-]\d{2}:\d{2})$', raw_str)
+        if tz_match:
+            tz_str = tz_match.group(1)
+            tz_hours = int(tz_str[:3])
+            tz_minutes = int(tz_str[3:]) * (1 if tz_str[1] == '+' else -1)
+            tz_offset = timezone(timedelta(hours=tz_hours, minutes=tz_minutes))
+            raw_str = raw_str[:tz_match.start()]
+            for fmt in ("%Y-%m-%dT%H:%M:%S", "%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M"):
+                try:
+                    dt = datetime.strptime(raw_str, fmt).replace(tzinfo=tz_offset)
+                    break
+                except ValueError:
+                    continue
+        if not dt:
+            for fmt in ("%Y-%m-%dT%H:%M:%SZ", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M"):
+                try:
+                    dt = datetime.strptime(raw_str, fmt).replace(tzinfo=timezone.utc)
+                    break
+                except ValueError:
+                    continue
+        if not dt:
+            try:
+                ts = int(raw_time)
+                if ts > 1000000000:
+                    dt = datetime.fromtimestamp(ts, tz=timezone.utc)
+            except (ValueError, OSError):
+                pass
+        if not dt:
+            for fmt in ("%H:%M", "%Y-%m-%d %H:%M"):
+                try:
+                    dt = datetime.strptime(str(raw_time), fmt).replace(tzinfo=WIB)
+                    break
+                except ValueError:
+                    continue
+
+    if not dt:
+        match_id = m.get("id", "")
+        date_match = re.search(r'(\d{4}-\d{2}-\d{2})', match_id)
+        if date_match:
+            try:
+                dt = datetime.strptime(date_match.group(1), "%Y-%m-%d").replace(tzinfo=WIB)
+            except ValueError:
+                pass
+
+    if dt and dt.tzinfo != WIB:
+        dt = dt.astimezone(WIB)
+    return dt if dt else datetime.max.replace(tzinfo=WIB)
+
+def format_match_time(dt: datetime) -> str:
+    if dt == datetime.max.replace(tzinfo=WIB):
+        return ""
+    return dt.strftime("%H:%M WIB %d/%m/%Y")
+
+# ─── LOGO ───────────────────────────────────────────────
+def extract_logo(m: dict, detail: dict) -> str:
+    if detail:
+        for key in ("home_team_logo", "logo", "team_logo", "home_logo"):
+            val = detail.get(key, "")
+            if val and isinstance(val, str) and val.startswith("http"):
+                return val
+        for team_key in ("home_team", "teams"):
+            team = detail.get(team_key)
+            if isinstance(team, dict):
+                for key in ("logo", "crest", "icon"):
+                    val = team.get(key, "")
+                    if val and isinstance(val, str) and val.startswith("http"):
+                        return val
+            elif isinstance(team, list) and team:
+                for key in ("logo", "crest", "icon"):
+                    val = team[0].get(key, "")
+                    if val and isinstance(val, str) and val.startswith("http"):
+                        return val
+    for key in ("hl", "logo", "home_logo", "team_logo"):
+        val = m.get(key, "")
+        if val and isinstance(val, str):
+            if val.startswith("http"):
+                return val
+            if val.startswith("/"):
+                return f"https://api.footypaper.top{val}"
+    return ""
+
+# ─── HELPERS ────────────────────────────────────────────
+def format_name_slim(m: dict) -> str:
+    name = f"{m.get('ht','?')} vs {m.get('at','?')}"
+    if m.get("c"):
+        name += f" [{m['c']}]"
+    hs, as_ = m.get("hs"), m.get("as")
+    if hs is not None and as_ is not None and hs != "" and as_ != "":
+        name += f" ({hs}-{as_})"
+    return name
+
+def format_name_detail(d: dict) -> str:
+    name = f"{d.get('home_team','?')} vs {d.get('away_team','?')}"
+    if d.get("competition"):
+        name += f" [{d['competition']}]"
+    hs, as_ = d.get("home_score"), d.get("away_score")
+    if hs is not None and as_ is not None:
+        name += f" ({hs}-{as_})"
+    if d.get("match_minute"):
+        name += f" [{d['match_minute']}']"
+    return name
+
+def normalize_urls(urls) -> list:
+    if isinstance(urls, str):
+        urls = [urls]
+    if not isinstance(urls, list):
+        return []
+    return [u for u in urls if isinstance(u, str) and u]
+
+# ─── PROXY WRAP ─────────────────────────────────────────
+def wrap_proxy(url: str, match_id: str = "", origin: str = "") -> str:
+    if url.startswith("https://"):
+        url = url[8:]
+    elif url.startswith("http://"):
+        url = url[7:]
+    sep = "&" if "?" in url else "?"
+    params = f"mid={match_id}"
+    if origin:
+        params += f"&origin={quote(origin, safe='')}"
+    url = f"{url}{sep}{params}"
+    return PROXY_BASE + url
+
+# ─── GENERATE M3U ───────────────────────────────────────
+def generate_m3u(entries: list) -> str:
+    lines = ["#EXTM3U"]
+    for e in entries:
+        logo = e.get("logo", "")
+        logo_attr = f' tvg-logo="{logo}"' if logo else ""
+        lines.append(f'#EXTINF:-1{logo_attr} group-title="{e["group"]}",{e["name"]}')
+        lines.append(e["proxy_url"])
+    return "\n".join(lines) + "\n"
+
+# ─── ASYNC RESOLVE ──────────────────────────────────────
+async def resolve_stream_async(page, php_url: str) -> tuple:
+    """Return (m3u8_url, player_origin)."""
+    m3u8_url = None
+    player_origin = ""
+    found = asyncio.Event()
+
+    def on_request(request):
+        nonlocal m3u8_url
+        if ".m3u8" in request.url:
+            m3u8_url = request.url
+            found.set()
+
+    def on_response(response):
+        nonlocal m3u8_url
+        if ".m3u8" in response.url and response.status == 200:
+            if not m3u8_url:
+                m3u8_url = response.url
+            found.set()
+
+    page.on("request", on_request)
+    page.on("response", on_response)
+
     try:
-        stream_url = get_stream_info(room_id)
+        resp = await page.goto(php_url, wait_until="networkidle", timeout=PW_TIMEOUT)
+        if DEBUG:
+            status = resp.status if resp else "None"
+            print(f"    [debug] goto → status={status}, url={page.url[:80]}")
+        await asyncio.wait_for(found.wait(), timeout=M3U8_WAIT)
+    except asyncio.TimeoutError:
+        if DEBUG:
+            print(f"    [debug] TIMEOUT m3u8 — page.url={page.url[:100]}")
     except Exception as e:
-        return (idx, room, None, str(e))
-    return (idx, room, stream_url, None)
+        if DEBUG:
+            print(f"    [debug] ERROR {type(e).__name__}: {e}")
+    finally:
+        page.remove_listener("request", on_request)
+        page.remove_listener("response", on_response)
 
+    try:
+        parsed = urlparse(page.url)
+        player_origin = f"{parsed.scheme}://{parsed.netloc}"
+    except Exception:
+        pass
 
-# ─── Step 7: Generate playlist ───────────────────────────────────
-def generate_playlist(output_file, max_rooms, max_workers=MAX_WORKERS):
-    print("=" * 55)
-    print("  HUYA M3U PLAYLIST GENERATOR (FINAL)")
-    print(f"  {max_rooms} rooms | {max_workers} threads")
-    print("=" * 55)
+    if not m3u8_url:
+        try:
+            content = await page.content()
+            match = re.search(r'(https?://[^\s"\'<>]+\.m3u8[^\s"\'<>]*)', content)
+            if match:
+                m3u8_url = match.group(1)
+                if DEBUG:
+                    print(f"    [debug] m3u8 found via DOM fallback: {m3u8_url[:80]}")
+        except Exception:
+            pass
 
-    # Step 1: Ambil semua rooms (iGid=0 = ALL)
-    print("\n[1/3] Mengambil rooms (live.huya.com, iGid=0)...")
-    all_rooms = get_all_rooms(max_rooms)
+    return (m3u8_url or "", player_origin)
 
-    # Fallback jika live.huya.com gagal
-    if not all_rooms:
-        print("  [WARN] live.huya.com gagal, mencoba fallback...")
-        all_rooms = get_rooms_fallback(max_rooms)
+async def process_match_async(page, task: dict) -> list:
+    entries = []
+    for url in task["urls"]:
+        m3u8_url, player_origin = await resolve_stream_async(page, url)
+        if m3u8_url:
+            proxy_url = wrap_proxy(m3u8_url, task["match_id"], player_origin)
+            entries.append({
+                "name": task["name"],
+                "url": m3u8_url,
+                "proxy_url": proxy_url,
+                "logo": task["logo"],
+                "group": task["group"],
+                "match_id": task["match_id"],
+                "player_origin": player_origin,
+            })
+        await asyncio.sleep(REQUEST_DELAY)
+    return entries
 
-    # Tambah esports
-    print("\n  [ESPORTS] Mengambil hot matches...")
-    esports_rooms = get_hot_matches()
-    existing_ids = {r['id'] for r in all_rooms}
-    for room in esports_rooms:
-        if room['id'] not in existing_ids:
-            all_rooms.append(room)
-            existing_ids.add(room['id'])
-    print(f"  Esports: +{len(esports_rooms)} rooms")
+# ─── PARALLEL RUNNER ────────────────────────────────────
+async def run_resolvers(browser, tasks: list) -> list:
+    semaphore = asyncio.Semaphore(MAX_WORKERS)
+    all_entries = []
+    completed = [0]
+    total = len(tasks)
 
-    print(f"\n  Total rooms: {len(all_rooms)}")
+    async def limited_process(page, task):
+        async with semaphore:
+            try:
+                entries = await process_match_async(page, task)
+                completed[0] += 1
+                status = "✅" if entries else "⏳"
+                print(f"  {status} [{completed[0]}/{total}] {task['name'][:60]} ({len(entries)} streams)")
+                return entries
+            except Exception as e:
+                completed[0] += 1
+                print(f"  ❌ [{completed[0]}/{total}] {task['name'][:60]} — {e}")
+                return []
 
-    if not all_rooms:
-        print("\n  [ERROR] Tidak ada rooms! IP mungkin di-ban.")
+    pages = []
+    for _ in range(MAX_WORKERS):
+        context = await browser.new_context(
+            user_agent=PLAYER_UA,
+            viewport={"width": 412, "height": 915},
+            device_scale_factor=2,
+            is_mobile=True,
+            has_touch=True,
+            locale="id-ID",
+            extra_http_headers={
+                "sec-ch-ua": '"Not:A-Brand";v="8", "Chromium";v="156", "Brave";v="156"',
+                "sec-ch-ua-mobile": "?1",
+                "sec-ch-ua-platform": '"Android"',
+            },
+        )
+        await context.add_init_script("""
+            Object.defineProperty(navigator, 'webdriver', {get: () => undefined});
+            Object.defineProperty(navigator, 'plugins', {get: () => [1,2,3,4,5]});
+            Object.defineProperty(navigator, 'languages', {get: () => ['id-ID','id','en-US','en']});
+            Object.defineProperty(navigator, 'platform', {get: () => 'Linux armv81'});
+            window.chrome = { runtime: {} };
+        """)
+        pages.append(await context.new_page())
+
+    async def worker(task_idx, task):
+        page = pages[task_idx % MAX_WORKERS]
+        return await limited_process(page, task)
+
+    coroutines = [worker(i, task) for i, task in enumerate(tasks)]
+    results = await asyncio.gather(*coroutines)
+
+    for r in results:
+        all_entries.extend(r)
+
+    for page in pages:
+        await page.context.close()
+
+    return all_entries
+
+# ─── MAIN ───────────────────────────────────────────────
+def main():
+    start = time.time()
+    now = datetime.now(WIB)
+    today_wib = now.strftime("%Y-%m-%d")
+    today_utc = now.astimezone(timezone.utc).strftime("%Y-%m-%d")
+
+    print("=" * 50)
+    print(f"  ⚽ M3U Generator — {now.strftime('%Y-%m-%d %H:%M WIB')}")
+    print(f"  Engine: curl_cffi + Playwright async (mobile)")
+    print(f"  Mode:   Worker pipe proxy")
+    print(f"  Workers: {MAX_WORKERS} | Delay: {REQUEST_DELAY}s | M3U8_WAIT: {M3U8_WAIT}s")
+    print(f"  Date: WIB={today_wib} | UTC={today_utc}")
+    print(f"  Proxy: {PROXY_BASE.rstrip('/')}")
+    print("=" * 50)
+
+    # [1] Fetch matches — merge UTC + WIB
+    print(f"\n[1] Fetching matches . . .")
+    matches = fetch_matches(today_wib)
+    if today_utc != today_wib:
+        matches_utc = fetch_matches(today_utc)
+        seen_ids = {m.get("id") for m in matches}
+        for m in matches_utc:
+            if m.get("id") not in seen_ids:
+                matches.append(m)
+                seen_ids.add(m.get("id"))
+        print(f"  [info] Merged UTC ({today_utc}) + WIB ({today_wib})")
+
+    if not matches:
+        print("  ❌ No data")
+        return
+    print(f"  ✅ {len(matches)} total matches")
+
+    status_values = Counter(str(m.get("s", "")).lower() for m in matches)
+    if DEBUG:
+        print(f"  [debug] Status values: {dict(status_values)}")
+
+    # All live + upcoming
+    live_matches = []
+    upcoming_matches = []
+    for m in matches:
+        status = get_match_status(m)
+        urls = normalize_urls(m.get("u", []))
+        if status == "live":
+            live_matches.append((m, urls, "Live"))
+        elif status == "upcoming":
+            upcoming_matches.append((m, urls, "Upcoming"))
+
+    print(f"  → {len(live_matches)} live, {len(upcoming_matches)} upcoming")
+
+    to_process = live_matches + upcoming_matches
+
+    if not to_process:
+        print(f"\n  ⏳ Tidak ada match saat ini.")
         return
 
-    # Step 2: Stream URL (PARALEL)
-    print(f"\n[2/3] Mengambil stream URL ({max_workers} threads)...")
-    results = [None] * len(all_rooms)
+    # [2] Prepare tasks
+    print(f"\n[2] Preparing {len(to_process)} matches . . .")
+    tasks = []
+    for m, urls, group in to_process:
+        match_id = m.get("id", "")
+        detail = {}
+        if USE_DETAIL and match_id:
+            detail = fetch_event(match_id)
+            if detail:
+                detail_urls = detail.get("urls")
+                if isinstance(detail_urls, list) and detail_urls:
+                    urls = normalize_urls(detail_urls)
 
-    with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        futures = {
-            executor.submit(fetch_stream_worker, (i, room)): i
-            for i, room in enumerate(all_rooms)
-        }
+        if detail:
+            name = format_name_detail(detail)
+        else:
+            name = format_name_slim(m)
 
-        done_count = 0
-        for future in as_completed(futures):
-            idx, room, stream_url, error = future.result()
-            results[idx] = (room, stream_url, error)
-            done_count += 1
-            if done_count % 100 == 0:
-                print(f"  Progress: {done_count}/{len(all_rooms)}")
+        match_dt = parse_match_time(m, detail)
+        time_str = format_match_time(match_dt)
+        if time_str:
+            name += f" | {time_str}"
 
-    # Step 3: Build playlist + translate
-    print(f"\n[3/3] Membangun playlist + translate...")
-    lines = ['#EXTM3U']
-    live_count = 0
-    offline_count = 0
-    error_count = 0
+        logo = extract_logo(m, detail)
+        tasks.append({
+            "m": m, "urls": urls, "group": group,
+            "detail": detail, "name": name, "logo": logo,
+            "match_dt": match_dt,
+            "match_id": match_id,
+        })
 
-    for item in results:
-        if item is None:
-            continue
-        room, stream_url, error = item
+    # Sort
+    live_tasks = [t for t in tasks if t["group"] == "Live"]
+    upcoming_tasks = [t for t in tasks if t["group"] == "Upcoming"]
+    live_tasks.sort(key=lambda t: t["match_dt"], reverse=True)
+    upcoming_tasks.sort(key=lambda t: t["match_dt"])
+    tasks = live_tasks + upcoming_tasks
 
-        if error:
-            error_count += 1
-            continue
-        if not stream_url:
-            offline_count += 1
-            continue
+    tasks_to_resolve = [t for t in tasks if t["urls"]]
+    tasks_no_url = [t for t in tasks if not t["urls"]]
 
-        name = translate_text(room['nick'] or room['introduction'] or f"Huya {room['id']}")
-        group_title = translate_text(room.get('gameName', '') or 'Huya')
-        logo = room.get('screenshot', '')
+    print(f"  ✅ {len(tasks)} total | {len(tasks_to_resolve)} to resolve | {len(tasks_no_url)} no URL")
+    for i, t in enumerate(tasks, 1):
+        time_str = format_match_time(t["match_dt"])
+        url_mark = "🔗" if t["urls"] else "⏳"
+        print(f"    {i:3d}. [{t['group']:8s}] {time_str:20s} {url_mark} {t['name'][:50]}")
 
-        extinf = f'#EXTINF:-1'
-        if logo:
-            extinf += f' tvg-logo="{logo}"'
-        extinf += f' group-title="{group_title}"'
-        extinf += f',{name}'
+    # [3] Resolve streams
+    if tasks_to_resolve:
+        print(f"\n[3] Resolving {len(tasks_to_resolve)} streams ({MAX_WORKERS} workers) . . .")
 
-        lines.append(extinf)
-        lines.append(stream_url)
-        live_count += 1
+        async def async_main():
+            async with async_playwright() as p:
+                browser = await p.chromium.launch(
+                    headless=True,
+                    args=["--disable-blink-features=AutomationControlled", "--no-sandbox", "--disable-dev-shm-usage"]
+                )
+                entries = await run_resolvers(browser, tasks_to_resolve)
+                await browser.close()
+                return entries
 
-    with open(output_file, 'w', encoding='utf-8') as f:
-        f.write('\n'.join(lines) + '\n')
+        all_entries = asyncio.run(async_main())
+    else:
+        print(f"\n[3] No streams to resolve.")
+        all_entries = []
 
-    print(f"\n{'=' * 55}")
-    print(f"  SELESAI: {live_count} live | {offline_count} offline | {error_count} error")
-    print(f"  Output: {output_file}")
-    print(f"{'=' * 55}")
+    # [4] Write output
+    print(f"\n[4] Writing {OUTPUT_M3U} . . .")
 
+    playable = [e for e in all_entries if e["proxy_url"]]
+    waiting = len(tasks_no_url)
 
-# ─── Main ────────────────────────────────────────────────────────
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(
-        description='Huya M3U Playlist Generator (Final)')
-    parser.add_argument('--output', '-o', default='playlist.m3u',
-                        help='File output M3U (default: playlist.m3u)')
-    parser.add_argument('--rooms', '-r', type=int, default=MAX_ROOMS_TOTAL,
-                        help=f'Total room (default: {MAX_ROOMS_TOTAL})')
-    parser.add_argument('--workers', '-w', type=int, default=MAX_WORKERS,
-                        help='Jumlah thread paralel (default: 18)')
-    parser.add_argument('--delay', '-d', type=float, default=REQUEST_DELAY,
-                        help='Jeda antar request (default: 0.3)')
-    parser.add_argument('--no-translate', action='store_true',
-                        help='Nonaktifkan terjemahan (lebih cepat)')
-    args = parser.parse_args()
+    m3u = generate_m3u(playable)
+    with open(OUTPUT_M3U, "w") as f:
+        f.write(m3u)
 
-    if args.no_translate:
-        translate_text = lambda x: x or ''
+    live_count = sum(1 for e in playable if e["group"] == "Live")
+    upcoming_count = sum(1 for e in playable if e["group"] == "Upcoming")
+    logo_count = sum(1 for e in playable if e.get("logo"))
 
-    REQUEST_DELAY = args.delay
-    generate_playlist(
-        output_file=args.output,
-        max_rooms=args.rooms,
-        max_workers=args.workers,
-    )   
+    print(f"  ✅ {len(playable)} streams in {OUTPUT_M3U}")
+    print(f"     • Live: {live_count}")
+    print(f"     • Upcoming: {upcoming_count}")
+    print(f"     • With logo: {logo_count}/{len(playable)}")
+    print(f"     • Waiting (no URL yet): {waiting}")
+    print(f"     • Proxy: {PROXY_BASE.rstrip('/')}")
+
+    if playable:
+        print(f"\n  📺 Sample:")
+        print(f"     {playable[0]['proxy_url'][:120]}...")
+
+    with open("result.json", "w") as f:
+        json.dump({
+            "date": today_wib,
+            "time": datetime.now(WIB).strftime("%Y-%m-%d %H:%M:%S WIB"),
+            "streams": len(playable),
+            "waiting": waiting,
+            "live": live_count,
+            "upcoming": upcoming_count,
+            "entries": playable,
+        }, f, indent=2, ensure_ascii=False)
+
+    print(f"\n  ⏱ {time.time() - start:.1f}s")
+
+if __name__ == "__main__":
+    main()   
