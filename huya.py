@@ -23,7 +23,7 @@ DEBUG = False
 PW_TIMEOUT = 30000
 M3U8_WAIT = 15
 
-MAX_WORKERS = 50
+MAX_WORKERS = 100
 REQUEST_DELAY = 0.1
 
 # ★ PROXY (Cloudflare Worker — pipe)
