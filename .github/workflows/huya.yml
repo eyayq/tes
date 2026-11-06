@@ -25,7 +25,7 @@ jobs:
       
 
       - name: Generate playlist
-        run: python3 huya.py --output playlist.m3u --rooms 5001 --per-cat 100 --workers 100      
+        run: python3 huya.py --output playlist.m3u --rooms 2000 --workers 100      
 
       - name: Commit & push
         run: |
