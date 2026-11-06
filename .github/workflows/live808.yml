@@ -1,0 +1,50 @@
+
+
+name: Huya Playlist
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+  branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update system packages
+        run: |
+          sudo apt-get update -y
+          sudo apt-get upgrade -y
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install curl_cffi playwright
+
+      - name: Install Chromium
+        run: playwright install chromium
+
+      - name: Run huya.py
+        run: |
+          python huya.py > playlist.m3u
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add playlist.m3u
+          git diff --staged --quiet || git commit -m "update playlist.m3u" && git push   
