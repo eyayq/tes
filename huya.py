@@ -23,8 +23,8 @@ DEBUG = False
 PW_TIMEOUT = 30000
 M3U8_WAIT = 15
 
-MAX_WORKERS = 100
-REQUEST_DELAY = 0.1
+MAX_WORKERS = 150
+REQUEST_DELAY = 0
 
 # ★ PROXY (Cloudflare Worker — pipe)
 PROXY_BASE = "https://pl-gratosv-al.bhns.workers.dev/live/"
@@ -238,16 +238,37 @@ async def resolve_stream_async(page, php_url: str) -> tuple:
     found = asyncio.Event()
 
     def on_request(request):
-        nonlocal m3u8_url
+        nonlocal m3u8_url, player_origin
         if ".m3u8" in request.url:
             m3u8_url = request.url
+            # ★ Ambil Origin dari header request m3u8
+            headers = request.headers
+            player_origin = headers.get("origin", "")
+            if not player_origin:
+                referer = headers.get("referer", "")
+                if referer:
+                    parsed = urlparse(referer)
+                    player_origin = f"{parsed.scheme}://{parsed.netloc}"
             found.set()
 
     def on_response(response):
-        nonlocal m3u8_url
+        nonlocal m3u8_url, player_origin
         if ".m3u8" in response.url and response.status == 200:
             if not m3u8_url:
                 m3u8_url = response.url
+            # ★ Fallback: ambil origin dari request terkait
+            if not player_origin:
+                try:
+                    req = response.request
+                    headers = req.headers
+                    player_origin = headers.get("origin", "")
+                    if not player_origin:
+                        referer = headers.get("referer", "")
+                        if referer:
+                            parsed = urlparse(referer)
+                            player_origin = f"{parsed.scheme}://{parsed.netloc}"
+                except Exception:
+                    pass
             found.set()
 
     page.on("request", on_request)
@@ -269,12 +290,19 @@ async def resolve_stream_async(page, php_url: str) -> tuple:
         page.remove_listener("request", on_request)
         page.remove_listener("response", on_response)
 
-    try:
-        parsed = urlparse(page.url)
-        player_origin = f"{parsed.scheme}://{parsed.netloc}"
-    except Exception:
-        pass
+    # ★ Fallback: cek frames/iframe jika origin masih kosong
+    if not player_origin:
+        try:
+            for frame in page.frames:
+                if frame != page.main_frame:
+                    parsed = urlparse(frame.url)
+                    if parsed.netloc:
+                        player_origin = f"{parsed.scheme}://{parsed.netloc}"
+                        break
+        except Exception:
+            pass
 
+    # Fallback: cari m3u8 di page content
     if not m3u8_url:
         try:
             content = await page.content()
@@ -285,6 +313,9 @@ async def resolve_stream_async(page, php_url: str) -> tuple:
                     print(f"    [debug] m3u8 found via DOM fallback: {m3u8_url[:80]}")
         except Exception:
             pass
+
+    if DEBUG:
+        print(f"    [debug] m3u8={m3u8_url[:60] if m3u8_url else 'None'} | origin={player_origin}")
 
     return (m3u8_url or "", player_origin)
 
