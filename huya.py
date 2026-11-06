@@ -19,10 +19,10 @@ from urllib.parse import unquote
 from curl_cffi import requests as cffi_requests
 
 # ─── Konfigurasi ─────────────────────────────────────────────────
-MAX_ROOMS_PER_CATEGORY = 50
-REQUEST_DELAY = 0.2
-TIMEOUT = 15
-MAX_WORKERS = 18          # jumlah thread paralel
+MAX_ROOMS_PER_CATEGORY = 500
+REQUEST_DELAY = 0
+TIMEOUT = 10
+MAX_WORKERS = 180          # jumlah thread paralel
 IMPERSONATE = "chrome"   # TLS fingerprint
 
 # Thread-local: setiap thread punya session sendiri (thread-safe)
@@ -41,7 +41,7 @@ def get_all_categories():
     s = get_session()
 
     # Metode 1: API
-    api = "https://www.huya.com/cache.php?m=LiveList&do=getLiveGameList"
+    api = "https://pler.bhns.workers.dev/?bro=https://www.huya.com/cache.php?m=LiveList&do=getLiveGameList"
     try:
         r = s.get(api, timeout=TIMEOUT)
         if r.status_code == 200 and r.headers.get('Content-Type', '').startswith('application/json'):
@@ -96,7 +96,7 @@ def get_rooms(category_id, max_rooms=MAX_ROOMS_PER_CATEGORY):
 
     while len(rooms) < max_rooms:
         api = (
-            f"https://www.huya.com/cache.php"
+            f"https://pler.bhns.workers.dev/?bro=https://www.huya.com/cache.php"
             f"?m=LiveList&do=getLiveListByPage"
             f"&gameId={category_id}&tagAll=0&page={page}"
         )
@@ -136,7 +136,7 @@ def get_rooms(category_id, max_rooms=MAX_ROOMS_PER_CATEGORY):
 # ─── Step 2b: Esports/sports matches ─────────────────────────────
 def get_hot_matches():
     s = get_session()
-    api = "https://www.huya.com/cache.php?callback=huyaNavHotMatch&do=ajaxGetHotMatch&m=Nav"
+    api = "https://pler.bhns.workers.dev/?bro=https://www.huya.com/cache.php?callback=huyaNavHotMatch&do=ajaxGetHotMatch&m=Nav"
     try:
         r = s.get(api, timeout=TIMEOUT)
         text = r.text
@@ -228,7 +228,7 @@ def get_stream_info(room_id):
 
     # ═══ METODE 1: m.huya.com + liveLineUrl ═══
     try:
-        r = s.get(f"https://m.huya.com/{room_id}", timeout=TIMEOUT)
+        r = s.get(f"https://pler.bhns.workers.dev/?bro=https://m.huya.com/{room_id}", timeout=TIMEOUT)
         if r.status_code == 200:
             html = r.text
 
@@ -277,7 +277,7 @@ def get_stream_info(room_id):
     # ═══ METODE 2: mp.huya.com API JSON ═══
     try:
         r = s.get(
-            f"https://mp.huya.com/cache.php?m=Live&do=profileRoom&roomid={room_id}",
+            f"https://pler.bhns.workers.dev/?bro=https://mp.huya.com/cache.php?m=Live&do=profileRoom&roomid={room_id}",
             timeout=TIMEOUT
         )
         if r.status_code == 200:
@@ -339,7 +339,7 @@ def get_stream_info(room_id):
 
     # ═══ METODE 3: www.huya.com + stream JSON ═══
     try:
-        r = s.get(f"https://www.huya.com/{room_id}", timeout=TIMEOUT)
+        r = s.get(f"https://pler.bhns.workers.dev/?bro=https://www.huya.com/{room_id}", timeout=TIMEOUT)
         if r.status_code == 200:
             html = r.text
 
