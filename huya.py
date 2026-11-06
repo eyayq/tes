@@ -3,7 +3,7 @@
 DOUYU M3U PLAYLIST GENERATOR — FINAL
 - Open API (open.douyucdn.cn) — TANPA AUTH
 - Auto-scrape 3222 kategori dari /api/RoomApi/game
-- Iterate per kategori (pagination tidak works)
+- Adaptive: iterate semua kategori sampai max_rooms tercapai
 - coapi.douyucdn.cn (MD5 sign) + getH5PlayV1 (encryption) + hlsH5Preview
 - curl_cffi (Chrome TLS fingerprint)
 - ThreadPoolExecutor (parallel)
@@ -24,11 +24,11 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from curl_cffi import requests as cffi_requests
 
 # ─── Konfigurasi ─────────────────────────────────────────────────
-MAX_ROOMS_TOTAL = 5000
+MAX_ROOMS_TOTAL = 5001
 REQUEST_DELAY = 0
 TIMEOUT = 15
 MAX_WORKERS = 28
-PAGE_SIZE = 300
+PER_CATEGORY = 7
 
 _local = threading.local()
 
@@ -230,29 +230,20 @@ def get_all_categories():
     return categories
 
 
-# ─── Step 1: Ambil rooms per kategori ────────────────────────────
+# ─── Step 1: Ambil rooms (adaptive, semua 3222 kategori) ────────
 def get_all_rooms(max_rooms, categories):
-    """
-    Iterate per kategori — ambil N room per kategori
-    sampai max_rooms tercapai.
-    """
     s = get_session()
     all_rooms = []
     seen_ids = set()
+    consecutive_empty = 0
 
-    # Hitung per kategori (max 100 kategori)
-    use_cats = categories[:100]
-    per_cat = max(1, max_rooms // len(use_cats))
-
-    print(f"  Strategi: {per_cat} room x {len(use_cats)} kategori")
-
-    for i, cat in enumerate(use_cats):
+    for i, cat in enumerate(categories):
         if len(all_rooms) >= max_rooms:
             break
 
         api = (
             f"https://open.douyucdn.cn/api/RoomApi/live/{cat['short']}"
-            f"?limit={min(per_cat, 30)}&page=1"
+            f"?limit={min(PER_CATEGORY, 30)}&page=1"
         )
         try:
             r = s.get(api, timeout=TIMEOUT)
@@ -283,8 +274,16 @@ def get_all_rooms(max_rooms, categories):
             })
             new_count += 1
 
-        if (i + 1) % 20 == 0:
-            print(f"  Progress: {i+1}/{len(use_cats)} | total rooms: {len(all_rooms)}")
+        if new_count == 0:
+            consecutive_empty += 1
+            if consecutive_empty >= 100:
+                print(f"  [INFO] 100 kategori kosong berturut-turut — stop.")
+                break
+        else:
+            consecutive_empty = 0
+
+        if (i + 1) % 50 == 0:
+            print(f"  Progress: {i+1}/{len(categories)} | total rooms: {len(all_rooms)}")
 
         time.sleep(REQUEST_DELAY)
 
@@ -451,7 +450,7 @@ def fetch_worker(args):
 def generate_playlist(output_file, max_rooms, max_workers=MAX_WORKERS):
     print("=" * 55)
     print("  DOUYU M3U PLAYLIST GENERATOR (FINAL)")
-    print(f"  {max_rooms} rooms | {max_workers} threads")
+    print(f"  {max_rooms} rooms | {max_workers} threads | {PER_CATEGORY}/kategori")
     print("=" * 55)
 
     # Step 0: Scrape semua kategori
@@ -463,8 +462,8 @@ def generate_playlist(output_file, max_rooms, max_workers=MAX_WORKERS):
         print("  [ERROR] Tidak bisa ambil kategori!")
         return
 
-    # Step 1: Ambil rooms per kategori
-    print(f"\n[1/3] Mengambil rooms per kategori...")
+    # Step 1: Ambil rooms (adaptive)
+    print(f"\n[1/3] Mengambil rooms (adaptive, max {max_rooms})...")
     all_rooms = get_all_rooms(max_rooms, categories)
 
     print(f"\n  Total rooms: {len(all_rooms)}")
@@ -547,6 +546,8 @@ if __name__ == '__main__':
                         help='Jumlah thread paralel (default: 18)')
     parser.add_argument('--delay', '-d', type=float, default=REQUEST_DELAY,
                         help='Jeda antar request (default: 0.2)')
+    parser.add_argument('--per-cat', '-p', type=int, default=PER_CATEGORY,
+                        help=f'Room per kategori (default: {PER_CATEGORY})')
     parser.add_argument('--no-translate', action='store_true',
                         help='Nonaktifkan terjemahan (lebih cepat)')
     args = parser.parse_args()
@@ -555,6 +556,7 @@ if __name__ == '__main__':
         translate_text = lambda x: x or ''
 
     REQUEST_DELAY = args.delay
+    PER_CATEGORY = args.per_cat
     generate_playlist(
         output_file=args.output,
         max_rooms=args.rooms,
