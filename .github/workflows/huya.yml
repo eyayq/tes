@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
   schedule:
-    - cron: '*/10 * * * *'   # setiap 30 menit
+    - cron: '*/5 * * * *'   # setiap 30 menit
   workflow_dispatch:
 
 permissions:
@@ -25,7 +25,7 @@ jobs:
       
 
       - name: Generate playlist
-        run: python3 huya.py --output playlist.m3u --rooms 5002 --workers 29   
+        run: python3 huya.py --output playlist.m3u --rooms 5001 --per-cat 100 --workers 100      
 
       - name: Commit & push
         run: |
