@@ -3,7 +3,7 @@
 HUYA M3U PLAYLIST GENERATOR — FINAL
 - curl_cffi (Chrome TLS fingerprint)
 - ThreadPoolExecutor (parallel stream fetching)
-- 50 kategori default (configurable via --top)
+- Scrape /g untuk ID kategori valid
 - live.huya.com endpoint (less restricted)
 - Esports/sports hot matches
 - tvg-logo + group-title otomatis
@@ -28,7 +28,7 @@ MAX_ROOMS_PER_CATEGORY = 10
 REQUEST_DELAY = 0.2
 TIMEOUT = 15
 MAX_WORKERS = 18
-TOP_CATEGORIES = 50  # ★ default: ambil 50 kategori teratas
+TOP_CATEGORIES = 50
 
 _local = threading.local()
 
@@ -41,187 +41,6 @@ def get_session():
         except Exception:
             pass
     return _local.session
-
-
-# ─── Hardcoded ALL Categories (176) ─────────────────────────────
-ALL_CATEGORIES = [
-    {'id': 2135, 'name': '英雄联盟'},
-    {'id': 1052, 'name': 'CS2'},
-    {'id': 1141, 'name': '无畏契约'},
-    {'id': 2067, 'name': '体育'},
-    {'id': 2068, 'name': '户外'},
-    {'id': 2134, 'name': '星秀'},
-    {'id': 1058, 'name': '天天吃鸡'},
-    {'id': 2136, 'name': '主机游戏'},
-    {'id': 1059, 'name': 'DOTA2'},
-    {'id': 2137, 'name': '王者荣耀'},
-    {'id': 1056, 'name': '和平精英'},
-    {'id': 2138, 'name': '金铲铲之战'},
-    {'id': 1053, 'name': 'Apex英雄'},
-    {'id': 1120, 'name': '我的世界'},
-    {'id': 1057, 'name': '失控进化-RUST'},
-    {'id': 1055, 'name': '炉石传说'},
-    {'id': 1054, 'name': '穿越火线'},
-    {'id': 1060, 'name': '魔兽世界'},
-    {'id': 1061, 'name': '坦克世界'},
-    {'id': 1062, 'name': '守望先锋'},
-    {'id': 1063, 'name': '地下城与勇士'},
-    {'id': 1064, 'name': '冒险岛'},
-    {'id': 1065, 'name': '剑灵'},
-    {'id': 1066, 'name': '永恒之塔'},
-    {'id': 1067, 'name': '黑色沙漠'},
-    {'id': 1068, 'name': '天堂'},
-    {'id': 1069, 'name': 'FF14'},
-    {'id': 1070, 'name': '命运方舟'},
-    {'id': 1071, 'name': '博德之门3'},
-    {'id': 1072, 'name': '艾尔登法环'},
-    {'id': 1073, 'name': '只狼：影逝二度'},
-    {'id': 1074, 'name': '黑神话悟空'},
-    {'id': 1075, 'name': '逃离塔科夫'},
-    {'id': 1076, 'name': '彩虹六号'},
-    {'id': 1077, 'name': '战争雷霆'},
-    {'id': 1078, 'name': '星际争霸'},
-    {'id': 1079, 'name': '魔兽争霸3'},
-    {'id': 1080, 'name': '拳皇15'},
-    {'id': 1081, 'name': '格斗游戏'},
-    {'id': 1082, 'name': '恐怖游戏'},
-    {'id': 1083, 'name': '小游戏'},
-    {'id': 1084, 'name': '桌游'},
-    {'id': 1085, 'name': '音乐'},
-    {'id': 1086, 'name': '美食'},
-    {'id': 1087, 'name': '旅游'},
-    {'id': 1088, 'name': '科技'},
-    {'id': 1089, 'name': '二次元'},
-    {'id': 1090, 'name': '原创'},
-    {'id': 1091, 'name': '交友'},
-    {'id': 1092, 'name': '颜值'},
-    {'id': 1093, 'name': '虚拟偶像'},
-    {'id': 1094, 'name': '一起看'},
-    {'id': 1095, 'name': '上分'},
-    {'id': 1096, 'name': '怀旧游戏'},
-    {'id': 1097, 'name': '军事游戏'},
-    {'id': 1098, 'name': '动作游戏'},
-    {'id': 1099, 'name': 'MMORPG'},
-    {'id': 1100, 'name': '射击综合游戏'},
-    {'id': 1101, 'name': '综合手游'},
-    {'id': 1102, 'name': '二次元手游'},
-    {'id': 1103, 'name': '棋牌休闲'},
-    {'id': 1104, 'name': 'CF手游'},
-    {'id': 1105, 'name': 'LOL手游'},
-    {'id': 1106, 'name': '原神'},
-    {'id': 1107, 'name': '第五人格'},
-    {'id': 1108, 'name': '蛋仔派对'},
-    {'id': 1109, 'name': '崩坏：星穹铁道'},
-    {'id': 1110, 'name': '鸣潮'},
-    {'id': 1111, 'name': '绝区零'},
-    {'id': 1112, 'name': '暗区突围'},
-    {'id': 1113, 'name': '永劫无间'},
-    {'id': 1114, 'name': '幻塔'},
-    {'id': 1115, 'name': '明日之后'},
-    {'id': 1116, 'name': '球球大作战'},
-    {'id': 1117, 'name': '荒野乱斗'},
-    {'id': 1118, 'name': '皇室战争'},
-    {'id': 1119, 'name': '部落冲突'},
-    {'id': 1121, 'name': '罗布乐思'},
-    {'id': 1122, 'name': '迷你世界'},
-    {'id': 1123, 'name': '植物大战僵尸'},
-    {'id': 1124, 'name': '鹅鸭杀'},
-    {'id': 1125, 'name': '恐鬼症'},
-    {'id': 1126, 'name': '森林之子'},
-    {'id': 1127, 'name': '方舟'},
-    {'id': 1128, 'name': '全面战争'},
-    {'id': 1129, 'name': '帝国时代4'},
-    {'id': 1130, 'name': '极限竞速：地平线'},
-    {'id': 1131, 'name': '刺客信条'},
-    {'id': 1132, 'name': '看门狗：军团'},
-    {'id': 1133, 'name': '最终幻想系列'},
-    {'id': 1134, 'name': 'NBA2KOL系列'},
-    {'id': 1135, 'name': '体育游戏'},
-    {'id': 1136, 'name': '中国象棋'},
-    {'id': 1137, 'name': '欢乐斗地主'},
-    {'id': 1138, 'name': 'JJ斗地主'},
-    {'id': 1139, 'name': '欢乐麻将'},
-    {'id': 1140, 'name': '三国杀'},
-    {'id': 1142, 'name': 'QQ飞车'},
-    {'id': 1143, 'name': 'QQ飞车手游'},
-    {'id': 1144, 'name': 'LOL云顶之弈'},
-    {'id': 1145, 'name': '炉石战棋'},
-    {'id': 1146, 'name': '彩虹岛Online'},
-    {'id': 1147, 'name': '英魂之刃'},
-    {'id': 1148, 'name': '梦三国'},
-    {'id': 1149, 'name': '天翼决'},
-    {'id': 1150, 'name': '全球使命'},
-    {'id': 1151, 'name': '洛克王国：世界'},
-    {'id': 1152, 'name': '热血江湖'},
-    {'id': 1153, 'name': '天龙八部2'},
-    {'id': 1154, 'name': '完美世界：诸神之战'},
-    {'id': 1155, 'name': '诛仙世界'},
-    {'id': 1156, 'name': '征途'},
-    {'id': 1157, 'name': '御龙在天'},
-    {'id': 1158, 'name': '疾风之刃'},
-    {'id': 1159, 'name': '斗战神'},
-    {'id': 1160, 'name': '泡泡堂'},
-    {'id': 1161, 'name': '生死狙击'},
-    {'id': 1162, 'name': '逆战'},
-    {'id': 1163, 'name': 'CFHD'},
-    {'id': 1164, 'name': 'COD手游'},
-    {'id': 1165, 'name': '火影忍者手游'},
-    {'id': 1166, 'name': '王者万象棋'},
-    {'id': 1167, 'name': '摸了个鱼'},
-    {'id': 1168, 'name': '台球国度'},
-    {'id': 1169, 'name': '指尖四川麻将'},
-    {'id': 1170, 'name': '天天象棋'},
-    {'id': 1171, 'name': '海底大作战'},
-    {'id': 1172, 'name': '俄罗斯钓鱼4'},
-    {'id': 1173, 'name': '环世界'},
-    {'id': 1174, 'name': '过山车之星'},
-    {'id': 1175, 'name': '双人成行'},
-    {'id': 1176, 'name': '港诡实录'},
-    {'id': 1177, 'name': '死亡之夜'},
-    {'id': 1178, 'name': '甜蜜之家'},
-    {'id': 1179, 'name': '异人之下'},
-    {'id': 1180, 'name': '风云'},
-    {'id': 1181, 'name': '盗贼之海'},
-    {'id': 1182, 'name': '巅峰战舰'},
-    {'id': 1183, 'name': '战意'},
-    {'id': 1184, 'name': '使命召唤系列'},
-    {'id': 1185, 'name': '虎牙全明星'},
-    {'id': 1186, 'name': '矩阵：零日危机'},
-    {'id': 1187, 'name': '怪物猎人：荒野'},
-    {'id': 1188, 'name': '育碧游戏'},
-    {'id': 1189, 'name': '足球小将'},
-    {'id': 1190, 'name': '极品飞车：集结'},
-    {'id': 1191, 'name': '魔法门之英雄无敌系列'},
-    {'id': 1192, 'name': '决斗之城'},
-    {'id': 1193, 'name': '坦克大战'},
-    {'id': 1194, 'name': '归家异途'},
-    {'id': 1195, 'name': '全球使命3'},
-    {'id': 1196, 'name': 'KARDS'},
-    {'id': 1197, 'name': '逃生：试炼'},
-    {'id': 1198, 'name': '命运扳机'},
-    {'id': 1199, 'name': '未来之役'},
-    {'id': 1200, 'name': '英灵神殿'},
-    {'id': 1201, 'name': '奶块'},
-    {'id': 1202, 'name': '重返帝国'},
-    {'id': 1203, 'name': '战锤40K：暗潮'},
-    {'id': 1204, 'name': '最终幻想：起源'},
-    {'id': 1205, 'name': '洛克手游'},
-    {'id': 1206, 'name': '神武4电脑版'},
-    {'id': 1207, 'name': '暗黑破坏神'},
-    {'id': 1208, 'name': '最终幻想7：重制版'},
-    {'id': 1209, 'name': '影之刃零'},
-    {'id': 1210, 'name': '英雄联盟手游'},
-    {'id': 1211, 'name': '英雄联盟电竞经理'},
-    {'id': 1212, 'name': '冒险岛：枫之传说'},
-    {'id': 1213, 'name': '暗区突围：无限'},
-    {'id': 1214, 'name': '海贼王 寻秘世界'},
-    {'id': 1215, 'name': '永劫无间手游'},
-    {'id': 1216, 'name': '狼人杀手游'},
-    {'id': 1217, 'name': '问道'},
-    {'id': 1218, 'name': '诛仙3'},
-    {'id': 1219, 'name': '战争冲突'},
-    {'id': 1220, 'name': '三角洲行动'},
-]
 
 
 # ─── Terjemahan Chinese → English ────────────────────────────────
@@ -398,7 +217,6 @@ GAME_TRANSLATION = {
     '狼人杀手游': 'Werewolf Mobile',
     '洛克手游': 'Roco Mobile',
     '神武4电脑版': 'Shenwu 4',
-    # Esports events
     'KPL年度总决赛': 'KPL Finals',
     '斯诺克': 'Snooker',
     'IEM北京2026': 'IEM Beijing 2026',
@@ -429,15 +247,11 @@ def translate_text(text):
     return text
 
 
-# ─── Step 1: Ambil kategori ──────────────────────────────────────
+# ─── Step 1: Ambil kategori (ID REAL dari Huya) ─────────────────
 def get_all_categories(top=None):
-    """
-    Ambil kategori. Jika top=None → semua (176).
-    Jika top=50 → 50 kategori teratas (paling populer).
-    """
     s = get_session()
 
-    # Metode 1: Scrape /g (dynamic, bisa lebih dari 176)
+    # Metode 1: Scrape /g (ID REAL dari halaman Huya)
     try:
         r = s.get("https://www.huya.com/g", timeout=TIMEOUT)
         if r.status_code == 200:
@@ -450,14 +264,12 @@ def get_all_categories(top=None):
                 if gid not in seen and gname and len(gname) > 1:
                     seen.add(gid)
                     categories.append({'id': gid, 'name': gname})
-            if len(categories) > 10:
-                if top:
-                    return categories[:top]
-                return categories
+            if categories:
+                return categories[:top] if top else categories
     except Exception:
         pass
 
-    # Metode 2: API
+    # Metode 2: API getLiveGameList (ID pasti valid)
     api = "https://www.huya.com/cache.php?m=LiveList&do=getLiveGameList"
     try:
         r = s.get(api, timeout=TIMEOUT)
@@ -470,16 +282,27 @@ def get_all_categories(top=None):
                 if gid and gname:
                     categories.append({'id': int(gid), 'name': gname})
             if categories:
-                if top:
-                    return categories[:top]
-                return categories
+                return categories[:top] if top else categories
     except Exception:
         pass
 
-    # Metode 3: Hardcoded
-    if top:
-        return ALL_CATEGORIES[:top]
-    return ALL_CATEGORIES
+    # Metode 3: Hardcoded MINIMAL (hanya ID yang pasti benar)
+    fallback = [
+        {'id': 2135, 'name': '英雄联盟'},
+        {'id': 1052, 'name': 'CS2'},
+        {'id': 1141, 'name': '无畏契约'},
+        {'id': 2067, 'name': '体育'},
+        {'id': 2068, 'name': '户外'},
+        {'id': 2134, 'name': '星秀'},
+        {'id': 1058, 'name': '天天吃鸡'},
+        {'id': 2136, 'name': '主机游戏'},
+        {'id': 1059, 'name': 'DOTA2'},
+        {'id': 2137, 'name': '王者荣耀'},
+        {'id': 1056, 'name': '和平精英'},
+        {'id': 2138, 'name': '金铲铲之战'},
+        {'id': 1220, 'name': '三角洲行动'},
+    ]
+    return fallback[:top] if top else fallback
 
 
 # ─── Step 2: Ambil rooms per kategori ────────────────────────────
@@ -948,7 +771,7 @@ if __name__ == '__main__':
     parser.add_argument('--output', '-o', default='playlist.m3u',
                         help='File output M3U (default: playlist.m3u)')
     parser.add_argument('--top', '-t', type=int, default=TOP_CATEGORIES,
-                        help=f'Jumlah kategori (default: {TOP_CATEGORIES}, max: {len(ALL_CATEGORIES)})')
+                        help=f'Jumlah kategori (default: {TOP_CATEGORIES})')
     parser.add_argument('--max-per-cat', '-m', type=int,
                         default=MAX_ROOMS_PER_CATEGORY,
                         help='Maks room per kategori (default: 10)')
