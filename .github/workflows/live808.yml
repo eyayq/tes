@@ -1,12 +1,10 @@
-
-
-name: Huya Playlist
+name: live808
 
 on:
   push:
     branches: [main]
   schedule:
-    - cron: '*/5 * * * *'   # setiap 30 menit
+    - cron: '*/5 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -22,19 +20,22 @@ jobs:
           ref: main
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Update system packages
-        run: |
-          sudo apt-get update -y
-          sudo apt-get upgrade -y
-
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+          cache: 'pip'
+
+      - name: Cache Playwright
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('**/requirements*.txt') }}
+          restore-keys: |
+            playwright-${{ runner.os }}-
 
       - name: Install dependencies
-        run: |
-          pip install curl_cffi playwright
+        run: pip install -r requirements.txt
 
       - name: Install Chromium
         run: playwright install chromium
