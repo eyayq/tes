@@ -21,7 +21,7 @@ jobs:
         with:
           python-version: '3.11'
 
-      - run: pip install requests curl-cffi deep-translator
+      - run: pip install requests curl-cffi playwright deep-translator
 
       - name: Generate playlist
         run: python3 huya.py --output playlist.m3u --rooms 500 --workers 18   
