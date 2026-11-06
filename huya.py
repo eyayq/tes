@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """
-TWITCH M3U PLAYLIST GENERATOR
-- GQL API (gql.twitch.tv) — tanpa OAuth, tanpa auth
-- StreamDirectory untuk listing channels live
-- PlaybackAccessToken untuk stream URL (m3u8)
+TWITCH M3U PLAYLIST GENERATOR — FINAL
+- Helix API (api.twitch.tv/helix/streams) untuk listing — TANPA OAUTH
+- GQL PlaybackAccessToken untuk stream URL (m3u8)
 - curl_cffi (Chrome TLS fingerprint)
 - ThreadPoolExecutor (parallel)
 - tvg-logo + group-title otomatis
@@ -14,7 +13,6 @@ import json
 import time
 import threading
 import argparse
-import uuid
 from urllib.parse import quote
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -24,11 +22,12 @@ from curl_cffi import requests as cffi_requests
 MAX_CHANNELS = 500
 REQUEST_DELAY = 0.2
 TIMEOUT = 15
-MAX_WORKERS = 28
+MAX_WORKERS = 18
 
-# Twitch public web client ID (baked into twitch.tv)
+# Twitch public web client ID
 CLIENT_ID = "kimne78kx3ncx6brgo4mv6wki5h1ko"
 GQL_URL = "https://gql.twitch.tv/gql"
+HELEX_URL = "https://api.twitch.tv/helix/streams"
 USHER_URL = "https://usher.ttvnw.net/api/channel/hls/{channel}.m3u8"
 
 # Persisted query hash untuk PlaybackAccessToken
@@ -45,7 +44,6 @@ def get_session():
 
 # ─── GQL Helper ──────────────────────────────────────────────────
 def gql_request(operations):
-    """POST to GQL API."""
     s = get_session()
     headers = {
         "Client-ID": CLIENT_ID,
@@ -62,128 +60,68 @@ def gql_request(operations):
     return None
 
 
-# ─── Step 1: Ambil list channels live (StreamDirectory) ─────────
+# ─── Step 1: Ambil list channels live (Helix API) ───────────────
 def get_live_channels(max_channels, category=None):
     """
-    Ambil list channels live dari Twitch GQL API.
-    Jika category=None → semua kategori (top channels)
-    Jika category="Just Chatting" → hanya kategori itu
+    Helix API: GET /helix/streams?first=100&after={cursor}
+    Butuh: Client-ID header (TANPA OAuth)
     """
+    s = get_session()
     all_channels = []
     cursor = ""
     page_size = min(100, max_channels)
 
     while len(all_channels) < max_channels:
-        # Build query
+        url = f"{HELEX_URL}?first={page_size}"
+        if cursor:
+            url += f"&after={cursor}"
         if category:
-            query = (
-                'query StreamDirectory($category: String, $limit: Int, $after: String) {\n'
-                '  streamDirectory(category: $category, first: $limit, after: $after) {\n'
-                '    edges {\n'
-                '      node {\n'
-                '        __typename\n'
-                '        ... on Stream {\n'
-                '          id\n'
-                '          game {\n'
-                '            displayName\n'
-                '          }\n'
-                '          viewerCount\n'
-                '          broadcaster {\n'
-                '            login\n'
-                '            displayName\n'
-                '            profileImageURL(width: 180)\n'
-                '          }\n'
-                '          title\n'
-                '        }\n'
-                '      }\n'
-                '    }\n'
-                '    pageInfo {\n'
-                '      hasNextPage\n'
-                '      endCursor\n'
-                '    }\n'
-                '  }\n'
-                '}'
-            )
-            variables = {
-                "category": category,
-                "limit": page_size,
-                "after": cursor,
-            }
-        else:
-            query = (
-                'query StreamDirectory($limit: Int, $after: String) {\n'
-                '  streamDirectory(first: $limit, after: $after) {\n'
-                '    edges {\n'
-                '      node {\n'
-                '        __typename\n'
-                '        ... on Stream {\n'
-                '          id\n'
-                '          game {\n'
-                '            displayName\n'
-                '          }\n'
-                '          viewerCount\n'
-                '          broadcaster {\n'
-                '            login\n'
-                '            displayName\n'
-                '            profileImageURL(width: 180)\n'
-                '          }\n'
-                '          title\n'
-                '        }\n'
-                '      }\n'
-                '    }\n'
-                '    pageInfo {\n'
-                '      hasNextPage\n'
-                '      endCursor\n'
-                '    }\n'
-                '  }\n'
-                '}'
-            )
-            variables = {
-                "limit": page_size,
-                "after": cursor,
-            }
+            url += f"&game_name={quote(category)}"
 
-        operations = [{
-            "operationName": "StreamDirectory",
-            "query": query,
-            "variables": variables,
-        }]
+        headers = {
+            "Client-ID": CLIENT_ID,
+            "Accept": "application/json",
+        }
 
-        data = gql_request(operations)
-        if not data:
+        try:
+            r = s.get(url, headers=headers, timeout=TIMEOUT)
+            if r.status_code != 200:
+                print(f"  [WARN] Helix API: HTTP {r.status_code}")
+                break
+            data = r.json()
+        except Exception as e:
+            print(f"  [WARN] Helix API: {e}")
             break
 
-        result = data[0].get("data", {}).get("streamDirectory", {})
-        edges = result.get("edges", [])
-        if not edges:
+        streams = data.get("data", [])
+        if not streams:
             break
 
-        for edge in edges:
-            node = edge.get("node", {})
-            if node.get("__typename") != "Stream":
-                continue
-
-            broadcaster = node.get("broadcaster", {})
-            channel_login = broadcaster.get("login", "")
-            if not channel_login:
+        for st in streams:
+            login = st.get("user_login", "")
+            if not login:
                 continue
 
             all_channels.append({
-                'id': node.get("id", ""),
-                'login': channel_login,
-                'name': broadcaster.get("displayName", channel_login),
-                'game': (node.get("game") or {}).get("displayName", "Twitch"),
-                'title': node.get("title", ""),
-                'viewers': node.get("viewerCount", 0),
-                'logo': broadcaster.get("profileImageURL", ""),
+                'id': st.get("id", ""),
+                'login': login,
+                'name': st.get("user_name", login),
+                'game': st.get("game_name", "Twitch"),
+                'title': st.get("title", ""),
+                'viewers': st.get("viewer_count", 0),
+                'logo': f"https://static-cdn.jtvnw.net/jtv_user_pictures/{login}_profile_300x300.png",
             })
 
-        page_info = result.get("pageInfo", {})
-        if not page_info.get("hasNextPage", False):
+        # Pagination
+        next_url = data.get("pagination", {}).get("next", "")
+        if not next_url:
             break
-        cursor = page_info.get("endCursor", "")
+        if "after=" in next_url:
+            cursor = next_url.split("after=")[-1].split("&")[0]
+        else:
+            break
 
-        print(f"  Page: +{len(edges)} channels (total: {len(all_channels)})")
+        print(f"  Page: +{len(streams)} channels (total: {len(all_channels)})")
         time.sleep(REQUEST_DELAY)
 
     return all_channels[:max_channels]
@@ -191,10 +129,6 @@ def get_live_channels(max_channels, category=None):
 
 # ─── Step 2: Get PlaybackAccessToken per channel ────────────────
 def get_playback_token(channel_login):
-    """
-    Get PlaybackAccessToken via GQL persisted query.
-    Return: (token, signature) atau (None, None)
-    """
     operations = [{
         "operationName": "PlaybackAccessToken_Template",
         "query": (
@@ -248,20 +182,13 @@ def get_playback_token(channel_login):
 
 # ─── Step 3: Build stream URL ───────────────────────────────────
 def get_stream_url(channel_login):
-    """
-    Get m3u8 URL untuk channel.
-    1. Get PlaybackAccessToken
-    2. Build usher URL
-    """
     token, sig = get_playback_token(channel_login)
     if not token or not sig:
         return None
 
-    # URL-encode token (JSON string)
     token_encoded = quote(token, safe='')
     sig_encoded = quote(sig, safe='')
 
-    # Build usher URL
     url = (
         f"{USHER_URL.format(channel=channel_login)}"
         f"?allow_source=true"
@@ -294,14 +221,14 @@ def fetch_worker(args):
 def generate_playlist(output_file, max_channels, max_workers=MAX_WORKERS,
                       category=None):
     print("=" * 55)
-    print("  TWITCH M3U PLAYLIST GENERATOR")
+    print("  TWITCH M3U PLAYLIST GENERATOR (FINAL)")
     print(f"  {max_channels} channels | {max_workers} threads")
     if category:
         print(f"  Category: {category}")
     print("=" * 55)
 
-    # Step 1: Ambil list channels live
-    print(f"\n[1/3] Mengambil channels live...")
+    # Step 1: Ambil list channels live (Helix)
+    print(f"\n[1/3] Mengambil channels live (Helix API)...")
     all_channels = get_live_channels(max_channels, category)
     print(f"\n  Total channels: {len(all_channels)}")
 
@@ -372,13 +299,13 @@ def generate_playlist(output_file, max_channels, max_workers=MAX_WORKERS,
 # ─── Main ────────────────────────────────────────────────────────
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='Twitch M3U Playlist Generator')
+        description='Twitch M3U Playlist Generator (Final)')
     parser.add_argument('--output', '-o', default='playlist_twitch.m3u',
                         help='File output M3U (default: playlist_twitch.m3u)')
     parser.add_argument('--channels', '-c', type=int, default=MAX_CHANNELS,
                         help=f'Total channel (default: {MAX_CHANNELS})')
     parser.add_argument('--category', '-g', default=None,
-                        help='Filter kategori (contoh: "Just Chatting", "League of Legends")')
+                        help='Filter kategori (contoh: "Just Chatting")')
     parser.add_argument('--workers', '-w', type=int, default=MAX_WORKERS,
                         help='Jumlah thread paralel (default: 18)')
     parser.add_argument('--delay', '-d', type=float, default=REQUEST_DELAY,
