@@ -24,7 +24,7 @@ jobs:
       - run: pip install requests curl-cffi deep-translator
 
       - name: Generate playlist
-        run: python3 huya.py --output playlist.m3u --max-per-cat 10
+        run: python3 huya.py --output playlist.m3u --rooms 500 --workers 18   
 
       - name: Commit & push
         run: |
