@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
 """
 HUYA M3U PLAYLIST GENERATOR — FINAL
+- live.huya.com/liveHttpUI/getLiveList (iGid=0 = ALL categories)
 - curl_cffi (Chrome TLS fingerprint)
 - ThreadPoolExecutor (parallel stream fetching)
-- Scrape /g untuk ID kategori valid
-- live.huya.com endpoint (less restricted)
-- Esports/sports hot matches
-- tvg-logo + group-title otomatis
+- tvg-logo + group-title dari listing API langsung
 - Chinese → English translation
 - Output: playlist.m3u
 """
@@ -24,11 +22,11 @@ from urllib.parse import unquote
 from curl_cffi import requests as cffi_requests
 
 # ─── Konfigurasi ─────────────────────────────────────────────────
-MAX_ROOMS_PER_CATEGORY = 10
-REQUEST_DELAY = 0.2
+MAX_ROOMS_TOTAL = 500       # total room yang mau diambil
+REQUEST_DELAY = 0.3
 TIMEOUT = 15
 MAX_WORKERS = 18
-TOP_CATEGORIES = 50
+PAGE_SIZE = 120             # rooms per page (max 120)
 
 _local = threading.local()
 
@@ -37,7 +35,7 @@ def get_session():
     if not hasattr(_local, 'session'):
         _local.session = cffi_requests.Session(impersonate="chrome")
         try:
-            _local.session.get("https://www.huya.com/", timeout=TIMEOUT)
+            _local.session.get("https://m.huya.com/", timeout=TIMEOUT)
         except Exception:
             pass
     return _local.session
@@ -247,138 +245,136 @@ def translate_text(text):
     return text
 
 
-# ─── Step 1: Ambil kategori (ID REAL dari Huya) ─────────────────
-def get_all_categories(top=None):
+# ─── Step 1: Ambil SEMUA rooms (iGid=0 = ALL) ────────────────────
+def get_all_rooms(max_rooms=MAX_ROOMS_TOTAL):
+    """
+    Ambil rooms dari live.huya.com — iGid=0 = SEMUA kategori.
+    Paginate: iPageNo=1,2,3... sampai max_rooms tercapai.
+    Setiap room sudah punya: sNick, lProfileRoom, sGameFullName, sScreenshot, sAvatar180
+    """
     s = get_session()
-
-    # Metode 1: Scrape /g (ID REAL dari halaman Huya)
-    try:
-        r = s.get("https://www.huya.com/g", timeout=TIMEOUT)
-        if r.status_code == 200:
-            html = r.text
-            seen = set()
-            categories = []
-            for m in re.finditer(r'href="/g/(\d+)"[^>]*>\s*([^<]+?)\s*</a>', html):
-                gid = int(m.group(1))
-                gname = m.group(2).strip()
-                if gid not in seen and gname and len(gname) > 1:
-                    seen.add(gid)
-                    categories.append({'id': gid, 'name': gname})
-            if categories:
-                return categories[:top] if top else categories
-    except Exception:
-        pass
-
-    # Metode 2: API getLiveGameList (ID pasti valid)
-    api = "https://www.huya.com/cache.php?m=LiveList&do=getLiveGameList"
-    try:
-        r = s.get(api, timeout=TIMEOUT)
-        if r.status_code == 200:
-            data = r.json()
-            categories = []
-            for item in data.get('data', []):
-                gid = item.get('gameId') or item.get('id')
-                gname = item.get('gameName') or item.get('name', '')
-                if gid and gname:
-                    categories.append({'id': int(gid), 'name': gname})
-            if categories:
-                return categories[:top] if top else categories
-    except Exception:
-        pass
-
-    # Metode 3: Hardcoded MINIMAL (hanya ID yang pasti benar)
-    fallback = [
-        {'id': 2135, 'name': '英雄联盟'},
-        {'id': 1052, 'name': 'CS2'},
-        {'id': 1141, 'name': '无畏契约'},
-        {'id': 2067, 'name': '体育'},
-        {'id': 2068, 'name': '户外'},
-        {'id': 2134, 'name': '星秀'},
-        {'id': 1058, 'name': '天天吃鸡'},
-        {'id': 2136, 'name': '主机游戏'},
-        {'id': 1059, 'name': 'DOTA2'},
-        {'id': 2137, 'name': '王者荣耀'},
-        {'id': 1056, 'name': '和平精英'},
-        {'id': 2138, 'name': '金铲铲之战'},
-        {'id': 1220, 'name': '三角洲行动'},
-    ]
-    return fallback[:top] if top else fallback
-
-
-# ─── Step 2: Ambil rooms per kategori ────────────────────────────
-def get_rooms(category_id, max_rooms=MAX_ROOMS_PER_CATEGORY):
-    s = get_session()
-    rooms = []
-
-    # ═══ METODE 1: live.huya.com (less restricted) ═══
-    api = (
-        f"https://live.huya.com/liveHttpUI/getLiveList"
-        f"?iGid={category_id}&iPageNo=1&iPageSize=120"
-    )
-    try:
-        r = s.get(api, timeout=TIMEOUT)
-        if r.status_code == 200:
-            data = r.json()
-            vlist = data.get('vList', [])
-            for item in vlist[:max_rooms]:
-                room_id = str(item.get('lProfileRoom', ''))
-                if not room_id:
-                    continue
-                rooms.append({
-                    'id': room_id,
-                    'nick': item.get('sNick', ''),
-                    'introduction': item.get('sIntroduction', ''),
-                    'screenshot': item.get('sScreenshot', ''),
-                    'gameName': '',
-                    'viewers': item.get('lTotalCount', 0),
-                })
-            if rooms:
-                return rooms
-    except Exception:
-        pass
-
-    # ═══ METODE 2: www.huya.com/cache.php (fallback) ═══
+    all_rooms = []
     page = 1
-    while len(rooms) < max_rooms:
-        api2 = (
-            f"https://www.huya.com/cache.php"
-            f"?m=LiveList&do=getLiveListByPage"
-            f"&gameId={category_id}&tagAll=0&page={page}"
+
+    while len(all_rooms) < max_rooms:
+        api = (
+            f"https://live.huya.com/liveHttpUI/getLiveList"
+            f"?iGid=0&iPageNo={page}&iPageSize={PAGE_SIZE}"
         )
         try:
-            r = s.get(api2, timeout=TIMEOUT)
+            r = s.get(api, timeout=TIMEOUT)
             if r.status_code != 200:
                 break
             data = r.json()
         except Exception:
             break
 
-        datas = data.get('data', {}).get('datas', [])
-        if not datas:
+        vlist = data.get('vList', [])
+        if not vlist:
             break
 
-        for item in datas:
-            room_id = item.get('profileRoom', '')
+        for item in vlist:
+            room_id = str(item.get('lProfileRoom', ''))
             if not room_id:
                 continue
-            rooms.append({
-                'id': str(room_id),
-                'nick': item.get('nick', ''),
-                'introduction': item.get('introduction', ''),
-                'screenshot': item.get('screenshot', ''),
-                'gameName': item.get('gameName', ''),
-                'viewers': item.get('totalCount', 0),
-            })
-            if len(rooms) >= max_rooms:
-                break
 
+            # Logo: screenshot (thumbnail stream) atau avatar
+            logo = item.get('sScreenshot', '') or item.get('sAvatar180', '')
+
+            all_rooms.append({
+                'id': room_id,
+                'nick': item.get('sNick', ''),
+                'introduction': item.get('sIntroduction', ''),
+                'screenshot': logo,
+                'gameName': item.get('sGameFullName', ''),  # ← group-title
+                'viewers': item.get('lTotalCount', 0),
+            })
+
+        print(f"  Page {page}: +{len(vlist)} rooms (total: {len(all_rooms)})")
         page += 1
         time.sleep(REQUEST_DELAY)
 
-    return rooms
+        if len(vlist) < PAGE_SIZE:
+            break  # sudah habis
+
+    return all_rooms[:max_rooms]
 
 
-# ─── Step 2b: Esports/sports hot matches ─────────────────────────
+# ─── Step 2: Fallback — www.huya.com/cache.php ───────────────────
+def get_rooms_fallback(max_rooms=MAX_ROOMS_TOTAL):
+    """Fallback jika live.huya.com gagal."""
+    s = get_session()
+    all_rooms = []
+
+    # Ambil kategori
+    api = "https://www.huya.com/cache.php?m=LiveList&do=getLiveGameList"
+    categories = []
+    try:
+        r = s.get(api, timeout=TIMEOUT)
+        if r.status_code == 200:
+            data = r.json()
+            for item in data.get('data', []):
+                gid = item.get('gameId') or item.get('id')
+                gname = item.get('gameName') or item.get('name', '')
+                if gid and gname:
+                    categories.append({'id': int(gid), 'name': gname})
+    except Exception:
+        pass
+
+    if not categories:
+        categories = [
+            {'id': 2135, 'name': '英雄联盟'},
+            {'id': 1052, 'name': 'CS2'},
+            {'id': 1141, 'name': '无畏契约'},
+            {'id': 2067, 'name': '体育'},
+            {'id': 2068, 'name': '户外'},
+            {'id': 2134, 'name': '星秀'},
+            {'id': 1058, 'name': '天天吃鸡'},
+            {'id': 2136, 'name': '主机游戏'},
+            {'id': 1059, 'name': 'DOTA2'},
+            {'id': 2137, 'name': '王者荣耀'},
+            {'id': 1056, 'name': '和平精英'},
+            {'id': 2138, 'name': '金铲铲之战'},
+            {'id': 1220, 'name': '三角洲行动'},
+        ]
+
+    per_cat = max(10, max_rooms // len(categories))
+
+    for cat in categories:
+        if len(all_rooms) >= max_rooms:
+            break
+        api2 = (
+            f"https://www.huya.com/cache.php"
+            f"?m=LiveList&do=getLiveListByPage"
+            f"&gameId={cat['id']}&tagAll=0&page=1"
+        )
+        try:
+            r = s.get(api2, timeout=TIMEOUT)
+            if r.status_code != 200:
+                continue
+            data = r.json()
+        except Exception:
+            continue
+
+        datas = data.get('data', {}).get('datas', [])
+        for item in datas[:per_cat]:
+            room_id = str(item.get('profileRoom', ''))
+            if not room_id:
+                continue
+            all_rooms.append({
+                'id': room_id,
+                'nick': item.get('nick', ''),
+                'introduction': item.get('introduction', ''),
+                'screenshot': item.get('screenshot', ''),
+                'gameName': item.get('gameName', '') or cat['name'],
+                'viewers': item.get('totalCount', 0),
+            })
+        time.sleep(REQUEST_DELAY)
+
+    return all_rooms[:max_rooms]
+
+
+# ─── Step 3: Esports hot matches ─────────────────────────────────
 def get_hot_matches():
     s = get_session()
     api = "https://www.huya.com/cache.php?callback=huyaNavHotMatch&do=ajaxGetHotMatch&m=Nav"
@@ -424,7 +420,7 @@ def get_hot_matches():
     return rooms
 
 
-# ─── Step 3: Decode liveLineUrl → stream URL ─────────────────────
+# ─── Step 4: Decode liveLineUrl → stream URL ─────────────────────
 def decode_live_url(liveline):
     try:
         i, b = liveline.split('?', 1)
@@ -460,7 +456,7 @@ def decode_live_url(liveline):
         return None
 
 
-# ─── Step 4: Ambil stream info per room ──────────────────────────
+# ─── Step 5: Ambil stream info per room ──────────────────────────
 def get_stream_info(room_id):
     s = get_session()
 
@@ -486,29 +482,7 @@ def get_stream_info(room_id):
                 if liveline and 'replay' not in liveline:
                     stream_url = decode_live_url(liveline)
                     if stream_url:
-                        stream_url = stream_url.replace('http://', 'https://')
-
-                        name_m = re.search(r'"nick"\s*:\s*"([^"]+)"', html)
-                        if not name_m:
-                            name_m = re.search(r'"nickName"\s*:\s*"([^"]+)"', html)
-                        name = name_m.group(1) if name_m else f"Huya {room_id}"
-
-                        logo = ''
-                        logo_m = re.search(r'"sAvatar"\s*:\s*"(https?://[^"]+)"', html)
-                        if not logo_m:
-                            logo_m = re.search(
-                                r'(https?://huyaimg\.msstatic\.com/avatar/[^"\s\')\\]+)', html)
-                        if not logo_m:
-                            logo_m = re.search(
-                                r'<meta[^>]+property="og:image"[^>]+content="([^"]+)"', html)
-                        logo = logo_m.group(1) if logo_m else ''
-
-                        game_m = re.search(r'"gameName"\s*:\s*"([^"]+)"', html)
-                        if not game_m:
-                            game_m = re.search(r'"sGameName"\s*:\s*"([^"]+)"', html)
-                        game = game_m.group(1) if game_m else ''
-
-                        return {'url': stream_url, 'name': name, 'logo': logo, 'game': game}
+                        return stream_url.replace('http://', 'https://')
     except Exception:
         pass
 
@@ -562,17 +536,11 @@ def get_stream_info(room_id):
                                 break
 
                     if stream_url:
-                        profile = d.get('profileInfo', {})
-                        name = (profile.get('nick', '')
-                                or profile.get('sNick', '')
-                                or f"Huya {room_id}")
-                        logo = profile.get('sAvatar', '') or profile.get('avatar', '')
-                        game = d.get('gameName', '') or d.get('game', '')
-                        return {'url': stream_url, 'name': name, 'logo': logo, 'game': game}
+                        return stream_url
     except Exception:
         pass
 
-    # ═══ METODE 3: www.huya.com + stream JSON ═══
+    # ═══ METODE 3: www.huya.com ═══
     try:
         r = s.get(f"https://www.huya.com/{room_id}", timeout=TIMEOUT)
         if r.status_code == 200:
@@ -609,92 +577,50 @@ def get_stream_info(room_id):
                     except Exception:
                         pass
 
-            if not stream_url:
-                return None
-
-            name_m = re.search(r'"nick"\s*:\s*"([^"]+)"', html)
-            if not name_m:
-                name_m = re.search(r'"nickName"\s*:\s*"([^"]+)"', html)
-            name = name_m.group(1) if name_m else f"Huya {room_id}"
-
-            logo = ''
-            logo_m = re.search(r'"sAvatar"\s*:\s*"(https?://[^"]+)"', html)
-            if not logo_m:
-                logo_m = re.search(
-                    r'(https?://huyaimg\.msstatic\.com/avatar/[^"\s\')\\]+)', html)
-            if not logo_m:
-                logo_m = re.search(
-                    r'<meta[^>]+property="og:image"[^>]+content="([^"]+)"', html)
-            logo = logo_m.group(1) if logo_m else ''
-
-            game_m = re.search(r'"gameName"\s*:\s*"([^"]+)"', html)
-            if not game_m:
-                game_m = re.search(r'"sGameName"\s*:\s*"([^"]+)"', html)
-            game = game_m.group(1) if game_m else 'Huya'
-
-            return {'url': stream_url, 'name': name, 'logo': logo, 'game': game}
+            if stream_url:
+                return stream_url
     except Exception:
         pass
 
     return None
 
 
-# ─── Step 5: Worker ──────────────────────────────────────────────
+# ─── Step 6: Worker ──────────────────────────────────────────────
 def fetch_stream_worker(args):
-    idx, room, cat_name = args
+    idx, room = args
     room_id = room['id']
     try:
-        info = get_stream_info(room_id)
+        stream_url = get_stream_info(room_id)
     except Exception as e:
-        return (idx, room, cat_name, None, str(e))
-    return (idx, room, cat_name, info, None)
+        return (idx, room, None, str(e))
+    return (idx, room, stream_url, None)
 
 
-# ─── Step 6: Generate playlist ───────────────────────────────────
-def generate_playlist(output_file, max_per_cat, top_categories,
-                      categories_filter=None, max_workers=MAX_WORKERS):
+# ─── Step 7: Generate playlist ───────────────────────────────────
+def generate_playlist(output_file, max_rooms, max_workers=MAX_WORKERS):
     print("=" * 55)
     print("  HUYA M3U PLAYLIST GENERATOR (FINAL)")
-    print(f"  {top_categories} kategori | {max_per_cat} room/kategori | {max_workers} threads")
+    print(f"  {max_rooms} rooms | {max_workers} threads")
     print("=" * 55)
 
-    # Step 1: Kategori
-    print("\n[1/4] Mengambil kategori...")
-    categories = get_all_categories(top=top_categories)
-    print(f"  Total kategori: {len(categories)}")
+    # Step 1: Ambil semua rooms (iGid=0 = ALL)
+    print("\n[1/3] Mengambil rooms (live.huya.com, iGid=0)...")
+    all_rooms = get_all_rooms(max_rooms)
 
-    if categories_filter:
-        categories = [c for c in categories if c['id'] in categories_filter]
-        print(f"  (Filter: {len(categories)} kategori)")
+    # Fallback jika live.huya.com gagal
+    if not all_rooms:
+        print("  [WARN] live.huya.com gagal, mencoba fallback...")
+        all_rooms = get_rooms_fallback(max_rooms)
 
-    # Step 2: Rooms
-    print(f"\n[2/4] Mengambil rooms (max {max_per_cat}/kategori)...")
-    all_rooms = []
-    consecutive_empty = 0
-
-    for i, cat in enumerate(categories):
-        rooms = get_rooms(cat['id'], max_per_cat)
-        for room in rooms:
-            all_rooms.append((room, cat['name']))
-
-        if not rooms:
-            consecutive_empty += 1
-            if consecutive_empty >= 30:
-                print(f"\n  [WARN] 30 kategori kosong berturut-turut — berhenti.")
-                break
-        else:
-            consecutive_empty = 0
-
-        if (i + 1) % 20 == 0 or i == len(categories) - 1:
-            print(f"  Progress: {i+1}/{len(categories)} | total rooms: {len(all_rooms)}")
-        time.sleep(REQUEST_DELAY)
-
-    # Step 2b: Esports
+    # Tambah esports
     print("\n  [ESPORTS] Mengambil hot matches...")
     esports_rooms = get_hot_matches()
+    existing_ids = {r['id'] for r in all_rooms}
     for room in esports_rooms:
-        all_rooms.append((room, 'Esports/Sports'))
-    print(f"  Esports/Sports         → {len(esports_rooms)} rooms")
+        if room['id'] not in existing_ids:
+            all_rooms.append(room)
+            existing_ids.add(room['id'])
+    print(f"  Esports: +{len(esports_rooms)} rooms")
 
     print(f"\n  Total rooms: {len(all_rooms)}")
 
@@ -702,26 +628,26 @@ def generate_playlist(output_file, max_per_cat, top_categories,
         print("\n  [ERROR] Tidak ada rooms! IP mungkin di-ban.")
         return
 
-    # Step 3: Stream URL (PARALEL)
-    print(f"\n[3/4] Mengambil stream URL ({max_workers} threads)...")
+    # Step 2: Stream URL (PARALEL)
+    print(f"\n[2/3] Mengambil stream URL ({max_workers} threads)...")
     results = [None] * len(all_rooms)
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = {
-            executor.submit(fetch_stream_worker, (i, room, cat)): i
-            for i, (room, cat) in enumerate(all_rooms)
+            executor.submit(fetch_stream_worker, (i, room)): i
+            for i, room in enumerate(all_rooms)
         }
 
         done_count = 0
         for future in as_completed(futures):
-            idx, room, cat_name, info, error = future.result()
-            results[idx] = (room, cat_name, info, error)
+            idx, room, stream_url, error = future.result()
+            results[idx] = (room, stream_url, error)
             done_count += 1
-            if done_count % 50 == 0:
+            if done_count % 100 == 0:
                 print(f"  Progress: {done_count}/{len(all_rooms)}")
 
-    # Step 4: Build playlist + translate
-    print(f"\n[4/4] Membangun playlist + translate...")
+    # Step 3: Build playlist + translate
+    print(f"\n[3/3] Membangun playlist + translate...")
     lines = ['#EXTM3U']
     live_count = 0
     offline_count = 0
@@ -730,20 +656,18 @@ def generate_playlist(output_file, max_per_cat, top_categories,
     for item in results:
         if item is None:
             continue
-        room, cat_name, info, error = item
+        room, stream_url, error = item
 
         if error:
             error_count += 1
             continue
-        if not info:
+        if not stream_url:
             offline_count += 1
             continue
 
-        name = translate_text(info['name'])
-        group_title = translate_text(
-            room.get('gameName', '') or info.get('game', '') or cat_name
-        )
-        logo = info.get('logo', '') or room.get('screenshot', '')
+        name = translate_text(room['nick'] or room['introduction'] or f"Huya {room['id']}")
+        group_title = translate_text(room.get('gameName', '') or 'Huya')
+        logo = room.get('screenshot', '')
 
         extinf = f'#EXTINF:-1'
         if logo:
@@ -752,7 +676,7 @@ def generate_playlist(output_file, max_per_cat, top_categories,
         extinf += f',{name}'
 
         lines.append(extinf)
-        lines.append(info['url'])
+        lines.append(stream_url)
         live_count += 1
 
     with open(output_file, 'w', encoding='utf-8') as f:
@@ -770,17 +694,12 @@ if __name__ == '__main__':
         description='Huya M3U Playlist Generator (Final)')
     parser.add_argument('--output', '-o', default='playlist.m3u',
                         help='File output M3U (default: playlist.m3u)')
-    parser.add_argument('--top', '-t', type=int, default=TOP_CATEGORIES,
-                        help=f'Jumlah kategori (default: {TOP_CATEGORIES})')
-    parser.add_argument('--max-per-cat', '-m', type=int,
-                        default=MAX_ROOMS_PER_CATEGORY,
-                        help='Maks room per kategori (default: 10)')
-    parser.add_argument('--categories', '-c', nargs='*', type=int,
-                        help='Filter kategori ID spesifik (contoh: -c 2135 1052)')
+    parser.add_argument('--rooms', '-r', type=int, default=MAX_ROOMS_TOTAL,
+                        help=f'Total room (default: {MAX_ROOMS_TOTAL})')
     parser.add_argument('--workers', '-w', type=int, default=MAX_WORKERS,
                         help='Jumlah thread paralel (default: 18)')
     parser.add_argument('--delay', '-d', type=float, default=REQUEST_DELAY,
-                        help='Jeda antar request listing (default: 0.2)')
+                        help='Jeda antar request (default: 0.3)')
     parser.add_argument('--no-translate', action='store_true',
                         help='Nonaktifkan terjemahan (lebih cepat)')
     args = parser.parse_args()
@@ -791,8 +710,6 @@ if __name__ == '__main__':
     REQUEST_DELAY = args.delay
     generate_playlist(
         output_file=args.output,
-        max_per_cat=args.max_per_cat,
-        top_categories=args.top,
-        categories_filter=set(args.categories) if args.categories else None,
+        max_rooms=args.rooms,
         max_workers=args.workers,
     )   
