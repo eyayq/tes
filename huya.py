@@ -1,24 +1,25 @@
 #!/usr/bin/env python3
 """
-Kick M3U Playlist Scraper
-Scrape semua kategori live streaming Kick → playlist.m3u
+Kick M3U Playlist Scraper (FIXED)
+Scrape semua subkategori → live streams → playback_url → playlist.m3u
 """
 
 import time
 import logging
+import argparse
 from datetime import datetime, timezone
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from typing import Optional
+import threading
 
 from curl_cffi import requests as cffi_requests
 
 # ─── Config ───────────────────────────────────────────────────────────────────
-MAX_WORKERS = 10          # jumlah thread paralel
-REQUEST_TIMEOUT = 15      # detik
-RETRY_COUNT = 3           # retry per request
-RETRY_DELAY = 2           # detik antar retry
-OUTPUT_FILE = "playlist.m3u"
+MAX_WORKERS = 105
+REQUEST_TIMEOUT = 15
+RETRY_COUNT = 3
+RETRY_DELAY = 2
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 log = logging.getLogger("kick-m3u")
@@ -29,14 +30,13 @@ class Stream:
     channel_slug: str
     title: str
     playback_url: str
-    group_title: str       # kategori
-    tvg_logo: str          # logo channel
-    started_at: Optional[str]  # ISO format
+    group_title: str
+    tvg_logo: str
+    started_at: Optional[str]
     viewers: int
 
 
-# ─── HTTP Session (thread-safe per thread) ───────────────────────────────────
-import threading
+# ─── Thread-local session ─────────────────────────────────────────────────────
 _local = threading.local()
 
 def get_session() -> cffi_requests.Session:
@@ -45,8 +45,7 @@ def get_session() -> cffi_requests.Session:
     return _local.session
 
 
-def http_get(url: str, params: dict | None = None) -> dict | None:
-    """GET dengan retry."""
+def http_get(url: str, params: dict | None = None) -> dict | list | None:
     for attempt in range(RETRY_COUNT):
         try:
             r = get_session().get(url, params=params, timeout=REQUEST_TIMEOUT)
@@ -59,192 +58,270 @@ def http_get(url: str, params: dict | None = None) -> dict | None:
             else:
                 log.debug("HTTP %s untuk %s", r.status_code, url)
         except Exception as e:
-            log.debug("Error %s (attempt %d/%d): %s", url, attempt+1, RETRY_COUNT, e)
+            log.debug("Error %s (attempt %d/%d): %s", url, attempt + 1, RETRY_COUNT, e)
             time.sleep(RETRY_DELAY)
     return None
 
 
-# ─── Step 1: Ambil semua subkategori ─────────────────────────────────────────
+# ─── Step 1: Ambil semua subcategories (page-based pagination) ────────────────
 def fetch_all_subcategories() -> list[dict]:
-    """Fetch semua subkategori (paginated)."""
+    """Fetch semua subcategories menggunakan page pagination."""
     all_subs = []
-    cursor = 0
-    session = cffi_requests.Session(impersonate="chrome124")
+    page = 1
     while True:
-        r = session.get(
+        data = http_get(
             "https://kick.com/api/v1/subcategories",
-            params={"cursor": cursor, "limit": 100},
-            timeout=REQUEST_TIMEOUT,
+            params={"page": page, "limit": 100},
         )
-        data = r.json()
-        items = data.get("data", [])
-        all_subs.extend(items)
-        log.info("Subkategori: %d diambil...", len(all_subs))
-
-        next_cursor = data.get("pagination", {}).get("next_cursor")
-        if not next_cursor:
+        if not data:
             break
-        cursor = next_cursor
-        time.sleep(0.3)
+
+        items = data.get("data", [])
+        if not items:
+            break
+
+        all_subs.extend(items)
+        log.info("Subcategories: %d diambil (page %d)...", len(all_subs), page)
+
+        # Cek apakah ada page berikutnya
+        last_page = data.get("last_page", 0)
+        current = data.get("current_page", page)
+        if current >= last_page:
+            break
+        page += 1
+        time.sleep(0.2)
+
     return all_subs
 
 
-# ─── Step 2: Ambil live streams per kategori ─────────────────────────────────
-def fetch_live_in_category(sub: dict) -> list[dict]:
-    """Fetch semua stream live di satu subkategori."""
-    slug = sub.get("slug")
-    if not slug:
-        return []
-    data = http_get(
-        f"https://kick.com/api/v1/categories/{slug}",
-        params={"limit": 0},  # 0 = semua
-    )
-    if not data:
-        return []
-    return data.get("data", [])
+# ─── Step 2: Ambil live streams per subcategory ───────────────────────────────
+def fetch_live_streams(subcategory_slug: str) -> list[dict]:
+    """
+    Fetch semua live streams di satu subcategory.
+    Endpoint: kick.com/stream/livestreams/en
+    """
+    all_streams = []
+    page = 1
+    while True:
+        data = http_get(
+            "https://kick.com/stream/livestreams/en",
+            params={
+                "page": page,
+                "limit": 50,
+                "subcategory": subcategory_slug,
+            },
+        )
+        if not data:
+            break
+
+        # Response bisa berupa list atau dict dengan "data"
+        if isinstance(data, list):
+            items = data
+        elif isinstance(data, dict):
+            items = data.get("data", data.get("results", []))
+        else:
+            break
+
+        if not items:
+            break
+
+        all_streams.extend(items)
+
+        # Pagination check
+        if isinstance(data, dict):
+            last_page = data.get("last_page", 0)
+            current = data.get("current_page", page)
+            if current >= last_page:
+                break
+        else:
+            # Jika list, berhenti jika kurang dari limit
+            if len(items) < 50:
+                break
+
+        page += 1
+        time.sleep(0.1)
+
+    return all_streams
 
 
-# ─── Step 3: Ambil playback_url per channel ──────────────────────────────────
+# ─── Step 3: Ambil playback_url ───────────────────────────────────────────────
 def fetch_playback_url(channel_slug: str) -> Optional[str]:
-    """Fetch playback_url (m3u8) dari channel."""
     data = http_get(f"https://kick.com/api/v2/channels/{channel_slug}")
     if not data:
         return None
     return data.get("playback_url")
 
 
-# ─── Step 4: Proses satu stream (dipanggil dari thread pool) ─────────────────
-def process_stream(live: dict, category_name: str) -> Optional[Stream]:
-    """
-    Proses satu entry livestream → Stream object.
-    Ambil playback_url dari channel API.
-    """
-    channel_slug = live.get("channel_slug")
+# ─── Step 4: Proses satu stream ───────────────────────────────────────────────
+def process_stream(stream_data: dict, category_name: str) -> Optional[Stream]:
+    """Proses satu stream entry → Stream object."""
+    # Ekstrak channel slug (variasi field name)
+    channel_slug = (
+        stream_data.get("channel_slug")
+        or stream_data.get("channel_name")
+        or stream_data.get("slug")
+        or ""
+    )
+    if not channel_slug:
+        # Coba dari nested channel object
+        ch = stream_data.get("channel", {})
+        if isinstance(ch, dict):
+            channel_slug = ch.get("slug") or ch.get("name") or ""
     if not channel_slug:
         return None
 
+    # Ambil playback_url
     playback_url = fetch_playback_url(channel_slug)
     if not playback_url:
         return None
 
-    started_at = live.get("start_time")
-    tvg_logo = live.get("channel_profile_pic", "")
+    # Ekstrak info
+    title = stream_data.get("title") or stream_data.get("session_title") or "Untitled"
+    viewers = (
+        stream_data.get("viewer_count")
+        or stream_data.get("viewers")
+        or 0
+    )
+    started_at = (
+        stream_data.get("start_time")
+        or stream_data.get("started_at")
+        or stream_data.get("created_at")
+        or None
+    )
+    tvg_logo = (
+        stream_data.get("channel_profile_pic")
+        or stream_data.get("profile_picture")
+        or stream_data.get("thumbnail_url")
+        or ""
+    )
+    # Coba dari nested channel
+    if not tvg_logo:
+        ch = stream_data.get("channel", {})
+        if isinstance(ch, dict):
+            tvg_logo = ch.get("profile_picture") or ch.get("profile_pic") or ""
 
     return Stream(
         channel_slug=channel_slug,
-        title=live.get("title", "Untitled"),
+        title=title,
         playback_url=playback_url,
         group_title=category_name,
         tvg_logo=tvg_logo,
         started_at=started_at,
-        viewers=live.get("viewer_count", 0),
+        viewers=viewers,
     )
 
 
 # ─── Step 5: Format M3U ──────────────────────────────────────────────────────
 def format_stream_title(stream: Stream) -> str:
-    """Format: {title} [{HH:MM} {DD/MM/YYYY}]"""
     base = stream.title
     if stream.started_at:
         try:
             dt = datetime.fromisoformat(stream.started_at.replace("Z", "+00:00"))
-            local = dt.astimezone()  # convert ke local time
-            time_str = local.strftime("%H:%M")
-            date_str = local.strftime("%d/%m/%Y")
-            base = f"{base} [{time_str} {date_str}]"
+            local = dt.astimezone()
+            base = f"{base} [{local.strftime('%H:%M')} {local.strftime('%d/%m/%Y')}]"
         except Exception:
             pass
     return base
 
 
 def build_m3u(streams: list[Stream]) -> str:
-    """Build M3U playlist string."""
-    lines = ["#EXTM3U", "#EXTINF:-1"]
+    lines = ["#EXTM3U"]
     for s in streams:
         title = format_stream_title(s)
-        attrs = [
-            f'tvg-id="{s.group_title}.{s.channel_slug}"',
-            f'tvg-name="{s.channel_slug}"',
-            f'tvg-logo="{s.tvg_logo}"',
-            f'group-title="{s.group_title}"',
-        ]
-        lines.append(",".join(attrs) + f" {title}")
+        attrs = (
+            f'tvg-id="{s.group_title}.{s.channel_slug}",'
+            f'tvg-name="{s.channel_slug}",'
+            f'tvg-logo="{s.tvg_logo}",'
+            f'group-title="{s.group_title}"'
+        )
+        lines.append(f"#EXTINF:-1,{attrs} {title}")
         lines.append(s.playback_url)
     return "\n".join(lines) + "\n"
 
 
 # ─── Main ─────────────────────────────────────────────────────────────────────
 def main():
+    parser = argparse.ArgumentParser(description="Kick M3U Scraper")
+    parser.add_argument("--output", "-o", default="playlist.m3u", help="Output file")
+    parser.add_argument("--workers", "-w", type=int, default=MAX_WORKERS, help="Thread count")
+    args = parser.parse_args()
+
     log.info("=== Kick M3U Scraper ===")
+    log.info("Workers: %d | Output: %s", args.workers, args.output)
 
-    # 1. Ambil semua subkategori
-    log.info("Mengambil semua subkategori...")
+    # 1. Ambil semua subcategories
+    log.info("Mengambil semua subcategories...")
     subcategories = fetch_all_subcategories()
-    log.info("Total subkategori: %d", len(subcategories))
+    log.info("Total subcategories: %d", len(subcategories))
 
-    # 2-4. Fetch live + playback_url (paralel per kategori)
-    all_streams: list[Stream] = []
-    seen_slugs: set[str] = set()  # dedup
+    # Filter: hanya yang viewers > 0 (ada stream live)
+    active_subs = [s for s in subcategories if s.get("viewers", 0) > 0]
+    log.info("Subcategories dengan stream live: %d", len(active_subs))
 
-    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
-        # Submit per kategori
+    # 2. Fetch live streams per subcategory (paralel)
+    all_raw_streams: list[tuple[dict, str]] = []  # (stream_data, category_name)
+    seen_slugs: set[str] = set()
+
+    with ThreadPoolExecutor(max_workers=args.workers) as pool:
         futures = {}
-        for sub in subcategories:
-            cat_name = sub.get("name", sub.get("slug", "Unknown"))
-            fut = pool.submit(fetch_live_in_category, sub)
-            futures[fut] = cat_name
+        for sub in active_subs:
+            slug = sub.get("slug")
+            name = sub.get("name", slug)
+            if slug:
+                fut = pool.submit(fetch_live_streams, slug)
+                futures[fut] = (slug, name)
 
-        # Kumpulkan hasil kategori
-        category_lives: dict[str, list[dict]] = {}
+        done = 0
         for fut in as_completed(futures):
-            cat_name = futures[fut]
+            done += 1
+            slug, name = futures[fut]
+            if done % 20 == 0:
+                log.info("Kategori progress: %d/%d", done, len(futures))
             try:
-                lives = fut.result()
-                if lives:
-                    category_lives[cat_name] = lives
+                streams = fut.result()
+                for s in streams:
+                    ch_slug = (
+                        s.get("channel_slug")
+                        or s.get("channel_name")
+                        or (s.get("channel", {}) or {}).get("slug", "")
+                    )
+                    if ch_slug and ch_slug not in seen_slugs:
+                        seen_slugs.add(ch_slug)
+                        all_raw_streams.append((s, name))
             except Exception as e:
-                log.warning("Error kategori %s: %s", cat_name, e)
+                log.debug("Error kategori %s: %s", name, e)
 
-    log.info("Kategori dengan stream live: %d", len(category_lives))
+    log.info("Total stream unik: %d", len(all_raw_streams))
 
-    # 5. Fetch playback_url per stream (paralel)
-    tasks = []
-    for cat_name, lives in category_lives.items():
-        for live in lives:
-            slug = live.get("channel_slug")
-            if slug and slug not in seen_slugs:
-                seen_slugs.add(slug)
-                tasks.append((live, cat_name))
-
-    log.info("Total stream unik: %d — fetching playback URLs...", len(tasks))
-
-    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
+    # 3. Fetch playback_url per stream (paralel)
+    all_streams: list[Stream] = []
+    with ThreadPoolExecutor(max_workers=args.workers) as pool:
         futures = {
-            pool.submit(process_stream, live, cat_name): live.get("channel_slug")
-            for live, cat_name in tasks
+            pool.submit(process_stream, raw, cat): raw
+            for raw, cat in all_raw_streams
         }
         done = 0
         for fut in as_completed(futures):
             done += 1
-            if done % 50 == 0:
-                log.info("Progress: %d/%d", done, len(futures))
+            if done % 100 == 0:
+                log.info("Playback URL progress: %d/%d", done, len(futures))
             try:
                 stream = fut.result()
                 if stream:
                     all_streams.append(stream)
             except Exception as e:
-                log.debug("Error stream %s: %s", futures[fut], e)
+                log.debug("Error stream: %s", e)
 
-    # 6. Sort by viewers desc
+    # 4. Sort by viewers desc
     all_streams.sort(key=lambda s: s.viewers, reverse=True)
-    log.info("Stream valid dengan playback_url: %d", len(all_streams))
+    log.info("Stream valid: %d", len(all_streams))
 
-    # 7. Tulis M3U
+    # 5. Tulis M3U
     m3u_content = build_m3u(all_streams)
-    with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
+    with open(args.output, "w", encoding="utf-8") as f:
         f.write(m3u_content)
 
-    log.info("✅ Selesai! File: %s (%d stream)", OUTPUT_FILE, len(all_streams))
+    log.info("✅ Selesai! File: %s (%d stream)", args.output, len(all_streams))
 
 
 if __name__ == "__main__":
