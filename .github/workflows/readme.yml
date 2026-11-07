@@ -15,14 +15,14 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: eyayq/tes
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_TOKEN }}
           path: source
 
       - name: ✓
         uses: actions/checkout@v4
         with:
           repository: eyayq/eliv
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_TOKEN }}
           path: destination
 
       - name: ✓
