@@ -1,42 +1,56 @@
-name: Update
+name: NEW
 
 on:
   push:
     branches: [main]
   schedule:
-    - cron: '*/5 * * * *'   # setiap 30 menit
+    - cron: '0,5,10,15,20,25,30,35,40,45,50,55 * * * *'
   workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  update:
+  scrape:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-      - uses: actions/setup-python@v5
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.12'
 
-      - run: pip install --upgrade pip
-             pip install "curl-cffi<0.14" deep-translator playwright
-             playwright install chromium
-      
-
-      - name: Generate playlist
-        run: python3 huya.py --output playlist.m3u    
-
-      - name: Commit & push
+      - name: Install Dependencies
         run: |
-          git config user.name "eyayq"
-          git config user.email "eyayq@users.noreply.github.com"
-          if git diff --quiet -- playlist.m3u; then
-            echo "No changes"
-          else
-            git add playlist.m3u
-            git commit -m "auto: update playlist ($(date -u +%Y-%m-%dT%H:%M:%SZ))"
-            git push
-          fi   
+          pip install curl_cffi beautifulsoup4 websockets pycryptodome playwright
+          playwright install chromium
+
+      - name: Run Scraper
+        run: python new.py
+
+      - name: Commit and Push
+        run: |
+          git config --local user.email "eyayq@users.noreply.github.com"
+          git config --local user.name "eyayq"
+          git add playlist.m3u
+
+          if git diff --cached --quiet; then
+            echo "no changes"
+            exit 0
+          fi
+
+          git commit -m "up $(date)"
+
+          for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16; do
+            git pull --rebase --autostash origin main && git push origin main && break
+            echo "❌ Attempt $i failed, retrying..."
+            sleep 5
+          done   
+
+
+
+
+
+
