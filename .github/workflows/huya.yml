@@ -21,8 +21,7 @@ jobs:
         with:
           python-version: '3.11'
 
-      - run: pip install curl-cffi deep-translator playwright
-         playwright install chromium
+      - run: pip install "curl-cffi<0.14" deep-translator
       
 
       - name: Generate playlist
