@@ -17,7 +17,7 @@ from typing import Optional
 from curl_cffi import requests as cffi_requests
 
 # ─── Config ───────────────────────────────────────────────────────────────────
-MAX_WORKERS = 300
+MAX_WORKERS = 100
 REQUEST_TIMEOUT = 15
 RETRY_COUNT = 3
 RETRY_DELAY = 2
