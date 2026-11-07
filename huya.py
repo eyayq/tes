@@ -14,7 +14,7 @@ from curl_cffi.requests import Session
 # ─── CONFIG ───────────────────────────────────────────────────────────────────
 PROXY = "https://a.bhns.workers.dev/?url="
 SOURCE_URL = "https://escharts.com/live/mobile-legends"
-OUTPUT_FILE = "mlbb_live.m3u"
+OUTPUT_FILE = "playlist.m3u"
 MAX_WORKERS = 5
 GROUP_TITLE = "Mobile Legends"
 CLIENT_NAME = "WEB_EMBEDDED_PLAYER"
