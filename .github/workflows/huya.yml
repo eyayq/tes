@@ -11,7 +11,7 @@ permissions:
   contents: write
 
 jobs:
-  ✓:
+  bhns0:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
