@@ -1,355 +1,250 @@
 #!/usr/bin/env python3
 """
-Scrape live streams dari escharts.com/live/mobile-legends
-→ Playwright untuk render JS → InnerTube untuk stream URL → M3U
+Kick M3U Playlist Scraper
+Scrape semua kategori live streaming Kick → playlist.m3u
 """
 
-import re
-import json
 import time
-import urllib.parse
-import sys
+import logging
+from datetime import datetime, timezone
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from curl_cffi.requests import Session
-from playwright.sync_api import sync_playwright
+from dataclasses import dataclass
+from typing import Optional
 
-# ─── CONFIG ───────────────────────────────────────────────────────────────────
-PROXY = "https://a.bhns.workers.dev/?url="
-SOURCE_URL = "https://escharts.com/live/mobile-legends"
+from curl_cffi import requests as cffi_requests
+
+# ─── Config ───────────────────────────────────────────────────────────────────
+MAX_WORKERS = 10          # jumlah thread paralel
+REQUEST_TIMEOUT = 15      # detik
+RETRY_COUNT = 3           # retry per request
+RETRY_DELAY = 2           # detik antar retry
 OUTPUT_FILE = "playlist.m3u"
-MAX_WORKERS = 5
-GROUP_TITLE = "Mobile Legends"
-CLIENT_NAME = "WEB_EMBEDDED_PLAYER"
-CLIENT_VERSION = "2.20261105.09.00"
-# ──────────────────────────────────────────────────────────────────────────────
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
+log = logging.getLogger("kick-m3u")
 
 
-def proxy_post(url: str, payload: dict, session: Session) -> dict:
-    """POST via Cloudflare Worker proxy"""
-    full = PROXY + urllib.parse.quote(url, safe="")
-    r = session.post(
-        full,
-        json=payload,
-        impersonate="chrome",
-        timeout=30,
-        headers={"Content-Type": "application/json"},
-    )
-    return r.json()
+@dataclass
+class Stream:
+    channel_slug: str
+    title: str
+    playback_url: str
+    group_title: str       # kategori
+    tvg_logo: str          # logo channel
+    started_at: Optional[str]  # ISO format
+    viewers: int
 
 
-def scrape_page(url: str) -> str:
-    """Render halaman dengan Playwright (headless)"""
-    with sync_playwright() as p:
-        browser = p.chromium.launch(
-            headless=True,
-            args=["--no-sandbox", "--disable-blink-features=AutomationControlled"]
-        )
-        context = browser.new_context(
-            user_agent="Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Mobile Safari/537.36",
-            viewport={"width": 390, "height": 844},
-            locale="id-ID",
-        )
-        page = context.new_page()
-        page.goto(url, wait_until="networkidle", timeout=60000)
-        # Tunggu ekstra untuk ensure semua stream tile ter-render
-        time.sleep(3)
-        html = page.content()
-        browser.close()
-    return html
+# ─── HTTP Session (thread-safe per thread) ───────────────────────────────────
+import threading
+_local = threading.local()
+
+def get_session() -> cffi_requests.Session:
+    if not hasattr(_local, "session"):
+        _local.session = cffi_requests.Session(impersonate="chrome124")
+    return _local.session
 
 
-def extract_streams(html: str) -> list[dict]:
-    """
-    Ekstrak semua stream dari HTML yang sudah di-render.
-    Mendukung: YouTube, Twitch, Kick, Trovo
-    """
-    streams = []
-
-    # ── YouTube embeds ──
-    yt_ids = set()
-    yt_ids.update(re.findall(r'youtube\.com/embed/([A-Za-z0-9_-]{11})', html))
-    yt_ids.update(re.findall(r'"videoId"\s*:\s*"([A-Za-z0-9_-]{11})"', html))
-    yt_ids.update(re.findall(r'youtube\.com/watch\?v=([A-Za-z0-9_-]{11})', html))
-    yt_ids.update(re.findall(r'youtu\.be/([A-Za-z0-9_-]{11})', html))
-
-    for vid in yt_ids:
-        streams.append({"platform": "youtube", "id": vid})
-
-    # ── Twitch channels ──
-    twitch_channels = set()
-    twitch_channels.update(re.findall(r'twitch\.tv/([a-zA-Z0-9_]{3,25})', html))
-    # Filter out non-channel paths
-    exclude = {'videos', 'directory', 'downloads', 'p', 'settings', 'login', 'signup', 'search', 'leaderboard'}
-    for ch in twitch_channels:
-        if ch.lower() not in exclude:
-            streams.append({"platform": "twitch", "id": ch})
-
-    # ── Kick ──
-    kick_channels = set(re.findall(r'kick\.com/([a-zA-Z0-9_]{3,25})', html))
-    for ch in kick_channels:
-        if ch.lower() not in ('discover', 'leaderboard', 'login', 'signup'):
-            streams.append({"platform": "kick", "id": ch})
-
-    # ── Trovo ──
-    trovo_channels = set(re.findall(r'trovo\.live/([a-zA-Z0-9_]{3,25})', html))
-    for ch in trovo_channels:
-        streams.append({"platform": "trovo", "id": ch})
-
-    return streams
+def http_get(url: str, params: dict | None = None) -> dict | None:
+    """GET dengan retry."""
+    for attempt in range(RETRY_COUNT):
+        try:
+            r = get_session().get(url, params=params, timeout=REQUEST_TIMEOUT)
+            if r.status_code == 200:
+                return r.json()
+            elif r.status_code == 429:
+                wait = RETRY_DELAY * (attempt + 1) * 3
+                log.warning("Rate limited, tunggu %ds...", wait)
+                time.sleep(wait)
+            else:
+                log.debug("HTTP %s untuk %s", r.status_code, url)
+        except Exception as e:
+            log.debug("Error %s (attempt %d/%d): %s", url, attempt+1, RETRY_COUNT, e)
+            time.sleep(RETRY_DELAY)
+    return None
 
 
-def get_youtube_stream(video_id: str, session: Session) -> dict:
-    """Panggil InnerTube player API untuk YouTube"""
-    payload = {
-        "context": {
-            "client": {
-                "clientName": CLIENT_NAME,
-                "clientVersion": CLIENT_VERSION,
-                "hl": "id",
-                "gl": "ID",
-                "platform": "MOBILE",
-            }
-        },
-        "videoId": video_id,
-    }
-    url = "https://www.youtube.com/youtubei/v1/player?prettyPrint=false"
-    data = proxy_post(url, payload, session)
-
-    status = data.get("playabilityStatus", {}).get("status", "")
-    if status != "OK":
-        return {"id": video_id, "platform": "youtube", "error": data.get("playabilityStatus", {}).get("reason", "unknown"), "stream_url": "", "title": "", "channel": "", "thumbnail": ""}
-
-    details = data.get("videoDetails", {})
-    is_live = details.get("isLiveContent", False)
-    if not is_live:
-        return {"id": video_id, "platform": "youtube", "error": "not_live", "stream_url": "", "title": details.get("title", ""), "channel": details.get("author", ""), "thumbnail": ""}
-
-    # Thumbnail
-    thumbnail = ""
-    thumbs = details.get("thumbnail", {})
-    if thumbs:
-        thumbnail = max(thumbs.values(), key=lambda x: x.get("width", 0))["url"]
-    if not thumbnail:
-        thumbnail = f"https://i.ytimg.com/vi/{video_id}/maxresdefault.jpg"
-
-    # HLS URL
-    stream_url = ""
-    sd = data.get("streamingData", {})
-    if sd.get("hlsManifestUrl"):
-        stream_url = sd["hlsManifestUrl"]
-
-    return {
-        "id": video_id,
-        "platform": "youtube",
-        "title": details.get("title", ""),
-        "channel": details.get("author", ""),
-        "thumbnail": thumbnail,
-        "stream_url": stream_url,
-        "live": True,
-    }
-
-
-def get_twitch_stream(channel: str, session: Session) -> dict:
-    """Dapat stream URL dari Twitch (GQL API)"""
-    gql_url = "https://gql.twitch.tv/gql"
-    query = """
-    query {
-      user(login: "%s") {
-        id
-        displayName
-        profileImageURL(width: 300)
-        stream {
-          id
-          title
-          viewersCount
-          game { name }
-        }
-      }
-    }
-    """ % channel
-
-    payload = {
-        "query": query.strip(),
-    }
-
-    try:
-        r = session.post(
-            gql_url,
-            json=payload,
-            impersonate="chrome",
-            timeout=15,
-            headers={"Client-Id": "kimne78kx3ncx6brgo4mv6wki5h1ko"},
+# ─── Step 1: Ambil semua subkategori ─────────────────────────────────────────
+def fetch_all_subcategories() -> list[dict]:
+    """Fetch semua subkategori (paginated)."""
+    all_subs = []
+    cursor = 0
+    session = cffi_requests.Session(impersonate="chrome124")
+    while True:
+        r = session.get(
+            "https://kick.com/api/v1/subcategories",
+            params={"cursor": cursor, "limit": 100},
+            timeout=REQUEST_TIMEOUT,
         )
         data = r.json()
-        user = data.get("data", {}).get("user", {})
-        stream = user.get("stream")
+        items = data.get("data", [])
+        all_subs.extend(items)
+        log.info("Subkategori: %d diambil...", len(all_subs))
 
-        if not stream:
-            return {"id": channel, "platform": "twitch", "error": "offline", "stream_url": "", "title": "", "channel": user.get("displayName", channel), "thumbnail": user.get("profileImageURL", "")}
-
-        channel_name = user.get("displayName", channel)
-        thumbnail = user.get("profileImageURL", f"https://static-cdn.jtvnw.net/jtv_user_pictures/{channel}_profile_image-300x300.png")
-        title = stream.get("title", "")
-
-        # Twitch HLS (public, no auth needed for basic quality)
-        # Format: https://<server>/<app>/<channel>_chunklist.m3u8
-        # We use the simple public URL
-        stream_url = f"https://static-cdn.jtvnw.net/swfplayer/crossdomain.xml"  # placeholder
-        # Actually for Twitch we need to use the player API
-        # Simple approach: use the channel's public HLS
-        stream_url = f"https://twitch.tv/{channel}"  # Fallback: just the page URL
-
-        return {
-            "id": channel,
-            "platform": "twitch",
-            "title": title,
-            "channel": channel_name,
-            "thumbnail": thumbnail,
-            "stream_url": stream_url,
-            "live": True,
-            "viewers": stream.get("viewersCount", 0),
-        }
-    except Exception as e:
-        return {"id": channel, "platform": "twitch", "error": str(e), "stream_url": "", "title": "", "channel": channel, "thumbnail": ""}
+        next_cursor = data.get("pagination", {}).get("next_cursor")
+        if not next_cursor:
+            break
+        cursor = next_cursor
+        time.sleep(0.3)
+    return all_subs
 
 
-def get_twitch_hls(channel: str, session: Session) -> str:
-    """Dapat actual HLS URL dari Twitch player API"""
-    try:
-        # Step 1: Get access token
-        token_url = f"https://id.twitch.tv/oauth2/access_token"
-        r = session.post(
-            token_url,
-            data={"client_id": "kimne78kx3ncx6brgo4mv6wki5h1ko",
-                  "client_secret": "34u8lq8k0r09v45677g3k2j9d1a0b2c3d4e5f6g7h8i9",
-                  "grant_type": "client_credentials"},
-            timeout=10
-        )
-        # This won't work without valid secret. Use public approach instead.
-        pass
-    except:
-        pass
-
-    # Public approach: use the channel's HLS directly
-    # Twitch provides public HLS at:
-    # https://<server>.ttvnw.net/<app>/<channel>.m3u8
-    # But we need to resolve the server first via player API
-    try:
-        player_url = f"https://player.twitch.tv/?channel={channel}&parent=escharts.com"
-        r = session.get(player_url, impersonate="chrome", timeout=10)
-        # Parse HLS URL from the page
-        m = re.search(r'"(https://[^"]+\.m3u8[^"]*)"', r.text)
-        if m:
-            return m.group(1)
-    except:
-        pass
-
-    # Fallback: use the simple public URL pattern
-    return f"https://static-cdn.jtvnw.net/swfplayer/crossdomain.xml"
+# ─── Step 2: Ambil live streams per kategori ─────────────────────────────────
+def fetch_live_in_category(sub: dict) -> list[dict]:
+    """Fetch semua stream live di satu subkategori."""
+    slug = sub.get("slug")
+    if not slug:
+        return []
+    data = http_get(
+        f"https://kick.com/api/v1/categories/{slug}",
+        params={"limit": 0},  # 0 = semua
+    )
+    if not data:
+        return []
+    return data.get("data", [])
 
 
-def process_stream(args):
-    """Worker untuk ThreadPoolExecutor"""
-    stream_info, session = args
-    platform = stream_info["platform"]
-    sid = stream_info["id"]
-
-    try:
-        if platform == "youtube":
-            return get_youtube_stream(sid, session)
-        elif platform == "twitch":
-            result = get_twitch_stream(sid, session)
-            if result.get("stream_url") == f"https://twitch.tv/{sid}":
-                # Try to get actual HLS
-                hls = get_twitch_hls(sid, session)
-                if hls and "crossdomain" not in hls:
-                    result["stream_url"] = hls
-            return result
-        else:
-            return {"id": sid, "platform": platform, "error": "unsupported", "stream_url": "", "title": "", "channel": sid, "thumbnail": ""}
-    except Exception as e:
-        return {"id": sid, "platform": platform, "error": str(e), "stream_url": "", "title": "", "channel": sid, "thumbnail": ""}
+# ─── Step 3: Ambil playback_url per channel ──────────────────────────────────
+def fetch_playback_url(channel_slug: str) -> Optional[str]:
+    """Fetch playback_url (m3u8) dari channel."""
+    data = http_get(f"https://kick.com/api/v2/channels/{channel_slug}")
+    if not data:
+        return None
+    return data.get("playback_url")
 
 
-def write_m3u(results: list[dict], output: str):
-    """Tulis M3U dengan tvg-logo dan group-title"""
-    with open(output, "w", encoding="utf-8") as f:
-        f.write("#EXTM3U\n")
-        for r in results:
-            if not r.get("stream_url"):
-                continue
-            group = r.get("channel") or GROUP_TITLE
-            logo = r.get("thumbnail", "")
-            title = r.get("title", r["id"]).replace('"', "'")
-            platform = r.get("platform", "")
-            # Format: [Platform] Channel | Title
-            display = f"[{platform.upper()}] {group} | {title}"
-            f.write(
-                f'#EXTINF:-1 group-title="{group}",tvg-logo="{logo}",{display}\n'
-            )
-            f.write(f'{r["stream_url"]}\n')
+# ─── Step 4: Proses satu stream (dipanggil dari thread pool) ─────────────────
+def process_stream(live: dict, category_name: str) -> Optional[Stream]:
+    """
+    Proses satu entry livestream → Stream object.
+    Ambil playback_url dari channel API.
+    """
+    channel_slug = live.get("channel_slug")
+    if not channel_slug:
+        return None
 
-    valid = sum(1 for r in results if r.get("stream_url"))
-    print(f"\n✅ M3U ditulis ke {output} ({valid}/{len(results)} stream valid)")
+    playback_url = fetch_playback_url(channel_slug)
+    if not playback_url:
+        return None
+
+    started_at = live.get("start_time")
+    tvg_logo = live.get("channel_profile_pic", "")
+
+    return Stream(
+        channel_slug=channel_slug,
+        title=live.get("title", "Untitled"),
+        playback_url=playback_url,
+        group_title=category_name,
+        tvg_logo=tvg_logo,
+        started_at=started_at,
+        viewers=live.get("viewer_count", 0),
+    )
 
 
+# ─── Step 5: Format M3U ──────────────────────────────────────────────────────
+def format_stream_title(stream: Stream) -> str:
+    """Format: {title} [{HH:MM} {DD/MM/YYYY}]"""
+    base = stream.title
+    if stream.started_at:
+        try:
+            dt = datetime.fromisoformat(stream.started_at.replace("Z", "+00:00"))
+            local = dt.astimezone()  # convert ke local time
+            time_str = local.strftime("%H:%M")
+            date_str = local.strftime("%d/%m/%Y")
+            base = f"{base} [{time_str} {date_str}]"
+        except Exception:
+            pass
+    return base
+
+
+def build_m3u(streams: list[Stream]) -> str:
+    """Build M3U playlist string."""
+    lines = ["#EXTM3U", "#EXTINF:-1"]
+    for s in streams:
+        title = format_stream_title(s)
+        attrs = [
+            f'tvg-id="{s.group_title}.{s.channel_slug}"',
+            f'tvg-name="{s.channel_slug}"',
+            f'tvg-logo="{s.tvg_logo}"',
+            f'group-title="{s.group_title}"',
+        ]
+        lines.append(",".join(attrs) + f" {title}")
+        lines.append(s.playback_url)
+    return "\n".join(lines) + "\n"
+
+
+# ─── Main ─────────────────────────────────────────────────────────────────────
 def main():
-    print(f"📡 Source: {SOURCE_URL}")
-    print(f"📝 Output: {OUTPUT_FILE}")
-    print()
+    log.info("=== Kick M3U Scraper ===")
 
-    # Step 1: Render page with Playwright
-    print("🔍 Step 1: Render halaman dengan Playwright...")
-    html = scrape_page(SOURCE_URL)
-    print(f"   HTML rendered: {len(html)} chars")
+    # 1. Ambil semua subkategori
+    log.info("Mengambil semua subkategori...")
+    subcategories = fetch_all_subcategories()
+    log.info("Total subkategori: %d", len(subcategories))
 
-    # Step 2: Extract streams
-    print("📺 Step 2: Ekstrak stream IDs...")
-    streams = extract_streams(html)
-    print(f"   Ditemukan {len(streams)} stream:")
-    for s in streams[:10]:
-        print(f"     [{s['platform']}] {s['id']}")
-    if len(streams) > 10:
-        print(f"     ... dan {len(streams) - 10} lainnya")
-
-    if not streams:
-        print("❌ Tidak ada stream ditemukan")
-        print("   Debug: simpan HTML untuk inspeksi manual")
-        with open("debug_page.html", "w") as f:
-            f.write(html)
-        print("   → Simpan ke debug_page.html")
-        return
-
-    # Step 3: Fetch stream info concurrent
-    print(f"\n⚡ Step 3: Fetch stream info (max {MAX_WORKERS} concurrent)...")
-    sessions = [Session() for _ in range(MAX_WORKERS)]
-    results = []
+    # 2-4. Fetch live + playback_url (paralel per kategori)
+    all_streams: list[Stream] = []
+    seen_slugs: set[str] = set()  # dedup
 
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
+        # Submit per kategori
         futures = {}
-        for i, s in enumerate(streams):
-            sess = sessions[i % MAX_WORKERS]
-            fut = pool.submit(process_stream, (s, sess))
-            futures[fut] = s
+        for sub in subcategories:
+            cat_name = sub.get("name", sub.get("slug", "Unknown"))
+            fut = pool.submit(fetch_live_in_category, sub)
+            futures[fut] = cat_name
 
+        # Kumpulkan hasil kategori
+        category_lives: dict[str, list[dict]] = {}
         for fut in as_completed(futures):
-            r = fut.result()
-            results.append(r)
-            done = len(results)
-            if r.get("stream_url"):
-                status = "✅"
-            elif r.get("error") == "not_live":
-                status = "⏸️"
-            else:
-                status = "❌"
-            title = r.get("title", r.get("error", ""))[:45]
-            print(f"   [{done}/{len(streams)}] {status} [{r.get('platform','?')}] {title}")
+            cat_name = futures[fut]
+            try:
+                lives = fut.result()
+                if lives:
+                    category_lives[cat_name] = lives
+            except Exception as e:
+                log.warning("Error kategori %s: %s", cat_name, e)
 
-    for s in sessions:
-        s.close()
+    log.info("Kategori dengan stream live: %d", len(category_lives))
 
-    # Step 4: Write M3U
-    write_m3u(results, OUTPUT_FILE)
+    # 5. Fetch playback_url per stream (paralel)
+    tasks = []
+    for cat_name, lives in category_lives.items():
+        for live in lives:
+            slug = live.get("channel_slug")
+            if slug and slug not in seen_slugs:
+                seen_slugs.add(slug)
+                tasks.append((live, cat_name))
+
+    log.info("Total stream unik: %d — fetching playback URLs...", len(tasks))
+
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
+        futures = {
+            pool.submit(process_stream, live, cat_name): live.get("channel_slug")
+            for live, cat_name in tasks
+        }
+        done = 0
+        for fut in as_completed(futures):
+            done += 1
+            if done % 50 == 0:
+                log.info("Progress: %d/%d", done, len(futures))
+            try:
+                stream = fut.result()
+                if stream:
+                    all_streams.append(stream)
+            except Exception as e:
+                log.debug("Error stream %s: %s", futures[fut], e)
+
+    # 6. Sort by viewers desc
+    all_streams.sort(key=lambda s: s.viewers, reverse=True)
+    log.info("Stream valid dengan playback_url: %d", len(all_streams))
+
+    # 7. Tulis M3U
+    m3u_content = build_m3u(all_streams)
+    with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
+        f.write(m3u_content)
+
+    log.info("✅ Selesai! File: %s (%d stream)", OUTPUT_FILE, len(all_streams))
 
 
 if __name__ == "__main__":
