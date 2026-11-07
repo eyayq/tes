@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-Kick M3U Playlist Scraper (Final)
-- Warmup cf_clearance
+Kick M3U Playlist Scraper (Final — Mobile Fingerprint Fix)
+- impersonate="chrome131_android" (match mobile request)
+- Headers mobile (sec-ch-ua-mobile, sec-ch-ua-platform)
 - Single shared session
-- Global rate limiter (token bucket)
+- Global rate limiter
 - Circuit breaker
 - POST /api/v1/stream/{video_id}/playback → m3u8 + token
-- Debug logging
 """
 
 import time
@@ -24,13 +24,13 @@ from typing import Optional
 from curl_cffi import requests as cffi_requests
 
 # ─── Config ───────────────────────────────────────────────────────────────────
-MAX_WORKERS = 3
+MAX_WORKERS = 7
 REQUEST_TIMEOUT = 15
 RETRY_COUNT = 5
 OUTPUT_FILE = "playlist.m3u"
 
 # ─── Rate Limit ───────────────────────────────────────────────────────────────
-REQUESTS_PER_SECOND = 1.5
+REQUESTS_PER_SECOND = 1
 COOLDOWN_AFTER_429 = 30
 CIRCUIT_BREAKER_THRESHOLD = 10
 
@@ -38,6 +38,24 @@ CIRCUIT_BREAKER_THRESHOLD = 10
 MAX_STREAMS = 500
 MIN_VIEWERS = 2
 MAX_CATEGORIES = 20
+
+# ─── MOBILE HEADERS (match request asli) ──────────────────────────────────────
+MOBILE_HEADERS = {
+    "user-agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Mobile Safari/537.36",
+    "sec-ch-ua": '"Not:A-Brand";v="8", "Chromium";v="156", "Google Chrome";v="156"',
+    "sec-ch-ua-mobile": "?1",
+    "sec-ch-ua-platform": '"Android"',
+    "accept": "application/json",
+    "content-type": "application/json",
+    "x-app-platform": "web",
+    "origin": "https://kick.com",
+    "referer": "https://kick.com/",
+    "sec-fetch-site": "same-site",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-dest": "empty",
+    "sec-gpc": "1",
+    "accept-language": "id-ID,id;q=0.9",
+}
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 log = logging.getLogger("kick-m3u")
@@ -103,8 +121,8 @@ class CircuitBreaker:
 
 breaker = CircuitBreaker(CIRCUIT_BREAKER_THRESHOLD, COOLDOWN_AFTER_429)
 
-# ─── SINGLE SHARED SESSION ────────────────────────────────────────────────────
-_session = cffi_requests.Session(impersonate="chrome124")
+# ─── SINGLE SHARED SESSION (MOBILE!) ──────────────────────────────────────────
+_session = cffi_requests.Session(impersonate="chrome131_android")
 _session_lock = threading.Lock()
 
 
@@ -117,7 +135,7 @@ def _request(method: str, url: str, **kwargs) -> cffi_requests.Response:
 def http_get(url: str, params: dict | None = None):
     for attempt in range(RETRY_COUNT):
         try:
-            r = _request("GET", url, params=params)
+            r = _request("GET", url, params=params, headers=MOBILE_HEADERS)
             if r.status_code == 200:
                 breaker.reset()
                 return r.json()
@@ -136,12 +154,12 @@ def http_get(url: str, params: dict | None = None):
     return None
 
 
-def http_post(url: str, json_body: dict, headers: dict | None = None) -> dict | None:
+def http_post(url: str, json_body: dict) -> dict | None:
     for attempt in range(RETRY_COUNT):
         try:
-            r = _request("POST", url, json=json_body, headers=headers)
+            r = _request("POST", url, json=json_body, headers=MOBILE_HEADERS)
             if r.status_code != 200:
-                log.warning("POST → HTTP %s | %s", r.status_code, r.text[:200])
+                log.warning("POST → HTTP %s | %s", r.status_code, r.text[:300])
             if r.status_code == 200:
                 breaker.reset()
                 return r.json()
@@ -159,11 +177,11 @@ def http_post(url: str, json_body: dict, headers: dict | None = None) -> dict | 
     return None
 
 
-# ─── WARMUP (cf_clearance) ────────────────────────────────────────────────────
+# ─── WARMUP ───────────────────────────────────────────────────────────────────
 def warmup_session():
-    log.info("Warming up session...")
+    log.info("Warming up session (mobile fingerprint)...")
     try:
-        r = _session.get("https://kick.com/", timeout=REQUEST_TIMEOUT)
+        r = _session.get("https://kick.com/", timeout=REQUEST_TIMEOUT, headers=MOBILE_HEADERS)
         cookies = _session.cookies
         has_cf = any("cf_clearance" in k for k in cookies)
         log.info("cf_clearance: %s | Cookies: %s", "✅" if has_cf else "❌", list(cookies.keys()))
@@ -203,24 +221,15 @@ def post_playback(video_id: str, channel_slug: str) -> Optional[str]:
         "user_session": {
             "session_id": str(uuid.uuid4()),
             "player_device_id": str(uuid.uuid4()),
-            "browser_lang": "en",
+            "browser_lang": "id",
             "non_personalised_ads": True,
             "gdpr": 0
         }
     }
 
-    headers = {
-        "x-app-platform": "web",
-        "origin": "https://kick.com",
-        "referer": "https://kick.com/",
-        "content-type": "application/json",
-        "accept": "application/json",
-    }
-
     result = http_post(
         f"https://web.kick.com/api/v1/stream/{video_id}/playback",
         json_body=body,
-        headers=headers,
     )
     if result:
         return result.get("playback_url", {}).get("live")
@@ -278,7 +287,7 @@ def fetch_all_subcategories() -> list[dict]:
 
 
 # ─── KICK: Live per kategori ──────────────────────────────────────────────────
-_debug_printed = [False]  # mutable flag for one-time debug
+_debug_printed = [False]
 
 def fetch_live_streams(subcategory_slug: str) -> list[dict]:
     all_streams = []
@@ -301,11 +310,9 @@ def fetch_live_streams(subcategory_slug: str) -> list[dict]:
         if not items:
             break
 
-        # ── DEBUG: print sample item sekali ──
         if not _debug_printed[0] and items:
             _debug_printed[0] = True
-            log.info("DEBUG sample item: %s", json.dumps(items[0], indent=2)[:1500])
-        # ─────────────────────────────────────
+            log.info("DEBUG sample: %s", json.dumps(items[0], indent=2)[:1500])
 
         all_streams.extend(items)
 
@@ -334,7 +341,6 @@ def process_kick_stream(stream_data: dict, category_name: str) -> Optional[Strea
     if viewers < MIN_VIEWERS:
         return None
 
-    # Cek video_id dari berbagai kemungkinan field
     video_id = (
         stream_data.get("video_id")
         or (stream_data.get("livestream", {}) or {}).get("video_id")
@@ -345,7 +351,6 @@ def process_kick_stream(stream_data: dict, category_name: str) -> Optional[Strea
     if not video_id:
         video_id = get_video_id(channel_slug)
     if not video_id:
-        log.debug("No video_id for %s", channel_slug)
         return None
 
     playback_url = post_playback(video_id, channel_slug)
@@ -407,7 +412,7 @@ def main():
     parser.add_argument("--min-viewers", type=int, default=MIN_VIEWERS)
     parser.add_argument("--max-categories", type=int, default=MAX_CATEGORIES)
     parser.add_argument("--rps", type=float, default=REQUESTS_PER_SECOND)
-    parser.add_argument("--debug", action="store_true", help="Enable debug logging")
+    parser.add_argument("--debug", action="store_true")
     args = parser.parse_args()
 
     if args.debug:
@@ -416,11 +421,12 @@ def main():
     global rate_limiter
     rate_limiter = RateLimiter(args.rps)
 
-    log.info("=== Kick M3U Scraper ===")
-    log.info("Workers: %d | RPS: %.1f | Max Streams: %d | Min Viewers: %d | Max Cat: %d",
-             args.workers, args.rps, args.max_streams, args.min_viewers, args.max_categories)
+    log.info("=== Kick M3U Scraper (Mobile) ===")
+    log.info("Fingerprint: chrome131_android | RPS: %.1f | Workers: %d",
+             args.rps, args.workers)
+    log.info("Max Streams: %d | Min Viewers: %d | Max Cat: %d",
+             args.max_streams, args.min_viewers, args.max_categories)
 
-    # 0. Warmup
     warmup_session()
 
     all_streams: list[Stream] = []
