@@ -26,9 +26,9 @@ RETRY_COUNT = 4
 OUTPUT_FILE = "playlist.m3u"
 
 # ─── Batas Scrape ─────────────────────────────────────────────────────────────
-MAX_STREAMS = 3000        # maksimal jumlah stream yang di-scrape
-MIN_VIEWERS = 10          # minimal viewers (skip stream di bawah ini)
-MAX_CATEGORIES = 200      # maksimal kategori yang di-scrape (0 = semua)
+MAX_STREAMS = 300        # maksimal jumlah stream yang di-scrape
+MIN_VIEWERS = 2          # minimal viewers (skip stream di bawah ini)
+MAX_CATEGORIES = 20      # maksimal kategori yang di-scrape (0 = semua)
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 log = logging.getLogger("kick-m3u")
