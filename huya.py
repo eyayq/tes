@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Kick M3U Playlist Scraper
-- POST /api/v1/stream/{video_id}/playback → m3u8 dengan token
-- Thread pool + rate limit handling
-- Max/min limit untuk scrape
+Kick M3U Playlist Scraper (Rate Limit Fixed v2)
+- Single shared session (bukan thread-local)
+- Global rate limiter (token bucket)
+- Circuit breaker saat 429 massal
 """
 
 import time
@@ -20,15 +20,20 @@ from typing import Optional
 from curl_cffi import requests as cffi_requests
 
 # ─── Config ───────────────────────────────────────────────────────────────────
-MAX_WORKERS = 5
+MAX_WORKERS = 3
 REQUEST_TIMEOUT = 15
-RETRY_COUNT = 4
+RETRY_COUNT = 5
 OUTPUT_FILE = "playlist.m3u"
 
+# ─── Rate Limit ───────────────────────────────────────────────────────────────
+REQUESTS_PER_SECOND = 2.0   # maksimal 2 request per detik (GLOBAL)
+COOLDOWN_AFTER_429 = 30     # detik jeda setelah 429 massal
+CIRCUIT_BREAKER_THRESHOLD = 10  # 10× 429 → pause semua thread
+
 # ─── Batas Scrape ─────────────────────────────────────────────────────────────
-MAX_STREAMS = 300        # maksimal jumlah stream yang di-scrape
-MIN_VIEWERS = 2          # minimal viewers (skip stream di bawah ini)
-MAX_CATEGORIES = 20      # maksimal kategori yang di-scrape (0 = semua)
+MAX_STREAMS = 1000
+MIN_VIEWERS = 2
+MAX_CATEGORIES = 100
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 log = logging.getLogger("kick-m3u")
@@ -45,54 +50,108 @@ class Stream:
     viewers: int
 
 
-# ─── HTTP Session (thread-local) ──────────────────────────────────────────────
-_local = threading.local()
+# ─── GLOBAL RATE LIMITER (Token Bucket) ───────────────────────────────────────
+class RateLimiter:
+    def __init__(self, rate: float):
+        self.rate = rate
+        self.tokens = rate
+        self.last_refill = time.monotonic()
+        self.lock = threading.Lock()
 
-def get_session() -> cffi_requests.Session:
-    if not hasattr(_local, "session"):
-        _local.session = cffi_requests.Session(impersonate="chrome124")
-    return _local.session
+    def acquire(self):
+        while True:
+            with self.lock:
+                now = time.monotonic()
+                elapsed = now - self.last_refill
+                self.tokens = min(self.rate, self.tokens + elapsed * self.rate)
+                self.last_refill = now
+
+                if self.tokens >= 1:
+                    self.tokens -= 1
+                    return
+            time.sleep(1.0 / self.rate)
 
 
-def smart_sleep(base=0.3):
-    time.sleep(base + random.uniform(0, 0.4))
+rate_limiter = RateLimiter(REQUESTS_PER_SECOND)
+
+# ─── CIRCUIT BREAKER ──────────────────────────────────────────────────────────
+class CircuitBreaker:
+    def __init__(self, threshold: int, cooldown: int):
+        self.threshold = threshold
+        self.cooldown = cooldown
+        self.count = 0
+        self.lock = threading.Lock()
+
+    def trip(self):
+        with self.lock:
+            self.count += 1
+            if self.count >= self.threshold:
+                self.count = 0
+                log.warning("⚡ CIRCUIT BREAKER! Pause %ds...", self.cooldown)
+                time.sleep(self.cooldown)
+                return True
+        return False
+
+    def reset(self):
+        with self.lock:
+            self.count = 0
+
+
+breaker = CircuitBreaker(CIRCUIT_BREAKER_THRESHOLD, COOLDOWN_AFTER_429)
+
+# ─── SINGLE SHARED SESSION (bukan thread-local!) ──────────────────────────────
+_session = cffi_requests.Session(impersonate="chrome124")
+_session_lock = threading.Lock()
+
+
+def _request(method: str, url: str, **kwargs) -> cffi_requests.Response:
+    """Thread-safe request dengan rate limit."""
+    rate_limiter.acquire()
+    with _session_lock:
+        return _session.request(method, url, timeout=REQUEST_TIMEOUT, **kwargs)
 
 
 def http_get(url: str, params: dict | None = None):
     for attempt in range(RETRY_COUNT):
         try:
-            r = get_session().get(url, params=params, timeout=REQUEST_TIMEOUT)
+            r = _request("GET", url, params=params)
             if r.status_code == 200:
+                breaker.reset()
                 return r.json()
             elif r.status_code == 429:
-                wait = 5 * (3 ** attempt)
+                if breaker.trip():
+                    continue
+                wait = 10 * (2 ** attempt)  # 10s, 20s, 40s, 80s, 160s
                 log.warning("429! Tunggu %ds (attempt %d/%d)", wait, attempt + 1, RETRY_COUNT)
                 time.sleep(wait)
             else:
-                time.sleep(1)
+                time.sleep(2)
         except Exception:
-            time.sleep(2)
+            time.sleep(3)
     return None
 
 
 def http_post(url: str, json_body: dict, headers: dict | None = None) -> dict | None:
     for attempt in range(RETRY_COUNT):
         try:
-            r = get_session().post(url, json=json_body, headers=headers, timeout=REQUEST_TIMEOUT)
+            r = _request("POST", url, json=json_body, headers=headers)
             if r.status_code == 200:
+                breaker.reset()
                 return r.json()
             elif r.status_code == 429:
-                wait = 5 * (3 ** attempt)
+                if breaker.trip():
+                    continue
+                wait = 10 * (2 ** attempt)
                 log.warning("429 POST! Tunggu %ds (attempt %d/%d)", wait, attempt + 1, RETRY_COUNT)
                 time.sleep(wait)
             else:
-                time.sleep(1)
+                time.sleep(2)
         except Exception:
-            time.sleep(2)
+            time.sleep(3)
     return None
 
 
-# ─── KICK: POST Playback (m3u8 + token) ───────────────────────────────────────
+# ─── KICK: POST Playback ──────────────────────────────────────────────────────
 def post_playback(video_id: str, channel_slug: str) -> Optional[str]:
     body = {
         "video_player": {
@@ -191,9 +250,8 @@ def fetch_all_subcategories() -> list[dict]:
             break
 
         page += 1
-        if page % 50 == 0:
+        if page % 100 == 0:
             log.info("Subcategories: %d (page %d)", len(all_subs), page)
-        smart_sleep(0.2)
 
     log.info("Total subcategories: %d", len(all_subs))
     return all_subs
@@ -230,7 +288,6 @@ def fetch_live_streams(subcategory_slug: str) -> list[dict]:
             break
 
         page += 1
-        smart_sleep(0.1)
 
     return all_streams
 
@@ -245,12 +302,10 @@ def process_kick_stream(stream_data: dict, category_name: str) -> Optional[Strea
     if not channel_slug:
         return None
 
-    # Filter: min viewers
     viewers = stream_data.get("viewer_count") or stream_data.get("viewers") or 0
     if viewers < MIN_VIEWERS:
         return None
 
-    # Cek video_id dari response
     video_id = (
         stream_data.get("video_id")
         or (stream_data.get("livestream", {}) or {}).get("video_id")
@@ -263,7 +318,6 @@ def process_kick_stream(stream_data: dict, category_name: str) -> Optional[Strea
     if not video_id:
         return None
 
-    # POST playback → m3u8 + token
     playback_url = post_playback(video_id, channel_slug)
     if not playback_url:
         return None
@@ -288,7 +342,7 @@ def process_kick_stream(stream_data: dict, category_name: str) -> Optional[Strea
     )
 
 
-# ─── M3U FORMAT ───────────────────────────────────────────────────────────────
+# ─── M3U ──────────────────────────────────────────────────────────────────────
 def format_title(s: Stream) -> str:
     base = s.title
     if s.started_at:
@@ -317,36 +371,34 @@ def build_m3u(streams: list[Stream]) -> str:
 # ─── MAIN ─────────────────────────────────────────────────────────────────────
 def main():
     parser = argparse.ArgumentParser(description="Kick M3U Scraper")
-    parser.add_argument("--output", "-o", default=OUTPUT_FILE, help="Output file")
-    parser.add_argument("--workers", "-w", type=int, default=MAX_WORKERS, help="Thread count")
-    parser.add_argument("--max-streams", type=int, default=MAX_STREAMS, help="Max streams to scrape")
-    parser.add_argument("--min-viewers", type=int, default=MIN_VIEWERS, help="Min viewers threshold")
-    parser.add_argument("--max-categories", type=int, default=MAX_CATEGORIES, help="Max categories (0=all)")
+    parser.add_argument("--output", "-o", default=OUTPUT_FILE)
+    parser.add_argument("--workers", "-w", type=int, default=MAX_WORKERS)
+    parser.add_argument("--max-streams", type=int, default=MAX_STREAMS)
+    parser.add_argument("--min-viewers", type=int, default=MIN_VIEWERS)
+    parser.add_argument("--max-categories", type=int, default=MAX_CATEGORIES)
+    parser.add_argument("--rps", type=float, default=REQUESTS_PER_SECOND,
+                        help="Requests per second (default: 2.0)")
     args = parser.parse_args()
 
+    # Update rate limiter
+    global rate_limiter
+    rate_limiter = RateLimiter(args.rps)
+
     log.info("=== Kick M3U Scraper ===")
-    log.info("Workers: %d | Max Streams: %d | Min Viewers: %d | Max Categories: %d",
-             args.workers, args.max_streams, args.min_viewers, args.max_categories)
-    log.info("Output: %s", args.output)
+    log.info("Workers: %d | RPS: %.1f | Max Streams: %d | Min Viewers: %d | Max Cat: %d",
+             args.workers, args.rps, args.max_streams, args.min_viewers, args.max_categories)
 
     all_streams: list[Stream] = []
 
-    # 1. Ambil semua subcategories
+    # 1. Subcategories
     subcategories = fetch_all_subcategories()
-
-    # Filter: viewers > 0
     active = [s for s in subcategories if s.get("viewers", 0) > 0]
-    log.info("Kategori aktif: %d / %d", len(active), len(subcategories))
-
-    # Sort by viewers desc → ambil kategori terpopuler dulu
     active.sort(key=lambda x: x.get("viewers", 0), reverse=True)
-
-    # Limit kategori
     if args.max_categories > 0:
         active = active[:args.max_categories]
-        log.info("Dibatasi: %d kategori terpopuler", len(active))
+    log.info("Kategori aktif: %d", len(active))
 
-    # 2. Fetch live streams per kategori (paralel)
+    # 2. Fetch live per kategori
     all_raw: list[tuple[dict, str]] = []
     seen: set[str] = set()
 
@@ -368,25 +420,22 @@ def main():
                         or s.get("channel_name")
                         or (s.get("channel", {}) or {}).get("slug", "")
                     )
-                    # Filter min viewers
                     v = s.get("viewer_count") or s.get("viewers") or 0
                     if v < args.min_viewers:
                         continue
-                    # Dedup
                     if slug and slug not in seen:
                         seen.add(slug)
                         all_raw.append((s, sub.get("name", sub.get("slug", ""))))
             except Exception:
                 pass
 
-    log.info("Stream unik (viewers >= %d): %d", args.min_viewers, len(all_raw))
+    log.info("Stream unik: %d", len(all_raw))
 
-    # Limit max streams
     if args.max_streams > 0:
         all_raw = all_raw[:args.max_streams]
         log.info("Dibatasi: %d stream", len(all_raw))
 
-    # 3. POST playback per stream (paralel) → m3u8 + token
+    # 3. POST playback (dengan rate limit global)
     with ThreadPoolExecutor(max_workers=args.workers) as pool:
         futures = {
             pool.submit(process_kick_stream, raw, cat): raw
@@ -396,7 +445,7 @@ def main():
         for fut in as_completed(futures):
             done += 1
             if done % 100 == 0:
-                log.info("Playback: %d/%d", done, len(futures))
+                log.info("Playback: %d/%d (valid: %d)", done, len(futures), len(all_streams))
             try:
                 s = fut.result()
                 if s:
@@ -404,14 +453,14 @@ def main():
             except Exception:
                 pass
 
-    # 4. Sort + output
+    # 4. Output
     all_streams.sort(key=lambda s: s.viewers, reverse=True)
     log.info("Stream valid: %d", len(all_streams))
 
     with open(args.output, "w", encoding="utf-8") as f:
         f.write(build_m3u(all_streams))
 
-    log.info("✅ Selesai! File: %s (%d stream)", args.output, len(all_streams))
+    log.info("✅ Selesai! %s (%d stream)", args.output, len(all_streams))
 
 
 if __name__ == "__main__":
