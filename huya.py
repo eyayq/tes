@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 """
-Kick M3U Playlist Scraper (Rate Limit Fixed v2)
-- Single shared session (bukan thread-local)
+Kick M3U Playlist Scraper (Final)
+- Warmup cf_clearance
+- Single shared session
 - Global rate limiter (token bucket)
-- Circuit breaker saat 429 massal
+- Circuit breaker
+- POST /api/v1/stream/{video_id}/playback → m3u8 + token
+- Debug logging
 """
 
 import time
@@ -12,6 +15,7 @@ import logging
 import argparse
 import threading
 import uuid
+import json
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
@@ -26,14 +30,14 @@ RETRY_COUNT = 5
 OUTPUT_FILE = "playlist.m3u"
 
 # ─── Rate Limit ───────────────────────────────────────────────────────────────
-REQUESTS_PER_SECOND = 2.0   # maksimal 2 request per detik (GLOBAL)
-COOLDOWN_AFTER_429 = 30     # detik jeda setelah 429 massal
-CIRCUIT_BREAKER_THRESHOLD = 10  # 10× 429 → pause semua thread
+REQUESTS_PER_SECOND = 1.5
+COOLDOWN_AFTER_429 = 30
+CIRCUIT_BREAKER_THRESHOLD = 10
 
 # ─── Batas Scrape ─────────────────────────────────────────────────────────────
-MAX_STREAMS = 1000
+MAX_STREAMS = 500
 MIN_VIEWERS = 2
-MAX_CATEGORIES = 100
+MAX_CATEGORIES = 20
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 log = logging.getLogger("kick-m3u")
@@ -50,7 +54,7 @@ class Stream:
     viewers: int
 
 
-# ─── GLOBAL RATE LIMITER (Token Bucket) ───────────────────────────────────────
+# ─── GLOBAL RATE LIMITER ──────────────────────────────────────────────────────
 class RateLimiter:
     def __init__(self, rate: float):
         self.rate = rate
@@ -65,7 +69,6 @@ class RateLimiter:
                 elapsed = now - self.last_refill
                 self.tokens = min(self.rate, self.tokens + elapsed * self.rate)
                 self.last_refill = now
-
                 if self.tokens >= 1:
                     self.tokens -= 1
                     return
@@ -73,6 +76,7 @@ class RateLimiter:
 
 
 rate_limiter = RateLimiter(REQUESTS_PER_SECOND)
+
 
 # ─── CIRCUIT BREAKER ──────────────────────────────────────────────────────────
 class CircuitBreaker:
@@ -82,7 +86,7 @@ class CircuitBreaker:
         self.count = 0
         self.lock = threading.Lock()
 
-    def trip(self):
+    def trip(self) -> bool:
         with self.lock:
             self.count += 1
             if self.count >= self.threshold:
@@ -99,13 +103,12 @@ class CircuitBreaker:
 
 breaker = CircuitBreaker(CIRCUIT_BREAKER_THRESHOLD, COOLDOWN_AFTER_429)
 
-# ─── SINGLE SHARED SESSION (bukan thread-local!) ──────────────────────────────
+# ─── SINGLE SHARED SESSION ────────────────────────────────────────────────────
 _session = cffi_requests.Session(impersonate="chrome124")
 _session_lock = threading.Lock()
 
 
 def _request(method: str, url: str, **kwargs) -> cffi_requests.Response:
-    """Thread-safe request dengan rate limit."""
     rate_limiter.acquire()
     with _session_lock:
         return _session.request(method, url, timeout=REQUEST_TIMEOUT, **kwargs)
@@ -121,12 +124,14 @@ def http_get(url: str, params: dict | None = None):
             elif r.status_code == 429:
                 if breaker.trip():
                     continue
-                wait = 10 * (2 ** attempt)  # 10s, 20s, 40s, 80s, 160s
-                log.warning("429! Tunggu %ds (attempt %d/%d)", wait, attempt + 1, RETRY_COUNT)
+                wait = 10 * (2 ** attempt)
+                log.warning("429 GET! Tunggu %ds (attempt %d/%d)", wait, attempt + 1, RETRY_COUNT)
                 time.sleep(wait)
             else:
+                log.debug("GET %s → %s", url, r.status_code)
                 time.sleep(2)
-        except Exception:
+        except Exception as e:
+            log.debug("GET error: %s", e)
             time.sleep(3)
     return None
 
@@ -135,6 +140,8 @@ def http_post(url: str, json_body: dict, headers: dict | None = None) -> dict | 
     for attempt in range(RETRY_COUNT):
         try:
             r = _request("POST", url, json=json_body, headers=headers)
+            if r.status_code != 200:
+                log.warning("POST → HTTP %s | %s", r.status_code, r.text[:200])
             if r.status_code == 200:
                 breaker.reset()
                 return r.json()
@@ -146,9 +153,22 @@ def http_post(url: str, json_body: dict, headers: dict | None = None) -> dict | 
                 time.sleep(wait)
             else:
                 time.sleep(2)
-        except Exception:
+        except Exception as e:
+            log.warning("POST exception: %s", e)
             time.sleep(3)
     return None
+
+
+# ─── WARMUP (cf_clearance) ────────────────────────────────────────────────────
+def warmup_session():
+    log.info("Warming up session...")
+    try:
+        r = _session.get("https://kick.com/", timeout=REQUEST_TIMEOUT)
+        cookies = _session.cookies
+        has_cf = any("cf_clearance" in k for k in cookies)
+        log.info("cf_clearance: %s | Cookies: %s", "✅" if has_cf else "❌", list(cookies.keys()))
+    except Exception as e:
+        log.warning("Warmup failed: %s", e)
 
 
 # ─── KICK: POST Playback ──────────────────────────────────────────────────────
@@ -258,6 +278,8 @@ def fetch_all_subcategories() -> list[dict]:
 
 
 # ─── KICK: Live per kategori ──────────────────────────────────────────────────
+_debug_printed = [False]  # mutable flag for one-time debug
+
 def fetch_live_streams(subcategory_slug: str) -> list[dict]:
     all_streams = []
     page = 1
@@ -278,6 +300,12 @@ def fetch_live_streams(subcategory_slug: str) -> list[dict]:
 
         if not items:
             break
+
+        # ── DEBUG: print sample item sekali ──
+        if not _debug_printed[0] and items:
+            _debug_printed[0] = True
+            log.info("DEBUG sample item: %s", json.dumps(items[0], indent=2)[:1500])
+        # ─────────────────────────────────────
 
         all_streams.extend(items)
 
@@ -306,6 +334,7 @@ def process_kick_stream(stream_data: dict, category_name: str) -> Optional[Strea
     if viewers < MIN_VIEWERS:
         return None
 
+    # Cek video_id dari berbagai kemungkinan field
     video_id = (
         stream_data.get("video_id")
         or (stream_data.get("livestream", {}) or {}).get("video_id")
@@ -316,6 +345,7 @@ def process_kick_stream(stream_data: dict, category_name: str) -> Optional[Strea
     if not video_id:
         video_id = get_video_id(channel_slug)
     if not video_id:
+        log.debug("No video_id for %s", channel_slug)
         return None
 
     playback_url = post_playback(video_id, channel_slug)
@@ -376,17 +406,22 @@ def main():
     parser.add_argument("--max-streams", type=int, default=MAX_STREAMS)
     parser.add_argument("--min-viewers", type=int, default=MIN_VIEWERS)
     parser.add_argument("--max-categories", type=int, default=MAX_CATEGORIES)
-    parser.add_argument("--rps", type=float, default=REQUESTS_PER_SECOND,
-                        help="Requests per second (default: 2.0)")
+    parser.add_argument("--rps", type=float, default=REQUESTS_PER_SECOND)
+    parser.add_argument("--debug", action="store_true", help="Enable debug logging")
     args = parser.parse_args()
 
-    # Update rate limiter
+    if args.debug:
+        log.setLevel(logging.DEBUG)
+
     global rate_limiter
     rate_limiter = RateLimiter(args.rps)
 
     log.info("=== Kick M3U Scraper ===")
     log.info("Workers: %d | RPS: %.1f | Max Streams: %d | Min Viewers: %d | Max Cat: %d",
              args.workers, args.rps, args.max_streams, args.min_viewers, args.max_categories)
+
+    # 0. Warmup
+    warmup_session()
 
     all_streams: list[Stream] = []
 
@@ -435,7 +470,7 @@ def main():
         all_raw = all_raw[:args.max_streams]
         log.info("Dibatasi: %d stream", len(all_raw))
 
-    # 3. POST playback (dengan rate limit global)
+    # 3. POST playback
     with ThreadPoolExecutor(max_workers=args.workers) as pool:
         futures = {
             pool.submit(process_kick_stream, raw, cat): raw
@@ -444,7 +479,7 @@ def main():
         done = 0
         for fut in as_completed(futures):
             done += 1
-            if done % 100 == 0:
+            if done % 50 == 0:
                 log.info("Playback: %d/%d (valid: %d)", done, len(futures), len(all_streams))
             try:
                 s = fut.result()
