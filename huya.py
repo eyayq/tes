@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 """
-Kick M3U Playlist Scraper (Final — Mobile Fingerprint Fix)
-- impersonate="chrome131_android" (match mobile request)
-- Headers mobile (sec-ch-ua-mobile, sec-ch-ua-platform)
-- Single shared session
-- Global rate limiter
-- Circuit breaker
+Kick M3U Playlist Scraper (Final — Playwright Auto cf_clearance)
+- Playwright headless → auto-ambil cf_clearance
+- impersonate="chrome131_android"
+- Global rate limiter + circuit breaker
 - POST /api/v1/stream/{video_id}/playback → m3u8 + token
 """
 
@@ -24,7 +22,7 @@ from typing import Optional
 from curl_cffi import requests as cffi_requests
 
 # ─── Config ───────────────────────────────────────────────────────────────────
-MAX_WORKERS = 7
+MAX_WORKERS = 3
 REQUEST_TIMEOUT = 15
 RETRY_COUNT = 5
 OUTPUT_FILE = "playlist.m3u"
@@ -39,7 +37,7 @@ MAX_STREAMS = 500
 MIN_VIEWERS = 2
 MAX_CATEGORIES = 20
 
-# ─── MOBILE HEADERS (match request asli) ──────────────────────────────────────
+# ─── MOBILE HEADERS ───────────────────────────────────────────────────────────
 MOBILE_HEADERS = {
     "user-agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Mobile Safari/537.36",
     "sec-ch-ua": '"Not:A-Brand";v="8", "Chromium";v="156", "Google Chrome";v="156"',
@@ -121,7 +119,7 @@ class CircuitBreaker:
 
 breaker = CircuitBreaker(CIRCUIT_BREAKER_THRESHOLD, COOLDOWN_AFTER_429)
 
-# ─── SINGLE SHARED SESSION (MOBILE!) ──────────────────────────────────────────
+# ─── SINGLE SHARED SESSION ────────────────────────────────────────────────────
 _session = cffi_requests.Session(impersonate="chrome131_android")
 _session_lock = threading.Lock()
 
@@ -177,14 +175,99 @@ def http_post(url: str, json_body: dict) -> dict | None:
     return None
 
 
+# ─── PLAYWRIGHT: Auto cf_clearance ────────────────────────────────────────────
+def get_cf_clearance_playwright() -> Optional[str]:
+    """
+    Ambil cf_clearance via Playwright headless browser.
+    Cloudflare JS challenge di-execute → cookie ter-issue.
+    """
+    try:
+        from playwright.sync_api import sync_playwright
+    except ImportError:
+        log.error("Playwright tidak terinstall!")
+        log.error("Jalankan: pip install playwright && playwright install chromium")
+        return None
+
+    log.info("🌐 Mengambil cf_clearance via Playwright (headless Chromium)...")
+    try:
+        with sync_playwright() as p:
+            browser = p.chromium.launch(
+                headless=True,
+                args=[
+                    "--disable-blink-features=AutomationControlled",
+                    "--no-sandbox",
+                ]
+            )
+            context = browser.new_context(
+                user_agent=MOBILE_HEADERS["user-agent"],
+                viewport={"width": 412, "height": 915},
+                locale="id-ID",
+                extra_http_headers={
+                    "sec-ch-ua-mobile": "?1",
+                    "sec-ch-ua-platform": '"Android"',
+                },
+            )
+
+            # Anti-detection
+            context.add_init_script("""
+                Object.defineProperty(navigator, 'webdriver', {get: () => undefined});
+                Object.defineProperty(navigator, 'plugins', {get: () => [1, 2, 3, 4, 5]});
+                Object.defineProperty(navigator, 'languages', {get: () => ['id-ID', 'id', 'en']});
+                window.chrome = {runtime: {}};
+            """)
+
+            page = context.new_page()
+            page.goto("https://kick.com/", wait_until="domcontentloaded", timeout=45000)
+
+            # Tunggu Cloudflare challenge selesai (max 30 detik)
+            log.info("   Menunggu Cloudflare challenge...")
+            for i in range(30):
+                time.sleep(1)
+                cookies = context.cookies()
+                for c in cookies:
+                    if c["name"] == "cf_clearance":
+                        log.info("   ✅ cf_clearance didapat setelah %ds!", i + 1)
+                        # Ambil semua cookies untuk session
+                        all_cookies = context.cookies()
+                        browser.close()
+                        return json.dumps(all_cookies)
+
+            browser.close()
+            log.warning("   ⚠️ cf_clearance tidak ditemukan dalam 30 detik")
+            return None
+
+    except Exception as e:
+        log.error("Playwright error: %s", e)
+        return None
+
+
+def set_cookies_from_playwright(cookies_json: str):
+    """Set cookies dari Playwright ke curl_cffi session."""
+    cookies = json.loads(cookies_json)
+    for c in cookies:
+        _session.cookies.set(
+            c["name"],
+            c["value"],
+            domain=c.get("domain", ".kick.com"),
+            path=c.get("path", "/"),
+        )
+    log.info("Cookies set: %s", [c["name"] for c in cookies])
+
+
 # ─── WARMUP ───────────────────────────────────────────────────────────────────
-def warmup_session():
-    log.info("Warming up session (mobile fingerprint)...")
+def warmup_session(cf_clearance_json: Optional[str] = None):
+    log.info("Warming up session...")
+
+    if cf_clearance_json:
+        set_cookies_from_playwright(cf_clearance_json)
+
     try:
         r = _session.get("https://kick.com/", timeout=REQUEST_TIMEOUT, headers=MOBILE_HEADERS)
         cookies = _session.cookies
         has_cf = any("cf_clearance" in k for k in cookies)
         log.info("cf_clearance: %s | Cookies: %s", "✅" if has_cf else "❌", list(cookies.keys()))
+        if not has_cf:
+            log.warning("⚠️  cf_clearance TIDAK ADA! POST playback akan gagal.")
     except Exception as e:
         log.warning("Warmup failed: %s", e)
 
@@ -405,7 +488,7 @@ def build_m3u(streams: list[Stream]) -> str:
 
 # ─── MAIN ─────────────────────────────────────────────────────────────────────
 def main():
-    parser = argparse.ArgumentParser(description="Kick M3U Scraper")
+    parser = argparse.ArgumentParser(description="Kick M3U Scraper (Playwright)")
     parser.add_argument("--output", "-o", default=OUTPUT_FILE)
     parser.add_argument("--workers", "-w", type=int, default=MAX_WORKERS)
     parser.add_argument("--max-streams", type=int, default=MAX_STREAMS)
@@ -413,6 +496,12 @@ def main():
     parser.add_argument("--max-categories", type=int, default=MAX_CATEGORIES)
     parser.add_argument("--rps", type=float, default=REQUESTS_PER_SECOND)
     parser.add_argument("--debug", action="store_true")
+    parser.add_argument("--no-playwright", action="store_true",
+                        help="Skip Playwright (pakai cf_clearance manual)")
+    parser.add_argument("--cf-clearance", type=str, default=None,
+                        help="Manual cf_clearance JSON cookies (dari --save-cookies)")
+    parser.add_argument("--save-cookies", type=str, default=None,
+                        help="Simpan cookies ke file (untuk reuse)")
     args = parser.parse_args()
 
     if args.debug:
@@ -421,13 +510,39 @@ def main():
     global rate_limiter
     rate_limiter = RateLimiter(args.rps)
 
-    log.info("=== Kick M3U Scraper (Mobile) ===")
+    log.info("=== Kick M3U Scraper (Playwright) ===")
     log.info("Fingerprint: chrome131_android | RPS: %.1f | Workers: %d",
              args.rps, args.workers)
     log.info("Max Streams: %d | Min Viewers: %d | Max Cat: %d",
              args.max_streams, args.min_viewers, args.max_categories)
 
-    warmup_session()
+    # ─── Ambil cf_clearance ──────────────────────────────────────────────────
+    cookies_json = None
+
+    if args.cf_clearance:
+        # Dari file (reuse)
+        import os
+        if os.path.isfile(args.cf_clearance):
+            with open(args.cf_clearance) as f:
+                cookies_json = f.read().strip()
+            log.info("Cookies loaded dari file: %s", args.cf_clearance)
+        else:
+            cookies_json = args.cf_clearance
+            log.info("Cookies loaded dari argumen")
+
+    elif not args.no_playwright:
+        # Auto via Playwright
+        cookies_json = get_cf_clearance_playwright()
+
+    warmup_session(cookies_json)
+
+    # Simpan cookies untuk reuse
+    if args.save_cookies:
+        import os
+        if cookies_json:
+            with open(args.save_cookies, "w") as f:
+                f.write(cookies_json)
+            log.info("Cookies disimpan: %s", args.save_cookies)
 
     all_streams: list[Stream] = []
 
