@@ -22,7 +22,7 @@ from typing import Optional
 from curl_cffi import requests as cffi_requests
 
 # ─── Config ───────────────────────────────────────────────────────────────────
-MAX_WORKERS = 3
+MAX_WORKERS = 30
 REQUEST_TIMEOUT = 15
 RETRY_COUNT = 5
 OUTPUT_FILE = "playlist.m3u"
