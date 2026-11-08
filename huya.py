@@ -249,14 +249,6 @@ def extract_matches_from_protobuf(data):
 # ==================== STREAM ID EXTRACTION ====================
 
 def extract_stream_id(data, match_id=None, _depth=0):
-    """
-    Extract streamId from match detail protobuf.
-    Structure:
-      top.field10 (bytes) = container
-        container.field2 (repeated bytes) = stream entries
-          entry.field1 (varint) = streamId
-          entry.field9 (varint) = siteType
-    """
     if _depth > 6:
         return None
     if isinstance(data, dict):
@@ -282,6 +274,7 @@ def extract_stream_id(data, match_id=None, _depth=0):
         return None
 
     # PRIMARY: Follow known structure
+    # top.field10 → container.field2 (repeated) → entry.field1 = streamId
     container = None
     for fnum, wtype, val in fields:
         if wtype == 2 and len(val) > 50:
@@ -348,25 +341,76 @@ def rot47_decode(s):
     return ''.join(result)
 
 
+def _check_rot47_url(raw):
+    """Check if raw bytes, when ROT47-decoded and dropping 8 chars, yields a URL."""
+    try:
+        s = raw.decode('ascii')
+    except (UnicodeDecodeError, ValueError):
+        return None
+    decoded = rot47_decode(s)
+    if len(decoded) > 12 and decoded[8:12] == "http":
+        return raw.decode('ascii')
+    return None
+
+
+def extract_obfuscated_url(data):
+    """Extract f4 field by parsing protobuf and verifying ROT47→URL."""
+    if isinstance(data, bytes):
+        # Parse protobuf — find the field that ROT47-decodes to a URL
+        fields = parse_message(data)
+        for fnum, wtype, val in fields:
+            if wtype == 2 and len(val) > 20:
+                candidate = _check_rot47_url(val)
+                if candidate:
+                    return candidate
+                # Check one level of nesting
+                sub_fields = parse_message(val)
+                for sf_num, sf_wire, sf_val in sub_fields:
+                    if sf_wire == 2 and len(sf_val) > 20:
+                        candidate = _check_rot47_url(sf_val)
+                        if candidate:
+                            return candidate
+        # Fallback: regex on raw bytes
+        candidates = re.findall(rb'[\x21-\x7e]{20,}', data)
+        for c in sorted(candidates, key=len, reverse=True):
+            candidate = _check_rot47_url(c)
+            if candidate:
+                return candidate
+        return None
+    elif isinstance(data, (dict, list)):
+        json_str = json.dumps(data)
+        m = re.findall(r'"([^"]{20,})"', json_str)
+        for s in sorted(m, key=len, reverse=True):
+            candidate = _check_rot47_url(s.encode())
+            if candidate:
+                return candidate
+        return None
+    return None
+
+
 def build_tokenized_url(obfuscated_url, rb_session):
     """
     1. ROT47 decode → drop first 8 chars → base URL
     2. AES-256-CBC encrypt rb-session → base64
     3. Insert token-{b64}a as first path segment after domain
-       https://domain.com/path/index.m3u8
-       → https://domain.com/token-{b64}a/path/index.m3u8
     """
     decoded = rot47_decode(obfuscated_url)
-    decoded = decoded[8:]  # drop leading marker
+    decoded = decoded[8:]
 
     if not decoded.startswith("http"):
-        # Try to find http at any offset
         idx = decoded.find("http")
         if idx == -1:
-            print(f"    [ERROR] No URL found after ROT47: {decoded[:60]!r}",
+            print(f"    [ERROR] No URL after ROT47: {decoded[:60]!r}",
                   file=sys.stderr, flush=True)
             return None
         decoded = decoded[idx:]
+
+    # Extract only the valid URL portion (stop at first invalid char)
+    url_match = re.match(
+        r'https?://[a-zA-Z0-9._~:/?#\[\]@!$&\'()*+,;=%-]+', decoded
+    )
+    if url_match:
+        decoded = url_match.group()
 
     if not HAS_AES or AES_KEY is None or AES_IV is None:
         print("    [ERROR] AES not available or key not set!", file=sys.stderr, flush=True)
@@ -396,28 +440,10 @@ def build_tokenized_url(obfuscated_url, rb_session):
     return urlunparse(result)
 
 
-def extract_obfuscated_url(data):
-    """Extract the longest printable string (the f4 field) from response."""
-    if isinstance(data, bytes):
-        candidates = re.findall(rb'[\x21-\x7e]{20,}', data)
-        if candidates:
-            longest = max(candidates, key=len)
-            return longest.decode('ascii')
-        return None
-    elif isinstance(data, (dict, list)):
-        json_str = json.dumps(data)
-        m = re.findall(r'"([^"]{20,})"', json_str)
-        if m:
-            longest = max(m, key=len)
-            return longest
-        return None
-    return None
-
-
 # ==================== DECODE ====================
 
 def decode_api_response(resp) -> bytes:
-    """requests already auto-decompresses gzip/deflate/br. Just return content."""
+    """requests already auto-decompresses gzip/deflate/br."""
     return resp.content
 
 
@@ -630,6 +656,8 @@ def main():
             if DEBUG and isinstance(stream_data, dict):
                 print(f"    JSON: {json.dumps(stream_data, ensure_ascii=False)[:300]}",
                       flush=True)
+            elif DEBUG and isinstance(stream_data, bytes):
+                print(f"    Raw: {stream_data[:200]!r}", flush=True)
             continue
 
         # 3d: Build tokenized URL
