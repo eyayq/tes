@@ -7,6 +7,7 @@ import sys
 import time
 import base64
 import random
+from urllib.parse import urlparse, quote
 
 try:
     import brotli
@@ -65,8 +66,11 @@ HEADERS = {
     "sec-fetch-site": "cross-site",
 }
 
-AES_KEY = b"a7981cc9eb2f4d19dcfea57b101ecd89"  # ← ISI DI SINI (32 bytes)
-AES_IV = b"8017d3a8f1400d2f"   # ← ISI DI SINI (16 bytes)
+# ==================== AES KEY MATERIAL ====================
+# From: Buffer.from("a7981cc9eb2f4d19dcfea57b101ecd89", "utf8")
+AES_KEY = b"a7981cc9eb2f4d19dcfea57b101ecd89"  # 32 bytes
+# From: Buffer.from("8017d3a8f1400d2f", "utf8")
+AES_IV = b"8017d3a8f1400d2f"  # 16 bytes
 
 DEBUG = True
 DEBUG_RAW = False
@@ -250,11 +254,7 @@ def extract_matches_from_protobuf(data):
 def extract_stream_id(data, match_id=None, _depth=0):
     """
     Extract streamId from match detail protobuf.
-    Known structure:
-      top.field10 (bytes) = container
-        container.field2 (repeated bytes) = stream entries
-          entry.field1 (varint) = streamId
-          entry.field9 (varint) = siteType
+    Structure: top.field10 → field2 (repeated) → field1 = streamId
     """
     if _depth > 6:
         return None
@@ -280,8 +280,7 @@ def extract_stream_id(data, match_id=None, _depth=0):
     if not fields:
         return None
 
-    # === PRIMARY: Follow known structure ===
-    # Step 1: Find container (field 10, or largest bytes field > 50B)
+    # PRIMARY: field10 → field2 (stream entries) → field1
     container = None
     for fnum, wtype, val in fields:
         if wtype == 2 and len(val) > 50:
@@ -293,7 +292,6 @@ def extract_stream_id(data, match_id=None, _depth=0):
 
     if container:
         container_fields = parse_message(container)
-        # Step 2: Find stream entries (repeated field 2, 10-200 bytes)
         for fnum, wtype, val in container_fields:
             if wtype == 2 and fnum == 2 and 10 < len(val) < 200:
                 stream_fields = parse_message(val)
@@ -306,11 +304,9 @@ def extract_stream_id(data, match_id=None, _depth=0):
                         elif sf_num == 9:
                             site_type = sf_val
                 if stream_id and stream_id != match_id and 100 < stream_id < 999999999:
-                    if site_type == SITE_TYPE:
-                        return stream_id
                     return stream_id
 
-    # === FALLBACK: Generic search ===
+    # FALLBACK: generic search
     for fnum, wtype, val in fields:
         if wtype == 2 and 5 < len(val) < 2000:
             sub_fields = parse_message(val)
@@ -337,6 +333,7 @@ def extract_stream_id(data, match_id=None, _depth=0):
 # ==================== CRYPTO ====================
 
 def rot47_decode(s):
+    """ROT47: shift chars 33-119 by 47 positions."""
     if isinstance(s, bytes):
         s = s.decode('ascii', errors='ignore')
     result = []
@@ -349,35 +346,46 @@ def rot47_decode(s):
 
 
 def build_tokenized_url(obfuscated_url, rb_session):
+    """
+    Matches JS exactly:
+      const decoded = rot47(obfuscatedUrl).slice(8);
+      const parsed = new URL(decoded);
+      const cipher = createCipheriv("aes-256-cbc", AES_KEY, AES_IV);
+      const encrypted = Buffer.concat([cipher.update(sessionToken), cipher.final()]);
+      const token = encodeURIComponent(encrypted.toString("base64")) + "a";
+      return `${parsed.origin}/token-${token}${parsed.pathname}${parsed.search}`;
+    """
     decoded = rot47_decode(obfuscated_url)
-    decoded = decoded[8:]
+    decoded = decoded[8:]  # .slice(8)
 
-    if not HAS_AES or AES_KEY is None or AES_IV is None:
-        print("    [ERROR] AES not available or key not set!", file=sys.stderr, flush=True)
+    if not HAS_AES:
+        print("    [ERROR] AES not available!", file=sys.stderr, flush=True)
         return None
 
     try:
         session_bytes = rb_session.encode('utf-8')
-        padded = pad(session_bytes, 16)
         cipher = AES.new(AES_KEY, AES.MODE_CBC, AES_IV)
-        ciphertext = cipher.encrypt(padded)
+        ciphertext = cipher.encrypt(pad(session_bytes, 16))
         token_b64 = base64.b64encode(ciphertext).decode('ascii')
     except Exception as e:
         print(f"    [ERROR] AES encrypt failed: {e}", file=sys.stderr, flush=True)
         return None
 
-    if '/' in decoded:
-        parts = decoded.split('/', 3)
-        if len(parts) >= 3:
-            base = '/'.join(parts[:2])
-            rest = parts[2] if len(parts) > 2 else ''
-            tokenized_url = f"{base}/token-{token_b64}a/{rest}"
-        else:
-            tokenized_url = f"{decoded}/token-{token_b64}a"
-    else:
-        tokenized_url = f"{decoded}?token={token_b64}a"
+    # encodeURIComponent equivalent
+    token = quote(token_b64, safe='') + 'a'
 
-    return tokenized_url
+    # Parse URL: origin + /token-{token} + pathname + search
+    parsed = urlparse(decoded)
+    origin = f"{parsed.scheme}://{parsed.netloc}"
+    pathname = parsed.path or ''
+    search = ('?' + parsed.query) if parsed.query else ''
+
+    final_url = f"{origin}/token-{token}{pathname}{search}"
+
+    if DEBUG:
+        print(f"    [DEBUG] Final URL: {final_url[:120]}", flush=True)
+
+    return final_url
 
 
 def extract_obfuscated_url(data):
@@ -549,8 +557,6 @@ def main():
     if not HAS_AES:
         print("WARNING: pycryptodome not installed. "
               "Run: pip install pycryptodome", file=sys.stderr, flush=True)
-    if AES_KEY is None or AES_IV is None:
-        print("WARNING: AES_KEY/AES_IV not set!", file=sys.stderr, flush=True)
 
     # Step 1
     print("Step 1: Getting signing key (code=100)...", flush=True)
@@ -576,7 +582,7 @@ def main():
     for m in matches[:5]:
         print(f"    - {m['name']} (id={m['id']}, sport={m['sport_type']})", flush=True)
 
-    # Step 3: SEQUENTIAL
+    # Step 3: Sequential
     print("Step 3: Fetching stream URLs (sequential)...", flush=True)
     entries = []
 
