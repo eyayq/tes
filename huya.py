@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-RBTV Playlist Generator (for GitHub Actions)
-One-shot: scrape → output M3U
+RBTV Playlist Generator (v8 FINAL — GitHub Actions)
+One-shot: scrape API → output playlist.m3u
 """
 
 import requests
@@ -10,6 +10,7 @@ import gzip
 import re
 import zlib
 import sys
+import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 try:
@@ -18,11 +19,19 @@ try:
 except ImportError:
     HAS_BROTLI = False
 
+try:
+    import zstandard as zstd
+    HAS_ZSTD = True
+except ImportError:
+    HAS_ZSTD = False
+
+# ==================== CONFIG ====================
+
 DATA_URL = "https://apis-data10.tcpwe138stya.ru"
 LIVE_URL = "https://apis-live.ta2mnt200stayr2.cfd"
 LIVE_URL_EU = "https://apis-live-defra.ta2mnt200stayr2.cfd"
 
-MAX_MATCHES = 100
+MAX_MATCHES = 30
 TIMEOUT = 10
 LIVE_TIMEOUT = 8
 SPORT_TYPE = 1
@@ -39,20 +48,72 @@ HEADERS = {
 }
 
 
+# ==================== DECODE ====================
+
 def decode_response(resp) -> str:
     content = resp.content
     enc = resp.headers.get("content-encoding", "").lower()
+
+    if not content:
+        print(f"[DEBUG] Empty response! Status: {resp.status_code}, "
+              f"Headers: {dict(resp.headers)}", file=sys.stderr, flush=True)
+        return ""
+
     if enc == "gzip" or content[:2] == b'\x1f\x8b':
-        content = gzip.decompress(content)
+        try:
+            content = gzip.decompress(content)
+        except Exception as e:
+            print(f"[DEBUG] Gzip decompress failed: {e}", file=sys.stderr, flush=True)
+            return ""
     elif enc == "br" and HAS_BROTLI:
-        content = brotli.decompress(content)
+        try:
+            content = brotli.decompress(content)
+        except Exception as e:
+            print(f"[DEBUG] Brotli decompress failed: {e}", file=sys.stderr, flush=True)
+            return ""
     elif enc == "deflate":
         try:
             content = zlib.decompress(content)
         except Exception:
-            content = zlib.decompress(content, -zlib.MAX_WBITS)
+            try:
+                content = zlib.decompress(content, -zlib.MAX_WBITS)
+            except Exception as e:
+                print(f"[DEBUG] Deflate failed: {e}, raw[:100]={content[:100]}",
+                      file=sys.stderr, flush=True)
+                return ""
+    elif enc == "zstd":
+        if HAS_ZSTD:
+            try:
+                content = zstd.ZstdDecompressor().decompress(content)
+            except Exception as e:
+                print(f"[DEBUG] Zstd decompress failed: {e}", file=sys.stderr, flush=True)
+                return ""
+        else:
+            print("[DEBUG] zstd encoding but no zstandard lib! "
+                  "Install: pip install zstandard", file=sys.stderr, flush=True)
+            return ""
+    elif enc and enc != "identity":
+        print(f"[DEBUG] Unknown encoding: {enc}, content[:100]={content[:100]}",
+              file=sys.stderr, flush=True)
+
     return content.decode("utf-8", errors="replace")
 
+
+def safe_json(resp, context=""):
+    """Decode + parse JSON with error handling. Returns None on failure."""
+    text = decode_response(resp)
+    if not text.strip():
+        print(f"[ERROR] Empty response from {context}", file=sys.stderr, flush=True)
+        return None
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError as e:
+        print(f"[ERROR] Invalid JSON from {context}: {e}\n"
+              f"  First 300 chars: {text[:300]}", file=sys.stderr, flush=True)
+        return None
+
+
+# ==================== API: DATA ====================
 
 def get_signing_key():
     url = f"{DATA_URL}/api/common/bs?code=100&sportType={SPORT_TYPE}&stream=true"
@@ -68,7 +129,18 @@ def get_live_matches(md5):
     url = (f"{DATA_URL}/sfver{md5}/api/match/live"
            f"?sportType={SPORT_TYPE}&language={LANGUAGE}&stream=true")
     resp = requests.get(url, headers=HEADERS, timeout=TIMEOUT)
-    data = json.loads(decode_response(resp))
+
+    print(f"[DEBUG] /match/live status={resp.status_code}, "
+          f"len={len(resp.content)}, "
+          f"encoding={resp.headers.get('content-encoding', 'none')}",
+          file=sys.stderr, flush=True)
+    if len(resp.content) > 0:
+        print(f"[DEBUG] Raw[:200]={resp.content[:200]}", file=sys.stderr, flush=True)
+
+    data = safe_json(resp, "/match/live")
+    if data is None:
+        return []
+
     if isinstance(data, dict):
         return (data.get("data") or data.get("list")
                 or data.get("matches") or data.get("items") or [])
@@ -79,8 +151,11 @@ def get_match_detail(md5, match_id, sport_type):
     url = (f"{DATA_URL}/sfver{md5}/api/match/detail"
            f"?matchId={match_id}&sportType={sport_type}&language={LANGUAGE}&stream=true")
     resp = requests.get(url, headers=HEADERS, timeout=TIMEOUT)
-    return json.loads(decode_response(resp))
+    data = safe_json(resp, f"/match/detail?id={match_id}")
+    return data if data is not None else {}
 
+
+# ==================== API: LIVE (STREAM) ====================
 
 def get_stream_from_live_api(md5, match_id, sport_type):
     endpoints = [
@@ -93,8 +168,9 @@ def get_stream_from_live_api(md5, match_id, sport_type):
         try:
             resp = requests.get(url, headers=HEADERS, timeout=LIVE_TIMEOUT)
             if resp.status_code == 200:
-                data = json.loads(decode_response(resp))
-                return extract_stream_url(data)
+                data = safe_json(resp, f"live_api?id={match_id}")
+                if data:
+                    return extract_stream_url(data)
         except Exception:
             pass
         return None
@@ -111,20 +187,29 @@ def get_stream_from_live_api(md5, match_id, sport_type):
     return None
 
 
+# ==================== EXTRACT ====================
+
 def extract_stream_url(data):
     json_str = json.dumps(data)
+
     m = re.search(r'(https?://[^"\s]+/cfall/[^"\s]+/super/[^"\s]+)', json_str)
     if m:
         return m.group(1)
+
     m = re.search(r'(https?://[^"\s]+\.m3u8[^"\s]*)', json_str)
     if m:
         return m.group(1)
+
     m = re.search(r'(https?://[^"\s]+/super/[^"\s]+)', json_str)
     if m:
         return m.group(1)
-    m = re.search(r'"(?:streamUrl|playUrl|hlsUrl|videoUrl|liveUrl)"\s*:\s*"(https?://[^"]+)"', json_str)
+
+    m = re.search(
+        r'"(?:streamUrl|playUrl|hlsUrl|videoUrl|liveUrl)"\s*:\s*"(https?://[^"]+)"',
+        json_str)
     if m:
         return m.group(1)
+
     return None
 
 
@@ -146,11 +231,17 @@ def get_match_name(detail_data, match_data):
     return "Unknown"
 
 
+# ==================== MAIN ====================
+
 def main():
+    t0 = time.time()
+
     print("Getting signing key...", flush=True)
     md5 = get_signing_key()
     if not md5:
-        print("ERROR: Failed to get signing key", file=sys.stderr)
+        print("ERROR: Failed to get signing key", file=sys.stderr, flush=True)
+        with open("playlist.m3u", "w") as f:
+            f.write("#EXTM3U\n")
         sys.exit(1)
     print(f"Key: {md5}", flush=True)
 
@@ -158,23 +249,35 @@ def main():
     matches = get_live_matches(md5)[:MAX_MATCHES]
     print(f"Found {len(matches)} matches", flush=True)
 
+    if not matches:
+        print("No live matches found. Writing empty playlist.",
+              file=sys.stderr, flush=True)
+        with open("playlist.m3u", "w") as f:
+            f.write("#EXTM3U\n")
+        sys.exit(0)
+
     entries = []
 
     def fetch_one(match):
-        match_id = (match.get("id") or match.get("matchId") or match.get("eventId"))
+        match_id = (match.get("id") or match.get("matchId")
+                    or match.get("eventId"))
         sport_type = match.get("sportType", SPORT_TYPE)
         if not match_id:
             return None
+
         detail = get_match_detail(md5, match_id, sport_type=sport_type)
         stream_url = extract_stream_url(detail)
+
         if not stream_url:
             stream_url = get_stream_from_live_api(md5, match_id, sport_type)
+
         name = get_match_name(detail, match)
         return (name, stream_url)
 
     with ThreadPoolExecutor(max_workers=5) as pool:
-        futures = [pool.submit(fetch_one, m) for m in matches if isinstance(m, dict)]
-        for f in as_completed(futures, timeout=TIMEOUT * 3):
+        futures = [pool.submit(fetch_one, m)
+                   for m in matches if isinstance(m, dict)]
+        for f in as_completed(futures, timeout=TIMEOUT * 4):
             try:
                 result = f.result(timeout=TIMEOUT * 2)
                 if result and result[1]:
@@ -182,24 +285,26 @@ def main():
             except Exception as e:
                 print(f"[WARN] {e}", file=sys.stderr, flush=True)
 
-    # Output M3U
+    elapsed = time.time() - t0
+    print(f"\nGenerated {len(entries)} streams in {elapsed:.1f}s", flush=True)
+
+    # Build M3U
     lines = ["#EXTM3U"]
     for name, stream_url in entries:
         tvg_id = re.sub(r'[^a-zA-Z0-9_]', '_', name)
         lines.append(f'#EXTINF:-1 tvg-id="{tvg_id}",{name}')
         lines.append(stream_url)
 
-    m3u_content = "\n".join(lines)
+    m3u_content = "\n".join(lines) + "\n"
 
-    # Write to file (GitHub Actions artifact)
+    # Write file
     with open("playlist.m3u", "w") as f:
         f.write(m3u_content)
 
-    # Also print to stdout
+    # Print to stdout (visible in GitHub Actions log)
     print(f"\n{'='*55}", flush=True)
-    print(f"  Generated: {len(entries)} streams", flush=True)
-    print(f"{'='*55}\n", flush=True)
     print(m3u_content, flush=True)
+    print(f"{'='*55}", flush=True)
 
 
 if __name__ == "__main__":
