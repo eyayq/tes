@@ -3,10 +3,9 @@ import json
 import re
 import sys
 import time
-import base64
 import random
 from datetime import datetime, timezone, timedelta
-from urllib.parse import urlparse, urlunparse
+from urllib.parse import urlparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # ==================== CONFIG ====================
@@ -263,96 +262,6 @@ def extract_stream_id(data, match_id=None):
     return None
 
 
-# ==================== ROT47 ====================
-
-def rot47_decode(s):
-    if isinstance(s, bytes):
-        s = s.decode('ascii', errors='ignore')
-    result = []
-    for c in s:
-        code = ord(c)
-        if 33 <= code <= 126:
-            code = (code - 33 + 47) % 94 + 33
-        result.append(chr(code))
-    return ''.join(result)
-
-
-def _check_rot47_url(raw):
-    try:
-        s = raw.decode('ascii')
-    except (UnicodeDecodeError, ValueError):
-        return None
-    decoded = rot47_decode(s)
-    if len(decoded) > 12 and decoded[8:12] == "http":
-        return raw.decode('ascii')
-    return None
-
-
-def extract_obfuscated_url(data):
-    if isinstance(data, bytes):
-        fields = parse_message(data)
-        for fnum, wtype, val in fields:
-            if wtype == 2 and len(val) > 20:
-                candidate = _check_rot47_url(val)
-                if candidate:
-                    return candidate
-                sub_fields = parse_message(val)
-                for sf_num, sf_wire, sf_val in sub_fields:
-                    if sf_wire == 2 and len(sf_val) > 20:
-                        candidate = _check_rot47_url(sf_val)
-                        if candidate:
-                            return candidate
-        candidates = re.findall(rb'[\x21-\x7e]{20,}', data)
-        for c in sorted(candidates, key=len, reverse=True):
-            candidate = _check_rot47_url(c)
-            if candidate:
-                return candidate
-        return None
-    elif isinstance(data, (dict, list)):
-        json_str = json.dumps(data)
-        m = re.findall(r'"([^"]{20,})"', json_str)
-        for s in sorted(m, key=len, reverse=True):
-            candidate = _check_rot47_url(s.encode())
-            if candidate:
-                return candidate
-    return None
-
-
-def extract_player_origin(data):
-    if isinstance(data, bytes):
-        strings = find_string_fields(data, min_len=15, max_len=200)
-        for s in strings:
-            if s.startswith("http") and "m3u8" not in s:
-                parsed = urlparse(s)
-                if parsed.netloc and len(parsed.path) <= 2:
-                    if "fhlsport" not in parsed.netloc and "tbak" not in parsed.netloc:
-                        return s.rstrip('/') + '/'
-        for s in strings:
-            if s.startswith("http") and "m3u8" not in s and "fhlsport" not in s:
-                parsed = urlparse(s)
-                if parsed.netloc:
-                    return s.rstrip('/') + '/'
-    return None
-
-
-def build_stream_url(obfuscated_url):
-    """ROT47 decode → drop 8 chars → truncate at .m3u8. No encoding."""
-    decoded = rot47_decode(obfuscated_url)
-    decoded = decoded[8:]
-
-    if not decoded.startswith("http"):
-        idx = decoded.find("http")
-        if idx == -1:
-            return None
-        decoded = decoded[idx:]
-
-    m3u8_idx = decoded.find('.m3u8')
-    if m3u8_idx != -1:
-        decoded = decoded[:m3u8_idx + 5]
-
-    return decoded
-
-
 # ==================== DECODE ====================
 
 def decode_api_response(resp) -> bytes:
@@ -423,6 +332,7 @@ def get_live_matches(md5):
 
 
 def process_match(match, fallback_md5):
+    """Python only gets stream_id. Worker handles the rest."""
     name = match["name"]
     match_id = match["id"]
     sport_type = match["sport_type"]
@@ -449,75 +359,43 @@ def process_match(match, fallback_md5):
     if fmt == "protobuf" and isinstance(data, bytes):
         stream_id = extract_stream_id(data, match_id=match_id)
     elif fmt == "json" and isinstance(data, dict):
-        def _find(d, keys, depth=0):
-            if depth > 5:
-                return None
-            if isinstance(d, dict):
-                for k in keys:
-                    if k in d:
-                        return d[k]
-                for v in d.values():
-                    r = _find(v, keys, depth + 1)
-                    if r is not None:
-                        return r
-            elif isinstance(d, list):
-                for item in d:
-                    r = _find(item, keys, depth + 1)
-                    if r is not None:
-                        return r
-            return None
-        stream_id = _find(data, ["streamId", "stream_id"])
+        stream_id = _find_json(data, ["streamId", "stream_id"])
 
     if not stream_id:
         return None
 
-    s_url = (f"{DATA_URL}/api/stream/detail"
-             f"?streamId={stream_id}&siteType={SITE_TYPE}"
-             f"&continent={CONTINENT}&country={COUNTRY}"
-             f"&digit={DIGIT}&matchId={match_id}&sportType={sport_type}")
-    s_resp = safe_get(s_url)
-    if s_resp is None:
-        return None
-
-    s_content = decode_api_response(s_resp)
-    rb_session = s_resp.headers.get("rb-session", "")
-    if not rb_session:
-        return None
-
-    s_fmt, s_data = try_json_or_protobuf(s_content)
-
-    obfuscated = None
-    if isinstance(s_data, bytes):
-        obfuscated = extract_obfuscated_url(s_data)
-    elif isinstance(s_data, dict):
-        for key in ("url", "streamUrl", "playUrl", "hlsUrl", "src", "link",
-                    "obfuscatedUrl", "encodedUrl", "f4"):
-            if key in s_data and isinstance(s_data[key], str):
-                obfuscated = s_data[key]
-                break
-        if not obfuscated:
-            obfuscated = extract_obfuscated_url(s_data)
-
-    if not obfuscated:
-        return None
-
-    final_url = build_stream_url(obfuscated)
-    if not final_url:
-        return None
-
-    referer = extract_player_origin(s_data)
-    if not referer:
-        parsed_url = urlparse(final_url)
-        referer = f"{parsed_url.scheme}://{parsed_url.netloc}/"
+    # Worker resolves everything: stream detail → token → m3u8
+    gen_url = (f"{WORKER_URL}/gen"
+               f"?streamId={stream_id}"
+               f"&matchId={match_id}"
+               f"&sportType={sport_type}")
 
     return {
         "name": name,
-        "url": final_url,
-        "referer": referer,
+        "url": gen_url,
         "sport_type": sport_type,
         "timestamp": timestamp,
         "logo": logo,
     }
+
+
+def _find_json(d, keys, depth=0):
+    if depth > 5:
+        return None
+    if isinstance(d, dict):
+        for k in keys:
+            if k in d:
+                return d[k]
+        for v in d.values():
+            r = _find_json(v, keys, depth + 1)
+            if r is not None:
+                return r
+    elif isinstance(d, list):
+        for item in d:
+            r = _find_json(item, keys, depth + 1)
+            if r is not None:
+                return r
+    return None
 
 
 # ==================== M3U BUILDER ====================
@@ -534,10 +412,6 @@ def format_time_wib(ts_ms):
         return ""
 
 
-def build_worker_url(stream_url, referer):
-    return f"{WORKER_URL}/?url={stream_url}&referer={referer}"
-
-
 def build_m3u(entries):
     entries.sort(key=lambda x: x.get("timestamp") or 0)
 
@@ -545,7 +419,6 @@ def build_m3u(entries):
     for e in entries:
         name = e["name"]
         url = e["url"]
-        referer = e.get("referer", "")
         sport_type = e.get("sport_type", 0)
         logo = e.get("logo", "")
         ts = e.get("timestamp")
@@ -555,18 +428,14 @@ def build_m3u(entries):
         full_title = f"{name} {time_str}".strip()
         tvg_id = re.sub(r'[^a-zA-Z0-9_]', '_', name)
 
-        proxied_url = build_worker_url(url, referer)
-
         lines.append(
             f'#EXTINF:-1 tvg-id="{tvg_id}" tvg-logo="{logo}" group-title="{group}",{full_title}'
         )
-        lines.append(f'#EXTVLCOPT:http-origin={referer.rstrip("/")}')
-        lines.append(f'#EXTVLCOPT:http-referrer={referer}')
         lines.append(
             '#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) '
             'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36'
         )
-        lines.append(proxied_url)
+        lines.append(url)
 
     return "\n".join(lines) + "\n"
 
@@ -601,7 +470,7 @@ def main():
         print(f"    - {m['name']} (id={m['id']}, sport={m['sport_type']}, {t}){logo_mark}",
               flush=True)
 
-    print(f"Step 3: Fetching stream URLs ({MAX_WORKERS} threads)...", flush=True)
+    print(f"Step 3: Fetching stream IDs ({MAX_WORKERS} threads)...", flush=True)
     entries = []
     completed = 0
     total = len(matches)
