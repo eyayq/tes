@@ -6,7 +6,7 @@ import time
 import base64
 import random
 from datetime import datetime, timezone, timedelta
-from urllib.parse import urlparse, urlunparse, quote
+from urllib.parse import urlparse, urlunparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # ==================== CONFIG ====================
@@ -20,7 +20,7 @@ SITE_TYPE = 2001
 CONTINENT = "AS"
 COUNTRY = "ID"
 DIGIT = "trd"
-MAX_WORKERS = 3
+MAX_WORKERS = 5
 
 WORKER_URL = "https://pl-gratosv-al.bhns.workers.dev"
 
