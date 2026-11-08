@@ -45,10 +45,9 @@ CONTINENT = "AS"
 COUNTRY = "ID"
 DIGIT = "trd"
 
-# Rate limiting
-REQUEST_DELAY = (1.5, 3.0)  # min/max delay between requests (seconds)
+REQUEST_DELAY = (1.5, 3.0)
 MAX_RETRIES = 3
-RETRY_BACKOFF = 5  # base seconds for exponential backoff
+RETRY_BACKOFF = 5
 
 HEADERS = {
     "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
@@ -70,9 +69,8 @@ AES_KEY = None  # ← ISI DI SINI (32 bytes)
 AES_IV = None   # ← ISI DI SINI (16 bytes)
 
 DEBUG = True
-DEBUG_RAW = True
+DEBUG_RAW = False
 
-# Session (maintain cookies across requests)
 session = requests.Session()
 session.headers.update(HEADERS)
 
@@ -80,14 +78,10 @@ session.headers.update(HEADERS)
 # ==================== RATE-LIMITED REQUEST ====================
 
 def safe_get(url, **kwargs):
-    """
-    GET with rate limiting, retry, and Cloudflare 429 handling.
-    """
     for attempt in range(MAX_RETRIES):
-        # Random delay before request
         delay = random.uniform(*REQUEST_DELAY)
         if attempt > 0:
-            delay += RETRY_BACKOFF * attempt  # exponential backoff
+            delay += RETRY_BACKOFF * attempt
         time.sleep(delay)
 
         try:
@@ -96,7 +90,6 @@ def safe_get(url, **kwargs):
             print(f"    [RETRY] Network error: {e}", flush=True)
             continue
 
-        # Check for Cloudflare challenge / rate limit
         if resp.status_code == 429:
             wait = RETRY_BACKOFF * (attempt + 1)
             print(f"    [429] Rate limited, waiting {wait}s "
@@ -105,7 +98,6 @@ def safe_get(url, **kwargs):
             continue
 
         if resp.status_code == 503:
-            # Cloudflare "Just a moment..."
             wait = RETRY_BACKOFF * (attempt + 1) * 2
             print(f"    [503] Cloudflare challenge, waiting {wait}s", flush=True)
             time.sleep(wait)
@@ -256,19 +248,20 @@ def extract_matches_from_protobuf(data):
 # ==================== STREAM ID EXTRACTION ====================
 
 def extract_stream_id(data, match_id=None, _depth=0):
+    """
+    Extract streamId from match detail protobuf.
+    Known structure:
+      top.field10 (bytes) = container
+        container.field2 (repeated bytes) = stream entries
+          entry.field1 (varint) = streamId
+          entry.field9 (varint) = siteType
+    """
     if _depth > 6:
         return None
     if isinstance(data, dict):
         if "streamId" in data and isinstance(data["streamId"], int):
             if data["streamId"] != match_id:
                 return data["streamId"]
-        for key in ("streams", "channels", "streamList", "items"):
-            if key in data and isinstance(data[key], list):
-                for item in data[key]:
-                    if isinstance(item, dict) and "streamId" in item:
-                        sid = item["streamId"]
-                        if isinstance(sid, int) and sid != match_id:
-                            return sid
         for v in data.values():
             result = extract_stream_id(v, match_id, _depth + 1)
             if result:
@@ -287,28 +280,56 @@ def extract_stream_id(data, match_id=None, _depth=0):
     if not fields:
         return None
 
-    # Strategy 1: Nested sub-messages (stream entries)
+    # === PRIMARY: Follow known structure ===
+    # Step 1: Find container (field 10, or largest bytes field > 50B)
+    container = None
     for fnum, wtype, val in fields:
-        if wtype == 2 and 5 < len(val) < 500:
+        if wtype == 2 and len(val) > 50:
+            if fnum == 10:
+                container = val
+                break
+            if container is None or len(val) > len(container):
+                container = val
+
+    if container:
+        container_fields = parse_message(container)
+        # Step 2: Find stream entries (repeated field 2, 10-200 bytes)
+        for fnum, wtype, val in container_fields:
+            if wtype == 2 and fnum == 2 and 10 < len(val) < 200:
+                stream_fields = parse_message(val)
+                stream_id = None
+                site_type = None
+                for sf_num, sf_wire, sf_val in stream_fields:
+                    if sf_wire == 0:
+                        if sf_num == 1:
+                            stream_id = sf_val
+                        elif sf_num == 9:
+                            site_type = sf_val
+                if stream_id and stream_id != match_id and 100 < stream_id < 999999999:
+                    if site_type == SITE_TYPE:
+                        return stream_id
+                    return stream_id
+
+    # === FALLBACK: Generic search ===
+    for fnum, wtype, val in fields:
+        if wtype == 2 and 5 < len(val) < 2000:
             sub_fields = parse_message(val)
-            if not sub_fields or len(sub_fields) < 2:
+            if not sub_fields:
                 continue
             for sf_num, sf_wire, sf_val in sub_fields:
-                if sf_wire == 0:
+                if sf_wire == 0 and sf_num == 1:
                     if sf_val != match_id and 100 < sf_val < 999999999:
-                        return sf_val
+                        if len(sub_fields) >= 3:
+                            return sf_val
                     break
-
-    # Strategy 2: Top-level varints (exclude matchId), prefer field > 1
-    candidates = []
-    for fnum, wtype, val in fields:
-        if wtype == 0 and val != match_id and 100 < val < 999999999:
-            candidates.append((fnum, val))
-    if candidates:
-        non_one = [c for c in candidates if c[0] != 1]
-        if non_one:
-            return non_one[0][1]
-        return candidates[0][1]
+            for sf_num, sf_wire, sf_val in sub_fields:
+                if sf_wire == 2 and sf_num == 2 and 10 < len(sf_val) < 200:
+                    entry_fields = parse_message(sf_val)
+                    for ef_num, ef_wire, ef_val in entry_fields:
+                        if ef_wire == 0 and ef_num == 1:
+                            if ef_val != match_id and 100 < ef_val < 999999999:
+                                return ef_val
+                            break
 
     return None
 
@@ -555,7 +576,7 @@ def main():
     for m in matches[:5]:
         print(f"    - {m['name']} (id={m['id']}, sport={m['sport_type']})", flush=True)
 
-    # Step 3: SEQUENTIAL (no ThreadPool) to avoid Cloudflare 429
+    # Step 3: SEQUENTIAL
     print("Step 3: Fetching stream URLs (sequential)...", flush=True)
     entries = []
 
@@ -572,7 +593,7 @@ def main():
             print("NO DETAIL", flush=True)
             continue
 
-        if DEBUG and isinstance(detail, bytes):
+        if DEBUG and isinstance(detail, bytes) and idx == 0:
             dump_protobuf(detail)
 
         stream_id = extract_stream_id(detail, match_id=match_id)
@@ -602,10 +623,22 @@ def main():
                     obfuscated = stream_data[key]
                     break
             if not obfuscated:
+                for k, v in stream_data.items():
+                    if isinstance(v, dict):
+                        for key2 in ("url", "streamUrl", "playUrl", "hlsUrl"):
+                            if key2 in v and isinstance(v[key2], str):
+                                obfuscated = v[key2]
+                                break
+                    if obfuscated:
+                        break
+            if not obfuscated:
                 obfuscated = extract_obfuscated_url(stream_data)
 
         if not obfuscated:
             print("NO OBFUSCATED URL", flush=True)
+            if DEBUG and isinstance(stream_data, dict):
+                print(f"    JSON: {json.dumps(stream_data, ensure_ascii=False)[:300]}",
+                      flush=True)
             continue
 
         # 3d: Build tokenized URL
