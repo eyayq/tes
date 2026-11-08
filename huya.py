@@ -7,6 +7,7 @@ import sys
 import time
 import base64
 import random
+import os
 from urllib.parse import urlparse, quote
 
 try:
@@ -35,20 +36,22 @@ except ImportError:
 
 # ==================== CONFIG ====================
 
-DATA_URL = "https://apis-data10.tcpwe138stya.ru"
+DATA_URL = os.environ.get("DATA_URL", "https://apis-data10.tcpwe138stya.ru")
 PORT = 8080
-MAX_MATCHES = 30
+MAX_MATCHES = int(os.environ.get("MAX_MATCHES", "30"))
 TIMEOUT = 15
-SPORT_TYPE = 0
-LANGUAGE = 34
-SITE_TYPE = 2001
-CONTINENT = "AS"
-COUNTRY = "ID"
-DIGIT = "trd"
+SPORT_TYPE = int(os.environ.get("SPORT_TYPE", "0"))
+LANGUAGE = int(os.environ.get("LANGUAGE", "34"))
+SITE_TYPE = int(os.environ.get("SITE_TYPE", "2001"))
+CONTINENT = os.environ.get("CONTINENT", "AS")
+COUNTRY = os.environ.get("COUNTRY", "ID")
+DIGIT = os.environ.get("DIGIT", "trd")
 
 REQUEST_DELAY = (1.5, 3.0)
 MAX_RETRIES = 3
 RETRY_BACKOFF = 5
+
+DEBUG = os.environ.get("DEBUG", "0") == "1"
 
 HEADERS = {
     "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
@@ -69,30 +72,16 @@ HEADERS = {
 # ==================== SPORT TYPE MAPPING ====================
 
 SPORT_NAMES = {
-    0: "All Sports",
-    1: "Football",
-    2: "Basketball",
-    3: "Tennis",
-    4: "Baseball",
-    6: "Cricket",
-    7: "Motorsport",
-    8: "Rugby",
-    9: "American Football",
-    10: "Aussie Rules",
-    11: "Hockey",
-    12: "Badminton",
-    13: "Volleyball",
-    14: "Fighting",
-    15: "Cycling",
-    16: "Handball",
-    90: "Others",
+    0: "All Sports", 1: "Football", 2: "Basketball", 3: "Tennis",
+    4: "Baseball", 6: "Cricket", 7: "Motorsport", 8: "Rugby",
+    9: "American Football", 10: "Aussie Rules", 11: "Hockey",
+    12: "Badminton", 13: "Volleyball", 14: "Fighting",
+    15: "Cycling", 16: "Handball", 90: "Others",
 }
 
 # ==================== AES KEY MATERIAL ====================
-AES_KEY = b"a7981cc9eb2f4d19dcfea57b101ecd89"  # 32 bytes
-AES_IV = b"8017d3a8f1400d2f"  # 16 bytes
-
-DEBUG = True
+AES_KEY = b"a7981cc9eb2f4d19dcfea57b101ecd89"
+AES_IV = b"8017d3a8f1400d2f"
 
 session = requests.Session()
 session.headers.update(HEADERS)
@@ -102,10 +91,10 @@ session.headers.update(HEADERS)
 
 def safe_get(url, **kwargs):
     for attempt in range(MAX_RETRIES):
-        delay = random.uniform(*REQUEST_DELAY)
+        # Sleep hanya di retry, bukan request pertama
         if attempt > 0:
-            delay += RETRY_BACKOFF * attempt
-        time.sleep(delay)
+            delay = random.uniform(*REQUEST_DELAY) + RETRY_BACKOFF * attempt
+            time.sleep(delay)
 
         try:
             resp = session.get(url, timeout=TIMEOUT, **kwargs)
@@ -115,14 +104,13 @@ def safe_get(url, **kwargs):
 
         if resp.status_code == 429:
             wait = RETRY_BACKOFF * (attempt + 1)
-            print(f"    [429] Rate limited, waiting {wait}s "
-                  f"(attempt {attempt+1}/{MAX_RETRIES})", flush=True)
+            print(f"    [429] Rate limited, waiting {wait}s", flush=True)
             time.sleep(wait)
             continue
 
         if resp.status_code == 503:
             wait = RETRY_BACKOFF * (attempt + 1) * 2
-            print(f"    [503] Cloudflare challenge, waiting {wait}s", flush=True)
+            print(f"    [503] Cloudflare, waiting {wait}s", flush=True)
             time.sleep(wait)
             continue
 
@@ -132,7 +120,7 @@ def safe_get(url, **kwargs):
 
         return resp
 
-    print(f"    [GIVE UP] {url[:80]} after {MAX_RETRIES} attempts", flush=True)
+    print(f"    [GIVE UP] {url[:80]}", flush=True)
     return None
 
 
@@ -194,33 +182,33 @@ def dump_protobuf(data, indent=0, max_depth=4):
     prefix = "  " * indent
     fields = parse_message(data)
     if not fields:
-        print(f"{prefix}(no valid protobuf fields, {len(data)} bytes)", flush=True)
-        print(f"{prefix}raw: {data[:80]!r}", flush=True)
+        print(f"{prefix}(no valid fields, {len(data)}B)", flush=True)
         return
     for fnum, wtype, val in fields:
-        wtype_name = {0: "varint", 1: "64bit", 2: "bytes", 5: "32bit"}.get(wtype, f"wt{wtype}")
+        wname = {0: "varint", 1: "64bit", 2: "bytes", 5: "32bit"}.get(wtype, f"wt{wtype}")
         if wtype == 0:
-            print(f"{prefix}field {fnum} ({wtype_name}): {val}", flush=True)
+            print(f"{prefix}f{fnum} ({wname}): {val}", flush=True)
         elif wtype == 2:
             try:
                 text = val.decode('utf-8')
                 if all(32 <= ord(c) < 127 or c in '\n\t' for c in text) and len(val) < 300:
-                    print(f"{prefix}field {fnum} (string): {text!r}", flush=True)
+                    print(f"{prefix}f{fnum} (str): {text!r}", flush=True)
                     continue
             except (UnicodeDecodeError, ValueError):
                 pass
-            print(f"{prefix}field {fnum} (bytes, {len(val)}B):", flush=True)
-            sub_fields = parse_message(val)
-            if sub_fields:
+            print(f"{prefix}f{fnum} (bytes, {len(val)}B):", flush=True)
+            sub = parse_message(val)
+            if sub:
                 dump_protobuf(val, indent + 1, max_depth)
             else:
                 print(f"{prefix}  raw: {val[:60]!r}", flush=True)
         else:
-            print(f"{prefix}field {fnum} ({wtype_name}): {val!r}", flush=True)
+            print(f"{prefix}f{fnum} ({wname}): {val!r}", flush=True)
 
 
 def find_vs_name(data):
-    m = re.search(rb'[\x20-\x7e]{2,} vs [\x20-\x7e]{2,}', data)
+    # Support "vs" dan "v" sebagai separator
+    m = re.search(rb'[\x20-\x7e]{2,}\s+(?:vs|v)\s+[\x20-\x7e]{2,}', data)
     if m:
         name = m.group().decode('utf-8', errors='replace').strip()
         name = re.sub(r'^[^a-zA-Z\u00c0-\u024f]+', '', name)
@@ -289,9 +277,9 @@ def extract_logo_from_protobuf(data):
                         return text
                 except (UnicodeDecodeError, ValueError):
                     pass
-                sub_fields = parse_message(val)
-                if sub_fields:
-                    result = _find_url(sub_fields, depth + 1)
+                sub = parse_message(val)
+                if sub:
+                    result = _find_url(sub, depth + 1)
                     if result:
                         return result
         return None
@@ -373,7 +361,6 @@ def extract_stream_id(data, match_id=None, _depth=0):
 # ==================== CRYPTO ====================
 
 def rot47_decode(s):
-    """ROT47: shift chars 33-119 by 47 positions."""
     if isinstance(s, bytes):
         s = s.decode('ascii', errors='ignore')
     result = []
@@ -386,19 +373,16 @@ def rot47_decode(s):
 
 
 def aes_decrypt(data):
-    """AES-256-CBC decrypt with PKCS7 unpadding."""
     if not HAS_AES or len(data) < 16 or len(data) % 16 != 0:
         return None
     try:
         cipher = AES.new(AES_KEY, AES.MODE_CBC, AES_IV)
-        plaintext = unpad(cipher.decrypt(data), 16)
-        return plaintext
+        return unpad(cipher.decrypt(data), 16)
     except Exception:
         return None
 
 
 def aes_encrypt(data):
-    """AES-256-CBC encrypt with PKCS7 padding."""
     if not HAS_AES:
         return None
     try:
@@ -409,7 +393,6 @@ def aes_encrypt(data):
 
 
 def build_tokenized_url(plain_url, rb_session):
-    """Build final tokenized m3u8 URL from plain URL + session."""
     if not (plain_url.startswith('http://') or plain_url.startswith('https://')):
         print(f"    [ERROR] Not a valid URL: {plain_url[:60]!r}", file=sys.stderr, flush=True)
         return None
@@ -428,19 +411,12 @@ def build_tokenized_url(plain_url, rb_session):
     search = ('?' + parsed.query) if parsed.query else ''
 
     final_url = f"{origin}/token-{token}{pathname}{search}"
-
     if DEBUG:
         print(f"    [DEBUG] Final URL: {final_url[:120]}", flush=True)
-
     return final_url
 
 
 def extract_obfuscated_url(data):
-    """
-    Extract plain URL from stream detail protobuf.
-    URL is stored as AES-256-CBC ciphertext in a protobuf field.
-    Steps: find bytes fields (multiple of 16) → AES decrypt → ROT47 decode → plain URL
-    """
     if isinstance(data, bytes):
         candidates = []
 
@@ -456,42 +432,26 @@ def extract_obfuscated_url(data):
 
         _collect(data)
 
-        if DEBUG:
-            print(f"    [DEBUG] Found {len(candidates)} AES-size fields:", flush=True)
-
         for fnum, depth, val in candidates:
             plaintext = aes_decrypt(val)
             if plaintext is None:
                 continue
-
             try:
                 text = plaintext.decode('utf-8')
             except (UnicodeDecodeError, ValueError):
                 continue
 
             if DEBUG:
-                print(f"    [DEBUG]   f{fnum} d{depth} len={len(val)} "
-                      f"decrypted={text[:80]!r}", flush=True)
+                print(f"    [DEBUG] f{fnum} d{depth} len={len(val)} dec={text[:80]!r}", flush=True)
 
-            # Check ROT47-encoded URL
             decoded = rot47_decode(text)
             if len(decoded) > 8:
                 after = decoded[8:]
                 if after.startswith('http://') or after.startswith('https://'):
-                    if DEBUG:
-                        print(f"    [DEBUG]     ROT47 decoded: {after[:80]!r}", flush=True)
                     return after
-
-            # Check plain URL
             if text.startswith('http://') or text.startswith('https://'):
-                if DEBUG:
-                    print(f"    [DEBUG]     Plain URL: {text[:80]!r}", flush=True)
                 return text
-
-            # Check ROT47 without slice
             if decoded.startswith('http://') or decoded.startswith('https://'):
-                if DEBUG:
-                    print(f"    [DEBUG]     ROT47 (no slice): {decoded[:80]!r}", flush=True)
                 return decoded
 
         # Fallback: ROT47 on printable strings
@@ -502,14 +462,13 @@ def extract_obfuscated_url(data):
                 return
             fields = parse_message(d)
             for fnum, wtype, val in fields:
-                if wtype == 2:
-                    if len(val) > 20:
-                        try:
-                            text = val.decode('utf-8')
-                            if all(33 <= ord(c) <= 126 for c in text):
-                                strings.append((fnum, depth, text))
-                        except (UnicodeDecodeError, ValueError):
-                            pass
+                if wtype == 2 and len(val) > 20:
+                    try:
+                        text = val.decode('utf-8')
+                        if all(33 <= ord(c) <= 126 for c in text):
+                            strings.append((fnum, depth, text))
+                    except (UnicodeDecodeError, ValueError):
+                        pass
                     _collect_strings(val, depth + 1)
 
         _collect_strings(data)
@@ -552,27 +511,17 @@ def extract_obfuscated_url(data):
 
 def decode_api_response(resp) -> bytes:
     content = resp.content
-    enc = resp.headers.get("content-encoding", "").lower()
+    # requests sudah auto-decompress gzip/deflate
+    # Cek magic bytes untuk brotli/zstd yang mungkin tidak ter-handle
     if not content:
         return b""
-    if enc == "gzip" or content[:2] == b'\x1f\x8b':
-        try:
-            content = gzip.decompress(content)
-        except Exception:
-            pass
-    elif enc == "br" and HAS_BROTLI:
+    # Brotli: tidak ada magic bytes, tapi cek encoding header
+    enc = resp.headers.get("content-encoding", "").lower()
+    if enc == "br" and HAS_BROTLI:
         try:
             content = brotli.decompress(content)
         except Exception:
             pass
-    elif enc == "deflate":
-        try:
-            content = zlib.decompress(content)
-        except Exception:
-            try:
-                content = zlib.decompress(content, -zlib.MAX_WBITS)
-            except Exception:
-                pass
     elif enc == "zstd" and HAS_ZSTD:
         try:
             content = zstd.ZstdDecompressor().decompress(content)
@@ -609,15 +558,12 @@ def get_signing_key(match_id=None, sport_type=None):
 
     content = decode_api_response(resp)
 
+    # Cari 32-char hex (MD5-like signing key)
     m = re.search(rb'[a-f0-9]{32}', content)
     if m:
         return m.group().decode()
 
     m = re.search(rb'[a-zA-Z0-9]{32}', content)
-    if m:
-        return m.group().decode()
-
-    m = re.search(rb'[a-f0-9]{6,}', content)
     if m:
         return m.group().decode()
 
@@ -644,10 +590,8 @@ def get_live_matches(md5):
 
 def get_match_detail(match_id, sport_type, fallback_md5):
     detail_md5 = get_signing_key(match_id=match_id, sport_type=sport_type)
-
     if not detail_md5:
         detail_md5 = fallback_md5
-
     if not detail_md5:
         return None, None
 
@@ -660,15 +604,6 @@ def get_match_detail(match_id, sport_type, fallback_md5):
 
     content = decode_api_response(resp)
     fmt, data = try_json_or_protobuf(content)
-
-    if fmt == "protobuf" and isinstance(data, bytes):
-        fields = parse_message(data)
-        if not fields and len(data) < 200:
-            err_text = data.decode('utf-8', errors='replace').strip()
-            if DEBUG:
-                print(f"    [DEBUG] Match detail error: {err_text!r}", flush=True)
-            return None, content
-
     return data, content
 
 
@@ -688,7 +623,6 @@ def get_stream_detail(stream_id, match_id, sport_type):
     content = decode_api_response(resp)
     fmt, data = try_json_or_protobuf(content)
     rb_session = resp.headers.get("rb-session", "")
-
     return data, rb_session, content
 
 
@@ -698,27 +632,26 @@ def main():
     t0 = time.time()
 
     if not HAS_AES:
-        print("WARNING: pycryptodome not installed. "
-              "Run: pip install pycryptodome", file=sys.stderr, flush=True)
+        print("WARNING: pycryptodome not installed!", file=sys.stderr, flush=True)
 
-    # Step 1
-    print("Step 1: Getting signing key (code=100)...", flush=True)
+    # Step 1: Signing key
+    print("Step 1: Getting signing key...", flush=True)
     md5 = get_signing_key(sport_type=SPORT_TYPE)
     if not md5:
         print("ERROR: Failed to get signing key", file=sys.stderr, flush=True)
-        with open("playlist.m3u", "w") as f:
+        with open("playlist.m3u", "w", encoding="utf-8") as f:
             f.write("#EXTM3U\n")
         sys.exit(1)
     print(f"  Key: {md5}", flush=True)
 
-    # Step 2
+    # Step 2: Live matches
     print("Step 2: Getting live matches...", flush=True)
     matches = get_live_matches(md5)[:MAX_MATCHES]
     print(f"  Found {len(matches)} matches", flush=True)
 
     if not matches:
         print("  No live matches.", file=sys.stderr, flush=True)
-        with open("playlist.m3u", "w") as f:
+        with open("playlist.m3u", "w", encoding="utf-8") as f:
             f.write("#EXTM3U\n")
         sys.exit(0)
 
@@ -726,8 +659,8 @@ def main():
         sport_name = SPORT_NAMES.get(m['sport_type'], f"Sport {m['sport_type']}")
         print(f"    - {m['name']} (id={m['id']}, {sport_name})", flush=True)
 
-    # Step 3: Sequential
-    print("Step 3: Fetching stream URLs (sequential)...", flush=True)
+    # Step 3: Sequential stream fetch
+    print("Step 3: Fetching stream URLs...", flush=True)
     entries = []
 
     for idx, match in enumerate(matches):
@@ -738,7 +671,7 @@ def main():
 
         print(f"  [{idx+1}/{len(matches)}] {name} ({sport_name})...", end=" ", flush=True)
 
-        # 3a: Match detail → streamId + logo
+        # 3a: Match detail
         detail, raw_content = get_match_detail(match_id, sport_type, md5)
         if detail is None:
             print("NO DETAIL", flush=True)
@@ -758,18 +691,14 @@ def main():
             print(f"streamId={stream_id}", end=" → ", flush=True)
 
         # 3b: Stream detail
-        stream_data, rb_session, raw = get_stream_detail(
-            stream_id, match_id, sport_type)
-
+        stream_data, rb_session, raw = get_stream_detail(stream_id, match_id, sport_type)
         if not rb_session:
             print("NO RB-SESSION", flush=True)
             continue
 
-        # 3c: Extract plain URL (AES decrypt + ROT47)
+        # 3c: Extract plain URL
         plain_url = None
-        if isinstance(stream_data, bytes):
-            plain_url = extract_obfuscated_url(stream_data)
-        elif isinstance(stream_data, dict):
+        if isinstance(stream_data, (bytes, dict, list)):
             plain_url = extract_obfuscated_url(stream_data)
 
         if not plain_url:
@@ -791,13 +720,11 @@ def main():
         print("OK", flush=True)
         if DEBUG:
             print(f"       → {final_url[:100]}", flush=True)
-        if logo and DEBUG:
-            print(f"       logo: {logo[:80]}", flush=True)
 
     elapsed = time.time() - t0
     print(f"\nGenerated {len(entries)} streams in {elapsed:.1f}s", flush=True)
 
-    # Build M3U with tvg-logo and group-title
+    # Build M3U
     lines = ["#EXTM3U"]
     for entry in entries:
         name = entry["name"]
@@ -813,7 +740,7 @@ def main():
         lines.append(stream_url)
 
     m3u_content = "\n".join(lines) + "\n"
-    with open("playlist.m3u", "w") as f:
+    with open("playlist.m3u", "w", encoding="utf-8") as f:
         f.write(m3u_content)
 
     print(f"\n{'='*55}", flush=True)
