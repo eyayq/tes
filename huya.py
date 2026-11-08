@@ -5,11 +5,8 @@ import sys
 import time
 import base64
 import random
-import threading
-import codecs
 from datetime import datetime, timezone, timedelta
-from urllib.parse import urlparse, urlunparse, quote, parse_qs
-from http.server import HTTPServer, BaseHTTPRequestHandler
+from urllib.parse import urlparse, urlunparse, quote
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 try:
@@ -36,7 +33,10 @@ CONTINENT = "AS"
 COUNTRY = "ID"
 DIGIT = "trd"
 MAX_WORKERS = 5
-PROXY_PORT = 8080
+
+# *** SET YOUR CLOUDFLARE WORKER URL HERE ***
+# After deploying the worker, replace with your actual URL
+WORKER_URL = "https://pl-gratosv-al.bhns.workers.dev"
 
 REQUEST_DELAY = (0.5, 1.5)
 MAX_RETRIES = 3
@@ -148,7 +148,6 @@ def parse_message(data, start=0, end=None):
 
 
 def find_string_fields(data, min_len=5, max_len=500):
-    """Find all printable string fields in a protobuf message (recursive, depth 3)."""
     results = []
     _find_strings_recursive(data, results, 0, min_len, max_len)
     return results
@@ -181,7 +180,6 @@ def find_vs_name(data):
 
 
 def find_logo_url(data):
-    """Find a logo/image URL from protobuf data."""
     strings = find_string_fields(data, min_len=10, max_len=300)
     for s in strings:
         if s.startswith("http") and (
@@ -340,7 +338,6 @@ def extract_obfuscated_url(data):
 
 
 def extract_referer(data):
-    """Try to find the iframe player origin (referer) from stream detail."""
     if isinstance(data, bytes):
         strings = find_string_fields(data, min_len=10, max_len=200)
         for s in strings:
@@ -391,39 +388,6 @@ def build_tokenized_url(obfuscated_url, rb_session):
 
     result = parsed._replace(path=new_path)
     return urlunparse(result)
-
-
-# ==================== CSL (CDN SMART LINK) DECODER ====================
-
-def decode_csl_segment(segment_url):
-    """Decode CSL segment URLs (_ctump/_ctuph params). ROT13 + base64."""
-    parsed = urlparse(segment_url)
-    params = parse_qs(parsed.query)
-
-    ctump = params.get('_ctump', [None])[0]
-    ctuph = params.get('_ctuph', [None])[0]
-
-    if not ctump and not ctuph:
-        return None
-
-    candidates = []
-    for raw in [ctump, ctuph]:
-        if not raw:
-            continue
-        try:
-            rot13 = codecs.decode(raw, 'rot_13')
-            decoded = base64.b64decode(rot13).decode('utf-8', errors='ignore')
-            if decoded.startswith('['):
-                urls = json.loads(decoded)
-                candidates.extend(urls)
-            elif ',' in decoded:
-                candidates.extend(u.strip() for u in decoded.split(','))
-            elif decoded.startswith('http'):
-                candidates.append(decoded)
-        except Exception:
-            continue
-
-    return candidates if candidates else None
 
 
 # ==================== DECODE ====================
@@ -595,136 +559,7 @@ def process_match(match, fallback_md5):
     }
 
 
-# ==================== LOCAL HLS PROXY ====================
-
-class HLSProxyHandler(BaseHTTPRequestHandler):
-    def log_message(self, format, *args):
-        pass
-
-    def do_GET(self):
-        parsed = urlparse(self.path)
-
-        if parsed.path == '/health':
-            self.send_response(200)
-            self.send_header('Content-Type', 'text/plain')
-            self.end_headers()
-            self.wfile.write(b'OK')
-            return
-
-        if parsed.path != '/proxy':
-            self.send_response(404)
-            self.end_headers()
-            return
-
-        params = parse_qs(parsed.query)
-        target_url = params.get('url', [None])[0]
-        referer = params.get('referer', [''])[0]
-
-        if not target_url:
-            self.send_response(400)
-            self.end_headers()
-            return
-
-        upstream_headers = {
-            "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 "
-                          "(KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36",
-            "Referer": referer,
-            "Origin": referer.rstrip('/'),
-        }
-
-        try:
-            resp = requests.get(target_url, headers=upstream_headers,
-                                timeout=15, stream=True)
-        except requests.exceptions.RequestException as e:
-            self.send_response(502)
-            self.send_header('Content-Type', 'text/plain')
-            self.end_headers()
-            self.wfile.write(str(e).encode())
-            return
-
-        if resp.status_code != 200:
-            self.send_response(resp.status_code)
-            self.send_header('Content-Type', 'text/plain')
-            self.end_headers()
-            self.wfile.write(resp.content[:500])
-            return
-
-        content_type = resp.headers.get('Content-Type', '')
-
-        if 'mpegurl' in content_type or target_url.endswith('.m3u8'):
-            body = resp.text
-            rewritten = self._rewrite_m3u8(body, target_url, referer)
-            self.send_response(200)
-            self.send_header('Content-Type', 'application/vnd.apple.mpegurl')
-            self.send_header('Access-Control-Allow-Origin', '*')
-            self.send_header('Cache-Control', 'no-store')
-            self.end_headers()
-            self.wfile.write(rewritten.encode('utf-8'))
-        else:
-            content = resp.content
-            if resp.status_code == 487 or (len(content) < 200 and b'487' in content):
-                csl_urls = decode_csl_segment(target_url)
-                if csl_urls:
-                    for csl_url in csl_urls:
-                        try:
-                            csl_resp = requests.get(csl_url, headers=upstream_headers,
-                                                    timeout=15)
-                            if csl_resp.status_code == 200 and len(csl_resp.content) > 1000:
-                                self.send_response(200)
-                                self.send_header('Content-Type', 'video/mp2t')
-                                self.send_header('Access-Control-Allow-Origin', '*')
-                                self.end_headers()
-                                self.wfile.write(csl_resp.content)
-                                return
-                        except Exception:
-                            continue
-                self.send_response(487)
-                self.send_header('Content-Type', 'text/plain')
-                self.end_headers()
-                self.wfile.write(b'CSL decode failed')
-                return
-
-            self.send_response(200)
-            self.send_header('Content-Type', content_type or 'video/mp2t')
-            self.send_header('Access-Control-Allow-Origin', '*')
-            self.send_header('Cache-Control', 'no-store')
-            self.end_headers()
-            self.wfile.write(content)
-
-    def _rewrite_m3u8(self, m3u8_content, playlist_url, referer):
-        base = playlist_url.rsplit('/', 1)[0] + '/'
-        lines = m3u8_content.split('\n')
-        rewritten = []
-        for line in lines:
-            stripped = line.strip()
-            if not stripped or stripped.startswith('#'):
-                if stripped.startswith('#EXT-X-START'):
-                    continue
-                rewritten.append(line)
-            else:
-                if stripped.startswith('http'):
-                    abs_url = stripped
-                else:
-                    if stripped.startswith('//'):
-                        abs_url = 'https:' + stripped
-                    else:
-                        abs_url = base + stripped
-                proxied = (f"http://localhost:{PROXY_PORT}/proxy"
-                           f"?url={quote(abs_url, safe='')}"
-                           f"&referer={quote(referer, safe='')}")
-                rewritten.append(proxied)
-        return '\n'.join(rewritten)
-
-
-def start_proxy():
-    server = HTTPServer(('0.0.0.0', PROXY_PORT), HLSProxyHandler)
-    thread = threading.Thread(target=server.serve_forever, daemon=True)
-    thread.start()
-    print(f"  HLS Proxy running on http://localhost:{PROXY_PORT}", flush=True)
-    return server
-
-
-# ==================== M3U BUILDER ====================
+# ==================== M3U BUILDER (WORKER) ====================
 
 def format_time_wib(ts_ms):
     if not ts_ms:
@@ -736,6 +571,12 @@ def format_time_wib(ts_ms):
         return f"[{dt.strftime('%H:%M')} WIB {dt.strftime('%d-%m-%Y')}]"
     except Exception:
         return ""
+
+
+def build_worker_url(stream_url, referer):
+    """Build the Cloudflare Worker proxy URL."""
+    return (f"{WORKER_URL}/?url={quote(stream_url, safe='')}"
+            f"&referer={quote(referer, safe='')}")
 
 
 def build_m3u(entries):
@@ -755,9 +596,8 @@ def build_m3u(entries):
         full_title = f"{name} {time_str}".strip()
         tvg_id = re.sub(r'[^a-zA-Z0-9_]', '_', name)
 
-        proxied_url = (f"http://localhost:{PROXY_PORT}/proxy"
-                       f"?url={quote(url, safe='')}"
-                       f"&referer={quote(referer, safe='')}")
+        # Route through Cloudflare Worker
+        proxied_url = build_worker_url(url, referer)
 
         lines.append(
             f'#EXTINF:-1 tvg-id="{tvg_id}" tvg-logo="{logo}" group-title="{group}",{full_title}'
@@ -783,8 +623,13 @@ def main():
               file=sys.stderr, flush=True)
         sys.exit(1)
 
-    print("Starting HLS proxy...", flush=True)
-    proxy_server = start_proxy()
+    if "your-worker-name" in WORKER_URL:
+        print("WARNING: WORKER_URL not set! Set it in CONFIG section.",
+              file=sys.stderr, flush=True)
+        print("  Deploy worker.js to Cloudflare, then set:", file=sys.stderr, flush=True)
+        print(f'  WORKER_URL = "https://your-worker.your-user.workers.dev"',
+              file=sys.stderr, flush=True)
+        sys.exit(1)
 
     print("Step 1: Getting signing key...", flush=True)
     md5 = get_signing_key(sport_type=SPORT_TYPE)
@@ -848,17 +693,9 @@ def main():
         print(f"... ({len(m3u_content)} chars total)", flush=True)
     print(f"{'='*60}", flush=True)
     print(f"\nSaved to: playlist.m3u", flush=True)
-    print(f"\n⚠ KEEP THIS SCRIPT RUNNING — proxy must stay alive for playback!", flush=True)
-    print(f"  VLC: Open playlist.m3u", flush=True)
-    print(f"  mpv:  mpv playlist.m3u", flush=True)
-    print(f"\nPress Ctrl+C to stop.", flush=True)
-
-    try:
-        while True:
-            time.sleep(60)
-    except KeyboardInterrupt:
-        print("\nStopping proxy...", flush=True)
-        proxy_server.shutdown()
+    print(f"\n⚠ Worker URL: {WORKER_URL}", flush=True)
+    print(f"  Import playlist.m3u to your IPTV/Dalvik player.", flush=True)
+    print(f"  ⚠ If streams don't play, CDN may be IP-locking (Worker uses CF IP).", flush=True)
 
 
 if __name__ == "__main__":
