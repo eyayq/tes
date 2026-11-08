@@ -24,7 +24,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          pip install requests curl_cffi beautifulsoup4 websockets pycryptodome brotli playwright
+          pip install requests curl_cffi beautifulsoup4 websockets pycryptodome brotli zstandard playwright
           playwright install chromium
 
       - name: Run Scraper
