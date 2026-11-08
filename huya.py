@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Kick + YouTube M3U Scraper
+Kick M3U Scraper
 OAuth 2.1 PKCE (User Access Token) + Public API v2
 """
 
@@ -8,12 +8,10 @@ import time
 import random
 import logging
 import argparse
-import subprocess
 import threading
 import hashlib
 import base64
 import secrets
-import re
 import json
 import os
 import webbrowser
@@ -39,7 +37,6 @@ MAX_PER_CATEGORY = 10
 MAX_STREAMS = 1000
 LANGUAGE = "id"
 
-# OAuth credentials — daftar di https://kick.com/settings/developer
 KICK_CLIENT_ID = os.getenv("KICK_CLIENT_ID", "01M6YCH4D5Y8TGGQAMP25TDJ42")
 KICK_CLIENT_SECRET = os.getenv("KICK_CLIENT_SECRET", "a6ba1635efe7f460edcc486675594df1c9156a813ffc93d677841121a43fe239")
 REDIRECT_URI = "http://127.0.0.1:8765/callback"
@@ -47,11 +44,6 @@ OAUTH_SCOPES = "user:read channel:read"
 
 API_BASE = "https://api.kick.com/public/v2"
 OAUTH_BASE = "https://id.kick.com/oauth"
-
-YOUTUBE_CHANNELS = [
-    ("https://www.youtube.com/@MPLIndonesia/live", "MPL Indonesia"),
-    ("https://www.youtube.com/@mlbbindonesia/live", "MLBB Indonesia"),
-]
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 log = logging.getLogger("kick-m3u")
@@ -179,15 +171,19 @@ class KickOAuthPKCE:
                 if code and returned_state == state:
                     auth_result["code"] = code
                     self.send_response(200)
-                    self.send_header("Content-Type", "text/html")
+                    self.send_header("Content-Type", "text/html; charset=utf-8")
                     self.end_headers()
-                    self.wfile.write(b"<h1>✅ Berhasil! Kembali ke terminal.</h1>")
+                    self.wfile.write(
+                        "<h1>✅ Berhasil! Kembali ke terminal.</h1>".encode("utf-8")
+                    )
                     log.info("   Callback diterima: code=%s...", code[:20])
                 else:
                     self.send_response(400)
-                    self.send_header("Content-Type", "text/html")
+                    self.send_header("Content-Type", "text/html; charset=utf-8")
                     self.end_headers()
-                    self.wfile.write(b"<h1>❌ Error: state mismatch atau code kosong</h1>")
+                    self.wfile.write(
+                        "<h1>❌ Error: state mismatch atau code kosong</h1>".encode("utf-8")
+                    )
                     log.error("   Callback error: code=%s, state_match=%s",
                               bool(code), returned_state == state)
 
@@ -429,11 +425,7 @@ def fetch_livestreams(category_id: int | None = None,
 def extract_playback_url(stream_data: dict) -> Optional[str]:
     """
     Extract .m3u8 URL dari response.
-    Support multiple response shapes:
-      - playback_url: {"live": "...", "dvr": "..."}
-      - playback_url: "https://..."
-      - stream.playback_url
-      - hls_url
+    Support multiple response shapes.
     """
     pb = stream_data.get("playback_url")
     if isinstance(pb, dict):
@@ -458,7 +450,6 @@ def extract_playback_url(stream_data: dict) -> Optional[str]:
 
 def process_kick_stream(stream_data: dict, group_name: str) -> Optional[Stream]:
     """Convert raw API response → Stream dataclass."""
-    # Extract slug (multiple possible shapes)
     channel_slug = (
         stream_data.get("channel_slug")
         or stream_data.get("slug")
@@ -514,59 +505,6 @@ def process_kick_stream(stream_data: dict, group_name: str) -> Optional[Stream]:
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# YOUTUBE
-# ═══════════════════════════════════════════════════════════════════════════════
-
-def get_youtube_m3u8(channel_url: str) -> Optional[str]:
-    """Get M3U8 URL via yt-dlp."""
-    try:
-        r = subprocess.run(
-            ["yt-dlp", "-g", "-f", "b[protocol=m3u8]",
-             "--extractor-args", "youtube:player_client=web_safari",
-             "--no-warnings", "--socket-timeout", "15",
-             channel_url],
-            capture_output=True, text=True, timeout=30,
-        )
-        if r.returncode == 0 and r.stdout.strip():
-            return r.stdout.strip()
-    except Exception:
-        pass
-    return None
-
-
-def get_youtube_channel_logo(channel_url: str) -> str:
-    """Scrape og:image from channel page."""
-    try:
-        r = requests.get(channel_url.replace("/live", ""), timeout=REQUEST_TIMEOUT)
-        if r.status_code == 200:
-            match = re.search(r'og:image"\s+content="([^"]+)"', r.text)
-            if match:
-                return match.group(1)
-    except Exception:
-        pass
-    return "https://www.youtube.com/img/icons/1x/channel-icon.png"
-
-
-def process_youtube(item: tuple) -> Optional[Stream]:
-    """Process a YouTube channel → Stream."""
-    url, name = item
-    m3u8 = get_youtube_m3u8(url)
-    if not m3u8:
-        return None
-    logo = get_youtube_channel_logo(url)
-    return Stream(
-        channel_slug=name.lower().replace(" ", "_"),
-        title=f"{name} LIVE",
-        playback_url=m3u8,
-        group_title="YouTube",
-        tvg_logo=logo,
-        started_at=None,
-        viewers=0,
-        platform="YouTube",
-    )
-
-
-# ═══════════════════════════════════════════════════════════════════════════════
 # M3U BUILDER
 # ═══════════════════════════════════════════════════════════════════════════════
 
@@ -607,16 +545,12 @@ def build_m3u(streams: list[Stream]) -> str:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Kick + YouTube M3U Scraper (OAuth 2.1 PKCE)"
+        description="Kick M3U Scraper (OAuth 2.1 PKCE)"
     )
     parser.add_argument("--output", "-o", default=OUTPUT_FILE,
                         help="Output file path")
     parser.add_argument("--workers", "-w", type=int, default=MAX_WORKERS,
                         help="Max concurrent workers")
-    parser.add_argument("--kick-only", action="store_true",
-                        help="Skip YouTube")
-    parser.add_argument("--yt-only", action="store_true",
-                        help="Skip Kick")
     parser.add_argument("--max-per-category", type=int, default=MAX_PER_CATEGORY,
                         help="Max streams per category")
     parser.add_argument("--max-streams", type=int, default=MAX_STREAMS,
@@ -628,9 +562,7 @@ def main():
     args = parser.parse_args()
 
     t0 = time.time()
-    log.info("╔══════════════════════════════════════════╗")
-    log.info("║  Kick + YouTube M3U Scraper (PKCE)     ║")
-    log.info("╚══════════════════════════════════════════╝")
+    log.info("=== Kick M3U Scraper (PKCE) ===")
     log.info("Settings: max-per-cat=%d, max-streams=%d, lang=%s",
              args.max_per_category, args.max_streams, args.language)
 
@@ -643,108 +575,89 @@ def main():
 
     # ── OAuth: ensure valid token ─────────────────────────────────────────────
     if args.reauth:
-        # Delete cached token to force re-auth
         if os.path.exists(TOKEN_FILE):
             os.remove(TOKEN_FILE)
             log.info("Token cache dihapus.")
 
     oauth = get_oauth()
     token = oauth.get_token()
-    if not token and not args.yt_only:
+    if not token:
         log.error("❌ Gagal mendapatkan token. Jalankan ulang dengan --reauth?")
         return
 
     all_streams: list[Stream] = []
 
-    # ── KICK ──────────────────────────────────────────────────────────────────
-    if not args.yt_only:
-        log.info("─── KICK ───")
+    # ── Fetch categories ──────────────────────────────────────────────────────
+    categories = fetch_categories()
+    log.info("Kategori: %d", len(categories))
 
-        # Step 1: Fetch categories
-        categories = fetch_categories()
-        log.info("Kategori: %d", len(categories))
+    all_raw: list[tuple[dict, str]] = []
+    seen: set[str] = set()
 
-        all_raw: list[tuple[dict, str]] = []
-        seen: set[str] = set()
+    # ── Fetch livestreams per category (parallel) ─────────────────────────────
+    if categories:
+        with ThreadPoolExecutor(max_workers=args.workers) as pool:
+            futures = {}
+            for cat in categories:
+                cat_id = cat.get("id") or cat.get("category_id")
+                cat_name = cat.get("name") or cat.get("slug", "unknown")
+                if cat_id:
+                    futures[pool.submit(
+                        fetch_livestreams, cat_id,
+                        args.max_per_category, args.language
+                    )] = cat_name
 
-        # Step 2: Fetch livestreams per category (parallel)
-        if categories:
-            with ThreadPoolExecutor(max_workers=args.workers) as pool:
-                futures = {}
-                for cat in categories:
-                    cat_id = cat.get("id") or cat.get("category_id")
-                    cat_name = cat.get("name") or cat.get("slug", "unknown")
-                    if cat_id:
-                        futures[pool.submit(
-                            fetch_livestreams, cat_id,
-                            args.max_per_category, args.language
-                        )] = cat_name
+            for fut in as_completed(futures):
+                cat_name = futures[fut]
+                try:
+                    streams = fut.result()
+                    for s in streams:
+                        slug = (
+                            s.get("channel_slug")
+                            or s.get("slug")
+                            or (s.get("channel", {}) or {}).get("slug", "")
+                        )
+                        if slug and slug not in seen:
+                            seen.add(slug)
+                            all_raw.append((s, cat_name))
+                    log.info("  %s: %d stream", cat_name, len(streams))
+                except Exception as e:
+                    log.debug("Error %s: %s", cat_name, e)
 
-                for fut in as_completed(futures):
-                    cat_name = futures[fut]
-                    try:
-                        streams = fut.result()
-                        for s in streams:
-                            slug = (
-                                s.get("channel_slug")
-                                or s.get("slug")
-                                or (s.get("channel", {}) or {}).get("slug", "")
-                            )
-                            if slug and slug not in seen:
-                                seen.add(slug)
-                                all_raw.append((s, cat_name))
-                        log.info("  %s: %d stream", cat_name, len(streams))
-                    except Exception as e:
-                        log.debug("Error %s: %s", cat_name, e)
+                if len(all_raw) >= args.max_streams:
+                    break
+    else:
+        # Fallback: tanpa filter kategori
+        log.info("Fallback: semua livestreams (tanpa kategori)")
+        streams = fetch_livestreams(None, args.max_per_category, args.language)
+        for s in streams:
+            slug = (
+                s.get("channel_slug")
+                or s.get("slug")
+                or (s.get("channel", {}) or {}).get("slug", "")
+            )
+            if slug and slug not in seen:
+                seen.add(slug)
+                all_raw.append((s, "All"))
 
-                    if len(all_raw) >= args.max_streams:
-                        break
-        else:
-            # Fallback: tanpa filter kategori
-            log.info("Fallback: semua livestreams (tanpa kategori)")
-            streams = fetch_livestreams(None, args.max_per_category, args.language)
-            for s in streams:
-                slug = (
-                    s.get("channel_slug")
-                    or s.get("slug")
-                    or (s.get("channel", {}) or {}).get("slug", "")
-                )
-                if slug and slug not in seen:
-                    seen.add(slug)
-                    all_raw.append((s, "All"))
+    log.info("Stream unik: %d (fetch: %.1fs)", len(all_raw), time.time() - t0)
 
-        log.info("Stream unik: %d (fetch: %.1fs)", len(all_raw), time.time() - t0)
-
-        # Step 3: Process streams (parallel)
-        if all_raw:
-            with ThreadPoolExecutor(max_workers=args.workers) as pool:
-                futures = {
-                    pool.submit(process_kick_stream, raw, cat): raw
-                    for raw, cat in all_raw
-                }
-                for fut in as_completed(futures):
-                    try:
-                        s = fut.result()
-                        if s:
-                            all_streams.append(s)
-                    except Exception:
-                        pass
-
-        kick_count = sum(1 for s in all_streams if s.platform == "Kick")
-        log.info("Kick valid: %d", kick_count)
-
-    # ── YOUTUBE ───────────────────────────────────────────────────────────────
-    if not args.kick_only and YOUTUBE_CHANNELS:
-        log.info("─── YOUTUBE ───")
-        with ThreadPoolExecutor(max_workers=3) as pool:
-            for fut in as_completed(pool.submit(process_youtube, ch) for ch in YOUTUBE_CHANNELS):
+    # ── Process streams (parallel) ────────────────────────────────────────────
+    if all_raw:
+        with ThreadPoolExecutor(max_workers=args.workers) as pool:
+            futures = {
+                pool.submit(process_kick_stream, raw, cat): raw
+                for raw, cat in all_raw
+            }
+            for fut in as_completed(futures):
                 try:
                     s = fut.result()
                     if s:
-                        log.info("  ✅ %s LIVE", s.title)
                         all_streams.append(s)
                 except Exception:
                     pass
+
+    log.info("Kick valid: %d", len(all_streams))
 
     # ── Output ────────────────────────────────────────────────────────────────
     all_streams.sort(key=lambda s: s.viewers, reverse=True)
