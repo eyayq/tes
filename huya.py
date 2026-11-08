@@ -1,10 +1,3 @@
-#!/usr/bin/env python3
-"""
-RBTV Playlist Generator (v16 — GitHub Actions)
-Alur: signing key → match list → match detail (streamId) → stream detail → 
-      ROT47 decode → AES token → final m3u8 URL
-"""
-
 import requests
 import json
 import gzip
@@ -64,21 +57,11 @@ HEADERS = {
 
 # ==================== AES KEY MATERIAL ====================
 # ⚠️  WAJIB: Ambil dari src/crypto/stream-token.ts di repo fctv33-stream-resolver
-#    (sharoon7171/fctv33-stream-resolver atau fork-nya)
-#    Key = 32 bytes (AES-256), IV = 16 bytes (CBC)
-#
-# Contoh format (GANTI dengan nilai asli dari source):
-#   AES_KEY = bytes.fromhex("...")  # 32 bytes
-#   AES_IV  = bytes.fromhex("...")  # 16 bytes
-#
-# Atau jika string:
-#   AES_KEY = b"your-32-byte-key-here!!!!!".ljust(32, b'\x00')
-#   AES_IV  = b"your-16-byte-iv!!!"
-
 AES_KEY = None  # ← ISI DI SINI (32 bytes)
 AES_IV = None   # ← ISI DI SINI (16 bytes)
 
-DEBUG = True  # Set True untuk debug, False untuk produksi
+DEBUG = True
+DEBUG_PROTO = True  # Set True untuk dump struktur protobuf (verbose)
 
 
 # ==================== PROTOBUF PARSER ====================
@@ -133,6 +116,32 @@ def parse_message(data, start=0, end=None):
     return fields
 
 
+def dump_protobuf(data, indent=0):
+    """Dump protobuf structure for debugging."""
+    prefix = "  " * indent
+    fields = parse_message(data)
+    for fnum, wtype, val in fields:
+        wtype_name = {0: "varint", 1: "64bit", 2: "bytes", 5: "32bit"}.get(wtype, f"wt{wtype}")
+        if wtype == 0:
+            print(f"{prefix}field {fnum} ({wtype_name}): {val}", flush=True)
+        elif wtype == 2:
+            try:
+                text = val.decode('utf-8')
+                if all(32 <= ord(c) < 127 or c in '\n\t' for c in text) and len(val) < 200:
+                    print(f"{prefix}field {fnum} (string): {text!r}", flush=True)
+                    continue
+            except (UnicodeDecodeError, ValueError):
+                pass
+            print(f"{prefix}field {fnum} (bytes, {len(val)}B):", flush=True)
+            sub_fields = parse_message(val)
+            if sub_fields:
+                dump_protobuf(val, indent + 1)
+            else:
+                print(f"{prefix}  raw: {val[:60]!r}", flush=True)
+        else:
+            print(f"{prefix}field {fnum} ({wtype_name}): {val!r}", flush=True)
+
+
 def find_vs_name(data):
     m = re.search(rb'[\x20-\x7e]{2,} vs [\x20-\x7e]{2,}', data)
     if m:
@@ -184,20 +193,25 @@ def extract_matches_from_protobuf(data):
 
 # ==================== STREAM ID EXTRACTION ====================
 
-def extract_stream_id(data, _depth=0):
-    if _depth > 5:
+def extract_stream_id(data, match_id=None, _depth=0):
+    """
+    Extract the real streamId from match detail protobuf.
+    The streamId is in a nested stream sub-message, NOT the matchId.
+    """
+    if _depth > 6:
         return None
     if isinstance(data, dict):
         if "streamId" in data and isinstance(data["streamId"], int):
-            return data["streamId"]
+            if data["streamId"] != match_id:
+                return data["streamId"]
         for v in data.values():
-            result = extract_stream_id(v, _depth + 1)
+            result = extract_stream_id(v, match_id, _depth + 1)
             if result:
                 return result
         return None
     elif isinstance(data, list):
         for item in data:
-            result = extract_stream_id(item, _depth + 1)
+            result = extract_stream_id(item, match_id, _depth + 1)
             if result:
                 return result
         return None
@@ -205,16 +219,34 @@ def extract_stream_id(data, _depth=0):
         return None
 
     fields = parse_message(data)
-    candidates = []
+
+    # Strategy 1: Look for nested messages (stream entries)
+    # A stream sub-message typically has: field1=streamId(varint), field2=siteType, field3=name
     for fnum, wtype, val in fields:
-        if wtype == 0 and 10000 < val < 9999999:
-            candidates.append(val)
-        elif wtype == 2 and len(val) > 10:
-            sub = extract_stream_id(val, _depth + 1)
-            if sub:
-                candidates.append(sub)
-    if candidates:
-        return candidates[0]
+        if wtype == 2 and 10 < len(val) < 500:
+            sub_fields = parse_message(val)
+            # Check if sub-message starts with a varint that's NOT the matchId
+            for sf_num, sf_wire, sf_val in sub_fields:
+                if sf_wire == 0 and sf_num == 1:
+                    if sf_val != match_id and 1000 < sf_val < 99999999:
+                        return sf_val
+                    break
+            # Also try: any varint in sub-message that's not the matchId
+            for sf_num, sf_wire, sf_val in sub_fields:
+                if sf_wire == 0 and sf_val != match_id and 1000 < sf_val < 99999999:
+                    return sf_val
+
+    # Strategy 2: Top-level varints (exclude matchId), prefer field > 1
+    for fnum, wtype, val in fields:
+        if wtype == 0 and val != match_id and 1000 < val < 99999999:
+            if fnum > 1:
+                return val
+
+    # Strategy 3: Last resort - any varint != matchId
+    for fnum, wtype, val in fields:
+        if wtype == 0 and val != match_id and 1000 < val < 99999999:
+            return val
+
     return None
 
 
@@ -255,23 +287,19 @@ def build_tokenized_url(obfuscated_url, rb_session):
     4. Base64-encode the ciphertext
     5. Insert 'token-{base64}a' into the URL path
     """
-    # Step 1: ROT47 decode
     decoded = rot47_decode(obfuscated_url)
-
-    # Step 2: Drop first 8 characters (leading marker)
     decoded = decoded[8:]
 
     if DEBUG:
         print(f"    [DEBUG] After ROT47+strip: {decoded[:100]}", flush=True)
 
-    # Step 3-4: AES encrypt session token
     if not HAS_AES or AES_KEY is None or AES_IV is None:
         print("    [ERROR] AES not available or key not set!", file=sys.stderr, flush=True)
         return None
 
     try:
         session_bytes = rb_session.encode('utf-8')
-        padded = pad(session_bytes, 16)  # PKCS7 padding
+        padded = pad(session_bytes, 16)
         cipher = AES.new(AES_KEY, AES.MODE_CBC, AES_IV)
         ciphertext = cipher.encrypt(padded)
         token_b64 = base64.b64encode(ciphertext).decode('ascii')
@@ -279,17 +307,9 @@ def build_tokenized_url(obfuscated_url, rb_session):
         print(f"    [ERROR] AES encrypt failed: {e}", file=sys.stderr, flush=True)
         return None
 
-    # Step 5: Insert token into URL path
-    # Pattern: https://.../token-{base64}a/...m3u8
-    # The decoded URL likely has a placeholder or we insert after the host path
-    # Common pattern: the URL has a path like /live/... and we insert token-...a/
-    
-    # Try to find where to insert the token
-    # Usually: {base_url}/token-{token}a/{rest_of_path}
     if '/' in decoded:
-        parts = decoded.split('/', 3)  # [scheme://host, '', rest]
+        parts = decoded.split('/', 3)
         if len(parts) >= 3:
-            # Insert token after the first path segment
             base = '/'.join(parts[:2])
             rest = parts[2] if len(parts) > 2 else ''
             tokenized_url = f"{base}/token-{token_b64}a/{rest}"
@@ -305,22 +325,15 @@ def build_tokenized_url(obfuscated_url, rb_session):
 
 
 def extract_obfuscated_url(data):
-    """
-    Extract the obfuscated URL string from stream detail response.
-    The response contains a ROT47-encoded URL (not a plain HTTP URL).
-    """
+    """Extract the obfuscated URL string from stream detail response."""
     if isinstance(data, bytes):
-        # Look for the longest printable string (likely the obfuscated URL)
-        # ROT47-encoded URLs will be printable ASCII (33-126 range)
         candidates = re.findall(rb'[\x21-\x7e]{20,}', data)
         if candidates:
-            # Pick the longest one (most likely the URL)
             longest = max(candidates, key=len)
             return longest.decode('ascii')
         return None
     elif isinstance(data, (dict, list)):
         json_str = json.dumps(data)
-        # Look for long string values
         m = re.findall(r'"([^"]{20,})"', json_str)
         if m:
             longest = max(m, key=len)
@@ -386,16 +399,14 @@ def get_signing_key(match_id=None, sport_type=None):
     resp = requests.get(url, headers=HEADERS, timeout=TIMEOUT)
     content = decode_api_response(resp)
 
-    # Try hex MD5 first
     m = re.search(rb'[a-f0-9]{32}', content)
     if m:
         return m.group().decode()
-    
-    # Fallback: try any 32-char alphanumeric
+
     m = re.search(rb'[a-zA-Z0-9]{32}', content)
     if m:
         return m.group().decode()
-    
+
     return None
 
 
@@ -415,18 +426,14 @@ def get_live_matches(md5):
 
 
 def get_match_detail(match_id, sport_type, fallback_md5):
-    """
-    Get match detail. Tries code=102 key first, falls back to code=100 key.
-    """
-    # Try dedicated key (code=102)
+    """Get match detail. Tries code=102 key first, falls back to code=100 key."""
     detail_md5 = get_signing_key(match_id=match_id, sport_type=sport_type)
-    
+
     if not detail_md5:
-        # Fallback: use the live list key
         if DEBUG:
             print(f"    [DEBUG] code=102 key failed, using code=100 key", flush=True)
         detail_md5 = fallback_md5
-    
+
     if not detail_md5:
         return None
 
@@ -440,9 +447,7 @@ def get_match_detail(match_id, sport_type, fallback_md5):
 
 
 def get_stream_detail(stream_id, match_id, sport_type):
-    """
-    Get stream detail. Returns (data, rb_session, raw_content).
-    """
+    """Get stream detail. Returns (data, rb_session, raw_content)."""
     url = (f"{DATA_URL}/api/stream/detail"
            f"?streamId={stream_id}"
            f"&siteType={SITE_TYPE}"
@@ -458,14 +463,12 @@ def get_stream_detail(stream_id, match_id, sport_type):
     rb_session = resp.headers.get("rb-session", "")
 
     if DEBUG:
-        # Dump raw content for debugging
         if isinstance(content, bytes) and len(content) < 2000:
             printable = content.decode('utf-8', errors='replace')
             print(f"    [DEBUG] Raw stream detail ({len(content)} bytes): "
                   f"{printable[:200]}", flush=True)
         elif isinstance(data, dict):
             print(f"    [DEBUG] Stream detail JSON keys: {list(data.keys())}", flush=True)
-            # Dump values that look like URLs or encoded strings
             for k, v in data.items():
                 if isinstance(v, str) and len(v) > 15:
                     print(f"    [DEBUG]   {k} = {v[:80]}...", flush=True)
@@ -478,7 +481,6 @@ def get_stream_detail(stream_id, match_id, sport_type):
 def main():
     t0 = time.time()
 
-    # Check AES key
     if not HAS_AES:
         print("WARNING: pycryptodome not installed. "
               "Run: pip install pycryptodome", file=sys.stderr, flush=True)
@@ -527,14 +529,20 @@ def main():
                   file=sys.stderr, flush=True)
             return (name, None)
 
-        stream_id = extract_stream_id(detail)
+        # DEBUG: dump protobuf structure
+        if DEBUG_PROTO and isinstance(detail, bytes):
+            print(f"    [DEBUG] === Protobuf dump for {name} ===", flush=True)
+            dump_protobuf(detail)
+            print(f"    [DEBUG] === End dump ===", flush=True)
+
+        stream_id = extract_stream_id(detail, match_id=match_id)
         if not stream_id:
             print(f"  [WARN] No streamId for {name} (id={match_id})",
                   file=sys.stderr, flush=True)
             return (name, None)
 
         if DEBUG:
-            print(f"    [DEBUG] {name}: streamId={stream_id}", flush=True)
+            print(f"    [DEBUG] {name}: streamId={stream_id} (matchId={match_id})", flush=True)
 
         # 3b: Get stream detail → obfuscated URL + rb-session
         stream_data, rb_session, raw_content = get_stream_detail(
@@ -549,7 +557,6 @@ def main():
         if isinstance(stream_data, bytes):
             obfuscated = extract_obfuscated_url(stream_data)
         elif isinstance(stream_data, dict):
-            # Try common field names
             for key in ("url", "streamUrl", "playUrl", "hlsUrl", "src", "link"):
                 if key in stream_data and isinstance(stream_data[key], str):
                     obfuscated = stream_data[key]
@@ -561,7 +568,6 @@ def main():
             print(f"  [WARN] No obfuscated URL for {name}. "
                   f"data_type={type(stream_data).__name__}",
                   file=sys.stderr, flush=True)
-            # Debug dump
             if isinstance(stream_data, bytes):
                 print(f"    [DEBUG] Content: {stream_data[:200]}",
                       file=sys.stderr, flush=True)
