@@ -93,7 +93,6 @@ AES_KEY = b"a7981cc9eb2f4d19dcfea57b101ecd89"  # 32 bytes
 AES_IV = b"8017d3a8f1400d2f"  # 16 bytes
 
 DEBUG = True
-DEBUG_RAW = False
 
 session = requests.Session()
 session.headers.update(HEADERS)
@@ -205,7 +204,7 @@ def dump_protobuf(data, indent=0, max_depth=4):
         elif wtype == 2:
             try:
                 text = val.decode('utf-8')
-                if all(32 <= ord(c) < 127 or c in '\n\t' for c in text) and len(val) < 200:
+                if all(32 <= ord(c) < 127 or c in '\n\t' for c in text) and len(val) < 300:
                     print(f"{prefix}field {fnum} (string): {text!r}", flush=True)
                     continue
             except (UnicodeDecodeError, ValueError):
@@ -269,44 +268,46 @@ def extract_matches_from_protobuf(data):
     return matches
 
 
+# ==================== STRING EXTRACTION FROM PROTOBUF ====================
+
+def extract_strings_from_protobuf(data, depth=0, max_depth=6):
+    """
+    Extract all printable string fields from protobuf recursively.
+    Returns list of (field_num, depth, string_value).
+    """
+    if depth > max_depth or not isinstance(data, bytes):
+        return []
+    results = []
+    fields = parse_message(data)
+    for fnum, wtype, val in fields:
+        if wtype == 2 and len(val) > 5:
+            try:
+                text = val.decode('utf-8')
+                # Must be all printable ASCII
+                if all(33 <= ord(c) <= 126 for c in text):
+                    results.append((fnum, depth, text))
+            except (UnicodeDecodeError, ValueError):
+                pass
+            # Recurse into sub-messages
+            results.extend(extract_strings_from_protobuf(val, depth + 1, max_depth))
+    return results
+
+
 # ==================== LOGO EXTRACTION ====================
 
 def extract_logo_from_protobuf(data):
-    """
-    Extract logo URL from match detail protobuf.
-    Looks for string fields that look like image URLs (http + image extension).
-    """
+    """Extract logo URL from match detail protobuf."""
     if not isinstance(data, bytes):
         return None
-
-    # Search recursively for URL-like strings
-    def _find_url(fields, depth=0):
-        if depth > 5:
-            return None
-        for fnum, wtype, val in fields:
-            if wtype == 2:
-                # Check if it's a printable string that looks like an image URL
-                try:
-                    text = val.decode('utf-8')
-                    if (text.startswith('http') and
-                            re.search(r'\.(png|jpg|jpeg|webp|svg|gif)', text, re.I)):
-                        return text
-                    # Also check for CDN paths
-                    if (text.startswith('http') and
-                            ('logo' in text.lower() or 'icon' in text.lower() or
-                             'team' in text.lower() or 'badge' in text.lower())):
-                        return text
-                except (UnicodeDecodeError, ValueError):
-                    pass
-                # Recurse into sub-messages
-                sub_fields = parse_message(val)
-                if sub_fields:
-                    result = _find_url(sub_fields, depth + 1)
-                    if result:
-                        return result
-        return None
-
-    return _find_url(parse_message(data))
+    strings = extract_strings_from_protobuf(data)
+    for fnum, depth, s in strings:
+        if s.startswith('http') and re.search(
+                r'\.(png|jpg|jpeg|webp|svg|gif)', s, re.I):
+            return s
+        if s.startswith('http') and re.search(
+                r'(logo|icon|team|badge|crest)', s, re.I):
+            return s
+    return None
 
 
 # ==================== STREAM ID EXTRACTION ====================
@@ -336,7 +337,6 @@ def extract_stream_id(data, match_id=None, _depth=0):
     if not fields:
         return None
 
-    # PRIMARY: field10 → field2 (stream entries) → field1
     container = None
     for fnum, wtype, val in fields:
         if wtype == 2 and len(val) > 50:
@@ -352,17 +352,12 @@ def extract_stream_id(data, match_id=None, _depth=0):
             if wtype == 2 and fnum == 2 and 10 < len(val) < 200:
                 stream_fields = parse_message(val)
                 stream_id = None
-                site_type = None
                 for sf_num, sf_wire, sf_val in stream_fields:
-                    if sf_wire == 0:
-                        if sf_num == 1:
-                            stream_id = sf_val
-                        elif sf_num == 9:
-                            site_type = sf_val
+                    if sf_wire == 0 and sf_num == 1:
+                        stream_id = sf_val
                 if stream_id and stream_id != match_id and 100 < stream_id < 999999999:
                     return stream_id
 
-    # FALLBACK
     for fnum, wtype, val in fields:
         if wtype == 2 and 5 < len(val) < 2000:
             sub_fields = parse_message(val)
@@ -412,7 +407,7 @@ def build_tokenized_url(obfuscated_url, rb_session):
     decoded = rot47_decode(obfuscated_url)
     decoded = decoded[8:]
 
-    if not decoded.startswith('http'):
+    if not (decoded.startswith('http://') or decoded.startswith('https://')):
         print(f"    [ERROR] Decoded not a URL: {decoded[:60]!r}", file=sys.stderr, flush=True)
         return None
 
@@ -446,26 +441,43 @@ def build_tokenized_url(obfuscated_url, rb_session):
 
 def extract_obfuscated_url(data):
     """
-    Extract the ROT47-obfuscated URL from stream detail response.
-    VALIDATES: ROT47-decode + slice(8) must start with 'http'.
+    Extract ROT47-obfuscated URL from stream detail.
+    Uses PROTOBUF PARSING (not regex on raw bytes) to find string fields,
+    then validates by ROT47-decoding and checking for http(s)://.
     """
     if isinstance(data, bytes):
+        # Parse protobuf and extract all string fields
+        strings = extract_strings_from_protobuf(data)
+
+        if DEBUG:
+            print(f"    [DEBUG] Found {len(strings)} string fields in stream detail:", flush=True)
+            for fnum, depth, s in strings[:15]:
+                decoded = rot47_decode(s)
+                after_slice = decoded[8:] if len(decoded) > 8 else ''
+                is_url = after_slice.startswith('http://') or after_slice.startswith('https://')
+                marker = " ★" if is_url else ""
+                print(f"    [DEBUG]   f{fnum} d{depth} len={len(s)} url={is_url}{marker} "
+                      f"raw={s[:50]!r}", flush=True)
+                if is_url:
+                    print(f"    [DEBUG]        decoded={after_slice[:80]!r}", flush=True)
+
+        # Validate each string: ROT47-decode + slice(8) must be a URL
+        for fnum, depth, s in sorted(strings, key=lambda x: len(x[2]), reverse=True):
+            decoded = rot47_decode(s)
+            if len(decoded) > 8:
+                after = decoded[8:]
+                if after.startswith('http://') or after.startswith('https://'):
+                    return s
+
+        # Fallback: try regex on raw bytes as last resort
         candidates = re.findall(rb'[\x21-\x7e]{20,}', data)
-        if DEBUG_RAW:
-            print(f"    [RAW] Found {len(candidates)} printable strings >= 20 chars", flush=True)
-
         for c in sorted(candidates, key=len, reverse=True):
-            try:
-                decoded = rot47_decode(c.decode('ascii'))
-                if len(decoded) > 8 and decoded[8:].startswith('http'):
+            decoded = rot47_decode(c.decode('ascii', errors='ignore'))
+            if len(decoded) > 8:
+                after = decoded[8:]
+                if after.startswith('http://') or after.startswith('https://'):
                     return c.decode('ascii')
-            except Exception:
-                continue
 
-        if candidates:
-            print(f"    [WARN] No validated URL found, using longest candidate",
-                  file=sys.stderr, flush=True)
-            return max(candidates, key=len).decode('ascii')
         return None
 
     elif isinstance(data, (dict, list)):
@@ -475,14 +487,16 @@ def extract_obfuscated_url(data):
                 if key in data and isinstance(data[key], str) and len(data[key]) > 20:
                     s = data[key]
                     decoded = rot47_decode(s)
-                    if len(decoded) > 8 and decoded[8:].startswith('http'):
+                    if len(decoded) > 8 and (decoded[8:].startswith('http://')
+                                              or decoded[8:].startswith('https://')):
                         return s
                     return s
         json_str = json.dumps(data)
         m = re.findall(r'"([^"]{20,})"', json_str)
         for s in sorted(m, key=len, reverse=True):
             decoded = rot47_decode(s)
-            if len(decoded) > 8 and decoded[8:].startswith('http'):
+            if len(decoded) > 8 and (decoded[8:].startswith('http://')
+                                      or decoded[8:].startswith('https://')):
                 return s
         if m:
             return max(m, key=len)
@@ -689,10 +703,8 @@ def main():
         if DEBUG and isinstance(detail, bytes) and idx == 0:
             dump_protobuf(detail)
 
-        # Extract logo from protobuf
         logo = extract_logo_from_protobuf(detail) if isinstance(detail, bytes) else None
 
-        # Extract streamId
         stream_id = extract_stream_id(detail, match_id=match_id)
         if not stream_id:
             print(f"NO STREAMID (matchId={match_id})", flush=True)
@@ -709,7 +721,7 @@ def main():
             print("NO RB-SESSION", flush=True)
             continue
 
-        # 3c: Extract obfuscated URL
+        # 3c: Extract obfuscated URL (protobuf parsing + validation)
         obfuscated = None
         if isinstance(stream_data, bytes):
             obfuscated = extract_obfuscated_url(stream_data)
@@ -750,7 +762,6 @@ def main():
         sport = entry["sport"]
         tvg_id = re.sub(r'[^a-zA-Z0-9_]', '_', name)
 
-        # Build EXTINF line with tvg-logo and group-title
         attrs = f'tvg-id="{tvg_id}" group-title="{sport}"'
         if logo:
             attrs += f' tvg-logo="{logo}"'
