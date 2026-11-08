@@ -11,7 +11,6 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # ==================== CONFIG ====================
 
-DATA_URL = "https://apis-data10.tcpwe10.tcpwe138stya.ru".replace("tcpwe10.tcpwe", "tcpwe")
 DATA_URL = "https://apis-data10.tcpwe138stya.ru"
 MAX_MATCHES = 50
 TIMEOUT = 15
@@ -21,9 +20,8 @@ SITE_TYPE = 2001
 CONTINENT = "AS"
 COUNTRY = "ID"
 DIGIT = "trd"
-MAX_WORKERS = 5
+MAX_WORKERS = 3
 
-# *** SET YOUR CLOUDFLARE WORKER URL HERE ***
 WORKER_URL = "https://pl-gratosv-al.bhns.workers.dev"
 
 REQUEST_DELAY = (0.5, 1.5)
@@ -321,21 +319,14 @@ def extract_obfuscated_url(data):
 
 
 def extract_player_origin(data):
-    """
-    Find the iframe player origin from stream detail.
-    Pattern: domain ending in .cfd, .xyz, .top, etc. (NOT the CDN domain)
-    """
     if isinstance(data, bytes):
         strings = find_string_fields(data, min_len=15, max_len=200)
         for s in strings:
             if s.startswith("http") and "m3u8" not in s:
                 parsed = urlparse(s)
-                # Player origin: has a domain, short path or no path
                 if parsed.netloc and len(parsed.path) <= 2:
-                    # Exclude CDN-like domains (fhlsport, tbak, etc.)
                     if "fhlsport" not in parsed.netloc and "tbak" not in parsed.netloc:
                         return s.rstrip('/') + '/'
-        # Fallback: any http URL that's not the CDN and not m3u8
         for s in strings:
             if s.startswith("http") and "m3u8" not in s and "fhlsport" not in s:
                 parsed = urlparse(s)
@@ -345,10 +336,7 @@ def extract_player_origin(data):
 
 
 def build_stream_url(obfuscated_url):
-    """
-    ROT47 decode → drop 8 chars → truncate at .m3u8 → URL-encode path.
-    NO TOKEN NEEDED.
-    """
+    """ROT47 decode → drop 8 chars → truncate at .m3u8. No encoding."""
     decoded = rot47_decode(obfuscated_url)
     decoded = decoded[8:]
 
@@ -358,16 +346,11 @@ def build_stream_url(obfuscated_url):
             return None
         decoded = decoded[idx:]
 
-    # Truncate at .m3u8
     m3u8_idx = decoded.find('.m3u8')
     if m3u8_idx != -1:
         decoded = decoded[:m3u8_idx + 5]
 
-    # URL-encode the path (preserve /)
-    parsed = urlparse(decoded)
-    encoded_path = quote(parsed.path, safe='/')
-    result = parsed._replace(path=encoded_path)
-    return urlunparse(result)
+    return decoded
 
 
 # ==================== DECODE ====================
@@ -518,15 +501,12 @@ def process_match(match, fallback_md5):
     if not obfuscated:
         return None
 
-    # Build URL (NO TOKEN)
     final_url = build_stream_url(obfuscated)
     if not final_url:
         return None
 
-    # Extract player origin (referer)
     referer = extract_player_origin(s_data)
     if not referer:
-        # Fallback: CDN domain
         parsed_url = urlparse(final_url)
         referer = f"{parsed_url.scheme}://{parsed_url.netloc}/"
 
@@ -555,8 +535,7 @@ def format_time_wib(ts_ms):
 
 
 def build_worker_url(stream_url, referer):
-    return (f"{WORKER_URL}/?url={quote(stream_url, safe='')}"
-            f"&referer={quote(referer, safe='')}")
+    return f"{WORKER_URL}/?url={stream_url}&referer={referer}"
 
 
 def build_m3u(entries):
@@ -596,9 +575,6 @@ def build_m3u(entries):
 
 def main():
     t0 = time.time()
-
-    if "your-worker" in WORKER_URL or "pl-gratosv-al" not in WORKER_URL:
-        print("WARNING: Check WORKER_URL in CONFIG.", file=sys.stderr, flush=True)
 
     print("Step 1: Getting signing key...", flush=True)
     md5 = get_signing_key(sport_type=SPORT_TYPE)
@@ -640,8 +616,7 @@ def main():
                 if result:
                     entries.append(result)
                     t = format_time_wib(result.get("timestamp"))
-                    ref = result.get("referer", "")[:50]
-                    print(f"  [{completed}/{total}] {result['name']} {t} → OK (ref: {ref})",
+                    print(f"  [{completed}/{total}] {result['name']} {t} → OK",
                           flush=True)
                 else:
                     print(f"  [{completed}/{total}] {match['name']} → FAIL",
