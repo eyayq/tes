@@ -9,20 +9,9 @@ from datetime import datetime, timezone, timedelta
 from urllib.parse import urlparse, urlunparse, quote
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-try:
-    from Crypto.Cipher import AES
-    from Crypto.Util.Padding import pad
-    HAS_AES = True
-except ImportError:
-    try:
-        from Cryptodome.Cipher import AES
-        from Cryptodome.Util.Padding import pad
-        HAS_AES = True
-    except ImportError:
-        HAS_AES = False
-
 # ==================== CONFIG ====================
 
+DATA_URL = "https://apis-data10.tcpwe10.tcpwe138stya.ru".replace("tcpwe10.tcpwe", "tcpwe")
 DATA_URL = "https://apis-data10.tcpwe138stya.ru"
 MAX_MATCHES = 50
 TIMEOUT = 15
@@ -35,7 +24,6 @@ DIGIT = "trd"
 MAX_WORKERS = 5
 
 # *** SET YOUR CLOUDFLARE WORKER URL HERE ***
-# After deploying the worker, replace with your actual URL
 WORKER_URL = "https://pl-gratosv-al.bhns.workers.dev"
 
 REQUEST_DELAY = (0.5, 1.5)
@@ -51,9 +39,6 @@ HEADERS = {
     "origin": "https://www.rbtvplus.ws",
     "referer": "https://www.rbtvplus.ws/",
 }
-
-AES_KEY = b"a7981cc9eb2f4d19dcfea57b101ecd89"
-AES_IV = b"8017d3a8f1400d2f"
 
 WIB = timezone(timedelta(hours=7))
 
@@ -183,10 +168,8 @@ def find_logo_url(data):
     strings = find_string_fields(data, min_len=10, max_len=300)
     for s in strings:
         if s.startswith("http") and (
-            "logo" in s.lower() or
-            "team" in s.lower() or
-            "icon" in s.lower() or
-            s.lower().endswith(('.png', '.jpg', '.jpeg', '.webp', '.svg', '.gif'))
+            "logo" in s.lower() or "team" in s.lower() or "icon" in s.lower()
+            or s.lower().endswith(('.png', '.jpg', '.jpeg', '.webp', '.svg', '.gif'))
         ):
             return s
     for s in strings:
@@ -282,7 +265,7 @@ def extract_stream_id(data, match_id=None):
     return None
 
 
-# ==================== CRYPTO ====================
+# ==================== ROT47 ====================
 
 def rot47_decode(s):
     if isinstance(s, bytes):
@@ -337,56 +320,53 @@ def extract_obfuscated_url(data):
     return None
 
 
-def extract_referer(data):
+def extract_player_origin(data):
+    """
+    Find the iframe player origin from stream detail.
+    Pattern: domain ending in .cfd, .xyz, .top, etc. (NOT the CDN domain)
+    """
     if isinstance(data, bytes):
-        strings = find_string_fields(data, min_len=10, max_len=200)
+        strings = find_string_fields(data, min_len=15, max_len=200)
         for s in strings:
-            if s.startswith("http") and "m3u8" not in s and len(s) < 100:
+            if s.startswith("http") and "m3u8" not in s:
                 parsed = urlparse(s)
-                if parsed.netloc and not parsed.path.strip('/'):
-                    return s
+                # Player origin: has a domain, short path or no path
+                if parsed.netloc and len(parsed.path) <= 2:
+                    # Exclude CDN-like domains (fhlsport, tbak, etc.)
+                    if "fhlsport" not in parsed.netloc and "tbak" not in parsed.netloc:
+                        return s.rstrip('/') + '/'
+        # Fallback: any http URL that's not the CDN and not m3u8
         for s in strings:
-            if s.startswith("http") and s.count('/') <= 2 and len(s) < 80:
-                return s
+            if s.startswith("http") and "m3u8" not in s and "fhlsport" not in s:
+                parsed = urlparse(s)
+                if parsed.netloc:
+                    return s.rstrip('/') + '/'
     return None
 
 
-def build_tokenized_url(obfuscated_url, rb_session):
+def build_stream_url(obfuscated_url):
+    """
+    ROT47 decode → drop 8 chars → truncate at .m3u8 → URL-encode path.
+    NO TOKEN NEEDED.
+    """
     decoded = rot47_decode(obfuscated_url)
     decoded = decoded[8:]
+
     if not decoded.startswith("http"):
         idx = decoded.find("http")
         if idx == -1:
             return None
         decoded = decoded[idx:]
 
+    # Truncate at .m3u8
     m3u8_idx = decoded.find('.m3u8')
     if m3u8_idx != -1:
         decoded = decoded[:m3u8_idx + 5]
 
-    if not HAS_AES:
-        return None
-
-    try:
-        session_bytes = rb_session.encode('utf-8')
-        padded = pad(session_bytes, 16)
-        cipher = AES.new(AES_KEY, AES.MODE_CBC, AES_IV)
-        ciphertext = cipher.encrypt(padded)
-        token_b64 = base64.b64encode(ciphertext).decode('ascii')
-    except Exception:
-        return None
-
-    token_b64 = quote(token_b64, safe='')
+    # URL-encode the path (preserve /)
     parsed = urlparse(decoded)
     encoded_path = quote(parsed.path, safe='/')
-    token_segment = f"token-{token_b64}a"
-
-    if encoded_path.startswith("/"):
-        new_path = f"/{token_segment}{encoded_path}"
-    else:
-        new_path = f"{token_segment}/{encoded_path}"
-
-    result = parsed._replace(path=new_path)
+    result = parsed._replace(path=encoded_path)
     return urlunparse(result)
 
 
@@ -538,16 +518,17 @@ def process_match(match, fallback_md5):
     if not obfuscated:
         return None
 
-    final_url = build_tokenized_url(obfuscated, rb_session)
+    # Build URL (NO TOKEN)
+    final_url = build_stream_url(obfuscated)
     if not final_url:
         return None
 
-    referer = extract_referer(s_data)
+    # Extract player origin (referer)
+    referer = extract_player_origin(s_data)
     if not referer:
+        # Fallback: CDN domain
         parsed_url = urlparse(final_url)
-        referer = f"{parsed_url.scheme}://{parsed_url.netloc}"
-    if not referer.endswith('/'):
-        referer += '/'
+        referer = f"{parsed_url.scheme}://{parsed_url.netloc}/"
 
     return {
         "name": name,
@@ -559,7 +540,7 @@ def process_match(match, fallback_md5):
     }
 
 
-# ==================== M3U BUILDER (WORKER) ====================
+# ==================== M3U BUILDER ====================
 
 def format_time_wib(ts_ms):
     if not ts_ms:
@@ -574,7 +555,6 @@ def format_time_wib(ts_ms):
 
 
 def build_worker_url(stream_url, referer):
-    """Build the Cloudflare Worker proxy URL."""
     return (f"{WORKER_URL}/?url={quote(stream_url, safe='')}"
             f"&referer={quote(referer, safe='')}")
 
@@ -596,7 +576,6 @@ def build_m3u(entries):
         full_title = f"{name} {time_str}".strip()
         tvg_id = re.sub(r'[^a-zA-Z0-9_]', '_', name)
 
-        # Route through Cloudflare Worker
         proxied_url = build_worker_url(url, referer)
 
         lines.append(
@@ -618,18 +597,8 @@ def build_m3u(entries):
 def main():
     t0 = time.time()
 
-    if not HAS_AES:
-        print("ERROR: pycryptodome not installed. Run: pip install pycryptodome",
-              file=sys.stderr, flush=True)
-        sys.exit(1)
-
-    if "your-worker-name" in WORKER_URL:
-        print("WARNING: WORKER_URL not set! Set it in CONFIG section.",
-              file=sys.stderr, flush=True)
-        print("  Deploy worker.js to Cloudflare, then set:", file=sys.stderr, flush=True)
-        print(f'  WORKER_URL = "https://your-worker.your-user.workers.dev"',
-              file=sys.stderr, flush=True)
-        sys.exit(1)
+    if "your-worker" in WORKER_URL or "pl-gratosv-al" not in WORKER_URL:
+        print("WARNING: Check WORKER_URL in CONFIG.", file=sys.stderr, flush=True)
 
     print("Step 1: Getting signing key...", flush=True)
     md5 = get_signing_key(sport_type=SPORT_TYPE)
@@ -671,7 +640,8 @@ def main():
                 if result:
                     entries.append(result)
                     t = format_time_wib(result.get("timestamp"))
-                    print(f"  [{completed}/{total}] {result['name']} {t} → OK",
+                    ref = result.get("referer", "")[:50]
+                    print(f"  [{completed}/{total}] {result['name']} {t} → OK (ref: {ref})",
                           flush=True)
                 else:
                     print(f"  [{completed}/{total}] {match['name']} → FAIL",
@@ -693,9 +663,7 @@ def main():
         print(f"... ({len(m3u_content)} chars total)", flush=True)
     print(f"{'='*60}", flush=True)
     print(f"\nSaved to: playlist.m3u", flush=True)
-    print(f"\n⚠ Worker URL: {WORKER_URL}", flush=True)
-    print(f"  Import playlist.m3u to your IPTV/Dalvik player.", flush=True)
-    print(f"  ⚠ If streams don't play, CDN may be IP-locking (Worker uses CF IP).", flush=True)
+    print(f"Worker: {WORKER_URL}", flush=True)
 
 
 if __name__ == "__main__":
