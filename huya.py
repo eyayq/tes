@@ -6,7 +6,7 @@ import zlib
 import sys
 import time
 import base64
-from concurrent.futures import ThreadPoolExecutor, as_completed
+import random
 
 try:
     import brotli
@@ -37,7 +37,7 @@ except ImportError:
 DATA_URL = "https://apis-data10.tcpwe138stya.ru"
 PORT = 8080
 MAX_MATCHES = 30
-TIMEOUT = 10
+TIMEOUT = 15
 SPORT_TYPE = 0
 LANGUAGE = 34
 SITE_TYPE = 2001
@@ -45,22 +45,80 @@ CONTINENT = "AS"
 COUNTRY = "ID"
 DIGIT = "trd"
 
+# Rate limiting
+REQUEST_DELAY = (1.5, 3.0)  # min/max delay between requests (seconds)
+MAX_RETRIES = 3
+RETRY_BACKOFF = 5  # base seconds for exponential backoff
+
 HEADERS = {
-    "user-agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 "
-                  "(KHTML, like Gecko) Chrome/156.0.0.0 Mobile Safari/537.36",
+    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                  "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     "accept": "application/json, text/plain, */*",
+    "accept-language": "id-ID,id;q=0.6,en-US;q=0.9",
+    "accept-encoding": "gzip, deflate, br",
     "origin": "https://www.rbtvplus.ws",
     "referer": "https://www.rbtvplus.ws/",
-    "accept-language": "id-ID,id;q=0.6",
-    "accept-encoding": "identity",
+    "sec-ch-ua": '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": '"Windows"',
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "cross-site",
 }
 
-# ==================== AES KEY MATERIAL ====================
 AES_KEY = None  # ← ISI DI SINI (32 bytes)
 AES_IV = None   # ← ISI DI SINI (16 bytes)
 
 DEBUG = True
-DEBUG_RAW = True  # Dump raw response (hex+ascii) untuk diagnosa
+DEBUG_RAW = True
+
+# Session (maintain cookies across requests)
+session = requests.Session()
+session.headers.update(HEADERS)
+
+
+# ==================== RATE-LIMITED REQUEST ====================
+
+def safe_get(url, **kwargs):
+    """
+    GET with rate limiting, retry, and Cloudflare 429 handling.
+    """
+    for attempt in range(MAX_RETRIES):
+        # Random delay before request
+        delay = random.uniform(*REQUEST_DELAY)
+        if attempt > 0:
+            delay += RETRY_BACKOFF * attempt  # exponential backoff
+        time.sleep(delay)
+
+        try:
+            resp = session.get(url, timeout=TIMEOUT, **kwargs)
+        except requests.exceptions.RequestException as e:
+            print(f"    [RETRY] Network error: {e}", flush=True)
+            continue
+
+        # Check for Cloudflare challenge / rate limit
+        if resp.status_code == 429:
+            wait = RETRY_BACKOFF * (attempt + 1)
+            print(f"    [429] Rate limited, waiting {wait}s "
+                  f"(attempt {attempt+1}/{MAX_RETRIES})", flush=True)
+            time.sleep(wait)
+            continue
+
+        if resp.status_code == 503:
+            # Cloudflare "Just a moment..."
+            wait = RETRY_BACKOFF * (attempt + 1) * 2
+            print(f"    [503] Cloudflare challenge, waiting {wait}s", flush=True)
+            time.sleep(wait)
+            continue
+
+        if resp.status_code != 200:
+            print(f"    [HTTP {resp.status_code}] {url[:80]}", flush=True)
+            return None
+
+        return resp
+
+    print(f"    [GIVE UP] {url[:80]} after {MAX_RETRIES} attempts", flush=True)
+    return None
 
 
 # ==================== PROTOBUF PARSER ====================
@@ -116,7 +174,6 @@ def parse_message(data, start=0, end=None):
 
 
 def dump_protobuf(data, indent=0, max_depth=4):
-    """Dump protobuf structure for debugging."""
     if indent > max_depth:
         return
     prefix = "  " * indent
@@ -199,19 +256,12 @@ def extract_matches_from_protobuf(data):
 # ==================== STREAM ID EXTRACTION ====================
 
 def extract_stream_id(data, match_id=None, _depth=0):
-    """
-    Extract the real streamId from match detail.
-    streamId is in a nested stream sub-message, NOT the matchId.
-    Reference: matchId=4334855 → streamId=819962
-    """
     if _depth > 6:
         return None
     if isinstance(data, dict):
-        # Direct JSON field
         if "streamId" in data and isinstance(data["streamId"], int):
             if data["streamId"] != match_id:
                 return data["streamId"]
-        # Also check nested "streams" or "channels" arrays
         for key in ("streams", "channels", "streamList", "items"):
             if key in data and isinstance(data[key], list):
                 for item in data[key]:
@@ -237,30 +287,24 @@ def extract_stream_id(data, match_id=None, _depth=0):
     if not fields:
         return None
 
-    # Strategy 1: Nested sub-messages that look like stream entries
-    # Stream sub-message: field1=streamId(varint), possibly field2=siteType, field3=name
+    # Strategy 1: Nested sub-messages (stream entries)
     for fnum, wtype, val in fields:
         if wtype == 2 and 5 < len(val) < 500:
             sub_fields = parse_message(val)
-            if not sub_fields:
+            if not sub_fields or len(sub_fields) < 2:
                 continue
-            # Check first varint in sub-message
             for sf_num, sf_wire, sf_val in sub_fields:
                 if sf_wire == 0:
                     if sf_val != match_id and 100 < sf_val < 999999999:
-                        # Additional check: sub-message should have multiple fields
-                        # (a stream entry has at least streamId + something else)
-                        if len(sub_fields) >= 2:
-                            return sf_val
+                        return sf_val
                     break
 
-    # Strategy 2: Top-level varints (exclude matchId), prefer higher field numbers
+    # Strategy 2: Top-level varints (exclude matchId), prefer field > 1
     candidates = []
     for fnum, wtype, val in fields:
         if wtype == 0 and val != match_id and 100 < val < 999999999:
             candidates.append((fnum, val))
     if candidates:
-        # Prefer field numbers that are NOT 1 (field 1 is usually matchId)
         non_one = [c for c in candidates if c[0] != 1]
         if non_one:
             return non_one[0][1]
@@ -287,9 +331,6 @@ def build_tokenized_url(obfuscated_url, rb_session):
     decoded = rot47_decode(obfuscated_url)
     decoded = decoded[8:]
 
-    if DEBUG:
-        print(f"    [DEBUG] After ROT47+strip: {decoded[:100]}", flush=True)
-
     if not HAS_AES or AES_KEY is None or AES_IV is None:
         print("    [ERROR] AES not available or key not set!", file=sys.stderr, flush=True)
         return None
@@ -314,9 +355,6 @@ def build_tokenized_url(obfuscated_url, rb_session):
             tokenized_url = f"{decoded}/token-{token_b64}a"
     else:
         tokenized_url = f"{decoded}?token={token_b64}a"
-
-    if DEBUG:
-        print(f"    [DEBUG] Tokenized URL: {tokenized_url[:120]}", flush=True)
 
     return tokenized_url
 
@@ -382,29 +420,9 @@ def try_json_or_protobuf(content):
     return ('protobuf', content)
 
 
-def raw_debug(label, resp, content):
-    """Print raw response info for debugging."""
-    if not DEBUG_RAW:
-        return
-    print(f"    [RAW] {label}: status={resp.status_code}, "
-          f"len={len(content)}, enc={resp.headers.get('content-encoding','none')}",
-          flush=True)
-    if content:
-        # Hex dump first 60 bytes
-        hex_str = ' '.join(f'{b:02x}' for b in content[:60])
-        print(f"    [RAW]   hex: {hex_str}", flush=True)
-        # ASCII printable
-        ascii_str = ''.join(chr(b) if 32 <= b < 127 else '.' for b in content[:80])
-        print(f"    [RAW]   asc: {ascii_str}", flush=True)
-
-
 # ==================== API ====================
 
 def get_signing_key(match_id=None, sport_type=None):
-    """
-    Get signing key from /api/common/bs.
-    Reference: Live list uses code 0x64 (100); match detail uses code 0x66 (102).
-    """
     if match_id:
         url = (f"{DATA_URL}/api/common/bs"
                f"?code=102&code=103&code=104&code=105"
@@ -413,30 +431,20 @@ def get_signing_key(match_id=None, sport_type=None):
         url = (f"{DATA_URL}/api/common/bs"
                f"?code=100&sportType={sport_type or 0}&stream=true")
 
-    resp = requests.get(url, headers=HEADERS, timeout=TIMEOUT)
+    resp = safe_get(url)
+    if resp is None:
+        return None
+
     content = decode_api_response(resp)
 
-    if DEBUG_RAW:
-        raw_debug(f"signing_key({'detail' if match_id else 'live'})", resp, content)
-
-    # Try hex MD5 (32 hex chars)
     m = re.search(rb'[a-f0-9]{32}', content)
     if m:
         return m.group().decode()
 
-    # Try any 32-char alphanumeric
     m = re.search(rb'[a-zA-Z0-9]{32}', content)
     if m:
         return m.group().decode()
 
-    # Try 6-char prefix (some implementations use short prefix)
-    m = re.search(rb'[a-f0-9]{6}', content)
-    if m:
-        if DEBUG:
-            print(f"    [DEBUG] Only found 6-char key: {m.group().decode()}", flush=True)
-        return m.group().decode()
-
-    # Last resort: any hex string >= 6 chars
     m = re.search(rb'[a-f0-9]{6,}', content)
     if m:
         return m.group().decode()
@@ -447,12 +455,11 @@ def get_signing_key(match_id=None, sport_type=None):
 def get_live_matches(md5):
     url = (f"{DATA_URL}/sfver{md5}/api/match/live"
            f"?sportType={SPORT_TYPE}&language={LANGUAGE}&stream=true")
-    resp = requests.get(url, headers=HEADERS, timeout=TIMEOUT)
+    resp = safe_get(url)
+    if resp is None:
+        return []
+
     content = decode_api_response(resp)
-
-    if DEBUG_RAW:
-        raw_debug("live_matches", resp, content)
-
     fmt, data = try_json_or_protobuf(content)
 
     if fmt == "json":
@@ -464,16 +471,9 @@ def get_live_matches(md5):
 
 
 def get_match_detail(match_id, sport_type, fallback_md5):
-    """
-    Get match detail.
-    Reference: match detail uses code 0x66 (102), path /sfver{key}/api/match/detail
-    Returns (data, raw_content) so caller can debug.
-    """
     detail_md5 = get_signing_key(match_id=match_id, sport_type=sport_type)
 
     if not detail_md5:
-        if DEBUG:
-            print(f"    [DEBUG] code=102 key failed, using code=100 key", flush=True)
         detail_md5 = fallback_md5
 
     if not detail_md5:
@@ -482,23 +482,19 @@ def get_match_detail(match_id, sport_type, fallback_md5):
     url = (f"{DATA_URL}/sfver{detail_md5}/api/match/detail"
            f"?matchId={match_id}&sportType={sport_type}"
            f"&language={LANGUAGE}&stream=true")
-    resp = requests.get(url, headers=HEADERS, timeout=TIMEOUT)
+    resp = safe_get(url)
+    if resp is None:
+        return None, None
+
     content = decode_api_response(resp)
-
-    if DEBUG_RAW:
-        raw_debug(f"match_detail(id={match_id})", resp, content)
-
     fmt, data = try_json_or_protobuf(content)
 
-    # If it's protobuf but parse_message returns nothing, it's likely an error
     if fmt == "protobuf" and isinstance(data, bytes):
         fields = parse_message(data)
-        if not fields and len(data) < 100:
-            # Probably an error message, not real protobuf
+        if not fields and len(data) < 200:
             err_text = data.decode('utf-8', errors='replace').strip()
             if DEBUG:
-                print(f"    [DEBUG] Match detail returned non-protobuf error: "
-                      f"{err_text!r} (status={resp.status_code})", flush=True)
+                print(f"    [DEBUG] Match detail error: {err_text!r}", flush=True)
             return None, content
 
     return data, content
@@ -513,24 +509,13 @@ def get_stream_detail(stream_id, match_id, sport_type):
            f"&digit={DIGIT}"
            f"&matchId={match_id}"
            f"&sportType={sport_type}")
-    resp = requests.get(url, headers=HEADERS, timeout=TIMEOUT)
+    resp = safe_get(url)
+    if resp is None:
+        return None, "", b""
+
     content = decode_api_response(resp)
-
-    if DEBUG_RAW:
-        raw_debug(f"stream_detail(id={stream_id})", resp, content)
-
     fmt, data = try_json_or_protobuf(content)
     rb_session = resp.headers.get("rb-session", "")
-
-    if DEBUG:
-        if isinstance(data, dict):
-            print(f"    [DEBUG] Stream detail JSON keys: {list(data.keys())}", flush=True)
-            for k, v in data.items():
-                if isinstance(v, str) and len(v) > 15:
-                    print(f"    [DEBUG]   {k} = {v[:80]}...", flush=True)
-        elif isinstance(content, bytes) and len(content) < 2000:
-            printable = content.decode('utf-8', errors='replace')
-            print(f"    [DEBUG] Raw stream detail: {printable[:200]}", flush=True)
 
     return data, rb_session, content
 
@@ -546,7 +531,7 @@ def main():
     if AES_KEY is None or AES_IV is None:
         print("WARNING: AES_KEY/AES_IV not set!", file=sys.stderr, flush=True)
 
-    # Step 1: Get signing key for live list (code=100)
+    # Step 1
     print("Step 1: Getting signing key (code=100)...", flush=True)
     md5 = get_signing_key(sport_type=SPORT_TYPE)
     if not md5:
@@ -554,9 +539,9 @@ def main():
         with open("playlist.m3u", "w") as f:
             f.write("#EXTM3U\n")
         sys.exit(1)
-    print(f"  Key: {md5} (len={len(md5)})", flush=True)
+    print(f"  Key: {md5}", flush=True)
 
-    # Step 2: Get live matches
+    # Step 2
     print("Step 2: Getting live matches...", flush=True)
     matches = get_live_matches(md5)[:MAX_MATCHES]
     print(f"  Found {len(matches)} matches", flush=True)
@@ -570,54 +555,41 @@ def main():
     for m in matches[:5]:
         print(f"    - {m['name']} (id={m['id']}, sport={m['sport_type']})", flush=True)
 
-    # Step 3: For each match → streamId → obfuscated URL → tokenized m3u8
-    print("Step 3: Fetching stream URLs...", flush=True)
+    # Step 3: SEQUENTIAL (no ThreadPool) to avoid Cloudflare 429
+    print("Step 3: Fetching stream URLs (sequential)...", flush=True)
     entries = []
 
-    def fetch_stream(match):
+    for idx, match in enumerate(matches):
         name = match["name"]
         match_id = match["id"]
         sport_type = match["sport_type"]
 
-        # 3a: Get match detail → extract streamId
+        print(f"  [{idx+1}/{len(matches)}] {name}...", end=" ", flush=True)
+
+        # 3a: Match detail → streamId
         detail, raw_content = get_match_detail(match_id, sport_type, md5)
         if detail is None:
-            print(f"  [WARN] No detail for {name} (id={match_id})",
-                  file=sys.stderr, flush=True)
-            return (name, None)
+            print("NO DETAIL", flush=True)
+            continue
 
-        # DEBUG: dump structure
         if DEBUG and isinstance(detail, bytes):
-            print(f"    [DEBUG] === Protobuf dump for {name} ({len(detail)}B) ===",
-                  flush=True)
             dump_protobuf(detail)
-            print(f"    [DEBUG] === End dump ===", flush=True)
-        elif DEBUG and isinstance(detail, dict):
-            print(f"    [DEBUG] === JSON keys for {name}: {list(detail.keys())} ===",
-                  flush=True)
-            # Print stream-related keys
-            for k, v in detail.items():
-                if "stream" in k.lower() or "channel" in k.lower():
-                    print(f"    [DEBUG]   {k} = {json.dumps(v, ensure_ascii=False)[:200]}",
-                          flush=True)
 
         stream_id = extract_stream_id(detail, match_id=match_id)
         if not stream_id:
-            print(f"  [WARN] No streamId for {name} (id={match_id})",
-                  file=sys.stderr, flush=True)
-            return (name, None)
+            print(f"NO STREAMID (matchId={match_id})", flush=True)
+            continue
 
         if DEBUG:
-            print(f"    [DEBUG] {name}: streamId={stream_id} (matchId={match_id})",
-                  flush=True)
+            print(f"streamId={stream_id}", end=" → ", flush=True)
 
-        # 3b: Get stream detail → obfuscated URL + rb-session
-        stream_data, rb_session, raw_content = get_stream_detail(
+        # 3b: Stream detail
+        stream_data, rb_session, raw = get_stream_detail(
             stream_id, match_id, sport_type)
 
         if not rb_session:
-            print(f"  [WARN] No rb-session for {name}", file=sys.stderr, flush=True)
-            return (name, None)
+            print("NO RB-SESSION", flush=True)
+            continue
 
         # 3c: Extract obfuscated URL
         obfuscated = None
@@ -630,55 +602,22 @@ def main():
                     obfuscated = stream_data[key]
                     break
             if not obfuscated:
-                # Try nested
-                for k, v in stream_data.items():
-                    if isinstance(v, dict):
-                        for key2 in ("url", "streamUrl", "playUrl", "hlsUrl"):
-                            if key2 in v and isinstance(v[key2], str):
-                                obfuscated = v[key2]
-                                break
-                    if obfuscated:
-                        break
-            if not obfuscated:
                 obfuscated = extract_obfuscated_url(stream_data)
 
         if not obfuscated:
-            print(f"  [WARN] No obfuscated URL for {name}. "
-                  f"data_type={type(stream_data).__name__}",
-                  file=sys.stderr, flush=True)
-            if isinstance(stream_data, bytes):
-                print(f"    [DEBUG] Content: {stream_data[:200]!r}",
-                      file=sys.stderr, flush=True)
-            elif isinstance(stream_data, dict):
-                print(f"    [DEBUG] JSON: {json.dumps(stream_data, ensure_ascii=False)[:300]}",
-                      file=sys.stderr, flush=True)
-            return (name, None)
-
-        if DEBUG:
-            print(f"    [DEBUG] Obfuscated: {obfuscated[:80]}...", flush=True)
+            print("NO OBFUSCATED URL", flush=True)
+            continue
 
         # 3d: Build tokenized URL
         final_url = build_tokenized_url(obfuscated, rb_session)
         if not final_url:
-            print(f"  [FAIL] Token build failed for {name}", file=sys.stderr, flush=True)
-            return (name, None)
+            print("TOKEN BUILD FAILED", flush=True)
+            continue
 
-        return (name, final_url)
-
-    with ThreadPoolExecutor(max_workers=5) as pool:
-        futures = [pool.submit(fetch_stream, m) for m in matches]
-        for f in as_completed(futures, timeout=TIMEOUT * 6):
-            try:
-                result = f.result(timeout=TIMEOUT * 3)
-                if result and result[1]:
-                    entries.append(result)
-                    print(f"  [OK] {result[0]}", flush=True)
-                    if DEBUG:
-                        print(f"       → {result[1][:100]}", flush=True)
-                elif result:
-                    print(f"  [FAIL] {result[0]}", file=sys.stderr, flush=True)
-            except Exception as e:
-                print(f"  [ERROR] {e}", file=sys.stderr, flush=True)
+        entries.append((name, final_url))
+        print("OK", flush=True)
+        if DEBUG:
+            print(f"       → {final_url[:100]}", flush=True)
 
     elapsed = time.time() - t0
     print(f"\nGenerated {len(entries)} streams in {elapsed:.1f}s", flush=True)
