@@ -65,8 +65,8 @@ HEADERS = {
     "sec-fetch-site": "cross-site",
 }
 
-AES_KEY = a7981cc9eb2f4d19dcfea57b101ecd89  # ← ISI DI SINI (32 bytes)
-AES_IV = 8017d3a8f1400d2f   # ← ISI DI SINI (16 bytes)
+AES_KEY = b"a7981cc9eb2f4d19dcfea57b101ecd89"  # ← ISI DI SINI (32 bytes)
+AES_IV = b"8017d3a8f1400d2f"   # ← ISI DI SINI (16 bytes)
 
 DEBUG = True
 DEBUG_RAW = False
