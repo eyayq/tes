@@ -1,22 +1,54 @@
 import requests
 import json
+import gzip
 import re
+import zlib
 import sys
 import time
 import base64
-from Crypto.Cipher import AES
-from Crypto.Util.Padding import pad
+import random
+from urllib.parse import urlparse, urlunparse
 
-# === CONFIG ===
+try:
+    import brotli
+    HAS_BROTLI = True
+except ImportError:
+    HAS_BROTLI = False
+
+try:
+    import zstandard as zstd
+    HAS_ZSTD = True
+except ImportError:
+    HAS_ZSTD = False
+
+try:
+    from Crypto.Cipher import AES
+    from Crypto.Util.Padding import pad
+    HAS_AES = True
+except ImportError:
+    try:
+        from Cryptodome.Cipher import AES
+        from Cryptodome.Util.Padding import pad
+        HAS_AES = True
+    except ImportError:
+        HAS_AES = False
+
+# ==================== CONFIG ====================
+
 DATA_URL = "https://apis-data10.tcpwe138stya.ru"
+PORT = 8080
+MAX_MATCHES = 30
+TIMEOUT = 15
+SPORT_TYPE = 0
 LANGUAGE = 34
 SITE_TYPE = 2001
 CONTINENT = "AS"
 COUNTRY = "ID"
 DIGIT = "trd"
 
-AES_KEY = b"a7981cc9eb2f4d19dcfea57b101ecd89"
-AES_IV  = b"8017d3a8f1400d2f"
+REQUEST_DELAY = (1.5, 3.0)
+MAX_RETRIES = 3
+RETRY_BACKOFF = 5
 
 HEADERS = {
     "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
@@ -26,606 +58,609 @@ HEADERS = {
     "accept-encoding": "gzip, deflate, br",
     "origin": "https://www.rbtvplus.ws",
     "referer": "https://www.rbtvplus.ws/",
+    "sec-ch-ua": '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": '"Windows"',
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "cross-site",
 }
+
+AES_KEY = b"a7981cc9eb2f4d19dcfea57b101ecd89"
+AES_IV = b"8017d3a8f1400d2f"
+
+DEBUG = True
+DEBUG_RAW = False
 
 session = requests.Session()
 session.headers.update(HEADERS)
 
 
-# === RAW PROTOBUF DECODER ===
-def read_varint(data, pos):
-    """Read a varint from data at pos. Returns (value, new_pos)."""
+# ==================== RATE-LIMITED REQUEST ====================
+
+def safe_get(url, **kwargs):
+    for attempt in range(MAX_RETRIES):
+        delay = random.uniform(*REQUEST_DELAY)
+        if attempt > 0:
+            delay += RETRY_BACKOFF * attempt
+        time.sleep(delay)
+
+        try:
+            resp = session.get(url, timeout=TIMEOUT, **kwargs)
+        except requests.exceptions.RequestException as e:
+            print(f"    [RETRY] Network error: {e}", flush=True)
+            continue
+
+        if resp.status_code == 429:
+            wait = RETRY_BACKOFF * (attempt + 1)
+            print(f"    [429] Rate limited, waiting {wait}s "
+                  f"(attempt {attempt+1}/{MAX_RETRIES})", flush=True)
+            time.sleep(wait)
+            continue
+
+        if resp.status_code == 503:
+            wait = RETRY_BACKOFF * (attempt + 1) * 2
+            print(f"    [503] Cloudflare challenge, waiting {wait}s", flush=True)
+            time.sleep(wait)
+            continue
+
+        if resp.status_code != 200:
+            print(f"    [HTTP {resp.status_code}] {url[:80]}", flush=True)
+            return None
+
+        return resp
+
+    print(f"    [GIVE UP] {url[:80]} after {MAX_RETRIES} attempts", flush=True)
+    return None
+
+
+# ==================== PROTOBUF PARSER ====================
+
+def read_varint(data, i):
     result = 0
     shift = 0
-    while pos < len(data):
-        byte = data[pos]
-        result |= (byte & 0x7F) << shift
-        pos += 1
-        if not (byte & 0x80):
-            break
+    while i < len(data) and shift < 35:
+        b = data[i]
+        result |= (b & 0x7F) << shift
+        i += 1
+        if not (b & 0x80):
+            return result, i
         shift += 7
-    return result, pos
+    return None, i
 
 
-def is_printable(data):
-    """Check if bytes look like a printable string."""
-    if not data:
-        return False
-    try:
-        s = data.decode('utf-8')
-        return all(32 <= ord(c) < 127 or c in '\n\t' for c in s)
-    except UnicodeDecodeError:
-        return False
-
-
-def parse_protobuf(data):
-    """
-    Raw protobuf decoder. Returns dict: {field_number: [list of values]}
-    - varint (wire 0): int
-    - length-delimited (wire 2): str if printable, else nested dict
-    - Other wire types: raw bytes
-    """
-    fields = {}
-    pos = 0
-    while pos < len(data):
-        try:
-            tag, pos = read_varint(data, pos)
-        except (IndexError, IndexError):
+def parse_message(data, start=0, end=None):
+    if end is None:
+        end = len(data)
+    fields = []
+    i = start
+    while i < end:
+        tag, i = read_varint(data, i)
+        if tag is None or tag == 0 or i >= end:
             break
-
         field_num = tag >> 3
         wire_type = tag & 0x07
-
-        if field_num == 0:
-            break
-
-        if wire_type == 0:  # varint
-            value, pos = read_varint(data, pos)
-            fields.setdefault(field_num, []).append(value)
-
-        elif wire_type == 1:  # 64-bit
-            if pos + 8 > len(data):
+        if wire_type == 0:
+            val, i = read_varint(data, i)
+            if val is None:
                 break
-            fields.setdefault(field_num, []).append(data[pos:pos+8])
-            pos += 8
-
-        elif wire_type == 2:  # length-delimited
-            length, pos = read_varint(data, pos)
-            if pos + length > len(data):
+            fields.append((field_num, 0, val))
+        elif wire_type == 1:
+            if i + 8 > end:
                 break
-            raw = data[pos:pos+length]
-            pos += length
-
-            # Try to interpret as string or nested message
-            if is_printable(raw):
-                fields.setdefault(field_num, []).append(raw.decode('utf-8'))
-            else:
-                # Try to parse as nested protobuf
-                nested = parse_protobuf(raw)
-                if nested:
-                    fields.setdefault(field_num, []).append(nested)
-                else:
-                    fields.setdefault(field_num, []).append(raw)
-
-        elif wire_type == 5:  # 32-bit
-            if pos + 4 > len(data):
+            fields.append((field_num, 1, data[i:i+8]))
+            i += 8
+        elif wire_type == 2:
+            length, i = read_varint(data, i)
+            if length is None or length < 0 or i + length > end:
                 break
-            fields.setdefault(field_num, []).append(data[pos:pos+4])
-            pos += 4
-
+            fields.append((field_num, 2, data[i:i+length]))
+            i += length
+        elif wire_type == 5:
+            if i + 4 > end:
+                break
+            fields.append((field_num, 5, data[i:i+4]))
+            i += 4
         else:
-            # Unknown wire type — skip
             break
-
     return fields
 
 
-def extract_matches(pb_data):
-    """
-    Extract match list from protobuf live-matches response.
-    Structure: field 10 = repeated match entries
-    Each match: field 1 = id, field 2 = sport_type, nested fields for names
-    """
+def dump_protobuf(data, indent=0, max_depth=4):
+    if indent > max_depth:
+        return
+    prefix = "  " * indent
+    fields = parse_message(data)
+    if not fields:
+        print(f"{prefix}(no valid protobuf fields, {len(data)} bytes)", flush=True)
+        print(f"{prefix}raw: {data[:80]!r}", flush=True)
+        return
+    for fnum, wtype, val in fields:
+        wtype_name = {0: "varint", 1: "64bit", 2: "bytes", 5: "32bit"}.get(wtype, f"wt{wtype}")
+        if wtype == 0:
+            print(f"{prefix}field {fnum} ({wtype_name}): {val}", flush=True)
+        elif wtype == 2:
+            try:
+                text = val.decode('utf-8')
+                if all(32 <= ord(c) < 127 or c in '\n\t' for c in text) and len(val) < 200:
+                    print(f"{prefix}field {fnum} (string): {text!r}", flush=True)
+                    continue
+            except (UnicodeDecodeError, ValueError):
+                pass
+            print(f"{prefix}field {fnum} (bytes, {len(val)}B):", flush=True)
+            sub_fields = parse_message(val)
+            if sub_fields:
+                dump_protobuf(val, indent + 1, max_depth)
+            else:
+                print(f"{prefix}  raw: {val[:60]!r}", flush=True)
+        else:
+            print(f"{prefix}field {fnum} ({wtype_name}): {val!r}", flush=True)
+
+
+def find_vs_name(data):
+    m = re.search(rb'[\x20-\x7e]{2,} vs [\x20-\x7e]{2,}', data)
+    if m:
+        name = m.group().decode('utf-8', errors='replace').strip()
+        name = re.sub(r'^[^a-zA-Z\u00c0-\u024f]+', '', name)
+        return name
+    return None
+
+
+def extract_matches_from_protobuf(data):
+    top_fields = parse_message(data)
+    field10_data = None
+    for fnum, wtype, val in top_fields:
+        if fnum == 10 and wtype == 2 and len(val) > 500:
+            field10_data = val
+            break
+    if not field10_data:
+        candidates = [(fnum, val) for fnum, wtype, val in top_fields
+                      if wtype == 2 and len(val) > 500]
+        if candidates:
+            candidates.sort(key=lambda x: len(x[1]), reverse=True)
+            field10_data = candidates[0][1]
+    if not field10_data:
+        return []
+
+    inner_fields = parse_message(field10_data)
     matches = []
-
-    # Top-level: field 10 contains the match list
-    match_entries = pb_data.get(10, [])
-
-    for entry in match_entries:
-        if not isinstance(entry, dict):
+    for fnum, wtype, val in inner_fields:
+        if wtype != 2 or len(val) < 20:
             continue
-
-        # Each entry might be field 1 (single match) or the match itself
-        match = entry
-        if 1 in entry and isinstance(entry[1], list):
-            # entry is a wrapper: field 1 = the actual match
-            inner = entry[1][0]
-            if isinstance(inner, dict):
-                match = inner
-
+        match_fields = parse_message(val)
         match_id = None
         sport_type = None
-        name = ""
-        league = ""
-
-        # field 1: match_id (varint)
-        if 1 in match and isinstance(match[1], list):
-            v = match[1][0]
-            if isinstance(v, int) and v > 1000:
-                match_id = v
-
-        # field 2: sport_type (varint)
-        if 2 in match and isinstance(match[2], list):
-            v = match[2][0]
-            if isinstance(v, int):
-                sport_type = v
-
-        # Search for string fields (name, league)
-        def find_strings(d, depth=0):
-            """Recursively find all string values in a parsed protobuf dict."""
-            results = []
-            if depth > 4:
-                return results
-            if isinstance(d, dict):
-                for k, v in d.items():
-                    if isinstance(v, list):
-                        for item in v:
-                            if isinstance(item, str) and len(item) > 3:
-                                results.append(item)
-                            elif isinstance(item, dict):
-                                results.extend(find_strings(item, depth + 1))
-            return results
-
-        strings = find_strings(match)
-        if strings:
-            # Usually: league name is the longest, or contains ":"
-            for s in strings:
-                if ":" in s and not league:
-                    league = s
-                elif len(s) > 3 and not name:
-                    name = s
-            if not name and strings:
-                name = strings[-1]
-
-        if match_id:
+        for mf_num, mf_wire, mf_val in match_fields:
+            if mf_wire == 0:
+                if mf_num == 1 and mf_val > 1000 and match_id is None:
+                    match_id = mf_val
+                elif mf_num == 2 and mf_val > 0 and mf_val < 100:
+                    sport_type = mf_val
+        name = find_vs_name(val)
+        if name and match_id:
             matches.append({
+                "name": name,
                 "id": match_id,
-                "sport_type": sport_type or 0,
-                "name": name or f"Match {match_id}",
-                "league": league,
+                "sport_type": sport_type or SPORT_TYPE,
             })
-
     return matches
 
 
-def extract_stream_id(pb_data):
-    """Extract streamId from match detail protobuf response."""
-    # Search for varint fields that look like stream IDs
-    # Stream IDs are typically large numbers in nested fields
-    def find_varints(d, depth=0):
-        results = []
-        if depth > 6:
-            return results
-        if isinstance(d, dict):
-            for k, v in d.items():
-                if isinstance(v, list):
-                    for item in v:
-                        if isinstance(item, int) and item > 10000:
-                            results.append((k, item))
-                        elif isinstance(item, dict):
-                            results.extend(find_varints(item, depth + 1))
-        return results
+# ==================== STREAM ID EXTRACTION ====================
 
-    # Also look for string fields that might be stream IDs
-    def find_strings(d, depth=0):
-        results = []
-        if depth > 6:
-            return results
-        if isinstance(d, dict):
-            for k, v in d.items():
-                if isinstance(v, list):
-                    for item in v:
-                        if isinstance(item, str) and item.isdigit() and len(item) > 4:
-                            results.append(item)
-                        elif isinstance(item, dict):
-                            results.extend(find_strings(item, depth + 1))
-        return results
+def extract_stream_id(data, match_id=None, _depth=0):
+    """
+    Extract streamId from match detail protobuf.
+    Structure:
+      top.field10 (bytes) = container
+        container.field2 (repeated bytes) = stream entries
+          entry.field1 (varint) = streamId
+          entry.field9 (varint) = siteType
+    """
+    if _depth > 6:
+        return None
+    if isinstance(data, dict):
+        if "streamId" in data and isinstance(data["streamId"], int):
+            if data["streamId"] != match_id:
+                return data["streamId"]
+        for v in data.values():
+            result = extract_stream_id(v, match_id, _depth + 1)
+            if result:
+                return result
+        return None
+    elif isinstance(data, list):
+        for item in data:
+            result = extract_stream_id(item, match_id, _depth + 1)
+            if result:
+                return result
+        return None
+    if not isinstance(data, bytes):
+        return None
 
-    # Try to find stream-related fields
-    # In the protobuf, streamId is usually a varint in a nested message
-    varints = find_varints(pb_data)
-    strings = find_strings(pb_data)
+    fields = parse_message(data)
+    if not fields:
+        return None
 
-    # Heuristic: streamId is often the largest varint or a specific field
-    # Print all candidates for debugging
-    return varints, strings
+    # PRIMARY: Follow known structure
+    container = None
+    for fnum, wtype, val in fields:
+        if wtype == 2 and len(val) > 50:
+            if fnum == 10:
+                container = val
+                break
+            if container is None or len(val) > len(container):
+                container = val
+
+    if container:
+        container_fields = parse_message(container)
+        for fnum, wtype, val in container_fields:
+            if wtype == 2 and fnum == 2 and 10 < len(val) < 200:
+                stream_fields = parse_message(val)
+                stream_id = None
+                site_type = None
+                for sf_num, sf_wire, sf_val in stream_fields:
+                    if sf_wire == 0:
+                        if sf_num == 1:
+                            stream_id = sf_val
+                        elif sf_num == 9:
+                            site_type = sf_val
+                if stream_id and stream_id != match_id and 100 < stream_id < 999999999:
+                    if site_type == SITE_TYPE:
+                        return stream_id
+                    return stream_id
+
+    # FALLBACK: Generic search
+    for fnum, wtype, val in fields:
+        if wtype == 2 and 5 < len(val) < 2000:
+            sub_fields = parse_message(val)
+            if not sub_fields:
+                continue
+            for sf_num, sf_wire, sf_val in sub_fields:
+                if sf_wire == 0 and sf_num == 1:
+                    if sf_val != match_id and 100 < sf_val < 999999999:
+                        if len(sub_fields) >= 3:
+                            return sf_val
+                    break
+            for sf_num, sf_wire, sf_val in sub_fields:
+                if sf_wire == 2 and sf_num == 2 and 10 < len(sf_val) < 200:
+                    entry_fields = parse_message(sf_val)
+                    for ef_num, ef_wire, ef_val in entry_fields:
+                        if ef_wire == 0 and ef_num == 1:
+                            if ef_val != match_id and 100 < ef_val < 999999999:
+                                return ef_val
+                            break
+
+    return None
 
 
-# === HELPERS ===
-def rot47(s):
+# ==================== CRYPTO ====================
+
+def rot47_decode(s):
+    """ROT47: self-inverse cipher for printable ASCII (33-126, 94 chars)."""
+    if isinstance(s, bytes):
+        s = s.decode('ascii', errors='ignore')
     result = []
-    for ch in s:
-        code = ord(ch)
+    for c in s:
+        code = ord(c)
         if 33 <= code <= 126:
-            result.append(chr((code - 33 + 47) % 94 + 33))
-        else:
-            result.append(ch)
+            code = (code - 33 + 47) % 94 + 33
+        result.append(chr(code))
     return ''.join(result)
 
 
-def decode(resp):
+def build_tokenized_url(obfuscated_url, rb_session):
+    """
+    1. ROT47 decode → drop first 8 chars → base URL
+    2. AES-256-CBC encrypt rb-session → base64
+    3. Insert token-{b64}a as first path segment after domain
+       https://domain.com/path/index.m3u8
+       → https://domain.com/token-{b64}a/path/index.m3u8
+    """
+    decoded = rot47_decode(obfuscated_url)
+    decoded = decoded[8:]  # drop leading marker
+
+    if not decoded.startswith("http"):
+        # Try to find http at any offset
+        idx = decoded.find("http")
+        if idx == -1:
+            print(f"    [ERROR] No URL found after ROT47: {decoded[:60]!r}",
+                  file=sys.stderr, flush=True)
+            return None
+        decoded = decoded[idx:]
+
+    if not HAS_AES or AES_KEY is None or AES_IV is None:
+        print("    [ERROR] AES not available or key not set!", file=sys.stderr, flush=True)
+        return None
+
+    try:
+        session_bytes = rb_session.encode('utf-8')
+        padded = pad(session_bytes, 16)
+        cipher = AES.new(AES_KEY, AES.MODE_CBC, AES_IV)
+        ciphertext = cipher.encrypt(padded)
+        token_b64 = base64.b64encode(ciphertext).decode('ascii')
+    except Exception as e:
+        print(f"    [ERROR] AES encrypt failed: {e}", file=sys.stderr, flush=True)
+        return None
+
+    # Insert token as first path segment
+    parsed = urlparse(decoded)
+    path = parsed.path
+    token_segment = f"token-{token_b64}a"
+
+    if path.startswith("/"):
+        new_path = f"/{token_segment}{path}"
+    else:
+        new_path = f"{token_segment}/{path}"
+
+    result = parsed._replace(path=new_path)
+    return urlunparse(result)
+
+
+def extract_obfuscated_url(data):
+    """Extract the longest printable string (the f4 field) from response."""
+    if isinstance(data, bytes):
+        candidates = re.findall(rb'[\x21-\x7e]{20,}', data)
+        if candidates:
+            longest = max(candidates, key=len)
+            return longest.decode('ascii')
+        return None
+    elif isinstance(data, (dict, list)):
+        json_str = json.dumps(data)
+        m = re.findall(r'"([^"]{20,})"', json_str)
+        if m:
+            longest = max(m, key=len)
+            return longest
+        return None
+    return None
+
+
+# ==================== DECODE ====================
+
+def decode_api_response(resp) -> bytes:
+    """requests already auto-decompresses gzip/deflate/br. Just return content."""
     return resp.content
 
 
-def try_parse(content):
-    """Try JSON first, then protobuf. Returns (parsed, format)."""
+def try_json_or_protobuf(content):
     try:
-        return json.loads(content), "json"
+        text = content.decode('utf-8')
+        stripped = text.strip()
+        if stripped.startswith('{') or stripped.startswith('['):
+            return ('json', json.loads(text))
     except Exception:
         pass
-    pb = parse_protobuf(content)
-    if pb:
-        return pb, "protobuf"
-    return None, "unknown"
+    return ('protobuf', content)
 
 
-def encrypt_session(rb_session):
-    cipher = AES.new(AES_KEY, AES.MODE_CBC, AES_IV)
-    encrypted = cipher.encrypt(pad(rb_session.encode('utf-8'), 16))
-    return base64.b64encode(encrypted).decode()
+# ==================== API ====================
 
-
-def build_url(base_url, token_b64):
-    token = f"token-{token_b64}a"
-    if ".m3u8" in base_url:
-        idx = base_url.rindex(".m3u8")
-        return base_url[:idx] + token + base_url[idx:]
-    elif base_url.endswith("/"):
-        return base_url + token
+def get_signing_key(match_id=None, sport_type=None):
+    if match_id:
+        url = (f"{DATA_URL}/api/common/bs"
+               f"?code=102&code=103&code=104&code=105"
+               f"&matchId={match_id}&sportType={sport_type}&stream=true")
     else:
-        return base_url + "/" + token
+        url = (f"{DATA_URL}/api/common/bs"
+               f"?code=100&sportType={sport_type or 0}&stream=true")
 
-
-# === STEP 1: Signing Key ===
-print("=" * 60)
-print("STEP 1: Get Signing Key")
-print("=" * 60)
-resp = session.get(
-    f"{DATA_URL}/api/common/bs?code=100&sportType=0&stream=true",
-    timeout=15
-)
-content = decode(resp)
-m = re.search(rb'[a-f0-9]{32}', content)
-md5 = m.group().decode() if m else None
-print(f"  Key: {md5}")
-if not md5:
-    print("  FAIL: no key found")
-    sys.exit(1)
-
-
-# === STEP 2: Live Matches ===
-print("\n" + "=" * 60)
-print("STEP 2: Get Live Matches")
-print("=" * 60)
-time.sleep(2)
-resp = session.get(
-    f"{DATA_URL}/sfver{md5}/api/match/live?sportType=0&language={LANGUAGE}&stream=true",
-    timeout=15
-)
-content = decode(resp)
-print(f"  Size: {len(content)} bytes")
-
-data, fmt = try_parse(content)
-print(f"  Format: {fmt}")
-
-matches = []
-if fmt == "json":
-    if isinstance(data, dict):
-        matches = data.get("data") or data.get("list") or data.get("matches") or []
-    elif isinstance(data, list):
-        matches = data
-    # Convert to our format
-    parsed_matches = []
-    for m in matches[:20]:
-        if isinstance(m, dict):
-            parsed_matches.append({
-                "id": m.get("id") or m.get("matchId") or m.get("match_id"),
-                "sport_type": m.get("sportType") or m.get("sport_type") or 0,
-                "name": m.get("name") or m.get("matchName") or "Unknown",
-                "league": m.get("league") or m.get("leagueName") or "",
-            })
-    matches = parsed_matches
-
-elif fmt == "protobuf":
-    matches = extract_matches(data)
-    # Debug: show raw field structure
-    print(f"  Top-level fields: {list(data.keys())}")
-    if 10 in data:
-        print(f"  Field 10 has {len(data[10])} entries")
-        if data[10]:
-            first = data[10][0]
-            if isinstance(first, dict):
-                print(f"  First entry fields: {list(first.keys())}")
-
-else:
-    print("  FAIL: cannot parse response")
-    print(f"  First 200 bytes: {content[:200]!r}")
-    sys.exit(1)
-
-if not matches:
-    print("  No matches found")
-    # Dump raw protobuf structure for debugging
-    if fmt == "protobuf":
-        print("\n  Raw protobuf structure (top-level):")
-        for k, v in data.items():
-            if isinstance(v, list):
-                print(f"    field {k}: {len(v)} items")
-                if v and isinstance(v[0], dict):
-                    print(f"      first item fields: {list(v[0].keys())}")
-                elif v:
-                    print(f"      first: {str(v[0])[:80]}")
-    sys.exit(0)
-
-print(f"  Found {len(matches)} matches")
-for i, m in enumerate(matches[:5]):
-    print(f"    [{i}] {m['name']} (id={m['id']}, sport={m['sport_type']})")
-
-match = matches[0]
-match_id = match["id"]
-sport_type = match["sport_type"]
-print(f"\n  Using: {match['name']} (id={match_id}, sport={sport_type})")
-
-
-# === STEP 3: Match Detail ===
-print("\n" + "=" * 60)
-print("STEP 3: Get Match Detail")
-print("=" * 60)
-time.sleep(2)
-resp = session.get(
-    f"{DATA_URL}/sfver{md5}/api/match/detail?matchId={match_id}"
-    f"&sportType={sport_type}&language={LANGUAGE}&stream=true",
-    timeout=15
-)
-content = decode(resp)
-print(f"  Size: {len(content)} bytes")
-
-detail, fmt = try_parse(content)
-print(f"  Format: {fmt}")
-
-stream_id = None
-if fmt == "json":
-    # Search for streamId in JSON
-    def find_key_json(d, keys, depth=0):
-        if depth > 6:
-            return None
-        if isinstance(d, dict):
-            for k in keys:
-                if k in d:
-                    return d[k]
-            for v in d.values():
-                r = find_key_json(v, keys, depth + 1)
-                if r is not None:
-                    return r
-        elif isinstance(d, list):
-            for item in d:
-                r = find_key_json(item, keys, depth + 1)
-                if r is not None:
-                    return r
+    resp = safe_get(url)
+    if resp is None:
         return None
 
-    stream_id = find_key_json(detail, ["streamId", "stream_id", "streamID"])
+    content = decode_api_response(resp)
 
-elif fmt == "protobuf":
-    varints, strings = extract_stream_id(detail)
-    print(f"  Varint candidates (>10000): {varints[:15]}")
-    print(f"  String candidates (numeric): {strings[:10]}")
+    m = re.search(rb'[a-f0-9]{32}', content)
+    if m:
+        return m.group().decode()
 
-    # Heuristic: streamId is usually in a specific field
-    # Try field 10 → field 1, or look for the pattern
-    # In the live list, stream info was in field 10 of each match
-    # In detail, it's likely similar
-    if 10 in detail:
-        for entry in detail[10]:
-            if isinstance(entry, dict):
-                # Look for varint fields that could be streamId
-                for k, v in entry.items():
-                    if isinstance(v, list):
-                        for item in v:
-                            if isinstance(item, int) and item > 10000:
-                                if stream_id is None or item > stream_id:
-                                    stream_id = item
-                # Also check nested
-                if 1 in entry:
-                    for sub in entry[1]:
-                        if isinstance(sub, dict):
-                            for k2, v2 in sub.items():
-                                if isinstance(v2, list):
-                                    for item in v2:
-                                        if isinstance(item, int) and item > 10000:
-                                            if stream_id is None or item > stream_id:
-                                                stream_id = item
+    m = re.search(rb'[a-zA-Z0-9]{32}', content)
+    if m:
+        return m.group().decode()
 
-    # If still no stream_id, try all varints
-    if not stream_id and varints:
-        # Pick the most likely one (often the largest or in field 1)
-        stream_id = varints[0][1]
-        print(f"  Using first varint candidate: {stream_id}")
+    m = re.search(rb'[a-f0-9]{6,}', content)
+    if m:
+        return m.group().decode()
 
-print(f"  Stream ID: {stream_id}")
-if not stream_id:
-    print("  FAIL: no streamId found")
-    if fmt == "protobuf":
-        print("  Full protobuf structure:")
-        for k, v in detail.items():
-            print(f"    field {k}: {str(v)[:200]}")
-    else:
-        print(json.dumps(detail, indent=2)[:2000])
-    sys.exit(0)
+    return None
 
 
-# === STEP 4: Stream Detail ===
-print("\n" + "=" * 60)
-print("STEP 4: Get Stream Detail")
-print("=" * 60)
-time.sleep(2)
-resp = session.get(
-    f"{DATA_URL}/api/stream/detail"
-    f"?streamId={stream_id}"
-    f"&siteType={SITE_TYPE}"
-    f"&continent={CONTINENT}"
-    f"&country={COUNTRY}"
-    f"&digit={DIGIT}"
-    f"&matchId={match_id}"
-    f"&sportType={sport_type}",
-    timeout=15
-)
+def get_live_matches(md5):
+    url = (f"{DATA_URL}/sfver{md5}/api/match/live"
+           f"?sportType={SPORT_TYPE}&language={LANGUAGE}&stream=true")
+    resp = safe_get(url)
+    if resp is None:
+        return []
 
-rb_session = resp.headers.get("rb-session", "")
-print(f"  Status: {resp.status_code}")
-print(f"  rb-session: {rb_session}")
+    content = decode_api_response(resp)
+    fmt, data = try_json_or_protobuf(content)
 
-if not rb_session:
-    print("  FAIL: no rb-session header")
-    sys.exit(1)
+    if fmt == "json":
+        if isinstance(data, dict):
+            return (data.get("data") or data.get("list")
+                    or data.get("matches") or data.get("items") or [])
+        return data if isinstance(data, list) else []
+    return extract_matches_from_protobuf(content)
 
-content = decode(resp)
-print(f"  Size: {len(content)} bytes")
 
-stream_data, fmt = try_parse(content)
-print(f"  Format: {fmt}")
+def get_match_detail(match_id, sport_type, fallback_md5):
+    detail_md5 = get_signing_key(match_id=match_id, sport_type=sport_type)
 
-# Find f4 / URL field
-f4_value = None
-if fmt == "json":
-    def find_key_json(d, keys, depth=0):
-        if depth > 6:
-            return None
-        if isinstance(d, dict):
-            for k in keys:
-                if k in d:
-                    return d[k]
-            for v in d.values():
-                r = find_key_json(v, keys, depth + 1)
-                if r is not None:
-                    return r
-        elif isinstance(d, list):
-            for item in d:
-                r = find_key_json(item, keys, depth + 1)
-                if r is not None:
-                    return r
-        return None
+    if not detail_md5:
+        detail_md5 = fallback_md5
 
-    f4_value = find_key_json(stream_data, ["f4", "url", "streamUrl", "m3u8Url", "playUrl"])
-    if stream_data:
-        print(f"  JSON keys: {list(stream_data.keys()) if isinstance(stream_data, dict) else type(stream_data)}")
-        print(f"  f4/url: {f4_value}")
+    if not detail_md5:
+        return None, None
 
-elif fmt == "protobuf":
-    # f4 is likely a string field in the protobuf
-    # Search for long string fields (the obfuscated URL)
-    def find_long_strings(d, min_len=30, depth=0):
-        results = []
-        if depth > 6:
-            return results
-        if isinstance(d, dict):
-            for k, v in d.items():
-                if isinstance(v, list):
-                    for item in v:
-                        if isinstance(item, str) and len(item) >= min_len:
-                            results.append((k, item))
-                        elif isinstance(item, dict):
-                            results.extend(find_long_strings(item, min_len, depth + 1))
-        return results
+    url = (f"{DATA_URL}/sfver{detail_md5}/api/match/detail"
+           f"?matchId={match_id}&sportType={sport_type}"
+           f"&language={LANGUAGE}&stream=true")
+    resp = safe_get(url)
+    if resp is None:
+        return None, None
 
-    long_strings = find_long_strings(stream_data)
-    print(f"  Long string fields found: {len(long_strings)}")
-    for k, v in long_strings[:10]:
-        print(f"    field {k}: {v[:80]}...")
+    content = decode_api_response(resp)
+    fmt, data = try_json_or_protobuf(content)
 
-    # The f4 field is typically the longest non-URL string (ROT47 encoded)
-    for k, v in long_strings:
-        if not v.startswith("http"):
-            f4_value = v
-            print(f"  Using field {k} as f4: {v[:60]}...")
-            break
+    if fmt == "protobuf" and isinstance(data, bytes):
+        fields = parse_message(data)
+        if not fields and len(data) < 200:
+            err_text = data.decode('utf-8', errors='replace').strip()
+            if DEBUG:
+                print(f"    [DEBUG] Match detail error: {err_text!r}", flush=True)
+            return None, content
 
-    if not f4_value:
-        # Maybe it's directly a URL
-        for k, v in long_strings:
-            if v.startswith("http"):
-                f4_value = v
-                break
+    return data, content
 
-    # Debug: show full structure
-    if not f4_value:
-        print("  Full protobuf structure:")
-        for k, v in stream_data.items():
-            print(f"    field {k}: {str(v)[:150]}")
 
-# === STEP 5: Build Stream URL ===
-print("\n" + "=" * 60)
-print("STEP 5: Build Stream URL")
-print("=" * 60)
+def get_stream_detail(stream_id, match_id, sport_type):
+    url = (f"{DATA_URL}/api/stream/detail"
+           f"?streamId={stream_id}"
+           f"&siteType={SITE_TYPE}"
+           f"&continent={CONTINENT}"
+           f"&country={COUNTRY}"
+           f"&digit={DIGIT}"
+           f"&matchId={match_id}"
+           f"&sportType={sport_type}")
+    resp = safe_get(url)
+    if resp is None:
+        return None, "", b""
 
-base_url = None
-if f4_value:
-    print(f"  f4 value: {f4_value[:100]}")
-    rot47_decoded = rot47(f4_value)
-    print(f"  ROT47(f4): {rot47_decoded[:100]}")
+    content = decode_api_response(resp)
+    fmt, data = try_json_or_protobuf(content)
+    rb_session = resp.headers.get("rb-session", "")
 
-    if "http" in rot47_decoded:
-        url_match = re.search(r'https?://[^\s]+', rot47_decoded)
-        if url_match:
-            base_url = url_match.group()
-            print(f"  ✓ URL found in ROT47: {base_url}")
-        else:
-            for i in range(min(16, len(rot47_decoded))):
-                if rot47_decoded[i:].startswith("http"):
-                    base_url = rot47_decoded[i:]
-                    print(f"  ✓ URL at offset {i}: {base_url}")
+    return data, rb_session, content
+
+
+# ==================== MAIN ====================
+
+def main():
+    t0 = time.time()
+
+    if not HAS_AES:
+        print("WARNING: pycryptodome not installed. "
+              "Run: pip install pycryptodome", file=sys.stderr, flush=True)
+    if AES_KEY is None or AES_IV is None:
+        print("WARNING: AES_KEY/AES_IV not set!", file=sys.stderr, flush=True)
+
+    # Step 1
+    print("Step 1: Getting signing key (code=100)...", flush=True)
+    md5 = get_signing_key(sport_type=SPORT_TYPE)
+    if not md5:
+        print("ERROR: Failed to get signing key", file=sys.stderr, flush=True)
+        with open("playlist.m3u", "w") as f:
+            f.write("#EXTM3U\n")
+        sys.exit(1)
+    print(f"  Key: {md5}", flush=True)
+
+    # Step 2
+    print("Step 2: Getting live matches...", flush=True)
+    matches = get_live_matches(md5)[:MAX_MATCHES]
+    print(f"  Found {len(matches)} matches", flush=True)
+
+    if not matches:
+        print("  No live matches.", file=sys.stderr, flush=True)
+        with open("playlist.m3u", "w") as f:
+            f.write("#EXTM3U\n")
+        sys.exit(0)
+
+    for m in matches[:5]:
+        print(f"    - {m['name']} (id={m['id']}, sport={m['sport_type']})", flush=True)
+
+    # Step 3: SEQUENTIAL
+    print("Step 3: Fetching stream URLs (sequential)...", flush=True)
+    entries = []
+
+    for idx, match in enumerate(matches):
+        name = match["name"]
+        match_id = match["id"]
+        sport_type = match["sport_type"]
+
+        print(f"  [{idx+1}/{len(matches)}] {name}...", end=" ", flush=True)
+
+        # 3a: Match detail → streamId
+        detail, raw_content = get_match_detail(match_id, sport_type, md5)
+        if detail is None:
+            print("NO DETAIL", flush=True)
+            continue
+
+        if DEBUG and isinstance(detail, bytes) and idx == 0:
+            dump_protobuf(detail)
+
+        stream_id = extract_stream_id(detail, match_id=match_id)
+        if not stream_id:
+            print(f"NO STREAMID (matchId={match_id})", flush=True)
+            continue
+
+        if DEBUG:
+            print(f"streamId={stream_id}", end=" \u2192 ", flush=True)
+
+        # 3b: Stream detail
+        stream_data, rb_session, raw = get_stream_detail(
+            stream_id, match_id, sport_type)
+
+        if not rb_session:
+            print("NO RB-SESSION", flush=True)
+            continue
+
+        # 3c: Extract obfuscated URL
+        obfuscated = None
+        if isinstance(stream_data, bytes):
+            obfuscated = extract_obfuscated_url(stream_data)
+        elif isinstance(stream_data, dict):
+            for key in ("url", "streamUrl", "playUrl", "hlsUrl", "src", "link",
+                        "obfuscatedUrl", "encodedUrl"):
+                if key in stream_data and isinstance(stream_data[key], str):
+                    obfuscated = stream_data[key]
                     break
-    elif f4_value.startswith("http"):
-        base_url = f4_value
-        print(f"  ✓ f4 is already a URL: {base_url}")
-    else:
-        print("  ⚠ f4 doesn't decode to a URL")
-        print(f"  f4 repr: {repr(f4_value[:80])}")
+            if not obfuscated:
+                for k, v in stream_data.items():
+                    if isinstance(v, dict):
+                        for key2 in ("url", "streamUrl", "playUrl", "hlsUrl"):
+                            if key2 in v and isinstance(v[key2], str):
+                                obfuscated = v[key2]
+                                break
+                    if obfuscated:
+                        break
+            if not obfuscated:
+                obfuscated = extract_obfuscated_url(stream_data)
 
-if not base_url:
-    # Fallback: search raw content for URL
-    url_match = re.search(rb'https?://[^\s"\'\\]+\.m3u8[^\s"\'\\]*', content)
-    if url_match:
-        base_url = url_match.group().decode()
-        print(f"  ✓ Found m3u8 URL in raw response: {base_url}")
-    else:
-        url_match = re.search(rb'https?://[^\s"\'\\]+', content)
-        if url_match:
-            base_url = url_match.group().decode()
-            print(f"  ✓ Found URL in raw response: {base_url}")
+        if not obfuscated:
+            print("NO OBFUSCATED URL", flush=True)
+            if DEBUG and isinstance(stream_data, dict):
+                print(f"    JSON: {json.dumps(stream_data, ensure_ascii=False)[:300]}",
+                      flush=True)
+            continue
 
-if not base_url:
-    print("\n  ⚠ Could not determine base URL")
-    print("  Raw content (first 500):")
-    print(repr(content[:500]))
-    sys.exit(0)
+        # 3d: Build tokenized URL
+        final_url = build_tokenized_url(obfuscated, rb_session)
+        if not final_url:
+            print("TOKEN BUILD FAILED", flush=True)
+            continue
 
-print(f"\n  Base URL: {base_url}")
+        entries.append((name, final_url))
+        print("OK", flush=True)
+        if DEBUG:
+            print(f"       \u2192 {final_url[:120]}", flush=True)
 
-token_b64 = encrypt_session(rb_session)
-print(f"  Encrypted token: {token_b64[:60]}...")
+    elapsed = time.time() - t0
+    print(f"\nGenerated {len(entries)} streams in {elapsed:.1f}s", flush=True)
 
-final_url = build_url(base_url, token_b64)
+    # Build M3U
+    lines = ["#EXTM3U"]
+    for name, stream_url in entries:
+        tvg_id = re.sub(r'[^a-zA-Z0-9_]', '_', name)
+        lines.append(f'#EXTINF:-1 tvg-id="{tvg_id}",{name}')
+        lines.append(stream_url)
 
-print(f"\n{'=' * 60}")
-print(f"  ✓ FINAL STREAM URL:")
-print(f"  {final_url}")
-print(f"{'=' * 60}")
-print(f"""
-  Playback:
-    - VLC:  Media → Open Network Stream → paste URL
-    - mpv:  mpv "{final_url}" --header="Referer: https://www.rbtvplus.ws/"
-    - curl: curl -H "Referer: https://www.rbtvplus.ws/" "{final_url}"
+    m3u_content = "\n".join(lines) + "\n"
+    with open("playlist.m3u", "w") as f:
+        f.write(m3u_content)
 
-  ⚠ Token is IP-locked. Must play from same IP.
-  ⚠ Token expires after ~30-60 minutes.
-""")   
+    print(f"\n{'='*55}", flush=True)
+    print(m3u_content, flush=True)
+    print(f"{'='*55}", flush=True)
+
+
+if __name__ == "__main__":
+    main()   
