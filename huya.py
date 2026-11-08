@@ -408,19 +408,12 @@ def aes_encrypt(data):
         return None
 
 
-def build_tokenized_url(obfuscated_url, rb_session):
-    """
-    Build final tokenized m3u8 URL from decoded (plain) URL + session.
-    """
-    if not (obfuscated_url.startswith('http://') or obfuscated_url.startswith('https://')):
-        print(f"    [ERROR] Not a valid URL: {obfuscated_url[:60]!r}", file=sys.stderr, flush=True)
+def build_tokenized_url(plain_url, rb_session):
+    """Build final tokenized m3u8 URL from plain URL + session."""
+    if not (plain_url.startswith('http://') or plain_url.startswith('https://')):
+        print(f"    [ERROR] Not a valid URL: {plain_url[:60]!r}", file=sys.stderr, flush=True)
         return None
 
-    if not HAS_AES:
-        print("    [ERROR] AES not available!", file=sys.stderr, flush=True)
-        return None
-
-    # AES-encrypt the session token
     encrypted = aes_encrypt(rb_session.encode('utf-8'))
     if not encrypted:
         print("    [ERROR] AES encrypt failed!", file=sys.stderr, flush=True)
@@ -429,7 +422,7 @@ def build_tokenized_url(obfuscated_url, rb_session):
     token_b64 = base64.b64encode(encrypted).decode('ascii')
     token = quote(token_b64, safe='') + 'a'
 
-    parsed = urlparse(obfuscated_url)
+    parsed = urlparse(plain_url)
     origin = f"{parsed.scheme}://{parsed.netloc}"
     pathname = parsed.path or ''
     search = ('?' + parsed.query) if parsed.query else ''
@@ -444,35 +437,28 @@ def build_tokenized_url(obfuscated_url, rb_session):
 
 def extract_obfuscated_url(data):
     """
-    Extract the obfuscated URL from stream detail protobuf.
-    
-    The URL is stored as AES-256-CBC ciphertext in a protobuf field (~128 bytes).
-    Steps:
-      1. Find bytes fields that are valid AES block multiples (16-256 bytes)
-      2. Try AES-decrypt each candidate
-      3. Check if plaintext is ROT47-encoded URL (decode + slice(8) → http)
-      4. If not ROT47, check if plaintext is already a plain URL
+    Extract plain URL from stream detail protobuf.
+    URL is stored as AES-256-CBC ciphertext in a protobuf field.
+    Steps: find bytes fields (multiple of 16) → AES decrypt → ROT47 decode → plain URL
     """
     if isinstance(data, bytes):
-        # Collect all bytes fields that could be AES ciphertext (16-256 bytes, multiple of 16)
         candidates = []
 
-        def _collect(data, depth=0):
-            if depth > 5:
+        def _collect(d, depth=0):
+            if depth > 5 or not isinstance(d, bytes):
                 return
-            fields = parse_message(data)
+            fields = parse_message(d)
             for fnum, wtype, val in fields:
-                if wtype == 2 and 16 <= len(val) <= 256 and len(val) % 16 == 0:
-                    candidates.append((fnum, depth, val))
-                # Recurse
-                _collect(val, depth + 1)
+                if wtype == 2:
+                    if 16 <= len(val) <= 256 and len(val) % 16 == 0:
+                        candidates.append((fnum, depth, val))
+                    _collect(val, depth + 1)
 
         _collect(data)
 
         if DEBUG:
             print(f"    [DEBUG] Found {len(candidates)} AES-size fields:", flush=True)
 
-        # Try each candidate: AES decrypt → check result
         for fnum, depth, val in candidates:
             plaintext = aes_decrypt(val)
             if plaintext is None:
@@ -487,41 +473,43 @@ def extract_obfuscated_url(data):
                 print(f"    [DEBUG]   f{fnum} d{depth} len={len(val)} "
                       f"decrypted={text[:80]!r}", flush=True)
 
-            # Check if it's a ROT47-encoded URL
+            # Check ROT47-encoded URL
             decoded = rot47_decode(text)
             if len(decoded) > 8:
                 after = decoded[8:]
                 if after.startswith('http://') or after.startswith('https://'):
                     if DEBUG:
                         print(f"    [DEBUG]     ROT47 decoded: {after[:80]!r}", flush=True)
-                    return after  # Return the plain URL directly
+                    return after
 
-            # Check if it's already a plain URL
+            # Check plain URL
             if text.startswith('http://') or text.startswith('https://'):
                 if DEBUG:
                     print(f"    [DEBUG]     Plain URL: {text[:80]!r}", flush=True)
                 return text
 
-            # Check if ROT47-decoded without slice is a URL
+            # Check ROT47 without slice
             if decoded.startswith('http://') or decoded.startswith('https://'):
                 if DEBUG:
                     print(f"    [DEBUG]     ROT47 (no slice): {decoded[:80]!r}", flush=True)
                 return decoded
 
-        # Fallback: try old method (ROT47 on printable strings)
+        # Fallback: ROT47 on printable strings
         strings = []
-        def _collect_strings(data, depth=0):
-            if depth > 5:
+
+        def _collect_strings(d, depth=0):
+            if depth > 5 or not isinstance(d, bytes):
                 return
-            fields = parse_message(data)
+            fields = parse_message(d)
             for fnum, wtype, val in fields:
-                if wtype == 2 and len(val) > 20:
-                    try:
-                        text = val.decode('utf-8')
-                        if all(33 <= ord(c) <= 126 for c in text):
-                            strings.append((fnum, depth, text))
-                    except (UnicodeDecodeError, ValueError):
-                        pass
+                if wtype == 2:
+                    if len(val) > 20:
+                        try:
+                            text = val.decode('utf-8')
+                            if all(33 <= ord(c) <= 126 for c in text):
+                                strings.append((fnum, depth, text))
+                        except (UnicodeDecodeError, ValueError):
+                            pass
                     _collect_strings(val, depth + 1)
 
         _collect_strings(data)
@@ -777,7 +765,7 @@ def main():
             print("NO RB-SESSION", flush=True)
             continue
 
-        # 3c: Extract obfuscated URL (AES decrypt + ROT47)
+        # 3c: Extract plain URL (AES decrypt + ROT47)
         plain_url = None
         if isinstance(stream_data, bytes):
             plain_url = extract_obfuscated_url(stream_data)
@@ -788,7 +776,7 @@ def main():
             print("NO OBFUSCATED URL", flush=True)
             continue
 
-        # 3d: Build tokenized URL (plain_url is already decoded)
+        # 3d: Build tokenized URL
         final_url = build_tokenized_url(plain_url, rb_session)
         if not final_url:
             print("TOKEN BUILD FAILED", flush=True)
