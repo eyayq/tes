@@ -8,7 +8,7 @@ import random
 import threading
 import codecs
 from datetime import datetime, timezone, timedelta
-from urllib.parse import urlparse, urlunparse, quote, unquote, parse_qs
+from urllib.parse import urlparse, urlunparse, quote, parse_qs
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -27,7 +27,7 @@ except ImportError:
 # ==================== CONFIG ====================
 
 DATA_URL = "https://apis-data10.tcpwe138stya.ru"
-MAX_MATCHES = 20
+MAX_MATCHES = 50
 TIMEOUT = 15
 SPORT_TYPE = 0
 LANGUAGE = 34
@@ -35,7 +35,7 @@ SITE_TYPE = 2001
 CONTINENT = "AS"
 COUNTRY = "ID"
 DIGIT = "trd"
-MAX_WORKERS = 3
+MAX_WORKERS = 5
 PROXY_PORT = 8080
 
 REQUEST_DELAY = (0.5, 1.5)
@@ -150,11 +150,11 @@ def parse_message(data, start=0, end=None):
 def find_string_fields(data, min_len=5, max_len=500):
     """Find all printable string fields in a protobuf message (recursive, depth 3)."""
     results = []
-    _find_strings_recursive(data, results, 0)
+    _find_strings_recursive(data, results, 0, min_len, max_len)
     return results
 
 
-def _find_strings_recursive(data, results, depth):
+def _find_strings_recursive(data, results, depth, min_len, max_len):
     if depth > 3:
         return
     fields = parse_message(data)
@@ -168,7 +168,7 @@ def _find_strings_recursive(data, results, depth):
                     continue
             except (UnicodeDecodeError, ValueError):
                 pass
-            _find_strings_recursive(val, results, depth + 1)
+            _find_strings_recursive(val, results, depth + 1, min_len, max_len)
 
 
 def find_vs_name(data):
@@ -191,7 +191,6 @@ def find_logo_url(data):
             s.lower().endswith(('.png', '.jpg', '.jpeg', '.webp', '.svg', '.gif'))
         ):
             return s
-    # Fallback: any http URL that looks like an image
     for s in strings:
         if s.startswith("http") and ('.png' in s or '.jpg' in s or '.webp' in s):
             return s
@@ -346,11 +345,9 @@ def extract_referer(data):
         strings = find_string_fields(data, min_len=10, max_len=200)
         for s in strings:
             if s.startswith("http") and "m3u8" not in s and len(s) < 100:
-                # Could be the player origin
                 parsed = urlparse(s)
                 if parsed.netloc and not parsed.path.strip('/'):
                     return s
-        # Fallback: look for any domain-like string
         for s in strings:
             if s.startswith("http") and s.count('/') <= 2 and len(s) < 80:
                 return s
@@ -399,11 +396,7 @@ def build_tokenized_url(obfuscated_url, rb_session):
 # ==================== CSL (CDN SMART LINK) DECODER ====================
 
 def decode_csl_segment(segment_url):
-    """
-    Decode CSL segment URLs (_ctump/_ctuph params).
-    ROT13 + base64 decode to get real CTU host URLs.
-    Returns list of candidate URLs or None if not CSL.
-    """
+    """Decode CSL segment URLs (_ctump/_ctuph params). ROT13 + base64."""
     parsed = urlparse(segment_url)
     params = parse_qs(parsed.query)
 
@@ -418,11 +411,8 @@ def decode_csl_segment(segment_url):
         if not raw:
             continue
         try:
-            # ROT13 decode
             rot13 = codecs.decode(raw, 'rot_13')
-            # Base64 decode
             decoded = base64.b64decode(rot13).decode('utf-8', errors='ignore')
-            # Might be a JSON array or comma-separated URLs
             if decoded.startswith('['):
                 urls = json.loads(decoded)
                 candidates.extend(urls)
@@ -512,7 +502,6 @@ def process_match(match, fallback_md5):
     timestamp = match.get("timestamp")
     logo = match.get("logo", "")
 
-    # Match detail → streamId
     detail_md5 = get_signing_key(match_id=match_id, sport_type=sport_type)
     if not detail_md5:
         detail_md5 = fallback_md5
@@ -555,7 +544,6 @@ def process_match(match, fallback_md5):
     if not stream_id:
         return None
 
-    # Stream detail
     s_url = (f"{DATA_URL}/api/stream/detail"
              f"?streamId={stream_id}&siteType={SITE_TYPE}"
              f"&continent={CONTINENT}&country={COUNTRY}"
@@ -571,7 +559,6 @@ def process_match(match, fallback_md5):
 
     s_fmt, s_data = try_json_or_protobuf(s_content)
 
-    # Extract obfuscated URL
     obfuscated = None
     if isinstance(s_data, bytes):
         obfuscated = extract_obfuscated_url(s_data)
@@ -587,19 +574,14 @@ def process_match(match, fallback_md5):
     if not obfuscated:
         return None
 
-    # Build tokenized URL
     final_url = build_tokenized_url(obfuscated, rb_session)
     if not final_url:
         return None
 
-    # Extract referer (iframe player origin)
     referer = extract_referer(s_data)
     if not referer:
-        # Fallback: use CDN domain
         parsed_url = urlparse(final_url)
         referer = f"{parsed_url.scheme}://{parsed_url.netloc}"
-
-    # Ensure trailing slash
     if not referer.endswith('/'):
         referer += '/'
 
@@ -616,10 +598,8 @@ def process_match(match, fallback_md5):
 # ==================== LOCAL HLS PROXY ====================
 
 class HLSProxyHandler(BaseHTTPRequestHandler):
-    """Proxy that injects Referer/Origin and decodes CSL segments."""
-
     def log_message(self, format, *args):
-        pass  # Silence request logging
+        pass
 
     def do_GET(self):
         parsed = urlparse(self.path)
@@ -645,7 +625,6 @@ class HLSProxyHandler(BaseHTTPRequestHandler):
             self.end_headers()
             return
 
-        # Build upstream headers
         upstream_headers = {
             "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 "
                           "(KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36",
@@ -672,7 +651,6 @@ class HLSProxyHandler(BaseHTTPRequestHandler):
 
         content_type = resp.headers.get('Content-Type', '')
 
-        # If it's an m3u8 playlist, rewrite segment URLs
         if 'mpegurl' in content_type or target_url.endswith('.m3u8'):
             body = resp.text
             rewritten = self._rewrite_m3u8(body, target_url, referer)
@@ -683,11 +661,8 @@ class HLSProxyHandler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(rewritten.encode('utf-8'))
         else:
-            # MPEG-TS segment or other binary
-            # Check if it's a CSL placeholder (HTTP 487 or small error response)
             content = resp.content
             if resp.status_code == 487 or (len(content) < 200 and b'487' in content):
-                # Try CSL decode
                 csl_urls = decode_csl_segment(target_url)
                 if csl_urls:
                     for csl_url in csl_urls:
@@ -706,7 +681,7 @@ class HLSProxyHandler(BaseHTTPRequestHandler):
                 self.send_response(487)
                 self.send_header('Content-Type', 'text/plain')
                 self.end_headers()
-                self.wfile.write(b'CSL decode failed or no CTU available')
+                self.wfile.write(b'CSL decode failed')
                 return
 
             self.send_response(200)
@@ -717,29 +692,23 @@ class HLSProxyHandler(BaseHTTPRequestHandler):
             self.wfile.write(content)
 
     def _rewrite_m3u8(self, m3u8_content, playlist_url, referer):
-        """Rewrite m3u8: make segment URLs absolute and route through proxy."""
         base = playlist_url.rsplit('/', 1)[0] + '/'
         lines = m3u8_content.split('\n')
         rewritten = []
         for line in lines:
             stripped = line.strip()
             if not stripped or stripped.startswith('#'):
-                # Strip #EXT-X-START (causes issues in some players)
                 if stripped.startswith('#EXT-X-START'):
                     continue
                 rewritten.append(line)
             else:
-                # It's a URI — make absolute and route through proxy
                 if stripped.startswith('http'):
                     abs_url = stripped
                 else:
-                    # Resolve relative URL
                     if stripped.startswith('//'):
                         abs_url = 'https:' + stripped
                     else:
                         abs_url = base + stripped
-
-                # Route through our proxy
                 proxied = (f"http://localhost:{PROXY_PORT}/proxy"
                            f"?url={quote(abs_url, safe='')}"
                            f"&referer={quote(referer, safe='')}")
@@ -748,7 +717,6 @@ class HLSProxyHandler(BaseHTTPRequestHandler):
 
 
 def start_proxy():
-    """Start the HLS proxy server in a background thread."""
     server = HTTPServer(('0.0.0.0', PROXY_PORT), HLSProxyHandler)
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
@@ -787,7 +755,6 @@ def build_m3u(entries):
         full_title = f"{name} {time_str}".strip()
         tvg_id = re.sub(r'[^a-zA-Z0-9_]', '_', name)
 
-        # Route through local proxy
         proxied_url = (f"http://localhost:{PROXY_PORT}/proxy"
                        f"?url={quote(url, safe='')}"
                        f"&referer={quote(referer, safe='')}")
@@ -816,11 +783,9 @@ def main():
               file=sys.stderr, flush=True)
         sys.exit(1)
 
-    # Start proxy first
     print("Starting HLS proxy...", flush=True)
     proxy_server = start_proxy()
 
-    # Step 1: Signing key
     print("Step 1: Getting signing key...", flush=True)
     md5 = get_signing_key(sport_type=SPORT_TYPE)
     if not md5:
@@ -830,7 +795,6 @@ def main():
         sys.exit(1)
     print(f"  Key: {md5}", flush=True)
 
-    # Step 2: Live matches
     print("Step 2: Getting live matches...", flush=True)
     matches = get_live_matches(md5)[:MAX_MATCHES]
     print(f"  Found {len(matches)} matches", flush=True)
@@ -847,7 +811,6 @@ def main():
         print(f"    - {m['name']} (id={m['id']}, sport={m['sport_type']}, {t}){logo_mark}",
               flush=True)
 
-    # Step 3: Process matches with ThreadPool
     print(f"Step 3: Fetching stream URLs ({MAX_WORKERS} threads)...", flush=True)
     entries = []
     completed = 0
@@ -875,7 +838,6 @@ def main():
     elapsed = time.time() - t0
     print(f"\nGenerated {len(entries)} streams in {elapsed:.1f}s", flush=True)
 
-    # Build M3U
     m3u_content = build_m3u(entries)
     with open("playlist.m3u", "w") as f:
         f.write(m3u_content)
@@ -886,12 +848,11 @@ def main():
         print(f"... ({len(m3u_content)} chars total)", flush=True)
     print(f"{'='*60}", flush=True)
     print(f"\nSaved to: playlist.m3u", flush=True)
-    print(f"\n⚠ KEEP THIS SCRIPT RUNNING — the proxy must stay alive for playback!", flush=True)
-    print(f"  VLC: Open playlist.m3u (proxy handles headers + CSL decode)", flush=True)
+    print(f"\n⚠ KEEP THIS SCRIPT RUNNING — proxy must stay alive for playback!", flush=True)
+    print(f"  VLC: Open playlist.m3u", flush=True)
     print(f"  mpv:  mpv playlist.m3u", flush=True)
     print(f"\nPress Ctrl+C to stop.", flush=True)
 
-    # Keep proxy alive
     try:
         while True:
             time.sleep(60)
