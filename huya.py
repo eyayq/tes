@@ -1,513 +1,349 @@
-import requests
-import json
-import re
-import sys
+
 import time
 import random
-from datetime import datetime, timezone, timedelta
-from urllib.parse import urlparse
+import logging
+import argparse
+import subprocess
+import threading
+from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from dataclasses import dataclass
+from typing import Optional
 
-# ==================== CONFIG ====================
+from curl_cffi import requests as cffi_requests
 
-DATA_URL = "https://apis-data10.tcpwe138stya.ru"
-MAX_MATCHES = 50
-TIMEOUT = 15
-SPORT_TYPE = 0
-LANGUAGE = 34
-SITE_TYPE = 2001
-CONTINENT = "AS"
-COUNTRY = "ID"
-DIGIT = "trd"
 MAX_WORKERS = 5
+REQUEST_TIMEOUT = 15
+RETRY_COUNT = 4
+OUTPUT_FILE = "playlist.m3u"
 
-WORKER_URL = "https://pl-gratosv-al.bhns.workers.dev"
+# YouTube channels
+YOUTUBE_CHANNELS = [
+    ("https://www.youtube.com/@MPLIndonesia/live", "MPL Indonesia"),
+    ("https://www.youtube.com/@mlbbindonesia/live", "MLBB Indonesia"),
+]
 
-REQUEST_DELAY = (0.5, 1.5)
-MAX_RETRIES = 3
-RETRY_BACKOFF = 5
-
-HEADERS = {
-    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-                  "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-    "accept": "application/json, text/plain, */*",
-    "accept-language": "id-ID,id;q=0.6,en-US;q=0.9",
-    "accept-encoding": "gzip, deflate, br",
-    "origin": "https://www.rbtvplus.ws",
-    "referer": "https://www.rbtvplus.ws/",
-}
-
-WIB = timezone(timedelta(hours=7))
-
-SPORT_NAMES = {
-    1: "Football", 2: "Basketball", 3: "Tennis", 4: "Baseball",
-    5: "Ice Hockey", 6: "Cricket", 7: "Volleyball", 8: "Badminton",
-    9: "Table Tennis", 10: "Handball", 11: "Rugby", 12: "Golf",
-    13: "Basketball", 14: "American Football", 15: "MMA", 16: "Boxing",
-    17: "Cycling", 18: "Formula 1", 19: "Esports", 20: "Snooker",
-    21: "Floorball", 22: "Hockey", 23: "Lacrosse", 24: "Netball",
-    25: "Polo", 26: "Squash", 27: "Surfing", 28: "Swimming",
-    29: "Weightlifting", 30: "Wrestling", 90: "Golf",
-}
-
-session = requests.Session()
-session.headers.update(HEADERS)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
+log = logging.getLogger("kick-m3u")
 
 
-# ==================== RATE-LIMITED REQUEST ====================
+@dataclass
+class Stream:
+    channel_slug: str
+    title: str
+    playback_url: str
+    group_title: str
+    tvg_logo: str
+    started_at: Optional[str]
+    viewers: int
+    platform: str = "Kick"
 
-def safe_get(url, **kwargs):
-    for attempt in range(MAX_RETRIES):
-        delay = random.uniform(*REQUEST_DELAY)
-        if attempt > 0:
-            delay += RETRY_BACKOFF * attempt
-        time.sleep(delay)
+
+# ─── HTTP with smart backoff ──────────────────────────────────────────────────
+_local = threading.local()
+
+def get_session():
+    if not hasattr(_local, "session"):
+        _local.session = cffi_requests.Session(impersonate="chrome124")
+    return _local.session
+
+
+def smart_sleep(base=0.3):
+    """Sleep dengan jitter untuk hindari pattern detection."""
+    time.sleep(base + random.uniform(0, 0.4))
+
+
+def http_get(url: str, params: dict | None = None):
+    for attempt in range(RETRY_COUNT):
         try:
-            resp = session.get(url, timeout=TIMEOUT, **kwargs)
-        except requests.exceptions.RequestException:
-            if attempt < MAX_RETRIES - 1:
-                continue
-            return None
-        if resp.status_code in (429, 503):
-            time.sleep(RETRY_BACKOFF * (attempt + 1))
-            continue
-        if resp.status_code != 200:
-            return None
-        return resp
+            r = get_session().get(url, params=params, timeout=REQUEST_TIMEOUT)
+            if r.status_code == 200:
+                return r.json()
+            elif r.status_code == 429:
+                # Exponential backoff: 5s, 15s, 45s, 135s
+                wait = 5 * (3 ** attempt)
+                log.warning("429 rate limit! Tunggu %ds (attempt %d/%d)",
+                           wait, attempt + 1, RETRY_COUNT)
+                time.sleep(wait)
+            else:
+                log.debug("HTTP %s → %s", r.status_code, url)
+                time.sleep(1)
+        except Exception as e:
+            log.debug("Error: %s", e)
+            time.sleep(2)
     return None
 
 
-# ==================== PROTOBUF PARSER ====================
-
-def read_varint(data, i):
-    result = 0
-    shift = 0
-    while i < len(data) and shift < 35:
-        b = data[i]
-        result |= (b & 0x7F) << shift
-        i += 1
-        if not (b & 0x80):
-            return result, i
-        shift += 7
-    return None, i
-
-
-def parse_message(data, start=0, end=None):
-    if end is None:
-        end = len(data)
-    fields = []
-    i = start
-    while i < end:
-        tag, i = read_varint(data, i)
-        if tag is None or tag == 0 or i >= end:
+# ─── KICK: Subcategories ──────────────────────────────────────────────────────
+def fetch_all_subcategories() -> list[dict]:
+    all_subs = []
+    seen: set[str] = set()
+    page = 1
+    while True:
+        data = http_get("https://kick.com/api/v1/subcategories",
+                        params={"page": page, "limit": 32})
+        if not data:
             break
-        field_num = tag >> 3
-        wire_type = tag & 0x07
-        if wire_type == 0:
-            val, i = read_varint(data, i)
-            if val is None:
-                break
-            fields.append((field_num, 0, val))
-        elif wire_type == 1:
-            if i + 8 > end:
-                break
-            fields.append((field_num, 1, data[i:i+8]))
-            i += 8
-        elif wire_type == 2:
-            length, i = read_varint(data, i)
-            if length is None or length < 0 or i + length > end:
-                break
-            fields.append((field_num, 2, data[i:i+length]))
-            i += length
-        elif wire_type == 5:
-            if i + 4 > end:
-                break
-            fields.append((field_num, 5, data[i:i+4]))
-            i += 4
-        else:
+
+        items = data.get("data", [])
+        if not items:
             break
-    return fields
 
+        new = 0
+        for item in items:
+            slug = item.get("slug")
+            if slug and slug not in seen:
+                seen.add(slug)
+                all_subs.append(item)
+                new += 1
 
-def find_string_fields(data, min_len=5, max_len=500):
-    results = []
-    _find_strings_recursive(data, results, 0, min_len, max_len)
-    return results
-
-
-def _find_strings_recursive(data, results, depth, min_len, max_len):
-    if depth > 3:
-        return
-    fields = parse_message(data)
-    for fnum, wtype, val in fields:
-        if wtype == 2:
-            try:
-                text = val.decode('utf-8')
-                if all(32 <= ord(c) < 127 or c in '\n\t' for c in text):
-                    if min_len <= len(text) <= max_len:
-                        results.append(text)
-                    continue
-            except (UnicodeDecodeError, ValueError):
-                pass
-            _find_strings_recursive(val, results, depth + 1, min_len, max_len)
-
-
-def find_vs_name(data):
-    m = re.search(rb'[\x20-\x7e]{2,} vs [\x20-\x7e]{2,}', data)
-    if m:
-        name = m.group().decode('utf-8', errors='replace').strip()
-        name = re.sub(r'^[^a-zA-Z\u00c0-\u024f]+', '', name)
-        return name
-    return None
-
-
-def find_logo_url(data):
-    strings = find_string_fields(data, min_len=10, max_len=300)
-    for s in strings:
-        if s.startswith("http") and (
-            "logo" in s.lower() or "team" in s.lower() or "icon" in s.lower()
-            or s.lower().endswith(('.png', '.jpg', '.jpeg', '.webp', '.svg', '.gif'))
-        ):
-            return s
-    for s in strings:
-        if s.startswith("http") and ('.png' in s or '.jpg' in s or '.webp' in s):
-            return s
-    return None
-
-
-def extract_matches_from_protobuf(data):
-    top_fields = parse_message(data)
-    field10_data = None
-    for fnum, wtype, val in top_fields:
-        if fnum == 10 and wtype == 2 and len(val) > 500:
-            field10_data = val
+        if new == 0:
             break
-    if not field10_data:
-        candidates = [(fnum, val) for fnum, wtype, val in top_fields
-                      if wtype == 2 and len(val) > 500]
-        if candidates:
-            candidates.sort(key=lambda x: len(x[1]), reverse=True)
-            field10_data = candidates[0][1]
-    if not field10_data:
-        return []
 
-    inner_fields = parse_message(field10_data)
-    matches = []
-    for fnum, wtype, val in inner_fields:
-        if wtype != 2 or len(val) < 20:
-            continue
-        match_fields = parse_message(val)
-        match_id = None
-        sport_type = None
-        timestamp = None
-        for mf_num, mf_wire, mf_val in match_fields:
-            if mf_wire == 0:
-                if mf_num == 1 and mf_val > 1000 and match_id is None:
-                    match_id = mf_val
-                elif mf_num == 2 and mf_val > 0 and mf_val < 200:
-                    sport_type = mf_val
-                elif mf_num == 3 and mf_val > 1_000_000_000_000:
-                    timestamp = mf_val
-        name = find_vs_name(val)
-        logo = find_logo_url(val)
-        if name and match_id:
-            matches.append({
-                "name": name,
-                "id": match_id,
-                "sport_type": sport_type or SPORT_TYPE,
-                "timestamp": timestamp,
-                "logo": logo or "",
-            })
-    return matches
+        last_page = data.get("last_page", 0)
+        if last_page and page >= last_page:
+            break
+
+        page += 1
+        smart_sleep(0.2)  # 0.2-0.6s antar halaman
+
+    log.info("Total subcategories: %d", len(all_subs))
+    return all_subs
 
 
-# ==================== STREAM ID EXTRACTION ====================
+# ─── KICK: Live per kategori ──────────────────────────────────────────────────
+def fetch_live_streams(subcategory_slug: str) -> list[dict]:
+    all_streams = []
+    page = 1
+    while True:
+        data = http_get("https://kick.com/stream/livestreams/en",
+                        params={"page": page, "limit": 50, "subcategory": subcategory_slug})
+        if not data:
+            break
 
-def extract_stream_id(data, match_id=None):
-    if not isinstance(data, bytes):
-        return None
-    fields = parse_message(data)
-    if not fields:
+        items = data if isinstance(data, list) else data.get("data", data.get("results", []))
+        if not items:
+            break
+
+        all_streams.extend(items)
+
+        if isinstance(data, dict):
+            if data.get("last_page", 0) and page >= data["last_page"]:
+                break
+        elif len(items) < 50:
+            break
+
+        page += 1
+        smart_sleep(0.1)
+
+    return all_streams
+
+
+# ─── KICK: Proses stream ──────────────────────────────────────────────────────
+def process_kick_stream(stream_data: dict, category_name: str) -> Optional[Stream]:
+    """
+    PENTING: Cek apakah playback_url SUDAH ada di response kategori.
+    Kalau iya → tidak perlu request tambahan.
+    """
+    channel_slug = (
+        stream_data.get("channel_slug")
+        or stream_data.get("channel_name")
+        or (stream_data.get("channel", {}) or {}).get("slug", "")
+    )
+    if not channel_slug:
         return None
 
-    container = None
-    for fnum, wtype, val in fields:
-        if wtype == 2 and len(val) > 50:
-            if fnum == 10:
-                container = val
-                break
-            if container is None or len(val) > len(container):
-                container = val
+    # ── Cek playback_url langsung dari response ──
+    playback_url = (
+        stream_data.get("live")
+        or (stream_data.get("channel", {}) or {}).get("live")
+        or stream_data.get("hls_url")
+        or ""
+    )
 
-    if container:
-        container_fields = parse_message(container)
-        for fnum, wtype, val in container_fields:
-            if wtype == 2 and fnum == 2 and 10 < len(val) < 200:
-                stream_fields = parse_message(val)
-                for sf_num, sf_wire, sf_val in stream_fields:
-                    if sf_wire == 0 and sf_num == 1:
-                        if sf_val != match_id and 100 < sf_val < 999999999:
-                            return sf_val
+    # Kalau tidak ada, baru fetch (1 request tambahan)
+    if not playback_url:
+        playback_url = fetch_playback_url(channel_slug)
+    if not playback_url:
+        return None
 
-    for fnum, wtype, val in fields:
-        if wtype == 2 and 5 < len(val) < 2000:
-            sub_fields = parse_message(val)
-            if not sub_fields:
-                continue
-            for sf_num, sf_wire, sf_val in sub_fields:
-                if sf_wire == 0 and sf_num == 1:
-                    if sf_val != match_id and 100 < sf_val < 999999999:
-                        if len(sub_fields) >= 3:
-                            return sf_val
-    return None
+    title = stream_data.get("title") or stream_data.get("session_title") or "Untitled"
+    viewers = stream_data.get("viewer_count") or stream_data.get("viewers") or 0
+    started_at = stream_data.get("start_time") or stream_data.get("created_at")
+    tvg_logo = (
+        stream_data.get("channel_profile_pic")
+        or (stream_data.get("channel", {}) or {}).get("profile_picture", "")
+        or stream_data.get("profile_picture", "")
+        or ""
+    )
 
-
-# ==================== DECODE ====================
-
-def decode_api_response(resp) -> bytes:
-    return resp.content
+    return Stream(
+        channel_slug=channel_slug,
+        title=title,
+        playback_url=playback_url,
+        group_title=category_name,
+        tvg_logo=tvg_logo,
+        started_at=started_at,
+        viewers=viewers,
+    )
 
 
-def try_json_or_protobuf(content):
+def fetch_playback_url(channel_slug: str) -> Optional[str]:
+    """Fallback: fetch playback_url dari channel API (1 request)."""
+    data = http_get(f"https://kick.com/api/v2/channels/{channel_slug}")
+    if not data:
+        return None
+    return data.get("live")
+
+
+# ─── YOUTUBE ──────────────────────────────────────────────────────────────────
+def get_youtube_m3u8(channel_url: str) -> Optional[str]:
     try:
-        text = content.decode('utf-8')
-        stripped = text.strip()
-        if stripped.startswith('{') or stripped.startswith('['):
-            return ('json', json.loads(text))
+        r = subprocess.run(
+            ["yt-dlp", "-g", "-f", "b[protocol=m3u8]",
+             "--extractor-args", "youtube:player_client=web_safari",
+             "--no-warnings", "--socket-timeout", "15",
+             channel_url],
+            capture_output=True, text=True, timeout=30,
+        )
+        if r.returncode == 0 and r.stdout.strip():
+            return r.stdout.strip()
     except Exception:
         pass
-    return ('protobuf', content)
-
-
-# ==================== API ====================
-
-def get_signing_key(match_id=None, sport_type=None):
-    if match_id:
-        url = (f"{DATA_URL}/api/common/bs"
-               f"?code=102&code=103&code=104&code=105"
-               f"&matchId={match_id}&sportType={sport_type}&stream=true")
-    else:
-        url = (f"{DATA_URL}/api/common/bs"
-               f"?code=100&sportType={sport_type or 0}&stream=true")
-    resp = safe_get(url)
-    if resp is None:
-        return None
-    content = decode_api_response(resp)
-    m = re.search(rb'[a-f0-9]{32}', content)
-    if m:
-        return m.group().decode()
-    m = re.search(rb'[a-zA-Z0-9]{32}', content)
-    if m:
-        return m.group().decode()
     return None
 
 
-def get_live_matches(md5):
-    url = (f"{DATA_URL}/sfver{md5}/api/match/live"
-           f"?sportType={SPORT_TYPE}&language={LANGUAGE}&stream=true")
-    resp = safe_get(url)
-    if resp is None:
-        return []
-    content = decode_api_response(resp)
-    fmt, data = try_json_or_protobuf(content)
-    if fmt == "json":
-        if isinstance(data, dict):
-            raw = (data.get("data") or data.get("list")
-                   or data.get("matches") or data.get("items") or [])
-        else:
-            raw = data if isinstance(data, list) else []
-        matches = []
-        for m in raw:
-            if isinstance(m, dict):
-                matches.append({
-                    "name": m.get("name") or m.get("matchName")
-                            or m.get("homeTeam", "?") + " vs " + m.get("awayTeam", "?"),
-                    "id": m.get("id") or m.get("matchId") or m.get("match_id"),
-                    "sport_type": m.get("sportType") or m.get("sport_type") or 0,
-                    "timestamp": m.get("timestamp") or m.get("startTime") or m.get("kickOffTime"),
-                    "logo": m.get("logo") or m.get("homeLogo") or "",
-                })
-        return matches
-    return extract_matches_from_protobuf(content)
-
-
-def process_match(match, fallback_md5):
-    """Python only gets stream_id. Worker handles the rest."""
-    name = match["name"]
-    match_id = match["id"]
-    sport_type = match["sport_type"]
-    timestamp = match.get("timestamp")
-    logo = match.get("logo", "")
-
-    detail_md5 = get_signing_key(match_id=match_id, sport_type=sport_type)
-    if not detail_md5:
-        detail_md5 = fallback_md5
-    if not detail_md5:
+def process_youtube(item: tuple) -> Optional[Stream]:
+    url, name = item
+    m3u8 = get_youtube_m3u8(url)
+    if not m3u8:
         return None
-
-    url = (f"{DATA_URL}/sfver{detail_md5}/api/match/detail"
-           f"?matchId={match_id}&sportType={sport_type}"
-           f"&language={LANGUAGE}&stream=true")
-    resp = safe_get(url)
-    if resp is None:
-        return None
-
-    content = decode_api_response(resp)
-    fmt, data = try_json_or_protobuf(content)
-
-    stream_id = None
-    if fmt == "protobuf" and isinstance(data, bytes):
-        stream_id = extract_stream_id(data, match_id=match_id)
-    elif fmt == "json" and isinstance(data, dict):
-        stream_id = _find_json(data, ["streamId", "stream_id"])
-
-    if not stream_id:
-        return None
-
-    # Worker resolves everything: stream detail → token → m3u8
-    gen_url = (f"{WORKER_URL}/gen"
-               f"?streamId={stream_id}"
-               f"&matchId={match_id}"
-               f"&sportType={sport_type}")
-
-    return {
-        "name": name,
-        "url": gen_url,
-        "sport_type": sport_type,
-        "timestamp": timestamp,
-        "logo": logo,
-    }
+    return Stream(
+        channel_slug=name.lower().replace(" ", "_"),
+        title=f"{name} LIVE",
+        playback_url=m3u8,
+        group_title="YouTube",
+        tvg_logo=f"https://i.ytimg.com/googletv?user_id={name.replace(' ', '')}",
+        started_at=None,
+        viewers=0,
+        platform="YouTube",
+    )
 
 
-def _find_json(d, keys, depth=0):
-    if depth > 5:
-        return None
-    if isinstance(d, dict):
-        for k in keys:
-            if k in d:
-                return d[k]
-        for v in d.values():
-            r = _find_json(v, keys, depth + 1)
-            if r is not None:
-                return r
-    elif isinstance(d, list):
-        for item in d:
-            r = _find_json(item, keys, depth + 1)
-            if r is not None:
-                return r
-    return None
+# ─── M3U ──────────────────────────────────────────────────────────────────────
+def format_title(s: Stream) -> str:
+    base = s.title
+    if s.started_at:
+        try:
+            dt = datetime.fromisoformat(s.started_at.replace("Z", "+00:00")).astimezone()
+            base = f"{base} [{dt.strftime('%H:%M')} {dt.strftime('%d/%m/%Y')}]"
+        except:
+            pass
+    return base
 
 
-# ==================== M3U BUILDER ====================
-
-def format_time_wib(ts_ms):
-    if not ts_ms:
-        return ""
-    try:
-        if ts_ms > 1_000_000_000_000:
-            ts_ms = ts_ms // 1000
-        dt = datetime.fromtimestamp(ts_ms, tz=WIB)
-        return f"[{dt.strftime('%H:%M')} WIB {dt.strftime('%d-%m-%Y')}]"
-    except Exception:
-        return ""
-
-
-def build_m3u(entries):
-    entries.sort(key=lambda x: x.get("timestamp") or 0)
-
+def build_m3u(streams: list[Stream]) -> str:
     lines = ["#EXTM3U"]
-    for e in entries:
-        name = e["name"]
-        url = e["url"]
-        sport_type = e.get("sport_type", 0)
-        logo = e.get("logo", "")
-        ts = e.get("timestamp")
-
-        group = SPORT_NAMES.get(sport_type, f"Sport {sport_type}")
-        time_str = format_time_wib(ts)
-        full_title = f"{name} {time_str}".strip()
-        tvg_id = re.sub(r'[^a-zA-Z0-9_]', '_', name)
-
-        lines.append(
-            f'#EXTINF:-1 tvg-id="{tvg_id}" tvg-logo="{logo}" group-title="{group}",{full_title}'
+    for s in streams:
+        attrs = (
+            f'tvg-id="{s.platform}.{s.group_title}.{s.channel_slug}",'
+            f'tvg-name="{s.channel_slug}",'
+            f'tvg-logo="{s.tvg_logo}",'
+            f'group-title="{s.group_title}"'
         )
-        lines.append(
-            '#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) '
-            'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36'
-        )
-        lines.append(url)
-
+        lines.append(f"#EXTINF:-1,{attrs} {format_title(s)}")
+        lines.append(s.playback_url)
     return "\n".join(lines) + "\n"
 
 
-# ==================== MAIN ====================
-
+# ─── MAIN ─────────────────────────────────────────────────────────────────────
 def main():
-    t0 = time.time()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--output", "-o", default=OUTPUT_FILE)
+    parser.add_argument("--workers", "-w", type=int, default=MAX_WORKERS)
+    parser.add_argument("--kick-only", action="store_true")
+    parser.add_argument("--yt-only", action="store_true")
+    args = parser.parse_args()
 
-    print("Step 1: Getting signing key...", flush=True)
-    md5 = get_signing_key(sport_type=SPORT_TYPE)
-    if not md5:
-        print("ERROR: Failed to get signing key", file=sys.stderr, flush=True)
-        with open("playlist.m3u", "w") as f:
-            f.write("#EXTM3U\n")
-        sys.exit(1)
-    print(f"  Key: {md5}", flush=True)
+    log.info("=== Kick + YouTube M3U Scraper ===")
+    all_streams: list[Stream] = []
 
-    print("Step 2: Getting live matches...", flush=True)
-    matches = get_live_matches(md5)[:MAX_MATCHES]
-    print(f"  Found {len(matches)} matches", flush=True)
+    # ─── KICK ────────────────────────────────────────────────────────────────
+    if not args.yt_only:
+        log.info("─── KICK ───")
 
-    if not matches:
-        print("  No live matches.", file=sys.stderr, flush=True)
-        with open("playlist.m3u", "w") as f:
-            f.write("#EXTM3U\n")
-        sys.exit(0)
+        subcategories = fetch_all_subcategories()
 
-    for m in matches[:5]:
-        t = format_time_wib(m.get("timestamp"))
-        logo_mark = " [logo]" if m.get("logo") else ""
-        print(f"    - {m['name']} (id={m['id']}, sport={m['sport_type']}, {t}){logo_mark}",
-              flush=True)
+        # Filter: hanya kategori yang viewers > 0
+        active = [s for s in subcategories if s.get("viewers", 0) > 0]
+        log.info("Kategori aktif (viewers>0): %d / %d", len(active), len(subcategories))
 
-    print(f"Step 3: Fetching stream IDs ({MAX_WORKERS} threads)...", flush=True)
-    entries = []
-    completed = 0
-    total = len(matches)
+        # Fetch live per kategori
+        all_raw: list[tuple[dict, str]] = []
+        seen: set[str] = set()
 
-    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-        futures = {executor.submit(process_match, m, md5): m for m in matches}
-        for future in as_completed(futures):
-            completed += 1
-            match = futures[future]
-            try:
-                result = future.result()
-                if result:
-                    entries.append(result)
-                    t = format_time_wib(result.get("timestamp"))
-                    print(f"  [{completed}/{total}] {result['name']} {t} → OK",
-                          flush=True)
-                else:
-                    print(f"  [{completed}/{total}] {match['name']} → FAIL",
-                          flush=True)
-            except Exception as ex:
-                print(f"  [{completed}/{total}] {match['name']} → ERROR: {ex}",
-                      flush=True)
+        with ThreadPoolExecutor(max_workers=args.workers) as pool:
+            futures = {
+                pool.submit(fetch_live_streams, sub["slug"]): sub
+                for sub in active if sub.get("slug")
+            }
+            done = 0
+            for fut in as_completed(futures):
+                done += 1
+                sub = futures[fut]
+                if done % 50 == 0:
+                    log.info("Kategori: %d/%d", done, len(futures))
+                try:
+                    for s in fut.result():
+                        slug = (s.get("channel_slug")
+                                or s.get("channel_name")
+                                or (s.get("channel", {}) or {}).get("slug", ""))
+                        if slug and slug not in seen:
+                            seen.add(slug)
+                            all_raw.append((s, sub.get("name", sub.get("slug", ""))))
+                except:
+                    pass
 
-    elapsed = time.time() - t0
-    print(f"\nGenerated {len(entries)} streams in {elapsed:.1f}s", flush=True)
+        log.info("Stream unik: %d", len(all_raw))
 
-    m3u_content = build_m3u(entries)
-    with open("playlist.m3u", "w") as f:
-        f.write(m3u_content)
+        # Proses (playback_url sudah di response → minim request)
+        with ThreadPoolExecutor(max_workers=args.workers) as pool:
+            futures = {
+                pool.submit(process_kick_stream, raw, cat): raw
+                for raw, cat in all_raw
+            }
+            done = 0
+            for fut in as_completed(futures):
+                done += 1
+                if done % 500 == 0:
+                    log.info("Stream: %d/%d", done, len(futures))
+                try:
+                    s = fut.result()
+                    if s:
+                        all_streams.append(s)
+                except:
+                    pass
 
-    print(f"\n{'='*60}", flush=True)
-    print(m3u_content[:2000], flush=True)
-    if len(m3u_content) > 2000:
-        print(f"... ({len(m3u_content)} chars total)", flush=True)
-    print(f"{'='*60}", flush=True)
-    print(f"\nSaved to: playlist.m3u", flush=True)
-    print(f"Worker: {WORKER_URL}", flush=True)
+        log.info("Kick valid: %d", sum(1 for s in all_streams if s.platform == "Kick"))
+
+    # ─── YOUTUBE ─────────────────────────────────────────────────────────────
+    if not args.kick_only and YOUTUBE_CHANNELS:
+        log.info("─── YOUTUBE ───")
+        with ThreadPoolExecutor(max_workers=3) as pool:
+            for fut in as_completed(pool.submit(process_youtube, ch) for ch in YOUTUBE_CHANNELS):
+                try:
+                    s = fut.result()
+                    if s:
+                        log.info("  ✅ %s LIVE", s.title)
+                        all_streams.append(s)
+                except:
+                    pass
+
+    # ─── OUTPUT ──────────────────────────────────────────────────────────────
+    all_streams.sort(key=lambda s: s.viewers, reverse=True)
+    with open(args.output, "w") as f:
+        f.write(build_m3u(all_streams))
+    log.info("✅ %d stream → %s", len(all_streams), args.output)
 
 
 if __name__ == "__main__":
