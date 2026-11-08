@@ -273,7 +273,6 @@ def extract_stream_id(data, match_id=None, _depth=0):
     if not fields:
         return None
 
-    # PRIMARY: Follow known structure
     container = None
     for fnum, wtype, val in fields:
         if wtype == 2 and len(val) > 50:
@@ -301,7 +300,6 @@ def extract_stream_id(data, match_id=None, _depth=0):
                         return stream_id
                     return stream_id
 
-    # FALLBACK: Generic search
     for fnum, wtype, val in fields:
         if wtype == 2 and 5 < len(val) < 2000:
             sub_fields = parse_message(val)
@@ -367,7 +365,6 @@ def extract_obfuscated_url(data):
                         candidate = _check_rot47_url(sf_val)
                         if candidate:
                             return candidate
-        # Fallback: regex on raw bytes
         candidates = re.findall(rb'[\x21-\x7e]{20,}', data)
         for c in sorted(candidates, key=len, reverse=True):
             candidate = _check_rot47_url(c)
@@ -387,10 +384,11 @@ def extract_obfuscated_url(data):
 
 def build_tokenized_url(obfuscated_url, rb_session):
     """
-    1. ROT47 decode → drop first 8 chars → base URL
-    2. Truncate at .m3u8 (f4 is fixed 128 bytes, extra chars are padding)
+    1. ROT47 decode → drop 8 chars → base URL
+    2. Truncate at .m3u8
     3. AES-256-CBC encrypt rb-session → base64 → URL-encode
-    4. Insert token-{b64}a as first path segment after domain
+    4. URL-encode the base path (= → %3D, etc.)
+    5. Insert token-{b64}a as first path segment
     """
     decoded = rot47_decode(obfuscated_url)
     decoded = decoded[8:]
@@ -403,13 +401,13 @@ def build_tokenized_url(obfuscated_url, rb_session):
             return None
         decoded = decoded[idx:]
 
-    # FIX: Truncate at .m3u8 (f4 field is fixed 128 bytes → extra trailing chars)
+    # Truncate at .m3u8 (f4 is fixed 128 bytes → extra trailing chars)
     m3u8_idx = decoded.find('.m3u8')
     if m3u8_idx != -1:
         decoded = decoded[:m3u8_idx + 5]
 
     if not HAS_AES or AES_KEY is None or AES_IV is None:
-        print("    [ERROR] AES not available or key not set!", file=sys.stderr, flush=True)
+        print("    [ERROR] AES not available!", file=sys.stderr, flush=True)
         return None
 
     try:
@@ -422,18 +420,21 @@ def build_tokenized_url(obfuscated_url, rb_session):
         print(f"    [ERROR] AES encrypt failed: {e}", file=sys.stderr, flush=True)
         return None
 
-    # FIX: URL-encode the base64 token (+ → %2B, / → %2F, = → %3D)
+    # URL-encode token (+ → %2B, / → %2F, = → %3D)
     token_b64 = quote(token_b64, safe='')
 
-    # Insert token as first path segment
+    # Parse base URL
     parsed = urlparse(decoded)
-    path = parsed.path
+
+    # *** URL-encode the path (preserve /, encode = and other special chars) ***
+    encoded_path = quote(parsed.path, safe='/')
+
     token_segment = f"token-{token_b64}a"
 
-    if path.startswith("/"):
-        new_path = f"/{token_segment}{path}"
+    if encoded_path.startswith("/"):
+        new_path = f"/{token_segment}{encoded_path}"
     else:
-        new_path = f"{token_segment}/{path}"
+        new_path = f"{token_segment}/{encoded_path}"
 
     result = parsed._replace(path=new_path)
     return urlunparse(result)
@@ -442,7 +443,6 @@ def build_tokenized_url(obfuscated_url, rb_session):
 # ==================== DECODE ====================
 
 def decode_api_response(resp) -> bytes:
-    """requests already auto-decompresses gzip/deflate/br."""
     return resp.content
 
 
@@ -568,7 +568,6 @@ def main():
     if AES_KEY is None or AES_IV is None:
         print("WARNING: AES_KEY/AES_IV not set!", file=sys.stderr, flush=True)
 
-    # Step 1
     print("Step 1: Getting signing key (code=100)...", flush=True)
     md5 = get_signing_key(sport_type=SPORT_TYPE)
     if not md5:
@@ -578,7 +577,6 @@ def main():
         sys.exit(1)
     print(f"  Key: {md5}", flush=True)
 
-    # Step 2
     print("Step 2: Getting live matches...", flush=True)
     matches = get_live_matches(md5)[:MAX_MATCHES]
     print(f"  Found {len(matches)} matches", flush=True)
@@ -592,7 +590,6 @@ def main():
     for m in matches[:5]:
         print(f"    - {m['name']} (id={m['id']}, sport={m['sport_type']})", flush=True)
 
-    # Step 3: SEQUENTIAL
     print("Step 3: Fetching stream URLs (sequential)...", flush=True)
     entries = []
 
@@ -603,7 +600,6 @@ def main():
 
         print(f"  [{idx+1}/{len(matches)}] {name}...", end=" ", flush=True)
 
-        # 3a: Match detail → streamId
         detail, raw_content = get_match_detail(match_id, sport_type, md5)
         if detail is None:
             print("NO DETAIL", flush=True)
@@ -620,7 +616,6 @@ def main():
         if DEBUG:
             print(f"streamId={stream_id}", end=" \u2192 ", flush=True)
 
-        # 3b: Stream detail
         stream_data, rb_session, raw = get_stream_detail(
             stream_id, match_id, sport_type)
 
@@ -628,7 +623,6 @@ def main():
             print("NO RB-SESSION", flush=True)
             continue
 
-        # 3c: Extract obfuscated URL
         obfuscated = None
         if isinstance(stream_data, bytes):
             obfuscated = extract_obfuscated_url(stream_data)
@@ -659,7 +653,6 @@ def main():
                 print(f"    Raw: {stream_data[:200]!r}", flush=True)
             continue
 
-        # 3d: Build tokenized URL
         final_url = build_tokenized_url(obfuscated, rb_session)
         if not final_url:
             print("TOKEN BUILD FAILED", flush=True)
@@ -673,7 +666,6 @@ def main():
     elapsed = time.time() - t0
     print(f"\nGenerated {len(entries)} streams in {elapsed:.1f}s", flush=True)
 
-    # Build M3U
     lines = ["#EXTM3U"]
     for name, stream_url in entries:
         tvg_id = re.sub(r'[^a-zA-Z0-9_]', '_', name)
