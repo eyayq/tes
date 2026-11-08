@@ -13,14 +13,13 @@ from typing import Optional
 from curl_cffi import requests as cffi_requests
 
 # ─── DEFAULTS ─────────────────────────────────────────────────────────────────
-MAX_WORKERS = 3
+MAX_WORKERS = 5
 REQUEST_TIMEOUT = 15
 RETRY_COUNT = 4
 OUTPUT_FILE = "playlist.m3u"
 
-SUB_LIMIT = 10          # subcategory per kategori
-MAX_PER_CATEGORY = 10    # stream per subcategory
-MAX_STREAMS = 100       # total maksimal stream di playlist
+MAX_PER_CATEGORY = 5    # stream per kategori
+MAX_STREAMS = 10       # total maksimal stream
 
 YOUTUBE_CHANNELS = [
     ("https://www.youtube.com/@MPLIndonesia/live", "MPL Indonesia"),
@@ -45,7 +44,7 @@ class Stream:
     platform: str = "Kick"
 
 
-# ─── HTTP (curl_cffi → bypass Cloudflare) ────────────────────────────────────
+# ─── HTTP ─────────────────────────────────────────────────────────────────────
 _local = threading.local()
 
 def get_session():
@@ -79,40 +78,8 @@ def http_get(url: str, params: dict | None = None):
     return None
 
 
-# ─── KICK: Fetch subcategories per kategori ──────────────────────────────────
-def fetch_subcategories(category: str, limit: int) -> list[dict]:
-    all_subs = []
-    seen: set[str] = set()
-    page = 1
-    while len(all_subs) < limit:
-        data = http_get("https://kick.com/api/v1/subcategories",
-                        params={"page": page, "limit": 32})
-        if not data:
-            break
-
-        items = data.get("data", [])
-        if not items:
-            break
-
-        for item in items:
-            if item.get("category") != category:
-                continue
-            slug = item.get("slug")
-            if slug and slug not in seen:
-                seen.add(slug)
-                all_subs.append(item)
-
-        last_page = data.get("last_page", 0)
-        if last_page and page >= last_page:
-            break
-        page += 1
-        smart_sleep(0.2)
-
-    return all_subs[:limit]
-
-
-# ─── KICK: Live per subcategory ──────────────────────────────────────────────
-def fetch_live_by_subcategory(subcategory_slug: str, max_streams: int) -> list[dict]:
+# ─── KICK: Live per kategori ─────────────────────────────────────────────────
+def fetch_live_by_category(category: str, max_streams: int) -> list[dict]:
     all_streams = []
     page = 1
     while len(all_streams) < max_streams:
@@ -120,7 +87,7 @@ def fetch_live_by_subcategory(subcategory_slug: str, max_streams: int) -> list[d
                         params={
                             "page": page,
                             "limit": 50,
-                            "subcategory": subcategory_slug,
+                            "category": category,
                         })
         if not data:
             break
@@ -146,12 +113,11 @@ def fetch_live_by_subcategory(subcategory_slug: str, max_streams: int) -> list[d
 # ─── KICK: Proses stream ─────────────────────────────────────────────────────
 def extract_playback_url(stream_data: dict) -> Optional[str]:
     """
-    Struktur response Kick:
-      stream_data["playback_url"] = {
-          "dvr": "https://stream.kick.com/...",
-          "imasdk": "",
-          "live": "https://...m3u8?token=..."
-      }
+    Struktur: stream_data["playback_url"] = {
+        "dvr": "https://stream.kick.com/...",
+        "imasdk": "",
+        "live": "https://...m3u8?token=..."
+    }
     """
     pb = stream_data.get("playback_url")
     if isinstance(pb, dict):
@@ -206,23 +172,19 @@ def process_kick_stream(stream_data: dict, group_name: str) -> Optional[Stream]:
 
 
 def fetch_playback_url(channel_slug: str) -> Optional[str]:
-    """Fallback: GET /api/v2/channels/{slug}/livestream"""
     data = http_get(f"https://kick.com/api/v2/channels/{channel_slug}/livestream")
     if not data:
         return None
-
     pb = data.get("playback_url")
     if isinstance(pb, dict):
         return pb.get("live") or ""
     if isinstance(pb, str) and pb.startswith("http"):
         return pb
-
     live = data.get("live")
     if isinstance(live, dict):
         return live.get("hls_url") or live.get("playback_url") or ""
     if isinstance(live, str) and live.startswith("http"):
         return live
-
     return ""
 
 
@@ -305,103 +267,63 @@ def build_m3u(streams: list[Stream]) -> str:
 
 # ─── MAIN ────────────────────────────────────────────────────────────────────
 def main():
-    parser = argparse.ArgumentParser(description="Kick + YouTube M3U Scraper (Unofficial API)")
+    parser = argparse.ArgumentParser(description="Kick + YouTube M3U Scraper (FAST)")
     parser.add_argument("--output", "-o", default=OUTPUT_FILE)
     parser.add_argument("--workers", "-w", type=int, default=MAX_WORKERS)
     parser.add_argument("--kick-only", action="store_true")
     parser.add_argument("--yt-only", action="store_true")
-    parser.add_argument("--sub-limit", type=int, default=SUB_LIMIT)
     parser.add_argument("--max-per-category", type=int, default=MAX_PER_CATEGORY)
     parser.add_argument("--max-streams", type=int, default=MAX_STREAMS)
     args = parser.parse_args()
 
-    log.info("=== Kick + YouTube M3U Scraper ===")
-    log.info("Settings: sub-limit=%d, max-per-sub=%d, max-streams=%d",
-             args.sub_limit, args.max_per_category, args.max_streams)
+    t0 = time.time()
+    log.info("=== Kick + YouTube M3U Scraper (FAST) ===")
+    log.info("Settings: max-per-cat=%d, max-streams=%d",
+             args.max_per_category, args.max_streams)
     all_streams: list[Stream] = []
 
-    # ─── KICK ────────────────────────────────────────────────────────────────
+    # ─── KICK (5 request, 1 per kategori) ───────────────────────────────────
     if not args.yt_only:
         log.info("─── KICK ───")
-
         all_raw: list[tuple[dict, str]] = []
         seen: set[str] = set()
 
-        # Step 1: Fetch subcategories per kategori
-        log.info("Fetching subcategories...")
-        sub_tasks: list[tuple[str, str]] = []
-
         with ThreadPoolExecutor(max_workers=args.workers) as pool:
             futures = {
-                pool.submit(fetch_subcategories, cat, args.sub_limit): cat
+                pool.submit(fetch_live_by_category, cat, args.max_per_category): cat
                 for cat in KICK_CATEGORIES
             }
             for fut in as_completed(futures):
                 cat = futures[fut]
                 try:
-                    subs = fut.result()
-                    for sub in subs:
-                        sub_tasks.append((cat, sub["slug"]))
-                    log.info("  %s: %d subcategories", cat, len(subs))
-                except Exception as e:
-                    log.debug("Error subcat %s: %s", cat, e)
-
-        log.info("Total subcategories: %d", len(sub_tasks))
-
-        # Step 2: Fetch live per subcategory
-        log.info("Fetching live streams per subcategory...")
-        with ThreadPoolExecutor(max_workers=args.workers) as pool:
-            futures = {
-                pool.submit(fetch_live_by_subcategory, sub_slug, args.max_per_category):
-                    (cat, sub_slug)
-                for cat, sub_slug in sub_tasks
-            }
-            done = 0
-            total_tasks = len(futures)
-            for fut in as_completed(futures):
-                done += 1
-                cat, sub_slug = futures[fut]
-                if done % 50 == 0:
-                    log.info("  Subcategory: %d/%d", done, total_tasks)
-
-                try:
-                    for s in fut.result():
+                    streams = fut.result()
+                    for s in streams:
                         slug = (s.get("channel_slug")
                                 or s.get("channel_name")
                                 or (s.get("channel", {}) or {}).get("slug", ""))
                         if slug and slug not in seen:
                             seen.add(slug)
-                            all_raw.append((s, sub_slug))
-
-                        if len(all_raw) >= args.max_streams:
-                            break
+                            all_raw.append((s, cat))
+                    log.info("  %s: %d stream", cat, len(streams))
                 except Exception as e:
-                    log.debug("Error live %s: %s", sub_slug, e)
+                    log.debug("Error %s: %s", cat, e)
 
-                if len(all_raw) >= args.max_streams:
-                    break
+        log.info("Stream unik: %d (fetch: %.1fs)", len(all_raw), time.time() - t0)
 
-        log.info("Stream unik: %d", len(all_raw))
-
-        # Step 3: Proses (extract playback_url)
+        # Proses (extract playback_url)
         if all_raw:
-            log.info("Processing streams...")
             with ThreadPoolExecutor(max_workers=args.workers) as pool:
                 futures = {
-                    pool.submit(process_kick_stream, raw, sub): raw
-                    for raw, sub in all_raw
+                    pool.submit(process_kick_stream, raw, cat): raw
+                    for raw, cat in all_raw
                 }
-                done = 0
                 for fut in as_completed(futures):
-                    done += 1
-                    if done % 100 == 0:
-                        log.info("  Process: %d/%d", done, len(futures))
                     try:
                         s = fut.result()
                         if s:
                             all_streams.append(s)
-                    except Exception as e:
-                        log.debug("Error process: %s", e)
+                    except Exception:
+                        pass
 
         kick_count = sum(1 for s in all_streams if s.platform == "Kick")
         log.info("Kick valid: %d", kick_count)
@@ -416,19 +338,17 @@ def main():
                     if s:
                         log.info("  ✅ %s LIVE", s.title)
                         all_streams.append(s)
-                except Exception as e:
-                    log.debug("Error YouTube: %s", e)
+                except Exception:
+                    pass
 
-    # ── Final trim ──
+    # ── Output ──
     all_streams.sort(key=lambda s: s.viewers, reverse=True)
     if len(all_streams) > args.max_streams:
-        log.info("Trim final: %d → %d", len(all_streams), args.max_streams)
         all_streams = all_streams[:args.max_streams]
 
-    # ─── OUTPUT ──────────────────────────────────────────────────────────────
     with open(args.output, "w") as f:
         f.write(build_m3u(all_streams))
-    log.info("✅ %d stream → %s", len(all_streams), args.output)
+    log.info("✅ %d stream → %s (%.1fs)", len(all_streams), args.output, time.time() - t0)
 
 
 if __name__ == "__main__":
