@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-RBTV Playlist Generator (v14 FINAL — GitHub Actions)
+RBTV Playlist Generator (v15 FIXED — GitHub Actions)
 Alur: signing key → match list → match detail (streamId) → stream detail (M3U8 URL)
 """
 
@@ -25,14 +25,24 @@ try:
 except ImportError:
     HAS_ZSTD = False
 
+try:
+    from Crypto.Cipher import AES
+    HAS_AES = True
+except ImportError:
+    try:
+        from Cryptodome.Cipher import AES
+        HAS_AES = True
+    except ImportError:
+        HAS_AES = False
+
 # ==================== CONFIG ====================
 
 DATA_URL = "https://apis-data10.tcpwe138stya.ru"
 PORT = 8080
 MAX_MATCHES = 30
 TIMEOUT = 10
-SPORT_TYPE = 0  # 0 = all sports
-LANGUAGE = 34   # Indonesian
+SPORT_TYPE = 0      # 0 = all sports
+LANGUAGE = 34       # Indonesian
 SITE_TYPE = 2001
 CONTINENT = "AS"
 COUNTRY = "ID"
@@ -152,52 +162,149 @@ def extract_matches_from_protobuf(data):
     return matches
 
 
-def extract_stream_id(data):
+# ==================== FIXED: RECURSIVE STREAM ID ====================
+
+def extract_stream_id(data, _depth=0):
     """
-    Extract streamId from /match/detail protobuf response.
-    streamId is a varint field — look for values in range 10000-9999999.
+    Recursively search for streamId (varint in range 10000–9999999).
+    Handles JSON dicts and nested protobuf messages up to 5 levels deep.
     """
-    if isinstance(data, bytes):
-        # Parse top-level
-        top_fields = parse_message(data)
-        candidates = []
-        for fnum, wtype, val in top_fields:
-            if wtype == 0 and 10000 < val < 9999999:
-                candidates.append(val)
-            elif wtype == 2 and len(val) > 10:
-                # Nested — parse sub-fields
-                sub_fields = parse_message(val)
-                for sf_num, sf_wire, sf_val in sub_fields:
-                    if sf_wire == 0 and 10000 < sf_val < 9999999:
-                        candidates.append(sf_val)
-        if candidates:
-            # streamId is typically the first/largest candidate
-            # From DevTools: streamId=932428, matchId=2266971
-            # streamId < matchId usually, or they're in different ranges
-            # Pick the one that's NOT the matchId
-            return candidates[0]
+    if _depth > 5:
+        return None
+
+    # --- JSON path ---
+    if isinstance(data, dict):
+        # Direct key match
+        if "streamId" in data and isinstance(data["streamId"], int):
+            return data["streamId"]
+        for v in data.values():
+            result = extract_stream_id(v, _depth + 1)
+            if result:
+                return result
+        return None
+    elif isinstance(data, list):
+        for item in data:
+            result = extract_stream_id(item, _depth + 1)
+            if result:
+                return result
+        return None
+
+    # --- Protobuf path ---
+    if not isinstance(data, bytes):
+        return None
+
+    fields = parse_message(data)
+    candidates = []
+    for fnum, wtype, val in fields:
+        if wtype == 0 and 10000 < val < 9999999:
+            candidates.append(val)
+        elif wtype == 2 and len(val) > 10:
+            sub = extract_stream_id(val, _depth + 1)
+            if sub:
+                candidates.append(sub)
+
+    if candidates:
+        return candidates[0]
     return None
 
 
-def extract_m3u8_url(data):
-    """Extract M3U8 URL from /stream/detail protobuf response."""
+# ==================== FIXED: M3U8 URL EXTRACTION ====================
+
+def rot47_decode(s):
+    """ROT47 decode: shift each char in range 33-119 by 47."""
+    result = []
+    for c in s:
+        code = ord(c)
+        if 33 <= code <= 119:
+            code = (code - 33 + 47) % 87 + 33
+        result.append(chr(code))
+    return ''.join(result)
+
+
+def try_aes_decrypt(data, key, iv):
+    """Try AES-256-CBC decrypt. Returns bytes or None."""
+    if not HAS_AES:
+        return None
+    try:
+        if len(data) % 16 != 0:
+            # PKCS7 padding
+            data = data + bytes([16 - (len(data) % 16)]) * (16 - (len(data) % 16))
+        cipher = AES.new(key, AES.MODE_CBC, iv)
+        decrypted = cipher.decrypt(data)
+        # Remove PKCS7 padding
+        pad_len = decrypted[-1]
+        if 1 <= pad_len <= 16:
+            decrypted = decrypted[:-pad_len]
+        return decrypted
+    except Exception:
+        return None
+
+
+def extract_m3u8_url(data, rb_session=""):
+    """
+    Extract M3U8 URL from stream detail response.
+    Handles: plain URL, ROT47-encoded, AES-encrypted.
+    """
+    # --- Plain URL search ---
     if isinstance(data, bytes):
-        # Search for .m3u8 URL in binary
         m = re.search(rb'(https?://[^\x00-\x1f\x7f-\xff]+\.m3u8[^\x00-\x1f\x7f-\xff]*)', data)
         if m:
             return m.group().decode()
-        # Also try /cfall/ pattern
         m = re.search(rb'(https?://[^\x00-\x1f\x7f-\xff]+/cfall/[^\x00-\x1f\x7f-\xff]+)', data)
         if m:
             return m.group().decode()
+
+        # --- ROT47 search ---
+        # Look for base64-like or ROT47-like strings
+        for m in re.finditer(rb'[\x21-\x7f]{30,}', data):
+            candidate = m.group().decode('ascii', errors='ignore')
+            decoded = rot47_decode(candidate)
+            if '.m3u8' in decoded:
+                return decoded.strip()
+
+        # --- AES decrypt using rb-session ---
+        if rb_session and HAS_AES:
+            try:
+                # Try rb-session as key (32 bytes) or derive from it
+                key = rb_session.encode('utf-8')[:32].ljust(32, b'\x00')
+                iv = b'\x00' * 16
+                decrypted = try_aes_decrypt(data, key, iv)
+                if decrypted:
+                    m = re.search(rb'(https?://[^\x00-\x1f\x7f-\xff]+\.m3u8[^\x00-\x1f\x7f-\xff]*)', decrypted)
+                    if m:
+                        return m.group().decode()
+            except Exception:
+                pass
+
+    # --- JSON path ---
     elif isinstance(data, (dict, list)):
         json_str = json.dumps(data)
-        m = re.search(r'(https?://[^"\s]+\.m3u8[^"\s]*)', json_str)
+        m = re.search(r'(https?://[^"\s\\]+\.m3u8[^"\s\\]*)', json_str)
         if m:
             return m.group(1)
-        m = re.search(r'(https?://[^"\s]+/cfall/[^"\s]+)', json_str)
+        m = re.search(r'(https?://[^"\s\\]+/cfall/[^"\s\\]+)', json_str)
         if m:
             return m.group(1)
+
+        # ROT47 on string values
+        def search_rot47(obj):
+            if isinstance(obj, str) and len(obj) > 20:
+                decoded = rot47_decode(obj)
+                if '.m3u8' in decoded:
+                    return decoded.strip()
+            elif isinstance(obj, dict):
+                for v in obj.values():
+                    r = search_rot47(v)
+                    if r:
+                        return r
+            elif isinstance(obj, list):
+                for item in obj:
+                    r = search_rot47(item)
+                    if r:
+                        return r
+            return None
+        return search_rot47(data)
+
     return None
 
 
@@ -209,19 +316,28 @@ def decode_api_response(resp) -> bytes:
     if not content:
         return b""
     if enc == "gzip" or content[:2] == b'\x1f\x8b':
-        try: content = gzip.decompress(content)
-        except: pass
+        try:
+            content = gzip.decompress(content)
+        except Exception:
+            pass
     elif enc == "br" and HAS_BROTLI:
-        try: content = brotli.decompress(content)
-        except: pass
+        try:
+            content = brotli.decompress(content)
+        except Exception:
+            pass
     elif enc == "deflate":
-        try: content = zlib.decompress(content)
-        except:
-            try: content = zlib.decompress(content, -zlib.MAX_WBITS)
-            except: pass
+        try:
+            content = zlib.decompress(content)
+        except Exception:
+            try:
+                content = zlib.decompress(content, -zlib.MAX_WBITS)
+            except Exception:
+                pass
     elif enc == "zstd" and HAS_ZSTD:
-        try: content = zstd.ZstdDecompressor().decompress(content)
-        except: pass
+        try:
+            content = zstd.ZstdDecompressor().decompress(content)
+        except Exception:
+            pass
     return content
 
 
@@ -230,7 +346,7 @@ def try_json_or_protobuf(content):
         text = content.decode('utf-8')
         if text.strip().startswith('{') or text.strip().startswith('['):
             return ('json', json.loads(text))
-    except:
+    except Exception:
         pass
     return ('protobuf', content)
 
@@ -240,20 +356,20 @@ def try_json_or_protobuf(content):
 def get_signing_key(match_id=None, sport_type=None):
     """
     Get signing key.
-    If match_id provided: /api/common/bs?code=102&code=103&code=104&code=105&matchId=X&sportType=Y
-    Otherwise: /api/common/bs?code=100&sportType=Y
+    - Live list:   /api/common/bs?code=100&sportType=Y
+    - Match detail: /api/common/bs?code=102&code=103&code=104&code=105&matchId=X&sportType=Y
     """
     if match_id:
         url = (f"{DATA_URL}/api/common/bs"
                f"?code=102&code=103&code=104&code=105"
                f"&matchId={match_id}&sportType={sport_type}&stream=true")
     else:
-        url = f"{DATA_URL}/api/common/bs?code=100&sportType={sport_type or 0}&stream=true"
+        url = (f"{DATA_URL}/api/common/bs"
+               f"?code=100&sportType={sport_type or 0}&stream=true")
 
     resp = requests.get(url, headers=HEADERS, timeout=TIMEOUT)
     content = decode_api_response(resp)
 
-    # Extract MD5 (32 hex chars) from binary or text
     m = re.search(rb'[a-f0-9]{32}', content)
     if m:
         return m.group().decode()
@@ -276,21 +392,28 @@ def get_live_matches(md5):
     return extract_matches_from_protobuf(content)
 
 
-def get_match_detail(md5, match_id, sport_type):
-    url = (f"{DATA_URL}/sfver{md5}/api/match/detail"
-           f"?matchId={match_id}&sportType={sport_type}&language={LANGUAGE}&stream=true")
+def get_match_detail(match_id, sport_type):
+    """
+    FIXED: Get a DEDICATED signing key (code=102) for match detail.
+    """
+    detail_md5 = get_signing_key(match_id=match_id, sport_type=sport_type)
+    if not detail_md5:
+        print(f"  [WARN] No detail key for match {match_id}",
+              file=sys.stderr, flush=True)
+        return None
+
+    url = (f"{DATA_URL}/sfver{detail_md5}/api/match/detail"
+           f"?matchId={match_id}&sportType={sport_type}"
+           f"&language={LANGUAGE}&stream=true")
     resp = requests.get(url, headers=HEADERS, timeout=TIMEOUT)
     content = decode_api_response(resp)
     fmt, data = try_json_or_protobuf(content)
-    if fmt == "json":
-        return data
-    return content
+    return data
 
 
 def get_stream_detail(stream_id, match_id, sport_type):
     """
-    THE KEY ENDPOINT: /api/stream/detail
-    Returns M3U8 URL.
+    Get stream detail. Returns (data, rb_session_header).
     """
     url = (f"{DATA_URL}/api/stream/detail"
            f"?streamId={stream_id}"
@@ -303,7 +426,11 @@ def get_stream_detail(stream_id, match_id, sport_type):
     resp = requests.get(url, headers=HEADERS, timeout=TIMEOUT)
     content = decode_api_response(resp)
     fmt, data = try_json_or_protobuf(content)
-    return data
+
+    # Capture rb-session from response headers
+    rb_session = resp.headers.get("rb-session", "")
+
+    return data, rb_session
 
 
 # ==================== MAIN ====================
@@ -311,8 +438,8 @@ def get_stream_detail(stream_id, match_id, sport_type):
 def main():
     t0 = time.time()
 
-    # Step 1: Get signing key
-    print("Step 1: Getting signing key...", flush=True)
+    # Step 1: Get signing key for live list (code=100)
+    print("Step 1: Getting signing key (code=100)...", flush=True)
     md5 = get_signing_key(sport_type=SPORT_TYPE)
     if not md5:
         print("ERROR: Failed to get signing key", file=sys.stderr, flush=True)
@@ -344,8 +471,13 @@ def main():
         match_id = match["id"]
         sport_type = match["sport_type"]
 
-        # 3a: Get match detail → extract streamId
-        detail = get_match_detail(md5, match_id, sport_type)
+        # 3a: Get match detail (dedicated key code=102) → extract streamId
+        detail = get_match_detail(match_id, sport_type)
+        if detail is None:
+            print(f"  [WARN] No detail for {name} (id={match_id})",
+                  file=sys.stderr, flush=True)
+            return (name, None)
+
         stream_id = extract_stream_id(detail)
 
         if not stream_id:
@@ -354,15 +486,20 @@ def main():
             return (name, None)
 
         # 3b: Get stream detail → extract M3U8 URL
-        stream_data = get_stream_detail(stream_id, match_id, sport_type)
-        m3u8_url = extract_m3u8_url(stream_data)
+        stream_data, rb_session = get_stream_detail(stream_id, match_id, sport_type)
+        m3u8_url = extract_m3u8_url(stream_data, rb_session)
 
         if not m3u8_url:
             # Debug: dump what we got
             if isinstance(stream_data, bytes):
                 urls = re.findall(rb'https?://[^\x00-\x1f\x7f-\xff]{10,}', stream_data)
-                print(f"  [WARN] No M3U8 for {name}. URLs found: "
-                      f"{[u.decode()[:80] for u in urls[:3]]}",
+                print(f"  [WARN] No M3U8 for {name}. "
+                      f"rb_session={rb_session[:20] if rb_session else 'none'} "
+                      f"URLs found: {[u.decode()[:80] for u in urls[:3]]}",
+                      file=sys.stderr, flush=True)
+            elif isinstance(stream_data, dict):
+                print(f"  [WARN] No M3U8 for {name}. "
+                      f"Keys: {list(stream_data.keys())[:10]}",
                       file=sys.stderr, flush=True)
             return (name, None)
 
@@ -370,9 +507,9 @@ def main():
 
     with ThreadPoolExecutor(max_workers=5) as pool:
         futures = [pool.submit(fetch_stream, m) for m in matches]
-        for f in as_completed(futures, timeout=TIMEOUT * 4):
+        for f in as_completed(futures, timeout=TIMEOUT * 6):
             try:
-                result = f.result(timeout=TIMEOUT * 2)
+                result = f.result(timeout=TIMEOUT * 3)
                 if result and result[1]:
                     entries.append(result)
                     print(f"  [OK] {result[0]} → {result[1][:60]}...", flush=True)
