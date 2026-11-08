@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-RBTV Playlist Generator (v9 FINAL — GitHub Actions)
-API response = PROTOBUF (bukan JSON) → parse pakai regex dari binary
+RBTV Playlist Generator (v10 FINAL — GitHub Actions)
+API response = PROTOBUF → parse structure → fetch detail per match → extract stream URL
 """
 
 import requests
@@ -48,73 +48,168 @@ HEADERS = {
 }
 
 
-# ==================== PROTOBUF BINARY PARSER ====================
+# ==================== PROTOBUF PARSER ====================
 
-def extract_strings_from_binary(data: bytes) -> list[str]:
-    """Extract readable UTF-8 strings from protobuf binary."""
+def read_varint(data, i):
+    """Read varint. Returns (value, new_i)."""
+    result = 0
+    shift = 0
+    while i < len(data):
+        byte = data[i]
+        result |= (byte & 0x7F) << shift
+        i += 1
+        if not (byte & 0x80):
+            return result, i
+        shift += 7
+        if shift > 63:
+            return None, i
+    return None, i
+
+
+def parse_fields(data, offset=0, end=None):
+    """
+    Parse protobuf fields. Returns list of (field_num, wire_type, value).
+    wire_type: 0=varint, 1=64bit, 2=length-delimited, 5=32bit
+    value: int (varint), bytes (length-delimited/64bit/32bit)
+    """
+    if end is None:
+        end = len(data)
+    fields = []
+    i = offset
+    while i < end:
+        tag, i = read_varint(data, i)
+        if tag is None or i >= end:
+            break
+        field_num = tag >> 3
+        wire_type = tag & 0x07
+
+        if field_num == 0:  # invalid
+            break
+
+        if wire_type == 0:  # varint
+            value, i = read_varint(data, i)
+            if value is None:
+                break
+            fields.append((field_num, 0, value))
+        elif wire_type == 1:  # 64-bit
+            if i + 8 > end:
+                break
+            fields.append((field_num, 1, data[i:i + 8]))
+            i += 8
+        elif wire_type == 2:  # length-delimited
+            length, i = read_varint(data, i)
+            if length is None or length < 0 or i + length > end:
+                break
+            fields.append((field_num, 2, data[i:i + length]))
+            i += length
+        elif wire_type == 5:  # 32-bit
+            if i + 4 > end:
+                break
+            fields.append((field_num, 5, data[i:i + 4]))
+            i += 4
+        else:
+            break
+
+    return fields
+
+
+def extract_strings_recursive(data, depth=0, max_depth=5):
+    """Extract all readable strings from nested protobuf."""
+    if depth > max_depth:
+        return []
     strings = []
-    # Find sequences of printable chars (min 3 chars)
-    for m in re.finditer(rb'[\x20-\x7e\xc2-\xf4][\x00-\xff]{2,}', data):
-        try:
-            s = m.group().decode('utf-8', errors='strict')
-            if len(s) >= 3 and not s.startswith('\x00'):
-                strings.append(s)
-        except Exception:
-            continue
+    fields = parse_fields(data)
+    for field_num, wire_type, value in fields:
+        if wire_type == 2:  # length-delimited (string or nested message)
+            try:
+                s = value.decode('utf-8')
+                if all(32 <= ord(c) < 127 or ord(c) > 0x200 for c in s):
+                    if len(s) >= 2 and not s.startswith('\x00'):
+                        strings.append(s)
+                        continue
+            except (UnicodeDecodeError, ValueError):
+                pass
+            # Try as nested message
+            strings.extend(extract_strings_recursive(value, depth + 1, max_depth))
     return strings
 
 
-def parse_protobuf_matches(data: bytes) -> list[dict]:
+def extract_match_entries(data):
     """
-    Parse protobuf binary to extract match entries.
-    Uses structural patterns visible in the binary.
+    Parse protobuf to extract match entries with IDs and names.
+    Strategy: find the large repeated field (field 10), parse each sub-message.
     """
-    matches = []
-    
-    # Extract all readable strings
-    all_strings = []
-    i = 0
-    while i < len(data):
-        # Look for length-prefixed strings (protobuf wire type 2)
-        # Common pattern: [field_byte][length_byte][string_bytes]
-        if data[i] in range(1, 200) and i + 1 < len(data):
-            length = data[i + 1]
-            if 3 <= length <= 200 and i + 2 + length <= len(data):
-                chunk = data[i + 2: i + 2 + length]
-                # Check if it's mostly printable
-                printable = sum(1 for b in chunk if 32 <= b < 127 or b >= 0xc2) / len(chunk)
-                if printable > 0.8:
-                    try:
-                        s = chunk.decode('utf-8', errors='strict')
-                        if s and not s.startswith('\x00'):
-                            all_strings.append((i, s))
-                            i += 2 + length
-                            continue
-                    except Exception:
-                        pass
-        i += 1
-    
-    # Now try to identify match structures
-    # Pattern: league name, then team names, then IDs
-    # We'll extract what we can and pair them up
-    
-    # Extract URLs (stream URLs, logo URLs)
-    urls = re.findall(rb'https?://[^\x00-\x1f\x7f-\xff]{10,}', data)
-    url_list = [u.decode() for u in urls]
-    
-    # Extract numeric IDs (protobuf varint fields)
-    # Match IDs are typically in specific byte patterns
-    
-    # For now, return raw data for further processing
-    return {
-        "strings": [s for _, s in all_strings],
-        "urls": url_list,
-        "raw_length": len(data),
-    }
+    top_fields = parse_fields(data)
 
+    # Find the large length-delimited field that contains matches
+    matches_field = None
+    for field_num, wire_type, value in top_fields:
+        if wire_type == 2 and len(value) > 1000:
+            matches_field = value
+            break
+
+    if not matches_field:
+        # Fallback: try all large fields
+        for field_num, wire_type, value in top_fields:
+            if wire_type == 2 and len(value) > 100:
+                matches_field = value
+                break
+
+    if not matches_field:
+        return []
+
+    # Parse sub-messages inside the matches field
+    sub_fields = parse_fields(matches_field)
+    matches = []
+
+    for field_num, wire_type, value in sub_fields:
+        if wire_type != 2 or len(value) < 10:
+            continue
+
+        # Parse each sub-message as a match entry
+        entry_fields = parse_fields(value)
+        match_data = {"strings": [], "integers": [], "urls": []}
+
+        for f_num, f_wire, f_val in entry_fields:
+            if f_wire == 0:  # varint (integer)
+                if f_val > 100:  # skip small values (flags, types, etc.)
+                    match_data["integers"].append(f_val)
+            elif f_wire == 2:  # string or nested
+                try:
+                    s = f_val.decode('utf-8')
+                    if all(32 <= ord(c) < 127 or ord(c) > 0x200 for c in s):
+                        if 'vs' in s or 'VS' in s:
+                            match_data["strings"].append(("name", s))
+                        elif s.startswith('http'):
+                            match_data["urls"].append(s)
+                        elif len(s) >= 2:
+                            match_data["strings"].append(("other", s))
+                except (UnicodeDecodeError, ValueError):
+                    # Nested message — recurse for URLs
+                    nested_urls = re.findall(
+                        rb'(https?://[^\x00-\x1f\x7f-\xff]{10,})', f_val)
+                    for u in nested_urls:
+                        match_data["urls"].append(u.decode())
+
+        # Only keep entries that have a "name" (contains "vs")
+        names = [s for tag, s in match_data["strings"] if tag == "name"]
+        if names:
+            # Pick the most likely match ID: largest integer in reasonable range
+            candidate_ids = [x for x in match_data["integers"] if 10000 < x < 999999999]
+            match_id = max(candidate_ids) if candidate_ids else None
+            matches.append({
+                "name": names[0],
+                "id": match_id,
+                "all_ints": match_data["integers"],
+                "urls": match_data["urls"],
+            })
+
+    return matches
+
+
+# ==================== DECODE ====================
 
 def decode_api_response(resp) -> bytes:
-    """Decode response, return raw bytes (not string)."""
     content = resp.content
     enc = resp.headers.get("content-encoding", "").lower()
 
@@ -148,18 +243,15 @@ def decode_api_response(resp) -> bytes:
     return content
 
 
-def try_json_or_protobuf(content: bytes) -> dict:
-    """Try JSON first, fall back to protobuf parsing."""
-    # Try JSON
+def try_json_or_protobuf(content: bytes):
+    """Returns ('json', data) or ('protobuf', bytes)."""
     try:
         text = content.decode('utf-8')
         if text.strip().startswith('{') or text.strip().startswith('['):
-            return {"type": "json", "data": json.loads(text)}
+            return ('json', json.loads(text))
     except Exception:
         pass
-
-    # It's protobuf — parse binary
-    return {"type": "protobuf", "data": content}
+    return ('protobuf', content)
 
 
 # ==================== API ====================
@@ -178,120 +270,26 @@ def get_live_matches(md5):
     url = (f"{DATA_URL}/sfver{md5}/api/match/live"
            f"?sportType={SPORT_TYPE}&language={LANGUAGE}&stream=true")
     resp = requests.get(url, headers=HEADERS, timeout=TIMEOUT)
-    
     content = decode_api_response(resp)
-    result = try_json_or_protobuf(content)
-    
+    fmt, data = try_json_or_protobuf(content)
+
     print(f"[DEBUG] /match/live: status={resp.status_code}, "
-          f"len={len(content)}, format={result['type']}", file=sys.stderr, flush=True)
-    
-    if result["type"] == "json":
-        data = result["data"]
+          f"len={len(content)}, format={fmt}", file=sys.stderr, flush=True)
+
+    if fmt == "json":
         if isinstance(data, dict):
             return (data.get("data") or data.get("list")
                     or data.get("matches") or data.get("items") or [])
         return data if isinstance(data, list) else []
-    
-    # PROTOBUF: extract match data from binary
-    return parse_protobuf_binary(content)
 
-
-def parse_protobuf_binary(data: bytes) -> list[dict]:
-    """
-    Extract match entries from protobuf binary.
-    Strategy: find repeated message blocks and extract fields.
-    """
-    matches = []
-    
-    # Find all embedded URLs
-    stream_urls = re.findall(
-        rb'(https?://[^/\x00-\x1f\x7f-\xff]+/cfall/[^/\x00-\x1f\x7f-\xff]+/super/[^"\x00-\x1f\x7f-\xff]+)',
-        data)
-    stream_urls = [u.decode() for u in stream_urls]
-    
-    # Find all .m3u8 URLs
-    m3u8_urls = re.findall(rb'(https?://[^"\x00-\x1f\x7f-\xff]+\.m3u8[^"\x00-\x1f\x7f-\xff]*)', data)
-    m3u8_urls = [u.decode() for u in m3u8_urls]
-    
-    # Extract readable strings for team/league names
-    # Protobuf strings are length-prefixed: [field_tag][length][bytes]
-    names = []
-    i = 0
-    while i < len(data) - 2:
-        # Look for string fields (wire type 2 = length-delimited)
-        tag = data[i]
-        field_num = tag >> 3
-        wire_type = tag & 0x07
-        
-        if wire_type == 2 and i + 1 < len(data):
-            length = data[i + 1]
-            if 2 <= length <= 100 and i + 2 + length <= len(data):
-                chunk = data[i + 2: i + 2 + length]
-                # Must be valid UTF-8 printable
-                try:
-                    s = chunk.decode('utf-8')
-                    if all(32 <= ord(c) < 127 or ord(c) > 0x200 for c in s):
-                        if not s.startswith(('http', 'www.')) and len(s) >= 2:
-                            names.append(s)
-                    i += 2 + length
-                    continue
-                except Exception:
-                    pass
-        
-        # Handle multi-byte length (for strings > 127 bytes)
-        if wire_type == 2 and i + 2 < len(data) and data[i + 1] >= 0x80:
-            # Varint length
-            length = 0
-            shift = 0
-            j = i + 1
-            while j < len(data) and j < i + 5:
-                length |= (data[j] & 0x7f) << shift
-                shift += 7
-                if not (data[j] & 0x80):
-                    break
-                j += 1
-            j += 1
-            if 2 <= length <= 500 and j + length <= len(data):
-                chunk = data[j: j + length]
-                try:
-                    s = chunk.decode('utf-8')
-                    if all(32 <= ord(c) < 127 or ord(c) > 0x200 for c in s):
-                        if not s.startswith(('http', 'www.')) and len(s) >= 2:
-                            names.append(s)
-                    i = j + length
-                    continue
-                except Exception:
-                    pass
-        
-        i += 1
-    
-    # Extract numeric IDs (varint fields that look like match IDs)
-    # Match IDs are typically 6-10 digit numbers
-    match_ids = re.findall(rb'[\x08\x10\x18\x20][\x01-\x09][\x00-\xff]{1,4}', data)
-    
-    print(f"[DEBUG] Protobuf: {len(names)} names, {len(stream_urls)} stream URLs, "
-          f"{len(m3u8_urls)} m3u8 URLs", file=sys.stderr, flush=True)
-    
-    # Print first few names for debugging
-    if names:
-        print(f"[DEBUG] Names sample: {names[:10]}", file=sys.stderr, flush=True)
-    
-    # Build match entries from available data
-    # Strategy: pair names (home vs away) with stream URLs
-    if stream_urls or m3u8_urls:
-        all_urls = stream_urls + m3u8_urls
-        for idx, url in enumerate(all_urls):
-            # Try to find team names near this URL in the binary
-            name = f"Match {idx + 1}"
-            if idx < len(names):
-                name = names[idx]
-            matches.append({"name": name, "url": url, "id": idx})
-    
-    # If no URLs found, return names as entries (for debugging)
-    if not matches and names:
-        print(f"[WARN] No stream URLs in protobuf. Names found: {names[:20]}",
-              file=sys.stderr, flush=True)
-    
+    # Protobuf: parse structure
+    matches = extract_match_entries(content)
+    print(f"[DEBUG] Protobuf parsed: {len(matches)} match entries",
+          file=sys.stderr, flush=True)
+    if matches:
+        for m in matches[:5]:
+            print(f"  - {m['name']} (id={m['id']}, urls={len(m['urls'])})",
+                  file=sys.stderr, flush=True)
     return matches
 
 
@@ -300,62 +298,46 @@ def get_match_detail(md5, match_id, sport_type):
            f"?matchId={match_id}&sportType={sport_type}&language={LANGUAGE}&stream=true")
     resp = requests.get(url, headers=HEADERS, timeout=TIMEOUT)
     content = decode_api_response(resp)
-    result = try_json_or_protobuf(content)
-    
-    if result["type"] == "json":
-        return result["data"]
-    
-    # Protobuf: extract stream URL directly
-    return {"protobuf": content}
+    fmt, data = try_json_or_protobuf(content)
+
+    if fmt == "json":
+        return data
+    return content  # return raw bytes for URL extraction
 
 
 def extract_stream_url(data) -> str | None:
     """Extract stream URL from JSON dict or protobuf bytes."""
-    if isinstance(data, dict):
-        if "protobuf" in data:
-            content = data["protobuf"]
-        else:
-            json_str = json.dumps(data)
-            m = re.search(r'(https?://[^"\s]+/cfall/[^"\s]+/super/[^"\s]+)', json_str)
+    if isinstance(data, (dict, list)):
+        json_str = json.dumps(data)
+        patterns = [
+            rb'(https?://[^"\s]+/cfall/[^"\s]+/super/[^"\s]+)',
+            rb'(https?://[^"\s]+\.m3u8[^"\s]*)',
+            rb'(https?://[^"\s]+/super/[^"\s]+)',
+        ]
+        for p in patterns:
+            m = re.search(p, json_str.encode())
             if m:
-                return m.group(1)
-            m = re.search(r'(https?://[^"\s]+\.m3u8[^"\s]*)', json_str)
-            if m:
-                return m.group(1)
-            m = re.search(r'(https?://[^"\s]+/super/[^"\s]+)', json_str)
-            if m:
-                return m.group(1)
-            m = re.search(
-                r'"(?:streamUrl|playUrl|hlsUrl|videoUrl|liveUrl)"\s*:\s*"(https?://[^"]+)"',
-                json_str)
-            if m:
-                return m.group(1)
-            return None
-    else:
-        content = data
+                return m.group(1).decode()
+        m = re.search(
+            r'"(?:streamUrl|playUrl|hlsUrl|videoUrl|liveUrl)"\s*:\s*"(https?://[^"]+)"',
+            json_str)
+        if m:
+            return m.group(1)
+        return None
 
-    # Search binary for URLs
-    m = re.search(rb'(https?://[^/\x00-\x1f\x7f-\xff]+/cfall/[^/\x00-\x1f\x7f-\xff]+/super/[^"\x00-\x1f\x7f-\xff]+)', content)
-    if m:
-        return m.group().decode()
-    m = re.search(rb'(https?://[^"\x00-\x1f\x7f-\xff]+\.m3u8[^"\x00-\x1f\x7f-\xff]*)', content)
-    if m:
-        return m.group().decode()
-    m = re.search(rb'(https?://[^/\x00-\x1f\x7f-\xff]+/super/[^"\x00-\x1f\x7f-\xff]+)', content)
-    if m:
-        return m.group().decode()
-    
+    # Protobuf bytes: search for URLs
+    if isinstance(data, bytes):
+        patterns = [
+            rb'(https?://[^\x00-\x1f\x7f-\xff]+/cfall/[^\x00-\x1f\x7f-\xff]+/super/[^\x00-\x1f\x7f-\xff]+)',
+            rb'(https?://[^\x00-\x1f\x7f-\xff]+\.m3u8[^\x00-\x1f\x7f-\xff]*)',
+            rb'(https?://[^\x00-\x1f\x7f-\xff]+/super/[^\x00-\x1f\x7f-\xff]+)',
+        ]
+        for p in patterns:
+            m = re.search(p, data)
+            if m:
+                return m.group(1).decode()
+
     return None
-
-
-def get_match_name(detail_data, match_data) -> str:
-    if isinstance(match_data, dict) and match_data.get("name"):
-        return match_data["name"]
-    if isinstance(detail_data, dict):
-        for key in ["title", "name", "matchName", "event"]:
-            if detail_data.get(key) and isinstance(detail_data[key], str):
-                return detail_data[key]
-    return "Unknown"
 
 
 # ==================== LIVE API ====================
@@ -379,9 +361,9 @@ def get_stream_from_live_api(md5, match_id, sport_type):
 
     with ThreadPoolExecutor(max_workers=len(endpoints)) as pool:
         futures = [pool.submit(try_url, u) for u in endpoints]
-        for f in as_completed(futures, timeout=10):
+        for f in as_completed(futures, timeout=12):
             try:
-                result = f.result(timeout=2)
+                result = f.result(timeout=3)
                 if result:
                     return result
             except Exception:
@@ -417,24 +399,28 @@ def main():
     entries = []
 
     def fetch_one(match):
+        name = match.get("name", "Unknown")
         match_id = match.get("id")
-        sport_type = match.get("sportType", SPORT_TYPE)
-        
-        # If we already have URL from protobuf parsing
-        if match.get("url"):
-            return (match.get("name", "Unknown"), match["url"])
-        
-        if not match_id:
-            return None
 
-        detail = get_match_detail(md5, match_id, sport_type=sport_type)
-        stream_url = extract_stream_url(detail)
+        # 1) Check if URL already in the live response
+        for url in match.get("urls", []):
+            if '/cfall/' in url or '/super/' in url or '.m3u8' in url:
+                return (name, url)
 
-        if not stream_url:
-            stream_url = get_stream_from_live_api(md5, match_id, sport_type)
+        # 2) Fetch detail
+        if match_id:
+            detail = get_match_detail(md5, match_id, sport_type=SPORT_TYPE)
+            stream_url = extract_stream_url(detail)
+            if stream_url:
+                return (name, stream_url)
 
-        name = get_match_name(detail, match)
-        return (name, stream_url)
+            # 3) Try Live API
+            stream_url = get_stream_from_live_api(md5, match_id, SPORT_TYPE)
+            if stream_url:
+                return (name, stream_url)
+
+        # 4) No ID — try Live API without ID (unlikely to work)
+        return (name, None)
 
     with ThreadPoolExecutor(max_workers=5) as pool:
         futures = [pool.submit(fetch_one, m)
@@ -444,6 +430,9 @@ def main():
                 result = f.result(timeout=TIMEOUT * 2)
                 if result and result[1]:
                     entries.append(result)
+                elif result:
+                    print(f"[WARN] No stream URL for: {result[0]}",
+                          file=sys.stderr, flush=True)
             except Exception as e:
                 print(f"[WARN] {e}", file=sys.stderr, flush=True)
 
@@ -462,9 +451,9 @@ def main():
     with open("playlist.m3u", "w") as f:
         f.write(m3u_content)
 
-    print(f"\n{'='*55}", flush=True)
+    print(f"\n{'=' * 55}", flush=True)
     print(m3u_content, flush=True)
-    print(f"{'='*55}", flush=True)
+    print(f"{'=' * 55}", flush=True)
 
 
 if __name__ == "__main__":
