@@ -7,7 +7,7 @@ import sys
 import time
 import base64
 import random
-from urllib.parse import urlparse, urlunparse
+from urllib.parse import urlparse, urlunparse, quote
 
 try:
     import brotli
@@ -274,7 +274,6 @@ def extract_stream_id(data, match_id=None, _depth=0):
         return None
 
     # PRIMARY: Follow known structure
-    # top.field10 → container.field2 (repeated) → entry.field1 = streamId
     container = None
     for fnum, wtype, val in fields:
         if wtype == 2 and len(val) > 50:
@@ -356,14 +355,12 @@ def _check_rot47_url(raw):
 def extract_obfuscated_url(data):
     """Extract f4 field by parsing protobuf and verifying ROT47→URL."""
     if isinstance(data, bytes):
-        # Parse protobuf — find the field that ROT47-decodes to a URL
         fields = parse_message(data)
         for fnum, wtype, val in fields:
             if wtype == 2 and len(val) > 20:
                 candidate = _check_rot47_url(val)
                 if candidate:
                     return candidate
-                # Check one level of nesting
                 sub_fields = parse_message(val)
                 for sf_num, sf_wire, sf_val in sub_fields:
                     if sf_wire == 2 and len(sf_val) > 20:
@@ -391,8 +388,9 @@ def extract_obfuscated_url(data):
 def build_tokenized_url(obfuscated_url, rb_session):
     """
     1. ROT47 decode → drop first 8 chars → base URL
-    2. AES-256-CBC encrypt rb-session → base64
-    3. Insert token-{b64}a as first path segment after domain
+    2. Truncate at .m3u8 (f4 is fixed 128 bytes, extra chars are padding)
+    3. AES-256-CBC encrypt rb-session → base64 → URL-encode
+    4. Insert token-{b64}a as first path segment after domain
     """
     decoded = rot47_decode(obfuscated_url)
     decoded = decoded[8:]
@@ -405,12 +403,10 @@ def build_tokenized_url(obfuscated_url, rb_session):
             return None
         decoded = decoded[idx:]
 
-    # Extract only the valid URL portion (stop at first invalid char)
-    url_match = re.match(
-        r'https?://[a-zA-Z0-9._~:/?#\[\]@!$&\'()*+,;=%-]+', decoded
-    )
-    if url_match:
-        decoded = url_match.group()
+    # FIX: Truncate at .m3u8 (f4 field is fixed 128 bytes → extra trailing chars)
+    m3u8_idx = decoded.find('.m3u8')
+    if m3u8_idx != -1:
+        decoded = decoded[:m3u8_idx + 5]
 
     if not HAS_AES or AES_KEY is None or AES_IV is None:
         print("    [ERROR] AES not available or key not set!", file=sys.stderr, flush=True)
@@ -425,6 +421,9 @@ def build_tokenized_url(obfuscated_url, rb_session):
     except Exception as e:
         print(f"    [ERROR] AES encrypt failed: {e}", file=sys.stderr, flush=True)
         return None
+
+    # FIX: URL-encode the base64 token (+ → %2B, / → %2F, = → %3D)
+    token_b64 = quote(token_b64, safe='')
 
     # Insert token as first path segment
     parsed = urlparse(decoded)
