@@ -39,7 +39,7 @@ LANGUAGE = "id"
 
 KICK_CLIENT_ID = os.getenv("KICK_CLIENT_ID", "01M6YCH4D5Y8TGGQAMP25TDJ42")
 KICK_CLIENT_SECRET = os.getenv("KICK_CLIENT_SECRET", "a6ba1635efe7f460edcc486675594df1c9156a813ffc93d677841121a43fe239")
-REDIRECT_URI = "http://127.0.0.1:8765/callback"
+REDIRECT_URI = "http://localhost:3100/"
 OAUTH_SCOPES = "user:read channel:read"
 
 API_BASE = "https://api.kick.com/public/v2"
@@ -190,7 +190,7 @@ class KickOAuthPKCE:
             def log_message(self, *args):
                 pass  # Suppress default logging
 
-        server = HTTPServer(("127.0.0.1", 8765), CallbackHandler)
+        server = HTTPServer(("localhost", 3100), CallbackHandler)
         server.timeout = 300  # 5 menit timeout
 
         # Open browser
