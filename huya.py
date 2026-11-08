@@ -1,231 +1,341 @@
-import requests, re, base64, binascii
+import requests
+import json
+import re
+import sys
+import time
+import base64
 from Crypto.Cipher import AES
-from Crypto.Util.Padding import unpad, pad
+from Crypto.Util.Padding import pad
 
+# === CONFIG ===
 DATA_URL = "https://apis-data10.tcpwe138stya.ru"
-AES_KEY = b"a7981cc9eb2f4d19dcfea57b101ecd89"
-AES_IV  = b"8017d3a8f1400d2f"
+LANGUAGE = 34
+SITE_TYPE = 2001
+CONTINENT = "AS"
+COUNTRY = "ID"
+DIGIT = "trd"
+
+# AES key/IV — RAW UTF-8, NOT hex-decoded
+AES_KEY = b"a7981cc9eb2f4d19dcfea57b101ecd89"  # 32 bytes → AES-256
+AES_IV  = b"8017d3a8f1400d2f"                  # 16 bytes → CBC
 
 HEADERS = {
-    "user-agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Mobile Safari/537.36",
+    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                  "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     "accept": "application/json, text/plain, */*",
-    "accept-encoding": "gzip, deflate, br, zstd",
-    "origin": "https://jack01eo.m8ow6pride8nly2qearly.cfd",
-    "referer": "https://jack01eo.m8ow6pride8nly2qearly.cfd/",
+    "accept-language": "id-ID,id;q=0.6,en-US;q=0.9",
+    "accept-encoding": "gzip, deflate, br",
+    "origin": "https://www.rbtvplus.ws",
+    "referer": "https://www.rbtvplus.ws/",
 }
 
-s = requests.Session()
-s.headers.update(HEADERS)
+session = requests.Session()
+session.headers.update(HEADERS)
 
-resp = s.get(
-    f"{DATA_URL}/api/stream/detail?streamId=932434&siteType=2001"
-    f"&continent=AS&country=ID&digit=trd&matchId=2266973&sportType=6",
+
+# === HELPERS ===
+def rot47(s):
+    result = []
+    for ch in s:
+        code = ord(ch)
+        if 33 <= code <= 126:
+            result.append(chr((code - 33 + 47) % 94 + 33))
+        else:
+            result.append(ch)
+    return ''.join(result)
+
+
+def decode(resp):
+    content = resp.content
+    enc = resp.headers.get("content-encoding", "").lower()
+    if enc == "br":
+        try:
+            import brotli
+            content = brotli.decompress(content)
+        except Exception:
+            pass
+    elif enc == "gzip":
+        import gzip
+        content = gzip.decompress(content)
+    elif enc == "deflate":
+        import zlib
+        content = zlib.decompress(content)
+    return content
+
+
+def find_key(d, keys, depth=0):
+    if depth > 6:
+        return None
+    if isinstance(d, dict):
+        for k in keys:
+            if k in d:
+                return d[k]
+        for v in d.values():
+            r = find_key(v, keys, depth + 1)
+            if r is not None:
+                return r
+    elif isinstance(d, list):
+        for item in d:
+            r = find_key(item, keys, depth + 1)
+            if r is not None:
+                return r
+    return None
+
+
+def find_all_keys(d, pattern, depth=0, results=None):
+    if results is None:
+        results = []
+    if depth > 6:
+        return results
+    if isinstance(d, dict):
+        for k, v in d.items():
+            if pattern in k.lower():
+                results.append((k, v))
+            find_all_keys(v, pattern, depth + 1, results)
+    elif isinstance(d, list):
+        for item in d:
+            find_all_keys(item, pattern, depth + 1, results)
+    return results
+
+
+def encrypt_session(rb_session):
+    """AES-256-CBC encrypt rb-session → base64 string"""
+    cipher = AES.new(AES_KEY, AES.MODE_CBC, AES_IV)
+    encrypted = cipher.encrypt(pad(rb_session.encode('utf-8'), 16))
+    return base64.b64encode(encrypted).decode()
+
+
+def build_url(base_url, token_b64):
+    """Insert token-{b64}a into the stream URL path."""
+    token = f"token-{token_b64}a"
+
+    if ".m3u8" in base_url:
+        idx = base_url.rindex(".m3u8")
+        # Insert before .m3u8: .../path/token-XXXa.m3u8
+        final = base_url[:idx] + token + base_url[idx:]
+    elif base_url.endswith("/"):
+        final = base_url + token
+    else:
+        final = base_url + "/" + token
+
+    return final
+
+
+# === STEP 1: Signing Key ===
+print("=" * 60)
+print("STEP 1: Get Signing Key")
+print("=" * 60)
+resp = session.get(
+    f"{DATA_URL}/api/common/bs?code=100&sportType=0&stream=true",
     timeout=15
 )
-content = resp.content
+content = decode(resp)
+m = re.search(rb'[a-f0-9]{32}', content)
+md5 = m.group().decode() if m else None
+print(f"  Key: {md5}")
+if not md5:
+    print("  FAIL: no key found")
+    sys.exit(1)
+
+
+# === STEP 2: Live Matches ===
+print("\n" + "=" * 60)
+print("STEP 2: Get Live Matches")
+print("=" * 60)
+time.sleep(2)
+resp = session.get(
+    f"{DATA_URL}/sfver{md5}/api/match/live?sportType=0&language={LANGUAGE}&stream=true",
+    timeout=15
+)
+content = decode(resp)
+print(f"  Size: {len(content)} bytes")
+
+try:
+    data = json.loads(content)
+    if isinstance(data, dict):
+        matches = data.get("data") or data.get("list") or data.get("matches") or []
+    else:
+        matches = data
+except Exception:
+    print("  Response is not JSON — checking for protobuf/binary...")
+    print(f"  First 200 bytes: {content[:200]!r}")
+    sys.exit(1)
+
+if not matches:
+    print("  No matches found")
+    sys.exit(0)
+
+print(f"  Found {len(matches)} matches")
+
+# Pick first match
+match = matches[0]
+match_id = match.get("id") or match.get("matchId") or match.get("match_id")
+sport_type = match.get("sportType") or match.get("sport_type") or 0
+name = match.get("name") or match.get("matchName") or match.get("homeTeam", "?") + " vs " + match.get("awayTeam", "?")
+print(f"  Using: {name} (id={match_id}, sport={sport_type})")
+
+
+# === STEP 3: Match Detail ===
+print("\n" + "=" * 60)
+print("STEP 3: Get Match Detail")
+print("=" * 60)
+time.sleep(2)
+resp = session.get(
+    f"{DATA_URL}/sfver{md5}/api/match/detail?matchId={match_id}"
+    f"&sportType={sport_type}&language={LANGUAGE}&stream=true",
+    timeout=15
+)
+content = decode(resp)
+print(f"  Size: {len(content)} bytes")
+
+try:
+    detail = json.loads(content)
+except Exception:
+    print("  Not JSON — binary response")
+    print(f"  First 300 bytes: {content[:300]!r}")
+    sys.exit(1)
+
+# Find streamId
+stream_id = find_key(detail, ["streamId", "stream_id"])
+if not stream_id:
+    # Try broader search
+    stream_fields = find_all_keys(detail, "stream")
+    print(f"  Stream-related fields: {stream_fields[:10]}")
+    # Fallback: look for any ID in the detail
+    stream_id = find_key(detail, ["id"])
+
+print(f"  Stream ID: {stream_id}")
+if not stream_id:
+    print("  FAIL: no streamId found")
+    print(f"  Full detail: {json.dumps(detail, indent=2)[:1500]}")
+    sys.exit(0)
+
+
+# === STEP 4: Stream Detail ===
+print("\n" + "=" * 60)
+print("STEP 4: Get Stream Detail")
+print("=" * 60)
+time.sleep(2)
+resp = session.get(
+    f"{DATA_URL}/api/stream/detail"
+    f"?streamId={stream_id}"
+    f"&siteType={SITE_TYPE}"
+    f"&continent={CONTINENT}"
+    f"&country={COUNTRY}"
+    f"&digit={DIGIT}"
+    f"&matchId={match_id}"
+    f"&sportType={sport_type}",
+    timeout=15
+)
+
+# *** CRITICAL: capture rb-session header ***
 rb_session = resp.headers.get("rb-session", "")
-print(f"rb-session: {rb_session}")
-print(f"Size: {len(content)}")
+print(f"  Status: {resp.status_code}")
+print(f"  rb-session: {rb_session}")
 
-# Parse protobuf to get f10.f2.f4
-def read_varint(data, i):
-    result, shift = 0, 0
-    while i < len(data) and shift < 35:
-        b = data[i]
-        result |= (b & 0x7F) << shift
-        i += 1
-        if not (b & 0x80): return result, i
-        shift += 7
-    return None, i
+if not rb_session:
+    print("  FAIL: no rb-session header")
+    sys.exit(1)
 
-def parse_msg(data, start=0, end=None):
-    if end is None: end = len(data)
-    fields, i = [], start
-    while i < end:
-        tag, i = read_varint(data, i)
-        if tag is None or tag == 0 or i >= end: break
-        fnum, wt = tag >> 3, tag & 0x07
-        if wt == 0:
-            val, i = read_varint(data, i)
-            if val is None: break
-            fields.append((fnum, 0, val))
-        elif wt == 2:
-            length, i = read_varint(data, i)
-            if length is None or i + length > end: break
-            fields.append((fnum, 2, data[i:i+length]))
-            i += length
-        elif wt == 1:
-            if i + 8 > end: break
-            fields.append((fnum, 1, data[i:i+8])); i += 8
-        elif wt == 5:
-            if i + 4 > end: break
-            fields.append((fnum, 5, data[i:i+4])); i += 4
-        else: break
-    return fields
+content = decode(resp)
+print(f"  Size: {len(content)} bytes")
 
-# Navigate: root → f10 → f2 → f4
-top = parse_msg(content)
-f10 = next((v for f, w, v in top if f == 10 and w == 2), None)
-if not f10:
-    print("f10 not found"); exit()
-
-f2 = next((v for f, w, v in parse_msg(f10) if f == 2 and w == 2), None)
-if not f2:
-    print("f2 not found"); exit()
-
-f4 = next((v for f, w, v in parse_msg(f2) if f == 4 and w == 2), None)
-if not f4:
-    print("f4 not found"); exit()
-
-print(f"\nf4: {len(f4)} bytes")
-print(f"  repr: {f4!r}")
-print(f"  %16 = {len(f4) % 16}")
-print(f"  All printable ASCII: {all(32 <= b < 127 for b in f4)}")
-
-# ===== TRY ALL DECRYPTION METHODS =====
-print("\n" + "="*60)
-
-# Method 1: Direct AES-CBC decrypt
-print("\n[1] Direct AES-CBC decrypt:")
 try:
-    cipher = AES.new(AES_KEY, AES.MODE_CBC, AES_IV)
-    raw = cipher.decrypt(f4)
-    print(f"  Raw: {raw[:100]!r}")
-    try:
-        pt = unpad(raw, 16)
-        print(f"  ✓ Unpadded: {pt!r}")
-    except Exception as e:
-        print(f"  ✗ Unpad failed: {e}")
-        print(f"  Last byte (pad?): 0x{raw[-1]:02x}")
-except Exception as e:
-    print(f"  ✗ {e}")
+    stream_data = json.loads(content)
+    print(f"  JSON keys: {list(stream_data.keys()) if isinstance(stream_data, dict) else type(stream_data)}")
+except Exception:
+    print("  Not JSON — binary response")
+    print(f"  First 500 bytes: {content[:500]!r}")
+    stream_data = None
 
-# Method 2: Base64 decode → AES
-print("\n[2] Base64 decode → AES-CBC:")
-for b64_variant in [
-    lambda d: base64.b64decode(d + b'=' * ((4 - len(d) % 4) % 4)),
-    lambda d: base64.urlsafe_b64decode(d + b'=' * ((4 - len(d) % 4) % 4)),
-]:
-    try:
-        decoded = b64_variant(f4)
-        print(f"  Decoded: {len(decoded)} bytes, %16={len(decoded)%16}")
-        if len(decoded) % 16 == 0 and len(decoded) >= 16:
-            cipher = AES.new(AES_KEY, AES.MODE_CBC, AES_IV)
-            raw = cipher.decrypt(decoded)
-            try:
-                pt = unpad(raw, 16)
-                print(f"  ✓ AES OK: {pt!r}")
-            except:
-                print(f"  Raw: {raw[:100]!r}")
-    except Exception as e:
-        print(f"  ✗ {e}")
+# === STEP 5: Build Stream URL ===
+print("\n" + "=" * 60)
+print("STEP 5: Build Stream URL")
+print("=" * 60)
 
-# Method 3: ROT47 → then check if it's base64 or AES
-print("\n[3] ROT47(f4) → check:")
-def rot47(s):
-    if isinstance(s, bytes): s = s.decode('ascii', errors='ignore')
-    return ''.join(chr((ord(c)-33+47)%87+33) if 33 <= ord(c) <= 119 else c for c in s)
+# Find f4 (or the URL field) in stream_data
+f4_value = None
+if stream_data:
+    f4_value = find_key(stream_data, ["f4", "url", "streamUrl", "m3u8Url", "playUrl"])
 
-r47 = rot47(f4)
-print(f"  ROT47 result: {r47[:80]}")
-# Check if ROT47 result is valid base64
-b64_chars = set(b'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=')
-if all(c in b64_chars for c in r47):
-    print(f"  ✓ ROT47 result IS valid base64!")
-    try:
-        decoded = base64.b64decode(r47)
-        print(f"  Decoded: {len(decoded)} bytes, %16={len(decoded)%16}")
-        if len(decoded) % 16 == 0:
-            cipher = AES.new(AES_KEY, AES.MODE_CBC, AES_IV)
-            raw = cipher.decrypt(decoded)
-            try:
-                pt = unpad(raw, 16)
-                print(f"  ✓ AES OK: {pt!r}")
-            except:
-                print(f"  Raw: {raw[:100]!r}")
-    except Exception as e:
-        print(f"  ✗ b64 decode: {e}")
-else:
-    non_b64 = [c for c in r47 if c not in b64_chars]
-    print(f"  Not base64. Non-b64 chars: {set(non_b64)}")
+# Also check all fields for anything URL-like
+if stream_data:
+    all_fields = find_all_keys(stream_data, "url") + find_all_keys(stream_data, "f4")
+    if all_fields:
+        print(f"  URL/f4 fields found:")
+        for k, v in all_fields[:10]:
+            print(f"    {k} = {str(v)[:120]}")
 
-# Method 4: XOR with key then AES
-print("\n[4] XOR with AES_KEY → AES:")
-try:
-    xored = bytes(f4[i] ^ AES_KEY[i % len(AES_KEY)] for i in range(len(f4)))
-    print(f"  Xored first 20: {xored[:20]!r}")
-    if len(xored) % 16 == 0:
-        cipher = AES.new(AES_KEY, AES.MODE_CBC, AES_IV)
-        raw = cipher.decrypt(xored)
-        try:
-            pt = unpad(raw, 16)
-            print(f"  ✓ AES OK: {pt!r}")
-        except:
-            print(f"  Raw: {raw[:100]!r}")
-except Exception as e:
-    print(f"  ✗ {e}")
+# Determine base URL
+base_url = None
+if f4_value:
+    print(f"\n  f4 value: {f4_value[:100]}")
+    # Try ROT47 decode
+    rot47_decoded = rot47(f4_value)
+    print(f"  ROT47(f4): {rot47_decoded[:100]}")
 
-# Method 5: Maybe it's not AES — try as direct URL with various decodings
-print("\n[5] Direct interpretations:")
-print(f"  As-is: {f4.decode('ascii', errors='replace')[:100]}")
-# Check if it looks like a URL with chars shifted
-for shift in range(1, 5):
-    shifted = bytes((b + shift) % 128 for b in f4)
-    try:
-        text = shifted.decode('ascii')
-        if 'http' in text:
-            print(f"  Shift +{shift}: {text[:100]}")
-    except:
-        pass
+    # Check if ROT47 result looks like a URL
+    if "http" in rot47_decoded:
+        # Extract URL from ROT47 result
+        url_match = re.search(r'https?://[^\s]+', rot47_decoded)
+        if url_match:
+            base_url = url_match.group()
+            print(f"  ✓ URL found in ROT47: {base_url}")
+        else:
+            # Maybe the whole thing is the URL after stripping prefix
+            for i in range(min(16, len(rot47_decoded))):
+                if rot47_decoded[i:].startswith("http"):
+                    base_url = rot47_decoded[i:]
+                    print(f"  ✓ URL at offset {i}: {base_url}")
+                    break
+    elif f4_value.startswith("http"):
+        base_url = f4_value
+        print(f"  ✓ f4 is already a URL: {base_url}")
+    else:
+        # Try other approaches
+        print("  ⚠ f4 doesn't look like a URL even after ROT47")
+        print(f"  f4 repr: {repr(f4_value[:80])}")
 
-# Method 6: Hex decode
-print("\n[6] Hex decode:")
-try:
-    decoded = binascii.unhexlify(f4)
-    print(f"  Decoded: {len(decoded)} bytes, %16={len(decoded)%16}")
-    if len(decoded) % 16 == 0:
-        cipher = AES.new(AES_KEY, AES.MODE_CBC, AES_IV)
-        raw = cipher.decrypt(decoded)
-        try:
-            pt = unpad(raw, 16)
-            print(f"  ✓ AES OK: {pt!r}")
-        except:
-            print(f"  Raw: {raw[:100]!r}")
-except Exception as e:
-    print(f"  ✗ Not valid hex: {e}")
+if not base_url:
+    # Fallback: look for any http URL in the raw response
+    url_match = re.search(rb'https?://[^\s"\'\\]+\.m3u8[^\s"\'\\]*', content)
+    if url_match:
+        base_url = url_match.group().decode()
+        print(f"  ✓ Found m3u8 URL in raw response: {base_url}")
+    else:
+        url_match = re.search(rb'https?://[^\s"\'\\]+', content)
+        if url_match:
+            base_url = url_match.group().decode()
+            print(f"  ✓ Found URL in raw response: {base_url}")
 
-# Method 7: AES-ECB (no IV)
-print("\n[7] AES-256-ECB (no IV):")
-try:
-    cipher = AES.new(AES_KEY, AES.MODE_ECB)
-    raw = cipher.decrypt(f4)
-    print(f"  Raw: {raw[:100]!r}")
-    try:
-        pt = unpad(raw, 16)
-        print(f"  ✓ Unpadded: {pt!r}")
-    except:
-        print(f"  Last byte: 0x{raw[-1]:02x}")
-except Exception as e:
-    print(f"  ✗ {e}")
+if not base_url:
+    print("\n  ⚠ Could not determine base URL")
+    print("  Full stream_data:")
+    if stream_data:
+        print(json.dumps(stream_data, indent=2)[:2000])
+    else:
+        print(content[:1000])
+    sys.exit(0)
 
-# Method 8: AES with hex-decoded key/IV
-print("\n[8] AES with hex-decoded key/IV:")
-try:
-    key_hex = bytes.fromhex("a7981cc9eb2f4d19dcfea57b101ecd89")
-    iv_hex = bytes.fromhex("8017d3a8f1400d2f")
-    print(f"  Key: {len(key_hex)}B, IV: {len(iv_hex)}B")
-    if len(key_hex) == 16 and len(iv_hex) == 8:
-        print(f"  Key=128bit, IV=8B (invalid for CBC)")
-    elif len(key_hex) == 32:
-        cipher = AES.new(key_hex, AES.MODE_CBC, iv_hex.ljust(16, b'\x00'))
-        raw = cipher.decrypt(f4)
-        try:
-            pt = unpad(raw, 16)
-            print(f"  ✓ AES OK: {pt!r}")
-        except:
-            print(f"  Raw: {raw[:100]!r}")
-except Exception as e:
-    print(f"  ✗ {e}")
+print(f"\n  Base URL: {base_url}")
 
-print("\n" + "="*60)
-print("DONE — share which method (if any) produced readable output")   
+# Encrypt rb-session
+token_b64 = encrypt_session(rb_session)
+print(f"  Encrypted token: {token_b64[:60]}...")
+
+# Build final URL
+final_url = build_url(base_url, token_b64)
+
+print(f"\n{'=' * 60}")
+print(f"  ✓ FINAL STREAM URL:")
+print(f"  {final_url}")
+print(f"{'=' * 60}")
+print(f"""
+  Playback:
+    - VLC: Media → Open Network Stream → paste URL
+    - mpv:  mpv "{final_url}" --header="Referer: https://www.rbtvplus.ws/"
+    - curl: curl -H "Referer: https://www.rbtvplus.ws/" "{final_url}"
+
+  ⚠ Token is IP-locked. Must play from same IP that made the request.
+  ⚠ Token expires after ~30-60 minutes.
+""")   
