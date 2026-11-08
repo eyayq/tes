@@ -1,18 +1,17 @@
-
 import time
 import random
 import logging
 import argparse
 import subprocess
 import threading
-from datetime import datetime
+from datetime import datetime, timezone
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from typing import Optional
 
 from curl_cffi import requests as cffi_requests
 
-MAX_WORKERS = 5
+MAX_WORKERS = 30
 REQUEST_TIMEOUT = 15
 RETRY_COUNT = 4
 OUTPUT_FILE = "playlist.m3u"
@@ -22,6 +21,9 @@ YOUTUBE_CHANNELS = [
     ("https://www.youtube.com/@MPLIndonesia/live", "MPL Indonesia"),
     ("https://www.youtube.com/@mlbbindonesia/live", "MLBB Indonesia"),
 ]
+
+# Top-level categories yang didukung endpoint stream/livestreams
+KICK_CATEGORIES = ["games", "irl", "music", "gambling", "creative"]
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 log = logging.getLogger("kick-m3u")
@@ -58,9 +60,12 @@ def http_get(url: str, params: dict | None = None):
         try:
             r = get_session().get(url, params=params, timeout=REQUEST_TIMEOUT)
             if r.status_code == 200:
-                return r.json()
+                try:
+                    return r.json()
+                except Exception:
+                    log.debug("Response bukan JSON valid: %s", url)
+                    return None
             elif r.status_code == 429:
-                # Exponential backoff: 5s, 15s, 45s, 135s
                 wait = 5 * (3 ** attempt)
                 log.warning("429 rate limit! Tunggu %ds (attempt %d/%d)",
                            wait, attempt + 1, RETRY_COUNT)
@@ -105,22 +110,24 @@ def fetch_all_subcategories() -> list[dict]:
             break
 
         page += 1
-        smart_sleep(0.2)  # 0.2-0.6s antar halaman
+        smart_sleep(0.2)
 
     log.info("Total subcategories: %d", len(all_subs))
     return all_subs
 
 
-# ─── KICK: Live per kategori ──────────────────────────────────────────────────
-def fetch_live_streams(subcategory_slug: str) -> list[dict]:
+# ─── KICK: Live per kategori (top-level) ──────────────────────────────────────
+def fetch_live_streams(category: str) -> list[dict]:
+    """Fetch livestreams berdasarkan top-level category."""
     all_streams = []
     page = 1
     while True:
         data = http_get("https://kick.com/stream/livestreams/en",
-                        params={"page": page, "limit": 50, "subcategory": subcategory_slug})
+                        params={"page": page, "limit": 50, "category": category})
         if not data:
             break
 
+        # Response bisa berupa list langsung atau dict dengan key "data"
         items = data if isinstance(data, list) else data.get("data", data.get("results", []))
         if not items:
             break
@@ -140,11 +147,32 @@ def fetch_live_streams(subcategory_slug: str) -> list[dict]:
 
 
 # ─── KICK: Proses stream ──────────────────────────────────────────────────────
+def extract_playback_url(stream_data: dict) -> Optional[str]:
+    """
+    Ekstrak playback_url dari berbagai kemungkinan struktur response.
+    Kick bisa mengembalikan:
+      - stream_data["live"] → dict dengan key "hls_url" atau "playback_url"
+      - stream_data["live"] → string URL langsung
+      - stream_data["hls_url"] → string
+    """
+    live = stream_data.get("live")
+
+    # Jika "live" adalah dict
+    if isinstance(live, dict):
+        return (live.get("hls_url")
+                or live.get("playback_url")
+                or live.get("url")
+                or "")
+
+    # Jika "live" adalah string
+    if isinstance(live, str) and live.startswith("http"):
+        return live
+
+    # Fallback langsung di level atas
+    return stream_data.get("hls_url") or stream_data.get("playback_url") or ""
+
+
 def process_kick_stream(stream_data: dict, category_name: str) -> Optional[Stream]:
-    """
-    PENTING: Cek apakah playback_url SUDAH ada di response kategori.
-    Kalau iya → tidak perlu request tambahan.
-    """
     channel_slug = (
         stream_data.get("channel_slug")
         or stream_data.get("channel_name")
@@ -153,15 +181,10 @@ def process_kick_stream(stream_data: dict, category_name: str) -> Optional[Strea
     if not channel_slug:
         return None
 
-    # ── Cek playback_url langsung dari response ──
-    playback_url = (
-        stream_data.get("live")
-        or (stream_data.get("channel", {}) or {}).get("live")
-        or stream_data.get("hls_url")
-        or ""
-    )
+    # Ekstrak playback_url dari response
+    playback_url = extract_playback_url(stream_data)
 
-    # Kalau tidak ada, baru fetch (1 request tambahan)
+    # Kalau tidak ada, fetch dari livestream endpoint (bukan channel endpoint)
     if not playback_url:
         playback_url = fetch_playback_url(channel_slug)
     if not playback_url:
@@ -170,11 +193,12 @@ def process_kick_stream(stream_data: dict, category_name: str) -> Optional[Strea
     title = stream_data.get("title") or stream_data.get("session_title") or "Untitled"
     viewers = stream_data.get("viewer_count") or stream_data.get("viewers") or 0
     started_at = stream_data.get("start_time") or stream_data.get("created_at")
+
     tvg_logo = (
         stream_data.get("channel_profile_pic")
         or (stream_data.get("channel", {}) or {}).get("profile_picture", "")
         or stream_data.get("profile_picture", "")
-        or ""
+        or f"https://kick.com/{channel_slug}/profile"
     )
 
     return Stream(
@@ -183,17 +207,21 @@ def process_kick_stream(stream_data: dict, category_name: str) -> Optional[Strea
         playback_url=playback_url,
         group_title=category_name,
         tvg_logo=tvg_logo,
-        started_at=started_at,
+        started_at=str(started_at) if started_at else None,
         viewers=viewers,
     )
 
 
 def fetch_playback_url(channel_slug: str) -> Optional[str]:
-    """Fallback: fetch playback_url dari channel API (1 request)."""
-    data = http_get(f"https://kick.com/api/v2/channels/{channel_slug}")
+    """Fallback: fetch dari /api/v2/channels/{slug}/livestream."""
+    data = http_get(f"https://kick.com/api/v2/channels/{channel_slug}/livestream")
     if not data:
         return None
-    return data.get("live")
+    # Response: {"live": {"hls_url": "...", ...}} atau {"hls_url": "..."}
+    live = data.get("live", data)
+    if isinstance(live, dict):
+        return live.get("hls_url") or live.get("playback_url") or ""
+    return "" if not isinstance(live, str) else live
 
 
 # ─── YOUTUBE ──────────────────────────────────────────────────────────────────
@@ -213,17 +241,38 @@ def get_youtube_m3u8(channel_url: str) -> Optional[str]:
     return None
 
 
+def get_youtube_channel_logo(channel_url: str) -> str:
+    """
+    Ambil avatar channel YouTube dari halaman channel.
+    Fallback: icon generik.
+    """
+    try:
+        r = get_session().get(channel_url.replace("/live", ""), timeout=REQUEST_TIMEOUT)
+        if r.status_code == 200:
+            # Ekstrak avatar dari meta tag
+            import re
+            match = re.search(r'og:image"\s+content="([^"]+)"', r.text)
+            if match:
+                return match.group(1)
+    except Exception:
+        pass
+    return "https://www.youtube.com/img/icons/1x/channel-icon.png"
+
+
 def process_youtube(item: tuple) -> Optional[Stream]:
     url, name = item
     m3u8 = get_youtube_m3u8(url)
     if not m3u8:
         return None
+
+    logo = get_youtube_channel_logo(url)
+
     return Stream(
         channel_slug=name.lower().replace(" ", "_"),
         title=f"{name} LIVE",
         playback_url=m3u8,
         group_title="YouTube",
-        tvg_logo=f"https://i.ytimg.com/googletv?user_id={name.replace(' ', '')}",
+        tvg_logo=logo,
         started_at=None,
         viewers=0,
         platform="YouTube",
@@ -235,9 +284,14 @@ def format_title(s: Stream) -> str:
     base = s.title
     if s.started_at:
         try:
-            dt = datetime.fromisoformat(s.started_at.replace("Z", "+00:00")).astimezone()
+            raw = s.started_at
+            # Handle Unix timestamp (int/float as string)
+            if raw.isdigit() or (raw.replace('.', '', 1).isdigit() and '.' in raw):
+                dt = datetime.fromtimestamp(float(raw), tz=timezone.utc).astimezone()
+            else:
+                dt = datetime.fromisoformat(raw.replace("Z", "+00:00")).astimezone()
             base = f"{base} [{dt.strftime('%H:%M')} {dt.strftime('%d/%m/%Y')}]"
-        except:
+        except (ValueError, TypeError, OSError):
             pass
     return base
 
@@ -272,27 +326,17 @@ def main():
     if not args.yt_only:
         log.info("─── KICK ───")
 
-        subcategories = fetch_all_subcategories()
-
-        # Filter: hanya kategori yang viewers > 0
-        active = [s for s in subcategories if s.get("viewers", 0) > 0]
-        log.info("Kategori aktif (viewers>0): %d / %d", len(active), len(subcategories))
-
-        # Fetch live per kategori
+        # Fetch live per top-level category (bukan subcategory)
         all_raw: list[tuple[dict, str]] = []
         seen: set[str] = set()
 
         with ThreadPoolExecutor(max_workers=args.workers) as pool:
             futures = {
-                pool.submit(fetch_live_streams, sub["slug"]): sub
-                for sub in active if sub.get("slug")
+                pool.submit(fetch_live_streams, cat): cat
+                for cat in KICK_CATEGORIES
             }
-            done = 0
             for fut in as_completed(futures):
-                done += 1
-                sub = futures[fut]
-                if done % 50 == 0:
-                    log.info("Kategori: %d/%d", done, len(futures))
+                cat = futures[fut]
                 try:
                     for s in fut.result():
                         slug = (s.get("channel_slug")
@@ -300,9 +344,9 @@ def main():
                                 or (s.get("channel", {}) or {}).get("slug", ""))
                         if slug and slug not in seen:
                             seen.add(slug)
-                            all_raw.append((s, sub.get("name", sub.get("slug", ""))))
-                except:
-                    pass
+                            all_raw.append((s, cat))
+                except Exception as e:
+                    log.debug("Error fetch category %s: %s", cat, e)
 
         log.info("Stream unik: %d", len(all_raw))
 
@@ -321,8 +365,8 @@ def main():
                     s = fut.result()
                     if s:
                         all_streams.append(s)
-                except:
-                    pass
+                except Exception as e:
+                    log.debug("Error process stream: %s", e)
 
         log.info("Kick valid: %d", sum(1 for s in all_streams if s.platform == "Kick"))
 
@@ -336,8 +380,8 @@ def main():
                     if s:
                         log.info("  ✅ %s LIVE", s.title)
                         all_streams.append(s)
-                except:
-                    pass
+                except Exception as e:
+                    log.debug("Error YouTube: %s", e)
 
     # ─── OUTPUT ──────────────────────────────────────────────────────────────
     all_streams.sort(key=lambda s: s.viewers, reverse=True)
