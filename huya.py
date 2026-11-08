@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-RBTV Playlist Generator (v15 FIXED — GitHub Actions)
-Alur: signing key → match list → match detail (streamId) → stream detail (M3U8 URL)
+RBTV Playlist Generator (v16 — GitHub Actions)
+Alur: signing key → match list → match detail (streamId) → stream detail → 
+      ROT47 decode → AES token → final m3u8 URL
 """
 
 import requests
@@ -11,6 +12,7 @@ import re
 import zlib
 import sys
 import time
+import base64
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 try:
@@ -27,10 +29,12 @@ except ImportError:
 
 try:
     from Crypto.Cipher import AES
+    from Crypto.Util.Padding import pad
     HAS_AES = True
 except ImportError:
     try:
         from Cryptodome.Cipher import AES
+        from Cryptodome.Util.Padding import pad
         HAS_AES = True
     except ImportError:
         HAS_AES = False
@@ -41,8 +45,8 @@ DATA_URL = "https://apis-data10.tcpwe138stya.ru"
 PORT = 8080
 MAX_MATCHES = 30
 TIMEOUT = 10
-SPORT_TYPE = 0      # 0 = all sports
-LANGUAGE = 34       # Indonesian
+SPORT_TYPE = 0
+LANGUAGE = 34
 SITE_TYPE = 2001
 CONTINENT = "AS"
 COUNTRY = "ID"
@@ -57,6 +61,24 @@ HEADERS = {
     "accept-language": "id-ID,id;q=0.6",
     "accept-encoding": "identity",
 }
+
+# ==================== AES KEY MATERIAL ====================
+# ⚠️  WAJIB: Ambil dari src/crypto/stream-token.ts di repo fctv33-stream-resolver
+#    (sharoon7171/fctv33-stream-resolver atau fork-nya)
+#    Key = 32 bytes (AES-256), IV = 16 bytes (CBC)
+#
+# Contoh format (GANTI dengan nilai asli dari source):
+#   AES_KEY = bytes.fromhex("...")  # 32 bytes
+#   AES_IV  = bytes.fromhex("...")  # 16 bytes
+#
+# Atau jika string:
+#   AES_KEY = b"your-32-byte-key-here!!!!!".ljust(32, b'\x00')
+#   AES_IV  = b"your-16-byte-iv!!!"
+
+AES_KEY = None  # ← ISI DI SINI (32 bytes)
+AES_IV = None   # ← ISI DI SINI (16 bytes)
+
+DEBUG = True  # Set True untuk debug, False untuk produksi
 
 
 # ==================== PROTOBUF PARSER ====================
@@ -121,9 +143,7 @@ def find_vs_name(data):
 
 
 def extract_matches_from_protobuf(data):
-    """Parse /match/live protobuf → list of {name, id, sport_type}"""
     top_fields = parse_message(data)
-
     field10_data = None
     for fnum, wtype, val in top_fields:
         if fnum == 10 and wtype == 2 and len(val) > 500:
@@ -162,19 +182,12 @@ def extract_matches_from_protobuf(data):
     return matches
 
 
-# ==================== FIXED: RECURSIVE STREAM ID ====================
+# ==================== STREAM ID EXTRACTION ====================
 
 def extract_stream_id(data, _depth=0):
-    """
-    Recursively search for streamId (varint in range 10000–9999999).
-    Handles JSON dicts and nested protobuf messages up to 5 levels deep.
-    """
     if _depth > 5:
         return None
-
-    # --- JSON path ---
     if isinstance(data, dict):
-        # Direct key match
         if "streamId" in data and isinstance(data["streamId"], int):
             return data["streamId"]
         for v in data.values():
@@ -188,8 +201,6 @@ def extract_stream_id(data, _depth=0):
             if result:
                 return result
         return None
-
-    # --- Protobuf path ---
     if not isinstance(data, bytes):
         return None
 
@@ -202,16 +213,17 @@ def extract_stream_id(data, _depth=0):
             sub = extract_stream_id(val, _depth + 1)
             if sub:
                 candidates.append(sub)
-
     if candidates:
         return candidates[0]
     return None
 
 
-# ==================== FIXED: M3U8 URL EXTRACTION ====================
+# ==================== CRYPTO ====================
 
 def rot47_decode(s):
-    """ROT47 decode: shift each char in range 33-119 by 47."""
+    """ROT47: shift chars 33-119 by 47 positions."""
+    if isinstance(s, bytes):
+        s = s.decode('ascii', errors='ignore')
     result = []
     for c in s:
         code = ord(c)
@@ -221,90 +233,99 @@ def rot47_decode(s):
     return ''.join(result)
 
 
-def try_aes_decrypt(data, key, iv):
-    """Try AES-256-CBC decrypt. Returns bytes or None."""
-    if not HAS_AES:
+def rot47_encode(s):
+    """ROT47 encode (inverse)."""
+    if isinstance(s, bytes):
+        s = s.decode('ascii', errors='ignore')
+    result = []
+    for c in s:
+        code = ord(c)
+        if 33 <= code <= 119:
+            code = (code - 33 - 47) % 87 + 33
+        result.append(chr(code))
+    return ''.join(result)
+
+
+def build_tokenized_url(obfuscated_url, rb_session):
+    """
+    Build the final tokenized m3u8 URL:
+    1. ROT47-decode the obfuscated URL
+    2. Drop first 8 characters (leading marker)
+    3. AES-256-CBC encrypt the rb-session string
+    4. Base64-encode the ciphertext
+    5. Insert 'token-{base64}a' into the URL path
+    """
+    # Step 1: ROT47 decode
+    decoded = rot47_decode(obfuscated_url)
+
+    # Step 2: Drop first 8 characters (leading marker)
+    decoded = decoded[8:]
+
+    if DEBUG:
+        print(f"    [DEBUG] After ROT47+strip: {decoded[:100]}", flush=True)
+
+    # Step 3-4: AES encrypt session token
+    if not HAS_AES or AES_KEY is None or AES_IV is None:
+        print("    [ERROR] AES not available or key not set!", file=sys.stderr, flush=True)
         return None
+
     try:
-        if len(data) % 16 != 0:
-            # PKCS7 padding
-            data = data + bytes([16 - (len(data) % 16)]) * (16 - (len(data) % 16))
-        cipher = AES.new(key, AES.MODE_CBC, iv)
-        decrypted = cipher.decrypt(data)
-        # Remove PKCS7 padding
-        pad_len = decrypted[-1]
-        if 1 <= pad_len <= 16:
-            decrypted = decrypted[:-pad_len]
-        return decrypted
-    except Exception:
+        session_bytes = rb_session.encode('utf-8')
+        padded = pad(session_bytes, 16)  # PKCS7 padding
+        cipher = AES.new(AES_KEY, AES.MODE_CBC, AES_IV)
+        ciphertext = cipher.encrypt(padded)
+        token_b64 = base64.b64encode(ciphertext).decode('ascii')
+    except Exception as e:
+        print(f"    [ERROR] AES encrypt failed: {e}", file=sys.stderr, flush=True)
         return None
 
+    # Step 5: Insert token into URL path
+    # Pattern: https://.../token-{base64}a/...m3u8
+    # The decoded URL likely has a placeholder or we insert after the host path
+    # Common pattern: the URL has a path like /live/... and we insert token-...a/
+    
+    # Try to find where to insert the token
+    # Usually: {base_url}/token-{token}a/{rest_of_path}
+    if '/' in decoded:
+        parts = decoded.split('/', 3)  # [scheme://host, '', rest]
+        if len(parts) >= 3:
+            # Insert token after the first path segment
+            base = '/'.join(parts[:2])
+            rest = parts[2] if len(parts) > 2 else ''
+            tokenized_url = f"{base}/token-{token_b64}a/{rest}"
+        else:
+            tokenized_url = f"{decoded}/token-{token_b64}a"
+    else:
+        tokenized_url = f"{decoded}?token={token_b64}a"
 
-def extract_m3u8_url(data, rb_session=""):
+    if DEBUG:
+        print(f"    [DEBUG] Tokenized URL: {tokenized_url[:120]}", flush=True)
+
+    return tokenized_url
+
+
+def extract_obfuscated_url(data):
     """
-    Extract M3U8 URL from stream detail response.
-    Handles: plain URL, ROT47-encoded, AES-encrypted.
+    Extract the obfuscated URL string from stream detail response.
+    The response contains a ROT47-encoded URL (not a plain HTTP URL).
     """
-    # --- Plain URL search ---
     if isinstance(data, bytes):
-        m = re.search(rb'(https?://[^\x00-\x1f\x7f-\xff]+\.m3u8[^\x00-\x1f\x7f-\xff]*)', data)
-        if m:
-            return m.group().decode()
-        m = re.search(rb'(https?://[^\x00-\x1f\x7f-\xff]+/cfall/[^\x00-\x1f\x7f-\xff]+)', data)
-        if m:
-            return m.group().decode()
-
-        # --- ROT47 search ---
-        # Look for base64-like or ROT47-like strings
-        for m in re.finditer(rb'[\x21-\x7f]{30,}', data):
-            candidate = m.group().decode('ascii', errors='ignore')
-            decoded = rot47_decode(candidate)
-            if '.m3u8' in decoded:
-                return decoded.strip()
-
-        # --- AES decrypt using rb-session ---
-        if rb_session and HAS_AES:
-            try:
-                # Try rb-session as key (32 bytes) or derive from it
-                key = rb_session.encode('utf-8')[:32].ljust(32, b'\x00')
-                iv = b'\x00' * 16
-                decrypted = try_aes_decrypt(data, key, iv)
-                if decrypted:
-                    m = re.search(rb'(https?://[^\x00-\x1f\x7f-\xff]+\.m3u8[^\x00-\x1f\x7f-\xff]*)', decrypted)
-                    if m:
-                        return m.group().decode()
-            except Exception:
-                pass
-
-    # --- JSON path ---
+        # Look for the longest printable string (likely the obfuscated URL)
+        # ROT47-encoded URLs will be printable ASCII (33-126 range)
+        candidates = re.findall(rb'[\x21-\x7e]{20,}', data)
+        if candidates:
+            # Pick the longest one (most likely the URL)
+            longest = max(candidates, key=len)
+            return longest.decode('ascii')
+        return None
     elif isinstance(data, (dict, list)):
         json_str = json.dumps(data)
-        m = re.search(r'(https?://[^"\s\\]+\.m3u8[^"\s\\]*)', json_str)
+        # Look for long string values
+        m = re.findall(r'"([^"]{20,})"', json_str)
         if m:
-            return m.group(1)
-        m = re.search(r'(https?://[^"\s\\]+/cfall/[^"\s\\]+)', json_str)
-        if m:
-            return m.group(1)
-
-        # ROT47 on string values
-        def search_rot47(obj):
-            if isinstance(obj, str) and len(obj) > 20:
-                decoded = rot47_decode(obj)
-                if '.m3u8' in decoded:
-                    return decoded.strip()
-            elif isinstance(obj, dict):
-                for v in obj.values():
-                    r = search_rot47(v)
-                    if r:
-                        return r
-            elif isinstance(obj, list):
-                for item in obj:
-                    r = search_rot47(item)
-                    if r:
-                        return r
-            return None
-        return search_rot47(data)
-
+            longest = max(m, key=len)
+            return longest
+        return None
     return None
 
 
@@ -354,11 +375,6 @@ def try_json_or_protobuf(content):
 # ==================== API ====================
 
 def get_signing_key(match_id=None, sport_type=None):
-    """
-    Get signing key.
-    - Live list:   /api/common/bs?code=100&sportType=Y
-    - Match detail: /api/common/bs?code=102&code=103&code=104&code=105&matchId=X&sportType=Y
-    """
     if match_id:
         url = (f"{DATA_URL}/api/common/bs"
                f"?code=102&code=103&code=104&code=105"
@@ -370,9 +386,16 @@ def get_signing_key(match_id=None, sport_type=None):
     resp = requests.get(url, headers=HEADERS, timeout=TIMEOUT)
     content = decode_api_response(resp)
 
+    # Try hex MD5 first
     m = re.search(rb'[a-f0-9]{32}', content)
     if m:
         return m.group().decode()
+    
+    # Fallback: try any 32-char alphanumeric
+    m = re.search(rb'[a-zA-Z0-9]{32}', content)
+    if m:
+        return m.group().decode()
+    
     return None
 
 
@@ -388,18 +411,23 @@ def get_live_matches(md5):
             return (data.get("data") or data.get("list")
                     or data.get("matches") or data.get("items") or [])
         return data if isinstance(data, list) else []
-
     return extract_matches_from_protobuf(content)
 
 
-def get_match_detail(match_id, sport_type):
+def get_match_detail(match_id, sport_type, fallback_md5):
     """
-    FIXED: Get a DEDICATED signing key (code=102) for match detail.
+    Get match detail. Tries code=102 key first, falls back to code=100 key.
     """
+    # Try dedicated key (code=102)
     detail_md5 = get_signing_key(match_id=match_id, sport_type=sport_type)
+    
     if not detail_md5:
-        print(f"  [WARN] No detail key for match {match_id}",
-              file=sys.stderr, flush=True)
+        # Fallback: use the live list key
+        if DEBUG:
+            print(f"    [DEBUG] code=102 key failed, using code=100 key", flush=True)
+        detail_md5 = fallback_md5
+    
+    if not detail_md5:
         return None
 
     url = (f"{DATA_URL}/sfver{detail_md5}/api/match/detail"
@@ -413,7 +441,7 @@ def get_match_detail(match_id, sport_type):
 
 def get_stream_detail(stream_id, match_id, sport_type):
     """
-    Get stream detail. Returns (data, rb_session_header).
+    Get stream detail. Returns (data, rb_session, raw_content).
     """
     url = (f"{DATA_URL}/api/stream/detail"
            f"?streamId={stream_id}"
@@ -427,16 +455,37 @@ def get_stream_detail(stream_id, match_id, sport_type):
     content = decode_api_response(resp)
     fmt, data = try_json_or_protobuf(content)
 
-    # Capture rb-session from response headers
     rb_session = resp.headers.get("rb-session", "")
 
-    return data, rb_session
+    if DEBUG:
+        # Dump raw content for debugging
+        if isinstance(content, bytes) and len(content) < 2000:
+            printable = content.decode('utf-8', errors='replace')
+            print(f"    [DEBUG] Raw stream detail ({len(content)} bytes): "
+                  f"{printable[:200]}", flush=True)
+        elif isinstance(data, dict):
+            print(f"    [DEBUG] Stream detail JSON keys: {list(data.keys())}", flush=True)
+            # Dump values that look like URLs or encoded strings
+            for k, v in data.items():
+                if isinstance(v, str) and len(v) > 15:
+                    print(f"    [DEBUG]   {k} = {v[:80]}...", flush=True)
+
+    return data, rb_session, content
 
 
 # ==================== MAIN ====================
 
 def main():
     t0 = time.time()
+
+    # Check AES key
+    if not HAS_AES:
+        print("WARNING: pycryptodome not installed. "
+              "Run: pip install pycryptodome", file=sys.stderr, flush=True)
+    if AES_KEY is None or AES_IV is None:
+        print("WARNING: AES_KEY/AES_IV not set! "
+              "Get them from fctv33-stream-resolver src/crypto/stream-token.ts",
+              file=sys.stderr, flush=True)
 
     # Step 1: Get signing key for live list (code=100)
     print("Step 1: Getting signing key (code=100)...", flush=True)
@@ -462,7 +511,7 @@ def main():
     for m in matches[:5]:
         print(f"    - {m['name']} (id={m['id']}, sport={m['sport_type']})", flush=True)
 
-    # Step 3: For each match → get streamId → get M3U8 URL
+    # Step 3: For each match → streamId → obfuscated URL → tokenized m3u8
     print("Step 3: Fetching stream URLs...", flush=True)
     entries = []
 
@@ -471,39 +520,63 @@ def main():
         match_id = match["id"]
         sport_type = match["sport_type"]
 
-        # 3a: Get match detail (dedicated key code=102) → extract streamId
-        detail = get_match_detail(match_id, sport_type)
+        # 3a: Get match detail → extract streamId
+        detail = get_match_detail(match_id, sport_type, md5)
         if detail is None:
             print(f"  [WARN] No detail for {name} (id={match_id})",
                   file=sys.stderr, flush=True)
             return (name, None)
 
         stream_id = extract_stream_id(detail)
-
         if not stream_id:
             print(f"  [WARN] No streamId for {name} (id={match_id})",
                   file=sys.stderr, flush=True)
             return (name, None)
 
-        # 3b: Get stream detail → extract M3U8 URL
-        stream_data, rb_session = get_stream_detail(stream_id, match_id, sport_type)
-        m3u8_url = extract_m3u8_url(stream_data, rb_session)
+        if DEBUG:
+            print(f"    [DEBUG] {name}: streamId={stream_id}", flush=True)
 
-        if not m3u8_url:
-            # Debug: dump what we got
+        # 3b: Get stream detail → obfuscated URL + rb-session
+        stream_data, rb_session, raw_content = get_stream_detail(
+            stream_id, match_id, sport_type)
+
+        if not rb_session:
+            print(f"  [WARN] No rb-session for {name}", file=sys.stderr, flush=True)
+            return (name, None)
+
+        # 3c: Extract obfuscated URL from response
+        obfuscated = None
+        if isinstance(stream_data, bytes):
+            obfuscated = extract_obfuscated_url(stream_data)
+        elif isinstance(stream_data, dict):
+            # Try common field names
+            for key in ("url", "streamUrl", "playUrl", "hlsUrl", "src", "link"):
+                if key in stream_data and isinstance(stream_data[key], str):
+                    obfuscated = stream_data[key]
+                    break
+            if not obfuscated:
+                obfuscated = extract_obfuscated_url(stream_data)
+
+        if not obfuscated:
+            print(f"  [WARN] No obfuscated URL for {name}. "
+                  f"data_type={type(stream_data).__name__}",
+                  file=sys.stderr, flush=True)
+            # Debug dump
             if isinstance(stream_data, bytes):
-                urls = re.findall(rb'https?://[^\x00-\x1f\x7f-\xff]{10,}', stream_data)
-                print(f"  [WARN] No M3U8 for {name}. "
-                      f"rb_session={rb_session[:20] if rb_session else 'none'} "
-                      f"URLs found: {[u.decode()[:80] for u in urls[:3]]}",
-                      file=sys.stderr, flush=True)
-            elif isinstance(stream_data, dict):
-                print(f"  [WARN] No M3U8 for {name}. "
-                      f"Keys: {list(stream_data.keys())[:10]}",
+                print(f"    [DEBUG] Content: {stream_data[:200]}",
                       file=sys.stderr, flush=True)
             return (name, None)
 
-        return (name, m3u8_url)
+        if DEBUG:
+            print(f"    [DEBUG] Obfuscated: {obfuscated[:80]}...", flush=True)
+
+        # 3d: Build tokenized URL
+        final_url = build_tokenized_url(obfuscated, rb_session)
+        if not final_url:
+            print(f"  [FAIL] Token build failed for {name}", file=sys.stderr, flush=True)
+            return (name, None)
+
+        return (name, final_url)
 
     with ThreadPoolExecutor(max_workers=5) as pool:
         futures = [pool.submit(fetch_stream, m) for m in matches]
@@ -512,7 +585,9 @@ def main():
                 result = f.result(timeout=TIMEOUT * 3)
                 if result and result[1]:
                     entries.append(result)
-                    print(f"  [OK] {result[0]} → {result[1][:60]}...", flush=True)
+                    print(f"  [OK] {result[0]}", flush=True)
+                    if DEBUG:
+                        print(f"       → {result[1][:100]}", flush=True)
                 elif result:
                     print(f"  [FAIL] {result[0]}", file=sys.stderr, flush=True)
             except Exception as e:
