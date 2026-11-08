@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """
-RBTV Proxy Server (v5)
-HLS stream yang disamarkan (URL .json, content-type application/zip)
-Sebenarnya: playlist = m3u8, segment = MP2T
+RBTV Proxy Server (v6 FINAL)
+- Data API + Live API (dual source)
+- HLS stream disamarkan (URL .json, content-type application/zip)
+- Parallel fetch, timeout, ThreadingHTTPServer
 """
 
 import requests
@@ -27,13 +28,21 @@ try:
 except ImportError:
     HAS_ZSTD = False
 
-BASE_URL = "https://apis-data10.tcpwe138stya.ru"
+# ==================== CONFIG ====================
+
+DATA_URL = "https://apis-data10.tcpwe138stya.ru"
+LIVE_URL = "https://apis-live.ta2mnt200stayr2.cfd"
+LIVE_URL_EU = "https://apis-live-defra.ta2mnt200stayr2.cfd"
+
 PORT = 8080
-MAX_MATCHES = 100
-TIMEOUT = 10
+MAX_MATCHES = 50
+TIMEOUT = 15
+SPORT_TYPE = 1        # 1 = football (default site)
+LANGUAGE = 34         # Indonesian
 
 HEADERS = {
-    "user-agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36",
+    "user-agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 "
+                  "(KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36",
     "accept": "application/json, text/plain, */*",
     "origin": "https://www.rbtvplus.ws",
     "referer": "https://www.rbtvplus.ws/",
@@ -52,7 +61,20 @@ SEG_HEADERS = {
 
 # ==================== DECODE ====================
 
-def decode_response(resp):
+def decode_bytes(content: bytes) -> bytes:
+    """Decompress based on magic bytes."""
+    if content[:2] == b'\x1f\x8b':
+        return gzip.decompress(content)
+    if content[:2] == b'PK':
+        return content  # ZIP passthrough
+    if content[:4] == b'\x28\xb5\x2f\xfd':
+        if HAS_ZSTD:
+            return zstd.ZstdDecompressor().decompress(content)
+        return content
+    return content
+
+
+def decode_response(resp) -> str:
     content = resp.content
     enc = resp.headers.get("content-encoding", "").lower()
     if enc == "gzip" or content[:2] == b'\x1f\x8b':
@@ -69,10 +91,11 @@ def decode_response(resp):
     return content.decode("utf-8", errors="replace")
 
 
-# ==================== API ====================
+# ==================== API: DATA ====================
 
-def get_signing_key(sport_type=0):
-    url = f"{BASE_URL}/api/common/bs?code=100&sportType={sport_type}&stream=true"
+def get_signing_key(sport_type=SPORT_TYPE):
+    """Get MD5 signing key from Data API."""
+    url = f"{DATA_URL}/api/common/bs?code=100&sportType={sport_type}&stream=true"
     resp = requests.get(url, headers=HEADERS, timeout=TIMEOUT)
     m = re.search(r'[a-f0-9]{32}', resp.text)
     if not m:
@@ -81,43 +104,75 @@ def get_signing_key(sport_type=0):
     return m.group()
 
 
-def get_live_matches(md5, sport_type=0, language=34):
-    url = f"{BASE_URL}/sfver{md5}/api/match/live?sportType={sport_type}&language={language}&stream=true"
+def get_live_matches(md5, sport_type=SPORT_TYPE):
+    """Get live match list from Data API."""
+    url = (f"{DATA_URL}/sfver{md5}/api/match/live"
+           f"?sportType={sport_type}&language={LANGUAGE}&stream=true")
     resp = requests.get(url, headers=HEADERS, timeout=TIMEOUT)
     data = json.loads(decode_response(resp))
     if isinstance(data, dict):
-        return data.get("data") or data.get("list") or data.get("matches") or data.get("items") or []
-    return data
+        return (data.get("data") or data.get("list")
+                or data.get("matches") or data.get("items") or [])
+    return data if isinstance(data, list) else []
 
 
-def get_match_detail(md5, match_id, sport_type=1, language=34):
-    url = (f"{BASE_URL}/sfver{md5}/api/match/detail"
-           f"?matchId={match_id}&sportType={sport_type}&language={language}&stream=true")
+def get_match_detail(md5, match_id, sport_type=SPORT_TYPE):
+    """Get match detail from Data API."""
+    url = (f"{DATA_URL}/sfver{md5}/api/match/detail"
+           f"?matchId={match_id}&sportType={sport_type}&language={LANGUAGE}&stream=true")
     resp = requests.get(url, headers=HEADERS, timeout=TIMEOUT)
     return json.loads(decode_response(resp))
 
 
+# ==================== API: LIVE (STREAM) ====================
+
+def get_stream_from_live_api(md5, match_id, sport_type=SPORT_TYPE):
+    """
+    Try to get stream URL from Live API.
+    Tries multiple endpoint patterns.
+    """
+    endpoints = [
+        f"{LIVE_URL}/sfver{md5}/api/stream/live?matchId={match_id}&sportType={sport_type}&stream=true",
+        f"{LIVE_URL}/sfver{md5}/api/match/stream?matchId={match_id}&sportType={sport_type}&stream=true",
+        f"{LIVE_URL}/sfver{md5}/api/match/detail?matchId={match_id}&sportType={sport_type}&language={LANGUAGE}&stream=true",
+        f"{LIVE_URL_EU}/sfver{md5}/api/stream/live?matchId={match_id}&sportType={sport_type}&stream=true",
+    ]
+    for url in endpoints:
+        try:
+            resp = requests.get(url, headers=HEADERS, timeout=TIMEOUT)
+            if resp.status_code == 200:
+                data = json.loads(decode_response(resp))
+                stream_url = extract_stream_url(data)
+                if stream_url:
+                    return stream_url
+        except Exception:
+            continue
+    return None
+
+
 # ==================== EXTRACT ====================
 
-def extract_stream_url(detail_data):
-    """
-    Extract playlist URL dari match detail.
-    URL-nya .json tapi isinya m3u8 (disamarkan).
-    """
-    json_str = json.dumps(detail_data)
+def extract_stream_url(data):
+    """Extract stream/playlist URL from any JSON response."""
+    json_str = json.dumps(data)
 
-    # Pattern: /cfall/.../super/... (URL .json yang sebenarnya m3u8)
-    m = re.search(r'(https?://[^"]+/cfall/[^"]+/super/[^"]+)', json_str)
+    # Pattern 1: /cfall/.../super/...
+    m = re.search(r'(https?://[^"\s]+/cfall/[^"\s]+/super/[^"\s]+)', json_str)
     if m:
         return m.group(1)
 
-    # Fallback: .m3u8 langsung
-    m = re.search(r'(https?://[^"]+?\.m3u8)', json_str)
+    # Pattern 2: .m3u8
+    m = re.search(r'(https?://[^"\s]+\.m3u8[^"\s]*)', json_str)
     if m:
         return m.group(1)
 
-    # Fallback: /super/
-    m = re.search(r'(https?://[^"]+/super/[^"]+)', json_str)
+    # Pattern 3: /super/...
+    m = re.search(r'(https?://[^"\s]+/super/[^"\s]+)', json_str)
+    if m:
+        return m.group(1)
+
+    # Pattern 4: streamUrl / playUrl / hlsUrl fields
+    m = re.search(r'"(?:streamUrl|playUrl|hlsUrl|videoUrl|liveUrl)"\s*:\s*"(https?://[^"]+)"', json_str)
     if m:
         return m.group(1)
 
@@ -144,8 +199,8 @@ def get_match_name(detail_data, match_data):
 
 # ==================== M3U REWRITER ====================
 
-def rewrite_m3u8(m3u8_content, base_url, port):
-    """Rewrite segment URLs agar lewat proxy."""
+def rewrite_m3u8(m3u8_content: str, base_url: str, port: int) -> str:
+    """Rewrite segment URLs to go through proxy."""
     lines = m3u8_content.strip().split("\n")
     rewritten = []
     parsed_base = urlparse(base_url)
@@ -187,9 +242,9 @@ class RBTVProxyHandler(BaseHTTPRequestHandler):
                 self.send_response(200)
                 self.send_header("Content-Type", "text/html")
                 self.end_headers()
-                body = (f"<h1>RBTV Proxy v5</h1>"
+                body = (f"<h1>RBTV Proxy v6</h1>"
                         f"<p><a href='/playlist.m3u'>Playlist</a></p>"
-                        f"<p>Max: {MAX_MATCHES} | Timeout: {TIMEOUT}s</p>")
+                        f"<p>Max: {MAX_MATCHES} | Timeout: {TIMEOUT}s | Sport: {SPORT_TYPE}</p>")
                 self.wfile.write(body.encode())
             else:
                 self.send_error(404)
@@ -201,33 +256,40 @@ class RBTVProxyHandler(BaseHTTPRequestHandler):
                 pass
 
     def handle_playlist(self):
-        md5 = get_signing_key(0)
+        md5 = get_signing_key(SPORT_TYPE)
         if not md5:
             self.send_error(500, "Gagal ambil signing key")
             return
 
-        matches = get_live_matches(md5, sport_type=0)
-        if not isinstance(matches, list):
-            matches = []
+        matches = get_live_matches(md5, sport_type=SPORT_TYPE)
         matches = matches[:MAX_MATCHES]
 
         entries = []
 
         def fetch_one(match):
-            match_id = match.get("id") or match.get("matchId") or match.get("eventId")
-            sport_type = match.get("sportType", 1)
+            match_id = (match.get("id") or match.get("matchId")
+                        or match.get("eventId"))
+            sport_type = match.get("sportType", SPORT_TYPE)
             if not match_id:
                 return None
+
+            # 1) Try Data API detail
             detail = get_match_detail(md5, match_id, sport_type=sport_type)
             stream_url = extract_stream_url(detail)
+
+            # 2) Fallback: try Live API
+            if not stream_url:
+                stream_url = get_stream_from_live_api(md5, match_id, sport_type)
+
             name = get_match_name(detail, match)
             return (name, stream_url)
 
         with ThreadPoolExecutor(max_workers=5) as pool:
-            futures = [pool.submit(fetch_one, m) for m in matches if isinstance(m, dict)]
-            for f in as_completed(futures, timeout=TIMEOUT * 3):
+            futures = [pool.submit(fetch_one, m)
+                       for m in matches if isinstance(m, dict)]
+            for f in as_completed(futures, timeout=TIMEOUT * 4):
                 try:
-                    result = f.result(timeout=TIMEOUT)
+                    result = f.result(timeout=TIMEOUT * 2)
                     if result and result[1]:
                         entries.append(result)
                 except Exception as e:
@@ -249,8 +311,8 @@ class RBTVProxyHandler(BaseHTTPRequestHandler):
 
     def handle_hls(self, params):
         """
-        Fetch "playlist" (URL .json, content-type application/zip)
-        → isinya sebenarnya m3u8 → rewrite segment URLs
+        Fetch playlist (URL .json, content-type application/zip)
+        → isinya m3u8 → rewrite segment URLs
         """
         playlist_url = params.get("url", [""])[0]
         if not playlist_url:
@@ -259,7 +321,7 @@ class RBTVProxyHandler(BaseHTTPRequestHandler):
 
         resp = requests.get(playlist_url, headers=SEG_HEADERS, timeout=TIMEOUT)
 
-        # Content-nya m3u8 (bukan zip), tinggal decode encoding
+        # Decode content (m3u8 disamarkan sebagai zip)
         content = resp.content
         enc = resp.headers.get("content-encoding", "").lower()
         if enc == "gzip" or content[:2] == b'\x1f\x8b':
@@ -273,9 +335,14 @@ class RBTVProxyHandler(BaseHTTPRequestHandler):
                 content = zlib.decompress(content, -zlib.MAX_WBITS)
 
         m3u8_text = content.decode("utf-8", errors="replace")
-        rewritten = rewrite_m3u8(m3u8_text, playlist_url, PORT)
 
+        # Kalau bukan m3u8 valid, coba langsung return
+        if not m3u8_text.strip().startswith("#EXTM3U"):
+            print(f"[WARN] Response bukan m3u8: {m3u8_text[:200]}", flush=True)
+
+        rewritten = rewrite_m3u8(m3u8_text, playlist_url, PORT)
         body = rewritten.encode()
+
         self.send_response(200)
         self.send_header("Content-Type", "application/vnd.apple.mpegurl")
         self.send_header("Content-Length", str(len(body)))
@@ -287,7 +354,7 @@ class RBTVProxyHandler(BaseHTTPRequestHandler):
     def handle_segment(self, params):
         """
         Proxy segment: content-type asal application/zip,
-        tapi isinya MP2T → return sebagai video/mp2t
+        isinya MP2T → return sebagai video/mp2t
         """
         seg_url = params.get("url", [""])[0]
         if not seg_url:
@@ -312,8 +379,12 @@ class RBTVProxyHandler(BaseHTTPRequestHandler):
 
 def main():
     print("=" * 55, flush=True)
-    print("  RBTV Proxy Server (v5)", flush=True)
-    print(f"  Port: {PORT} | Max: {MAX_MATCHES} | Timeout: {TIMEOUT}s", flush=True)
+    print("  RBTV Proxy Server (v6 FINAL)", flush=True)
+    print(f"  Port: {PORT}", flush=True)
+    print(f"  Data API: {DATA_URL}", flush=True)
+    print(f"  Live API: {LIVE_URL}", flush=True)
+    print(f"  Max matches: {MAX_MATCHES} | Timeout: {TIMEOUT}s", flush=True)
+    print(f"  Sport: {SPORT_TYPE} | Language: {LANGUAGE}", flush=True)
     print("=" * 55, flush=True)
     print(flush=True)
     print(f"  ▶ http://localhost:{PORT}/playlist.m3u", flush=True)
