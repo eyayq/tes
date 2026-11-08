@@ -66,10 +66,30 @@ HEADERS = {
     "sec-fetch-site": "cross-site",
 }
 
+# ==================== SPORT TYPE MAPPING ====================
+
+SPORT_NAMES = {
+    0: "All Sports",
+    1: "Football",
+    2: "Basketball",
+    3: "Tennis",
+    4: "Baseball",
+    6: "Cricket",
+    7: "Motorsport",
+    8: "Rugby",
+    9: "American Football",
+    10: "Aussie Rules",
+    11: "Hockey",
+    12: "Badminton",
+    13: "Volleyball",
+    14: "Fighting",
+    15: "Cycling",
+    16: "Handball",
+    90: "Others",
+}
+
 # ==================== AES KEY MATERIAL ====================
-# From: Buffer.from("a7981cc9eb2f4d19dcfea57b101ecd89", "utf8")
 AES_KEY = b"a7981cc9eb2f4d19dcfea57b101ecd89"  # 32 bytes
-# From: Buffer.from("8017d3a8f1400d2f", "utf8")
 AES_IV = b"8017d3a8f1400d2f"  # 16 bytes
 
 DEBUG = True
@@ -249,13 +269,49 @@ def extract_matches_from_protobuf(data):
     return matches
 
 
+# ==================== LOGO EXTRACTION ====================
+
+def extract_logo_from_protobuf(data):
+    """
+    Extract logo URL from match detail protobuf.
+    Looks for string fields that look like image URLs (http + image extension).
+    """
+    if not isinstance(data, bytes):
+        return None
+
+    # Search recursively for URL-like strings
+    def _find_url(fields, depth=0):
+        if depth > 5:
+            return None
+        for fnum, wtype, val in fields:
+            if wtype == 2:
+                # Check if it's a printable string that looks like an image URL
+                try:
+                    text = val.decode('utf-8')
+                    if (text.startswith('http') and
+                            re.search(r'\.(png|jpg|jpeg|webp|svg|gif)', text, re.I)):
+                        return text
+                    # Also check for CDN paths
+                    if (text.startswith('http') and
+                            ('logo' in text.lower() or 'icon' in text.lower() or
+                             'team' in text.lower() or 'badge' in text.lower())):
+                        return text
+                except (UnicodeDecodeError, ValueError):
+                    pass
+                # Recurse into sub-messages
+                sub_fields = parse_message(val)
+                if sub_fields:
+                    result = _find_url(sub_fields, depth + 1)
+                    if result:
+                        return result
+        return None
+
+    return _find_url(parse_message(data))
+
+
 # ==================== STREAM ID EXTRACTION ====================
 
 def extract_stream_id(data, match_id=None, _depth=0):
-    """
-    Extract streamId from match detail protobuf.
-    Structure: top.field10 → field2 (repeated) → field1 = streamId
-    """
     if _depth > 6:
         return None
     if isinstance(data, dict):
@@ -306,7 +362,7 @@ def extract_stream_id(data, match_id=None, _depth=0):
                 if stream_id and stream_id != match_id and 100 < stream_id < 999999999:
                     return stream_id
 
-    # FALLBACK: generic search
+    # FALLBACK
     for fnum, wtype, val in fields:
         if wtype == 2 and 5 < len(val) < 2000:
             sub_fields = parse_message(val)
@@ -347,16 +403,18 @@ def rot47_decode(s):
 
 def build_tokenized_url(obfuscated_url, rb_session):
     """
-    Matches JS exactly:
+    Matches JS:
       const decoded = rot47(obfuscatedUrl).slice(8);
       const parsed = new URL(decoded);
-      const cipher = createCipheriv("aes-256-cbc", AES_KEY, AES_IV);
-      const encrypted = Buffer.concat([cipher.update(sessionToken), cipher.final()]);
       const token = encodeURIComponent(encrypted.toString("base64")) + "a";
       return `${parsed.origin}/token-${token}${parsed.pathname}${parsed.search}`;
     """
     decoded = rot47_decode(obfuscated_url)
-    decoded = decoded[8:]  # .slice(8)
+    decoded = decoded[8:]
+
+    if not decoded.startswith('http'):
+        print(f"    [ERROR] Decoded not a URL: {decoded[:60]!r}", file=sys.stderr, flush=True)
+        return None
 
     if not HAS_AES:
         print("    [ERROR] AES not available!", file=sys.stderr, flush=True)
@@ -371,10 +429,8 @@ def build_tokenized_url(obfuscated_url, rb_session):
         print(f"    [ERROR] AES encrypt failed: {e}", file=sys.stderr, flush=True)
         return None
 
-    # encodeURIComponent equivalent
     token = quote(token_b64, safe='') + 'a'
 
-    # Parse URL: origin + /token-{token} + pathname + search
     parsed = urlparse(decoded)
     origin = f"{parsed.scheme}://{parsed.netloc}"
     pathname = parsed.path or ''
@@ -389,18 +445,47 @@ def build_tokenized_url(obfuscated_url, rb_session):
 
 
 def extract_obfuscated_url(data):
+    """
+    Extract the ROT47-obfuscated URL from stream detail response.
+    VALIDATES: ROT47-decode + slice(8) must start with 'http'.
+    """
     if isinstance(data, bytes):
         candidates = re.findall(rb'[\x21-\x7e]{20,}', data)
+        if DEBUG_RAW:
+            print(f"    [RAW] Found {len(candidates)} printable strings >= 20 chars", flush=True)
+
+        for c in sorted(candidates, key=len, reverse=True):
+            try:
+                decoded = rot47_decode(c.decode('ascii'))
+                if len(decoded) > 8 and decoded[8:].startswith('http'):
+                    return c.decode('ascii')
+            except Exception:
+                continue
+
         if candidates:
-            longest = max(candidates, key=len)
-            return longest.decode('ascii')
+            print(f"    [WARN] No validated URL found, using longest candidate",
+                  file=sys.stderr, flush=True)
+            return max(candidates, key=len).decode('ascii')
         return None
+
     elif isinstance(data, (dict, list)):
+        if isinstance(data, dict):
+            for key in ("url", "streamUrl", "playUrl", "hlsUrl", "src", "link",
+                        "obfuscatedUrl", "encodedUrl"):
+                if key in data and isinstance(data[key], str) and len(data[key]) > 20:
+                    s = data[key]
+                    decoded = rot47_decode(s)
+                    if len(decoded) > 8 and decoded[8:].startswith('http'):
+                        return s
+                    return s
         json_str = json.dumps(data)
         m = re.findall(r'"([^"]{20,})"', json_str)
+        for s in sorted(m, key=len, reverse=True):
+            decoded = rot47_decode(s)
+            if len(decoded) > 8 and decoded[8:].startswith('http'):
+                return s
         if m:
-            longest = max(m, key=len)
-            return longest
+            return max(m, key=len)
         return None
     return None
 
@@ -580,7 +665,8 @@ def main():
         sys.exit(0)
 
     for m in matches[:5]:
-        print(f"    - {m['name']} (id={m['id']}, sport={m['sport_type']})", flush=True)
+        sport_name = SPORT_NAMES.get(m['sport_type'], f"Sport {m['sport_type']}")
+        print(f"    - {m['name']} (id={m['id']}, {sport_name})", flush=True)
 
     # Step 3: Sequential
     print("Step 3: Fetching stream URLs (sequential)...", flush=True)
@@ -590,10 +676,11 @@ def main():
         name = match["name"]
         match_id = match["id"]
         sport_type = match["sport_type"]
+        sport_name = SPORT_NAMES.get(sport_type, f"Sport {sport_type}")
 
-        print(f"  [{idx+1}/{len(matches)}] {name}...", end=" ", flush=True)
+        print(f"  [{idx+1}/{len(matches)}] {name} ({sport_name})...", end=" ", flush=True)
 
-        # 3a: Match detail → streamId
+        # 3a: Match detail → streamId + logo
         detail, raw_content = get_match_detail(match_id, sport_type, md5)
         if detail is None:
             print("NO DETAIL", flush=True)
@@ -602,6 +689,10 @@ def main():
         if DEBUG and isinstance(detail, bytes) and idx == 0:
             dump_protobuf(detail)
 
+        # Extract logo from protobuf
+        logo = extract_logo_from_protobuf(detail) if isinstance(detail, bytes) else None
+
+        # Extract streamId
         stream_id = extract_stream_id(detail, match_id=match_id)
         if not stream_id:
             print(f"NO STREAMID (matchId={match_id})", flush=True)
@@ -623,28 +714,10 @@ def main():
         if isinstance(stream_data, bytes):
             obfuscated = extract_obfuscated_url(stream_data)
         elif isinstance(stream_data, dict):
-            for key in ("url", "streamUrl", "playUrl", "hlsUrl", "src", "link",
-                        "obfuscatedUrl", "encodedUrl"):
-                if key in stream_data and isinstance(stream_data[key], str):
-                    obfuscated = stream_data[key]
-                    break
-            if not obfuscated:
-                for k, v in stream_data.items():
-                    if isinstance(v, dict):
-                        for key2 in ("url", "streamUrl", "playUrl", "hlsUrl"):
-                            if key2 in v and isinstance(v[key2], str):
-                                obfuscated = v[key2]
-                                break
-                    if obfuscated:
-                        break
-            if not obfuscated:
-                obfuscated = extract_obfuscated_url(stream_data)
+            obfuscated = extract_obfuscated_url(stream_data)
 
         if not obfuscated:
             print("NO OBFUSCATED URL", flush=True)
-            if DEBUG and isinstance(stream_data, dict):
-                print(f"    JSON: {json.dumps(stream_data, ensure_ascii=False)[:300]}",
-                      flush=True)
             continue
 
         # 3d: Build tokenized URL
@@ -653,19 +726,35 @@ def main():
             print("TOKEN BUILD FAILED", flush=True)
             continue
 
-        entries.append((name, final_url))
+        entries.append({
+            "name": name,
+            "url": final_url,
+            "logo": logo,
+            "sport": sport_name,
+        })
         print("OK", flush=True)
         if DEBUG:
             print(f"       → {final_url[:100]}", flush=True)
+        if logo and DEBUG:
+            print(f"       logo: {logo[:80]}", flush=True)
 
     elapsed = time.time() - t0
     print(f"\nGenerated {len(entries)} streams in {elapsed:.1f}s", flush=True)
 
-    # Build M3U
+    # Build M3U with tvg-logo and group-title
     lines = ["#EXTM3U"]
-    for name, stream_url in entries:
+    for entry in entries:
+        name = entry["name"]
+        stream_url = entry["url"]
+        logo = entry["logo"] or ""
+        sport = entry["sport"]
         tvg_id = re.sub(r'[^a-zA-Z0-9_]', '_', name)
-        lines.append(f'#EXTINF:-1 tvg-id="{tvg_id}",{name}')
+
+        # Build EXTINF line with tvg-logo and group-title
+        attrs = f'tvg-id="{tvg_id}" group-title="{sport}"'
+        if logo:
+            attrs += f' tvg-logo="{logo}"'
+        lines.append(f'#EXTINF:-1 {attrs},{name}')
         lines.append(stream_url)
 
     m3u_content = "\n".join(lines) + "\n"
