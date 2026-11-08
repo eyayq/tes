@@ -4,8 +4,15 @@ import re
 import sys
 import time
 import base64
+import gzip
+import zlib
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad
+
+try:
+    import brotli
+except ImportError:
+    brotli = None
 
 # === CONFIG ===
 DATA_URL = "https://apis-data10.tcpwe138stya.ru"
@@ -15,7 +22,7 @@ CONTINENT = "AS"
 COUNTRY = "ID"
 DIGIT = "trd"
 
-# AES key/IV — RAW UTF-8, NOT hex-decoded
+# AES key/IV — RAW UTF-8 bytes, NOT hex-decoded
 AES_KEY = b"a7981cc9eb2f4d19dcfea57b101ecd89"  # 32 bytes → AES-256
 AES_IV  = b"8017d3a8f1400d2f"                  # 16 bytes → CBC
 
@@ -46,21 +53,8 @@ def rot47(s):
 
 
 def decode(resp):
-    content = resp.content
-    enc = resp.headers.get("content-encoding", "").lower()
-    if enc == "br":
-        try:
-            import brotli
-            content = brotli.decompress(content)
-        except Exception:
-            pass
-    elif enc == "gzip":
-        import gzip
-        content = gzip.decompress(content)
-    elif enc == "deflate":
-        import zlib
-        content = zlib.decompress(content)
-    return content
+    """requests already decompresses gzip/deflate/br — just return content."""
+    return resp.content
 
 
 def find_key(d, keys, depth=0):
@@ -108,16 +102,13 @@ def encrypt_session(rb_session):
 def build_url(base_url, token_b64):
     """Insert token-{b64}a into the stream URL path."""
     token = f"token-{token_b64}a"
-
     if ".m3u8" in base_url:
         idx = base_url.rindex(".m3u8")
-        # Insert before .m3u8: .../path/token-XXXa.m3u8
         final = base_url[:idx] + token + base_url[idx:]
     elif base_url.endswith("/"):
         final = base_url + token
     else:
         final = base_url + "/" + token
-
     return final
 
 
@@ -157,7 +148,7 @@ try:
     else:
         matches = data
 except Exception:
-    print("  Response is not JSON — checking for protobuf/binary...")
+    print("  Response is not JSON — checking for binary...")
     print(f"  First 200 bytes: {content[:200]!r}")
     sys.exit(1)
 
@@ -167,11 +158,11 @@ if not matches:
 
 print(f"  Found {len(matches)} matches")
 
-# Pick first match
 match = matches[0]
 match_id = match.get("id") or match.get("matchId") or match.get("match_id")
 sport_type = match.get("sportType") or match.get("sport_type") or 0
-name = match.get("name") or match.get("matchName") or match.get("homeTeam", "?") + " vs " + match.get("awayTeam", "?")
+name = (match.get("name") or match.get("matchName")
+        or match.get("homeTeam", "?") + " vs " + match.get("awayTeam", "?"))
 print(f"  Using: {name} (id={match_id}, sport={sport_type})")
 
 
@@ -195,13 +186,10 @@ except Exception:
     print(f"  First 300 bytes: {content[:300]!r}")
     sys.exit(1)
 
-# Find streamId
 stream_id = find_key(detail, ["streamId", "stream_id"])
 if not stream_id:
-    # Try broader search
     stream_fields = find_all_keys(detail, "stream")
     print(f"  Stream-related fields: {stream_fields[:10]}")
-    # Fallback: look for any ID in the detail
     stream_id = find_key(detail, ["id"])
 
 print(f"  Stream ID: {stream_id}")
@@ -228,7 +216,6 @@ resp = session.get(
     timeout=15
 )
 
-# *** CRITICAL: capture rb-session header ***
 rb_session = resp.headers.get("rb-session", "")
 print(f"  Status: {resp.status_code}")
 print(f"  rb-session: {rb_session}")
@@ -248,17 +235,16 @@ except Exception:
     print(f"  First 500 bytes: {content[:500]!r}")
     stream_data = None
 
+
 # === STEP 5: Build Stream URL ===
 print("\n" + "=" * 60)
 print("STEP 5: Build Stream URL")
 print("=" * 60)
 
-# Find f4 (or the URL field) in stream_data
 f4_value = None
 if stream_data:
     f4_value = find_key(stream_data, ["f4", "url", "streamUrl", "m3u8Url", "playUrl"])
 
-# Also check all fields for anything URL-like
 if stream_data:
     all_fields = find_all_keys(stream_data, "url") + find_all_keys(stream_data, "f4")
     if all_fields:
@@ -266,23 +252,18 @@ if stream_data:
         for k, v in all_fields[:10]:
             print(f"    {k} = {str(v)[:120]}")
 
-# Determine base URL
 base_url = None
 if f4_value:
     print(f"\n  f4 value: {f4_value[:100]}")
-    # Try ROT47 decode
     rot47_decoded = rot47(f4_value)
     print(f"  ROT47(f4): {rot47_decoded[:100]}")
 
-    # Check if ROT47 result looks like a URL
     if "http" in rot47_decoded:
-        # Extract URL from ROT47 result
         url_match = re.search(r'https?://[^\s]+', rot47_decoded)
         if url_match:
             base_url = url_match.group()
             print(f"  ✓ URL found in ROT47: {base_url}")
         else:
-            # Maybe the whole thing is the URL after stripping prefix
             for i in range(min(16, len(rot47_decoded))):
                 if rot47_decoded[i:].startswith("http"):
                     base_url = rot47_decoded[i:]
@@ -292,12 +273,10 @@ if f4_value:
         base_url = f4_value
         print(f"  ✓ f4 is already a URL: {base_url}")
     else:
-        # Try other approaches
         print("  ⚠ f4 doesn't look like a URL even after ROT47")
         print(f"  f4 repr: {repr(f4_value[:80])}")
 
 if not base_url:
-    # Fallback: look for any http URL in the raw response
     url_match = re.search(rb'https?://[^\s"\'\\]+\.m3u8[^\s"\'\\]*', content)
     if url_match:
         base_url = url_match.group().decode()
@@ -310,7 +289,6 @@ if not base_url:
 
 if not base_url:
     print("\n  ⚠ Could not determine base URL")
-    print("  Full stream_data:")
     if stream_data:
         print(json.dumps(stream_data, indent=2)[:2000])
     else:
@@ -319,11 +297,9 @@ if not base_url:
 
 print(f"\n  Base URL: {base_url}")
 
-# Encrypt rb-session
 token_b64 = encrypt_session(rb_session)
 print(f"  Encrypted token: {token_b64[:60]}...")
 
-# Build final URL
 final_url = build_url(base_url, token_b64)
 
 print(f"\n{'=' * 60}")
@@ -332,10 +308,10 @@ print(f"  {final_url}")
 print(f"{'=' * 60}")
 print(f"""
   Playback:
-    - VLC: Media → Open Network Stream → paste URL
+    - VLC:  Media → Open Network Stream → paste URL
     - mpv:  mpv "{final_url}" --header="Referer: https://www.rbtvplus.ws/"
     - curl: curl -H "Referer: https://www.rbtvplus.ws/" "{final_url}"
 
-  ⚠ Token is IP-locked. Must play from same IP that made the request.
+  ⚠ Token is IP-locked. Must play from same IP.
   ⚠ Token expires after ~30-60 minutes.
 """)   
