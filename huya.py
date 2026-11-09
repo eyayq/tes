@@ -8,7 +8,7 @@ import sys
 
 from curl_cffi import requests as cffi_requests
 
-ROOM_ID = sys.argv[1] if len(sys.argv) > 1 else "12475010"
+ROOM_ID = sys.argv[1] if len(sys.argv) > 1 else "793400"
 TIMEOUT = 15
 
 s = cffi_requests.Session(impersonate="chrome")
