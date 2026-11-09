@@ -229,7 +229,7 @@ def get_all_categories():
 
 
 # ─── Step 1: Ambil rooms (adaptive) ─────────────────────────────
-def get_all_rooms(max_rooms, categories):
+def get_all_rooms(categories):
     s = get_session()
     all_rooms = []
     seen_ids = set()
@@ -268,7 +268,7 @@ def get_all_rooms(max_rooms, categories):
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         futures = {
             executor.submit(fetch_category, cat): cat
-            for cat in categories
+            for cat in categories  # ← SEMUA kategori, tanpa limit
         }
 
         done_count = 0
@@ -280,15 +280,11 @@ def get_all_rooms(max_rooms, categories):
                         continue
                     seen_ids.add(room['id'])
                     all_rooms.append(room)
-                    if len(all_rooms) >= max_rooms:
-                        break
             done_count += 1
             if done_count % 100 == 0:
                 print(f"  Progress: {done_count}/{len(categories)} | total rooms: {len(all_rooms)}")
-            if len(all_rooms) >= max_rooms:
-                break
 
-    return all_rooms[:max_rooms]   
+    return all_rooms   
 
 
 # ─── Step 2: Stream URL (getH5PlayV1) ───────────────────────────
@@ -384,7 +380,7 @@ def generate_playlist(output_file, max_rooms, max_workers=MAX_WORKERS):
 
     # Step 1: Ambil rooms (adaptive)
     print(f"\n[1/3] rooms (adaptive, max {max_rooms})...")
-    all_rooms = get_all_rooms(max_rooms, categories)
+    all_rooms = get_all_rooms(categories)
 
     print(f"\n  Total rooms: {len(all_rooms)}")
 
@@ -458,8 +454,8 @@ def generate_playlist(output_file, max_rooms, max_workers=MAX_WORKERS):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Douyu M3U Playlist Generator (Final v3)')
-    parser.add_argument('--output', '-o', default='playlist.m3u',
-                        help='File output M3U (default: playlist.m3u)')
+    parser.add_argument('--output', '-o', default='a/doyo.gif',
+                        help='File output M3U (default: a/doyo.gif)')
     parser.add_argument('--rooms', '-r', type=int, default=MAX_ROOMS_TOTAL,
                         help=f'Total room (default: {MAX_ROOMS_TOTAL})')
     parser.add_argument('--workers', '-w', type=int, default=MAX_WORKERS,
