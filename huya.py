@@ -15,7 +15,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from curl_cffi import requests as cffi_requests
 
 # ─── Konfigurasi ─────────────────────────────────────────────────
-MAX_ROOMS_TOTAL = 2500
+MAX_ROOMS_TOTAL = 5500
 REQUEST_DELAY = 0
 TIMEOUT = 10
 MAX_WORKERS = 301
@@ -242,7 +242,7 @@ def get_all_rooms(categories):
         s = get_session()
         results = []
         page = 1
-        MAX_PAGE = 5
+        MAX_PAGE = 15
         while page <= MAX_PAGE:
             api = (
                 f"https://open.douyucdn.cn/api/RoomApi/live/{cat['short']}"
