@@ -391,7 +391,7 @@ def build_m3u(streams: list[Stream]) -> str:
         # Kick → Worker URL (token selalu fresh via 302 redirect)
         # YouTube → URL langsung
         if s.platform == "Kick":
-            lines.append(f"{WORKER_URL}/kick/{s.channel_slug}")
+            lines.append(f"{WORKER_URL}/0.m3u8/{s.channel_slug}")
         else:
             lines.append(s.playback_url)
 
@@ -561,7 +561,7 @@ def build_m3u_direct(streams: list[Stream]) -> str:
             f'tvg-logo="{s.tvg_logo}",'
             f'group-title="{s.group_title}"'
         )
-        lines.append(f"#EXTINF:-1,{attrs} {format_title(s)}")
+        lines.append(f"#EXTINF:-1 {attrs} {format_title(s)}")
         lines.append(s.playback_url)
     return "\n".join(lines) + "\n"
 
