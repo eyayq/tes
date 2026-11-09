@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 """
-DOUYU M3U PLAYLIST GENERATOR — FINAL v2
+DOUYU M3U PLAYLIST GENERATOR — FINAL v3
 - Open API (open.douyucdn.cn) — TANPA AUTH
 - Auto-scrape kategori dari /api/RoomApi/game
 - Adaptive: iterate semua kategori sampai max_rooms tercapai
-- getH5PlayV1 (encryption) — PRIMARY
-- coapi.douyucdn.cn (MD5 sign) — FALLBACK
+- getH5PlayV1 (encryption) — SINGLE METHOD
 - curl_cffi (Chrome TLS fingerprint)
 - ThreadPoolExecutor (parallel)
 - tvg-logo + group-title otomatis
@@ -189,7 +188,7 @@ def translate_text(text):
     return text
 
 
-# ─── Parse response (handle list atau dict) ─────────────────────
+# ─── Parse response ─────────────────────────────────────────────
 def parse_response(data, key='rooms'):
     data_field = data.get('data', [])
     if isinstance(data_field, list):
@@ -302,8 +301,8 @@ def get_all_rooms(max_rooms, categories):
     return all_rooms[:max_rooms]
 
 
-# ─── Step 2: Stream URL — Method 1 (getH5PlayV1) — PRIMARY ──────
-def get_stream_url_method1(room_id):
+# ─── Step 2: Stream URL (getH5PlayV1) ───────────────────────────
+def get_stream_url(room_id):
     s = get_session()
     did = uuid.uuid4().hex
     ts = str(int(time.time()))
@@ -366,50 +365,7 @@ def get_stream_url_method1(room_id):
     return None
 
 
-# ─── Step 3: Stream URL — Method 2 (coapi, MD5 sign) — FALLBACK ─
-def get_stream_url_method2(room_id):
-    s = get_session()
-    tt = str(int(time.time()))
-
-    sign_content = (
-        f"lapi/live/thirdPart/getPlay/{room_id}"
-        f"?aid=pcclient&rate=0&time={tt}9TUk5fjjUjg9qIMH3sdnh"
-    )
-    sign = hashlib.md5(sign_content.encode('ascii')).hexdigest()
-
-    api = (
-        f"https://coapi.douyucdn.cn/lapi/live/thirdPart/getPlay/{room_id}"
-        f"?rate=0&cdn=ws-h5&auth={sign}"
-    )
-    try:
-        r = s.get(api, timeout=TIMEOUT)
-        if r.status_code == 200:
-            data = r.json()
-            if data.get('error') == 0:
-                d = data.get('data', {})
-                if isinstance(d, dict):
-                    return build_stream_url(
-                        d.get('rtmp_url', ''),
-                        d.get('rtmp_live', '')
-                    )
-    except Exception:
-        pass
-
-    return None
-
-
-# ─── Step 4: Get stream URL (Method 1 → Method 2) ───────────────
-def get_stream_url(room_id):
-    url = get_stream_url_method1(room_id)
-    if url:
-        return url
-    url = get_stream_url_method2(room_id)
-    if url:
-        return url
-    return None
-
-
-# ─── Step 5: Worker ──────────────────────────────────────────────
+# ─── Step 3: Worker ──────────────────────────────────────────────
 def fetch_worker(args):
     idx, room = args
     room_id = room['id']
@@ -420,10 +376,10 @@ def fetch_worker(args):
     return (idx, room, stream_url, None)
 
 
-# ─── Step 6: Generate playlist ───────────────────────────────────
+# ─── Step 4: Generate playlist ───────────────────────────────────
 def generate_playlist(output_file, max_rooms, max_workers=MAX_WORKERS):
     print("=" * 55)
-    print("  DOUYU M3U PLAYLIST GENERATOR (FINAL v2)")
+    print("  DOUYU M3U PLAYLIST GENERATOR (FINAL v3)")
     print(f"  {max_rooms} rooms | {max_workers} threads | {PER_CATEGORY}/kategori")
     print("=" * 55)
 
@@ -511,7 +467,7 @@ def generate_playlist(output_file, max_rooms, max_workers=MAX_WORKERS):
 # ─── Main ────────────────────────────────────────────────────────
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='Douyu M3U Playlist Generator (Final v2)')
+        description='Douyu M3U Playlist Generator (Final v3)')
     parser.add_argument('--output', '-o', default='playlist.m3u',
                         help='File output M3U (default: playlist.m3u)')
     parser.add_argument('--rooms', '-r', type=int, default=MAX_ROOMS_TOTAL,
@@ -536,3 +492,11 @@ if __name__ == '__main__':
         max_rooms=args.rooms,
         max_workers=args.workers,
     )   
+
+
+
+
+
+
+
+
