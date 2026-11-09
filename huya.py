@@ -233,7 +233,7 @@ def get_all_rooms(categories):
     seen_ids = set()
     lock = threading.Lock()
 
-    def fetch_category(cat):
+def fetch_category(cat):
     s = get_session()
     results = []
     page = 1
