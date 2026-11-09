@@ -1,18 +1,4 @@
 
-#!/usr/bin/env python3
-"""
-DOUYU M3U PLAYLIST GENERATOR — FINAL
-- Open API (open.douyucdn.cn) — TANPA AUTH
-- Auto-scrape 3222 kategori dari /api/RoomApi/game
-- Adaptive: iterate semua kategori sampai max_rooms tercapai
-- coapi.douyucdn.cn (MD5 sign) + getH5PlayV1 (encryption) + hlsH5Preview
-- curl_cffi (Chrome TLS fingerprint)
-- ThreadPoolExecutor (parallel)
-- tvg-logo + group-title otomatis
-- Chinese → English translation
-- Output: playlist.m3u
-"""
-
 import re
 import json
 import time
@@ -25,10 +11,10 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from curl_cffi import requests as cffi_requests
 
 # ─── Konfigurasi ─────────────────────────────────────────────────
-MAX_ROOMS_TOTAL = 2000
+MAX_ROOMS_TOTAL = 500
 REQUEST_DELAY = 0
 TIMEOUT = 15
-MAX_WORKERS = 38
+MAX_WORKERS = 28
 PER_CATEGORY = 50
 
 _local = threading.local()
