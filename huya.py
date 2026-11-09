@@ -59,13 +59,10 @@ def get_session() -> requests.Session:
         _local.session.headers.update({
             "Authorization": f"Bearer {KICK_SESSION_TOKEN}",
             "Accept": "application/json",
-            "Content-Type": "application/json",
             "User-Agent": ("Mozilla/5.0 (Linux; Android 10; K) "
                            "AppleWebKit/537.36 (KHTML, like Gecko) "
                            "Chrome/156.0.0.0 Mobile Safari/537.36"),
             "x-app-platform": "web",
-            "Origin": "https://kick.com",
-            "Referer": "https://kick.com/",
         })
     return _local.session
 
@@ -74,11 +71,11 @@ def smart_sleep(base=0.3):
     time.sleep(base + random.uniform(0, 0.4))
 
 
-# ─── KICK: Fetch list streams (kick.com) ─────────────────────────────────────
+# ─── KICK: Fetch list streams (pagination) ───────────────────────────────────
 def fetch_livestreams(category: str, language: str, max_streams: int = 100) -> list[dict]:
     """
     GET kick.com/stream/livestreams/{lang}?page=X&limit=50&category=Y
-    → metadata + stream id (playback_url di sini TANPA token, tidak bisa diputar)
+    → metadata + channel slug (untuk fetch playback_url)
     """
     all_streams = []
     page = 1
@@ -86,6 +83,7 @@ def fetch_livestreams(category: str, language: str, max_streams: int = 100) -> l
     while len(all_streams) < max_streams:
         params = {"page": page, "limit": 50, "category": category}
         url = f"https://kick.com/stream/livestreams/{language}"
+        data = None
 
         for attempt in range(RETRY_COUNT):
             try:
@@ -101,11 +99,6 @@ def fetch_livestreams(category: str, language: str, max_streams: int = 100) -> l
                     time.sleep(1)
             except Exception:
                 time.sleep(2)
-        else:
-            break
-
-        if 'data' not in dir():
-            data = None
 
         if not data:
             break
@@ -128,53 +121,25 @@ def fetch_livestreams(category: str, language: str, max_streams: int = 100) -> l
     return all_streams[:max_streams]
 
 
-# ─── KICK: Fetch playback_url dengan token (web.kick.com) ────────────────────
-def fetch_playback_with_token(stream_id: int) -> Optional[str]:
+# ─── KICK: Fetch playback_url dengan token ───────────────────────────────────
+def fetch_playback_url(channel_slug: str) -> Optional[str]:
     """
-    POST web.kick.com/api/v1/stream/{id}/playback
+    GET kick.com/api/v2/channels/{slug}/livestream
     → playback_url["live"] = "https://...m3u8?token=eyJ..."
     """
-    body = {
-        "video_player": {
-            "player": {
-                "player_name": "web_mobile",
-                "player_version": "web_mobile_fd20d6ce",
-                "player_software": "IVS Player",
-                "player_software_version": "1.56.2",
-            },
-            "mux_sdk": {"sdk_available": True},
-            "pal_sdk": {"sdk_available": False, "nonce": ""},
-            "datazoom_sdk": {"sdk_available": True, "datazoom_sdk_version": "2.33.0", "om_sdk_version": "1.6.6"},
-            "google_ads_sdk": {"sdk_available": False},
-            "ima_sdk": {"sdk_available": False},
-        },
-        "video_session": {
-            "page_type": "channel",
-            "player_remote_played": False,
-            "enable_sampling": False,
-            "url_path": "",
-            "autoplay_behaviour": "click",
-            "play_muted": False,
-            "viewer_connection_type": "",
-        },
-        "user_session": {
-            "session_id": str(uuid.uuid4()),
-            "player_device_id": str(uuid.uuid4()),
-            "browser_lang": "id",
-            "non_personalised_ads": True,
-            "gdpr": 0,
-        },
-    }
-
-    url = f"https://web.kick.com/api/v1/stream/{stream_id}/playback"
+    url = f"https://kick.com/api/v2/channels/{channel_slug}/livestream"
 
     for attempt in range(RETRY_COUNT):
         try:
-            r = get_session().post(url, json=body, timeout=REQUEST_TIMEOUT)
+            r = get_session().get(url, timeout=REQUEST_TIMEOUT)
             if r.status_code == 200:
                 data = r.json()
                 pb = data.get("playback_url", {})
-                return pb.get("live") or ""
+                if isinstance(pb, dict):
+                    return pb.get("live") or ""
+                if isinstance(pb, str) and pb.startswith("http"):
+                    return pb
+                return None
             elif r.status_code == 429:
                 wait = 5 * (3 ** attempt)
                 log.warning("429 (playback)! Tunggu %ds", wait)
@@ -188,17 +153,13 @@ def fetch_playback_with_token(stream_id: int) -> Optional[str]:
 
 # ─── KICK: Process stream ─────────────────────────────────────────────────────
 def process_kick_stream(stream_data: dict) -> Optional[Stream]:
-    stream_id = stream_data.get("id")
-    if not stream_id:
-        return None
-
     channel = stream_data.get("channel", {})
     channel_slug = channel.get("slug", "")
     if not channel_slug:
         return None
 
-    # Fetch playback_url dengan token (WAJIB)
-    playback_url = fetch_playback_with_token(stream_id)
+    # Fetch playback_url dengan token
+    playback_url = fetch_playback_url(channel_slug)
     if not playback_url:
         return None
 
@@ -322,11 +283,6 @@ def main():
     log.info("=== Kick + YouTube M3U Scraper ===")
     log.info("Settings: max-per-cat=%d, max-streams=%d, lang=%s, cats=%s",
              args.max_per_category, args.max_streams, args.language, categories)
-
-    if "paste_token" in KICK_SESSION_TOKEN and not args.yt_only:
-        log.error("❌ Set KICK_SESSION_TOKEN!")
-        log.error("   export KICK_SESSION_TOKEN=kat_xxx")
-        return
 
     all_streams: list[Stream] = []
 
