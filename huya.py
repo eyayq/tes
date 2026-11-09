@@ -21,7 +21,7 @@ REQUEST_TIMEOUT = 15
 RETRY_COUNT = 4
 OUTPUT_FILE = "playlist.m3u"
 
-MAX_PER_CATEGORY = 1001
+MAX_PER_CATEGORY = 1000
 MAX_STREAMS = 1500
 LANGUAGE = "id"
 CATEGORIES = ["games", "irl", "music", "gambling", "creative"]
@@ -168,7 +168,7 @@ def fetch_recommended(language: str, max_streams: int = 50) -> list[dict]:
     cursor = None
 
     while len(all_streams) < max_streams:
-        params = {"limit": 150, "language": language}
+        params = {"limit": 50, "language": language}
         if cursor:
             params["cursor"] = cursor
 
