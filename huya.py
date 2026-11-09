@@ -1,4 +1,3 @@
-
 import re
 import json
 import time
@@ -236,7 +235,6 @@ def get_all_rooms(categories):
 
     def fetch_category(cat):
         s = get_session()  # ← PINDAHKAN KE SINI (per-thread)
-        results = []
         page = 1
         while True:
             api = (
