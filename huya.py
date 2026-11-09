@@ -19,10 +19,10 @@ import requests
 MAX_WORKERS = 5
 REQUEST_TIMEOUT = 15
 RETRY_COUNT = 4
-OUTPUT_FILE = "playlist.m3u"
+OUTPUT_FILE = "a/kik.gif"
 
 MAX_PER_CATEGORY = 1000
-MAX_STREAMS = 1500
+MAX_STREAMS = 15
 LANGUAGE = "id"
 CATEGORIES = ["games", "irl", "music", "gambling", "creative"]
 LANGUAGES = ["id", "jp", "ja", "en"]
@@ -384,7 +384,7 @@ def build_m3u(streams: list[Stream]) -> str:
             f'tvg-id="{s.platform}.{s.group_title}.{s.channel_slug}" '
             f'tvg-name="{s.channel_slug}" '
             f'tvg-logo="{s.tvg_logo}" '
-            f'group-title="{s.group_title}",'
+            f'group-title="{s.group_title} [vip tes 2]",'
         )
         lines.append(f"#EXTINF:-1 {attrs}, {format_title(s)}")
 
