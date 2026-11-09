@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+"""
+DOUYU M3U PLAYLIST GENERATOR — FINAL v5
+"""
 
 import re
 import json
@@ -196,6 +200,39 @@ def build_stream_url(rtmp_url, rtmp_live):
     return f"{rtmp_url}/{rtmp_live}"
 
 
+# ─── Encryption cache (fetch 1x, pakai untuk semua room) ─────────
+_enc_cache = {}
+_enc_lock = threading.Lock()
+
+
+def get_encryption():
+    """Fetch encryption data 1x, cache untuk semua thread (60 detik)."""
+    with _enc_lock:
+        if _enc_cache.get('key') and time.time() - _enc_cache.get('ts', 0) < 60:
+            return _enc_cache
+    s = get_session()
+    did = uuid.uuid4().hex
+    enc_api = f"https://www.douyu.com/wgapi/livenc/liveweb/websec/getEncryption?did={did}"
+    try:
+        r = s.get(enc_api, timeout=TIMEOUT)
+        if r.status_code != 200:
+            return None
+        data = r.json()
+        if data.get('error') != 0:
+            return None
+        enc_data = data.get('data', {})
+        if not isinstance(enc_data, dict):
+            return None
+        enc_data['did'] = did
+        enc_data['ts'] = time.time()
+        with _enc_lock:
+            _enc_cache.clear()
+            _enc_cache.update(enc_data)
+        return enc_data
+    except Exception:
+        return None
+
+
 # ─── Step 0: Scrape SEMUA kategori ──────────────────────────────
 def get_all_categories():
     s = get_session()
@@ -230,12 +267,12 @@ def get_all_categories():
 
 # ─── Step 1: Ambil rooms (adaptive) ─────────────────────────────
 def get_all_rooms(categories):
-    s = get_session()
     all_rooms = []
     seen_ids = set()
     lock = threading.Lock()
 
     def fetch_category(cat):
+        s = get_session()
         api = (
             f"https://open.douyucdn.cn/api/RoomApi/live/{cat['short']}"
             f"?limit=30&page=1"
@@ -268,7 +305,7 @@ def get_all_rooms(categories):
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         futures = {
             executor.submit(fetch_category, cat): cat
-            for cat in categories  # ← SEMUA kategori, tanpa limit
+            for cat in categories
         }
 
         done_count = 0
@@ -284,69 +321,66 @@ def get_all_rooms(categories):
             if done_count % 100 == 0:
                 print(f"  Progress: {done_count}/{len(categories)} | total rooms: {len(all_rooms)}")
 
-    return all_rooms   
+    return all_rooms
 
 
-# ─── Step 2: Stream URL (getH5PlayV1) ───────────────────────────
-def get_stream_url(room_id):
-    s = get_session()
-    did = uuid.uuid4().hex
-    ts = str(int(time.time()))
+# ─── Step 2: Stream URL (getH5PlayV1 + cache + retry) ───────────
+def get_stream_url(room_id, retries=2):
+    for attempt in range(retries + 1):
+        enc = get_encryption()
+        if not enc:
+            time.sleep(1)
+            continue
 
-    enc_api = f"https://www.douyu.com/wgapi/livenc/liveweb/websec/getEncryption?did={did}"
-    try:
-        r = s.get(enc_api, timeout=TIMEOUT)
-        if r.status_code != 200:
-            return None
-        data = r.json()
-        if data.get('error') != 0:
-            return None
-        enc_data = data.get('data', {})
-        if not isinstance(enc_data, dict):
-            return None
-    except Exception:
-        return None
+        did = enc.get('did', uuid.uuid4().hex)
+        key = enc.get('key', '')
+        rand_str = enc.get('rand_str', '')
+        enc_time = int(enc.get('enc_time', 0))
+        enc_data_str = enc.get('enc_data', '')
 
-    key = enc_data.get('key', '')
-    rand_str = enc_data.get('rand_str', '')
-    enc_time = int(enc_data.get('enc_time', 0))
-    enc_data_str = enc_data.get('enc_data', '')
+        if not key or not rand_str:
+            time.sleep(1)
+            continue
 
-    if not key or not rand_str:
-        return None
+        ts = str(int(time.time()))
+        f = rand_str
+        for _ in range(enc_time):
+            f = hashlib.md5((f + key).encode('utf-8')).hexdigest()
+        auth = hashlib.md5((f + key + str(room_id) + ts).encode('utf-8')).hexdigest()
 
-    f = rand_str
-    for _ in range(enc_time):
-        f = hashlib.md5((f + key).encode('utf-8')).hexdigest()
-    auth = hashlib.md5((f + key + str(room_id) + ts).encode('utf-8')).hexdigest()
-
-    api = f"https://www.douyu.com/lapi/live/getH5PlayV1/{room_id}"
-    form_data = {
-        'enc_data': enc_data_str,
-        'tt': ts,
-        'did': did,
-        'auth': auth,
-        'cdn': 'ws-h5',
-        'rate': '0',
-        'ver': 'Douyu_new',
-        'iar': '0',
-        'ive': '0',
-        'prev': '1',
-        'bs': '2',
-    }
-    try:
-        r = s.post(api, data=form_data, timeout=TIMEOUT)
-        if r.status_code == 200:
-            data = r.json()
-            if data.get('error') == 0:
-                d = data.get('data', {})
-                if isinstance(d, dict):
-                    return build_stream_url(
-                        d.get('rtmp_url', ''),
-                        d.get('rtmp_live', '')
-                    )
-    except Exception:
-        pass
+        s = get_session()
+        api = f"https://www.douyu.com/lapi/live/getH5PlayV1/{room_id}"
+        form_data = {
+            'enc_data': enc_data_str,
+            'tt': ts,
+            'did': did,
+            'auth': auth,
+            'cdn': 'ws-h5',
+            'rate': '0',
+            'ver': 'Douyu_new',
+            'iar': '0',
+            'ive': '0',
+            'prev': '1',
+            'bs': '2',
+        }
+        try:
+            r = s.post(api, data=form_data, timeout=TIMEOUT)
+            if r.status_code == 200:
+                data = r.json()
+                if data.get('error') == 0:
+                    d = data.get('data', {})
+                    if isinstance(d, dict):
+                        url = build_stream_url(
+                            d.get('rtmp_url', ''),
+                            d.get('rtmp_live', '')
+                        )
+                        if url:
+                            return url
+            if attempt < retries:
+                time.sleep(1 + attempt)
+        except Exception:
+            if attempt < retries:
+                time.sleep(1)
 
     return None
 
@@ -365,31 +399,31 @@ def fetch_worker(args):
 # ─── Step 4: Generate playlist ───────────────────────────────────
 def generate_playlist(output_file, max_rooms, max_workers=MAX_WORKERS):
     print("=" * 55)
-    print("  ✓)")
-    print(f"  {max_rooms} rooms | {max_workers} ✓ | {PER_CATEGORY}/kategori")
+    print("  DOUYU M3U PLAYLIST GENERATOR (FINAL v5)")
+    print(f"  {max_rooms} rooms | {max_workers} threads | {PER_CATEGORY}/kategori")
     print("=" * 55)
 
     # Step 0: Scrape semua kategori
-    print("\n[0/3] semua kategori...")
+    print("\n[0/3] Scraping semua kategori...")
     categories = get_all_categories()
-    print(f"  Kategori : {len(categories)}")
+    print(f"  Kategori ditemukan: {len(categories)}")
 
     if not categories:
-        print("  [ERROR] Tidak bisa!")
+        print("  [ERROR] Tidak bisa ambil kategori!")
         return
 
     # Step 1: Ambil rooms (adaptive)
-    print(f"\n[1/3] rooms (adaptive, max {max_rooms})...")
+    print(f"\n[1/3] Mengambil rooms (adaptive, max {max_rooms})...")
     all_rooms = get_all_rooms(categories)
 
     print(f"\n  Total rooms: {len(all_rooms)}")
 
     if not all_rooms:
-        print("\n  [ERROR] Tidak ada rooms!.")
+        print("\n  [ERROR] Tidak ada rooms live!")
         return
 
     # Step 2: Stream URL (PARALEL)
-    print(f"\n[2/3] stream URL ({max_workers} )...")
+    print(f"\n[2/3] Mengambil stream URL ({max_workers} threads)...")
     results = [None] * len(all_rooms)
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
@@ -407,7 +441,7 @@ def generate_playlist(output_file, max_rooms, max_workers=MAX_WORKERS):
                 print(f"  Progress: {done_count}/{len(all_rooms)}")
 
     # Step 3: Build playlist + translate
-    print(f"\n[3/3] Membangun playlist...")
+    print(f"\n[3/3] Membangun playlist + translate...")
     lines = ['#EXTM3U']
     live_count = 0
     offline_count = 0
@@ -453,15 +487,15 @@ def generate_playlist(output_file, max_rooms, max_workers=MAX_WORKERS):
 # ─── Main ────────────────────────────────────────────────────────
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='Douyu M3U Playlist Generator (Final v3)')
+        description='Douyu M3U Playlist Generator (Final v5)')
     parser.add_argument('--output', '-o', default='playlist.m3u',
-                        help='File output M3U (default: )')
+                        help='File output M3U (default: playlist.m3u)')
     parser.add_argument('--rooms', '-r', type=int, default=MAX_ROOMS_TOTAL,
                         help=f'Total room (default: {MAX_ROOMS_TOTAL})')
     parser.add_argument('--workers', '-w', type=int, default=MAX_WORKERS,
                         help='Jumlah thread paralel (default: 28)')
     parser.add_argument('--delay', '-d', type=float, default=REQUEST_DELAY,
-                        help='Jeda antar request (default: 0)')
+                        help='Jeda antar request (default: 0.1)')
     parser.add_argument('--per-cat', '-p', type=int, default=PER_CATEGORY,
                         help=f'Room per kategori (default: {PER_CATEGORY})')
     parser.add_argument('--no-translate', action='store_true',
@@ -478,14 +512,3 @@ if __name__ == '__main__':
         max_rooms=args.rooms,
         max_workers=args.workers,
     )   
-
-
-
-
-
-
-
-
-
-
-
