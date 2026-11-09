@@ -14,7 +14,7 @@ from curl_cffi import requests as cffi_requests
 MAX_ROOMS_TOTAL = 1500
 REQUEST_DELAY = 0
 TIMEOUT = 15
-MAX_WORKERS = 10l
+MAX_WORKERS = 101
 PER_CATEGORY = 50
 
 _local = threading.local()
