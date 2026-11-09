@@ -7,7 +7,7 @@ import threading
 import re
 import json
 import os
-import uuid
+import uuid as uuid_lib
 from datetime import datetime, timezone
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
@@ -25,9 +25,13 @@ MAX_PER_CATEGORY = 10
 MAX_STREAMS = 1000
 LANGUAGE = "id"
 CATEGORIES = ["games", "irl", "music", "gambling", "creative"]
+LANGUAGES = ["id", "en"]  # multi-language untuk lebih banyak UUID
 
 # ─── SESSION TOKEN ────────────────────────────────────────────────────────────
-KICK_SESSION_TOKEN = os.getenv("KICK_SESSION_TOKEN", "kat_aBAhHd_aLVu-4dyfYCzpja9SVvFyEXbOeXwoYHfxAuQ")
+KICK_SESSION_TOKEN = os.getenv(
+    "KICK_SESSION_TOKEN",
+    "kat_aBAhHd_aLVu-4dyfYCzpja9SVvFyEXbOeXwoYHfxAuQ"
+)
 
 YOUTUBE_CHANNELS = [
     ("https://www.youtube.com/@MPLIndonesia/live", "MPL Indonesia"),
@@ -59,10 +63,13 @@ def get_session() -> requests.Session:
         _local.session.headers.update({
             "Authorization": f"Bearer {KICK_SESSION_TOKEN}",
             "Accept": "application/json",
+            "Content-Type": "application/json",
             "User-Agent": ("Mozilla/5.0 (Linux; Android 10; K) "
                            "AppleWebKit/537.36 (KHTML, like Gecko) "
                            "Chrome/156.0.0.0 Mobile Safari/537.36"),
             "x-app-platform": "web",
+            "Origin": "https://kick.com",
+            "Referer": "https://kick.com/",
         })
     return _local.session
 
@@ -71,35 +78,55 @@ def smart_sleep(base=0.3):
     time.sleep(base + random.uniform(0, 0.4))
 
 
-# ─── KICK: Fetch list streams (pagination) ───────────────────────────────────
-def fetch_livestreams(category: str, language: str, max_streams: int = 100) -> list[dict]:
+def _get(url: str, params: dict | None = None) -> Optional[dict]:
+    for attempt in range(RETRY_COUNT):
+        try:
+            r = get_session().get(url, params=params, timeout=REQUEST_TIMEOUT)
+            if r.status_code == 200:
+                return r.json()
+            elif r.status_code == 429:
+                wait = 5 * (3 ** attempt)
+                log.warning("429! Tunggu %ds", wait)
+                time.sleep(wait)
+            else:
+                time.sleep(1)
+        except Exception:
+            time.sleep(2)
+    return None
+
+
+def _post(url: str, json_body: dict) -> Optional[dict]:
+    for attempt in range(RETRY_COUNT):
+        try:
+            r = get_session().post(url, json=json_body, timeout=REQUEST_TIMEOUT)
+            if r.status_code == 200:
+                return r.json()
+            elif r.status_code == 429:
+                wait = 5 * (3 ** attempt)
+                log.warning("429! Tunggu %ds", wait)
+                time.sleep(wait)
+            else:
+                time.sleep(1)
+        except Exception:
+            time.sleep(2)
+    return None
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SOURCE A: kick.com/stream/livestreams (PAGINATION, banyak stream)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def fetch_kick_livestreams(category: str, language: str, max_streams: int = 200) -> list[dict]:
     """
     GET kick.com/stream/livestreams/{lang}?page=X&limit=50&category=Y
-    → metadata + channel slug (untuk fetch playback_url)
+    → banyak stream, pagination, channel.playback_url (BASE, tanpa token)
     """
     all_streams = []
     page = 1
 
     while len(all_streams) < max_streams:
-        params = {"page": page, "limit": 50, "category": category}
-        url = f"https://kick.com/stream/livestreams/{language}"
-        data = None
-
-        for attempt in range(RETRY_COUNT):
-            try:
-                r = get_session().get(url, params=params, timeout=REQUEST_TIMEOUT)
-                if r.status_code == 200:
-                    data = r.json()
-                    break
-                elif r.status_code == 429:
-                    wait = 5 * (3 ** attempt)
-                    log.warning("429 (list)! Tunggu %ds", wait)
-                    time.sleep(wait)
-                else:
-                    time.sleep(1)
-            except Exception:
-                time.sleep(2)
-
+        data = _get(f"https://kick.com/stream/livestreams/{language}",
+                    params={"page": page, "limit": 50, "category": category})
         if not data:
             break
 
@@ -121,62 +148,201 @@ def fetch_livestreams(category: str, language: str, max_streams: int = 100) -> l
     return all_streams[:max_streams]
 
 
-# ─── KICK: Fetch playback_url dengan token ───────────────────────────────────
-def fetch_playback_url(channel_slug: str) -> Optional[str]:
+# ═══════════════════════════════════════════════════════════════════════════════
+# SOURCE B: web.kick.com (UUID untuk POST playback)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def fetch_web_featured(language: str) -> list[dict]:
+    """GET web.kick.com/api/v1/livestreams/featured → UUIDs"""
+    data = _get("https://web.kick.com/api/v1/livestreams/featured",
+                params={"language": language})
+    if not data:
+        return []
+    return (data.get("data") or {}).get("livestreams", [])
+
+
+def fetch_web_recommended(language: str, max_streams: int = 50) -> list[dict]:
+    """GET web.kick.com/api/v1/recommendations/livestreams/list → UUIDs"""
+    all_streams = []
+    cursor = None
+    while len(all_streams) < max_streams:
+        params = {"limit": 50, "language": language}
+        if cursor:
+            params["cursor"] = cursor
+        data = _get("https://web.kick.com/api/v1/recommendations/livestreams/list",
+                    params=params)
+        if not data:
+            break
+        inner = data.get("data") or {}
+        items = inner.get("livestreams", [])
+        if not items:
+            break
+        all_streams.extend(items[:max_streams - len(all_streams)])
+        cursor = (inner.get("pagination") or {}).get("next_cursor", "")
+        if not cursor:
+            break
+        smart_sleep(0.2)
+    return all_streams[:max_streams]
+
+
+def build_uuid_map(languages: list[str]) -> dict[str, str]:
     """
-    GET kick.com/api/v2/channels/{slug}/livestream
+    Build map: channel_slug → stream_uuid
+    Dari web.kick.com endpoints (featured + recommended, multi-language).
+    """
+    uuid_map: dict[str, str] = {}
+
+    for lang in languages:
+        for s in fetch_web_featured(lang):
+            slug = s.get("channel", {}).get("slug", "")
+            sid = s.get("id", "")
+            if slug and sid:
+                uuid_map[slug] = sid
+
+        for s in fetch_web_recommended(lang):
+            slug = s.get("channel", {}).get("slug", "")
+            sid = s.get("id", "")
+            if slug and sid:
+                uuid_map[slug] = sid
+
+    log.info("UUID map: %d channel", len(uuid_map))
+    return uuid_map
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# TOKEN: POST web.kick.com/api/v1/stream/{uuid}/playback
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def fetch_token(stream_uuid: str) -> Optional[str]:
+    """
+    POST web.kick.com/api/v1/stream/{uuid}/playback
     → playback_url["live"] = "https://...m3u8?token=eyJ..."
     """
-    url = f"https://kick.com/api/v2/channels/{channel_slug}/livestream"
+    body = {
+        "video_player": {
+            "player": {
+                "player_name": "web_mobile",
+                "player_version": "web_mobile_fd20d6ce",
+                "player_software": "IVS Player",
+                "player_software_version": "1.56.2",
+            },
+            "mux_sdk": {"sdk_available": True},
+            "pal_sdk": {"sdk_available": False, "nonce": ""},
+            "datazoom_sdk": {"sdk_available": True, "datazoom_sdk_version": "2.33.0", "om_sdk_version": "1.6.6"},
+            "google_ads_sdk": {"sdk_available": False},
+            "ima_sdk": {"sdk_available": False},
+        },
+        "video_session": {
+            "page_type": "channel",
+            "player_remote_played": False,
+            "enable_sampling": False,
+            "url_path": "",
+            "autoplay_behaviour": "click",
+            "play_muted": False,
+            "viewer_connection_type": "",
+        },
+        "user_session": {
+            "session_id": str(uuid_lib.uuid4()),
+            "player_device_id": str(uuid_lib.uuid4()),
+            "browser_lang": "id",
+            "non_personalised_ads": True,
+            "gdpr": 0,
+        },
+    }
 
-    for attempt in range(RETRY_COUNT):
-        try:
-            r = get_session().get(url, timeout=REQUEST_TIMEOUT)
-            if r.status_code == 200:
-                data = r.json()
-                pb = data.get("playback_url", {})
-                if isinstance(pb, dict):
-                    return pb.get("live") or ""
-                if isinstance(pb, str) and pb.startswith("http"):
-                    return pb
-                return None
-            elif r.status_code == 429:
-                wait = 5 * (3 ** attempt)
-                log.warning("429 (playback)! Tunggu %ds", wait)
-                time.sleep(wait)
-            else:
-                time.sleep(1)
-        except Exception:
-            time.sleep(2)
+    data = _post(f"https://web.kick.com/api/v1/stream/{stream_uuid}/playback",
+                 json_body=body)
+    if not data:
+        return None
+
+    pb = data.get("playback_url", {})
+    if isinstance(pb, dict):
+        return pb.get("live") or ""
     return None
 
 
-# ─── KICK: Process stream ─────────────────────────────────────────────────────
-def process_kick_stream(stream_data: dict) -> Optional[Stream]:
+# ═══════════════════════════════════════════════════════════════════════════════
+# COMBINE: base URL + token
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def combine_url(base_url: str, token_url: str) -> str:
+    """
+    Ambil token dari token_url, append ke base_url.
+    base_url:    https://...channel.XXX.m3u8
+    token_url:   https://...channel.XXX.m3u8?token=eyJ...
+    result:      https://...channel.XXX.m3u8?token=eyJ...
+    """
+    if not base_url or not token_url:
+        return token_url or base_url or ""
+
+    # Ekstrak token dari token_url
+    if "?token=" in token_url:
+        token = token_url.split("?token=")[1]
+        return f"{base_url}?token={token}"
+
+    # Fallback: pakai token_url langsung
+    return token_url
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PROCESS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def process_stream(stream_data: dict, uuid_map: dict[str, str]) -> Optional[Stream]:
+    """
+    1. Ambil base URL dari channel.playback_url
+    2. Cari UUID dari uuid_map (by slug)
+    3. POST untuk dapat token
+    4. Combine: base_url + ?token=...
+    """
     channel = stream_data.get("channel", {})
     channel_slug = channel.get("slug", "")
     if not channel_slug:
         return None
 
-    # Fetch playback_url dengan token
-    playback_url = fetch_playback_url(channel_slug)
-    if not playback_url:
+    # Base URL (tanpa token)
+    base_url = channel.get("playback_url", "")
+
+    # Cari UUID
+    stream_uuid = uuid_map.get(channel_slug, "")
+
+    # Fetch token
+    token_url = None
+    if stream_uuid:
+        token_url = fetch_token(stream_uuid)
+
+    # Combine
+    if token_url:
+        final_url = combine_url(base_url, token_url)
+    elif base_url:
+        # Tidak ada token → skip (tidak bisa diputar)
+        return None
+    else:
         return None
 
+    if not final_url:
+        return None
+
+    # Metadata
     viewers = stream_data.get("viewer_count") or stream_data.get("viewers") or 0
-    title = stream_data.get("session_title", "Untitled")
+    title = stream_data.get("session_title") or stream_data.get("title") or "Untitled"
     started_at = stream_data.get("start_time")
 
     categories = stream_data.get("categories", [])
-    group_name = categories[0].get("name", "Unknown") if categories else "Unknown"
+    if categories:
+        group_name = categories[0].get("name", "Unknown")
+    else:
+        group_name = stream_data.get("category", {}).get("name", "Unknown")
 
     user = channel.get("user", {})
-    tvg_logo = user.get("profilepic", f"https://kick.com/{channel_slug}/profile")
+    tvg_logo = (user.get("profilepic")
+                or channel.get("profile_pic")
+                or f"https://kick.com/{channel_slug}/profile")
 
     return Stream(
         channel_slug=channel_slug,
         title=title,
-        playback_url=playback_url,
+        playback_url=final_url,
         group_title=group_name,
         tvg_logo=tvg_logo,
         started_at=started_at,
@@ -184,7 +350,10 @@ def process_kick_stream(stream_data: dict) -> Optional[Stream]:
     )
 
 
-# ─── YOUTUBE ─────────────────────────────────────────────────────────────────
+# ═══════════════════════════════════════════════════════════════════════════════
+# YOUTUBE
+# ═══════════════════════════════════════════════════════════════════════════════
+
 def get_youtube_m3u8(channel_url: str) -> Optional[str]:
     try:
         r = subprocess.run(
@@ -231,7 +400,10 @@ def process_youtube(item: tuple) -> Optional[Stream]:
     )
 
 
-# ─── M3U ─────────────────────────────────────────────────────────────────────
+# ═══════════════════════════════════════════════════════════════════════════════
+# M3U
+# ═══════════════════════════════════════════════════════════════════════════════
+
 def format_title(s: Stream) -> str:
     base = s.title
     if s.started_at:
@@ -264,7 +436,10 @@ def build_m3u(streams: list[Stream]) -> str:
     return "\n".join(lines) + "\n"
 
 
-# ─── MAIN ────────────────────────────────────────────────────────────────────
+# ═══════════════════════════════════════════════════════════════════════════════
+# MAIN
+# ═══════════════════════════════════════════════════════════════════════════════
+
 def main():
     parser = argparse.ArgumentParser(description="Kick + YouTube M3U Scraper")
     parser.add_argument("--output", "-o", default=OUTPUT_FILE)
@@ -290,13 +465,18 @@ def main():
     if not args.yt_only:
         log.info("─── KICK ───")
 
-        # Step 1: Fetch list per kategori (parallel)
+        # Step 1: Build UUID map dari web.kick.com (multi-language)
+        log.info("Building UUID map...")
+        uuid_map = build_uuid_map(LANGUAGES)
+
+        # Step 2: Fetch stream list dari kick.com (pagination)
+        log.info("Fetching stream list (kick.com)...")
         all_raw: list[dict] = []
         seen: set[str] = set()
 
         with ThreadPoolExecutor(max_workers=args.workers) as pool:
             futures = {
-                pool.submit(fetch_livestreams, cat, args.language, args.max_streams): cat
+                pool.submit(fetch_kick_livestreams, cat, args.language, args.max_streams): cat
                 for cat in categories
             }
             for fut in as_completed(futures):
@@ -314,7 +494,9 @@ def main():
                 if len(all_raw) >= args.max_streams:
                     break
 
-        # Filter per kategori
+        log.info("Stream unik: %d (list: %.1fs)", len(all_raw), time.time() - t0)
+
+        # Step 3: Filter per kategori
         per_cat_count: dict[str, int] = {}
         filtered: list[dict] = []
         for s in all_raw:
@@ -327,18 +509,20 @@ def main():
                 break
 
         all_raw = filtered
-        log.info("Stream unik: %d (list: %.1fs)", len(all_raw), time.time() - t0)
+        log.info("After filter: %d stream", len(all_raw))
 
-        # Step 2: Fetch playback_url dengan token (parallel)
+        # Step 4: Process (base URL + token dari POST)
         if all_raw:
-            log.info("Fetching playback_url (dengan token)...")
+            log.info("Fetching tokens (POST playback)...")
             with ThreadPoolExecutor(max_workers=args.workers) as pool:
-                futures = {pool.submit(process_kick_stream, s): s for s in all_raw}
+                futures = {
+                    pool.submit(process_stream, s, uuid_map): s for s in all_raw
+                }
                 done = 0
                 for fut in as_completed(futures):
                     done += 1
                     if done % 20 == 0:
-                        log.info("  Playback: %d/%d", done, len(futures))
+                        log.info("  Token: %d/%d", done, len(futures))
                     try:
                         s = fut.result()
                         if s:
@@ -347,7 +531,7 @@ def main():
                         pass
 
         kick_count = sum(1 for s in all_streams if s.platform == "Kick")
-        log.info("Kick valid: %d", kick_count)
+        log.info("Kick valid: %d (dari %d stream)", kick_count, len(all_raw))
 
     # ─── YOUTUBE ─────────────────────────────────────────────────────────────
     if not args.kick_only and YOUTUBE_CHANNELS:
