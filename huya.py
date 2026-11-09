@@ -19,7 +19,7 @@ import requests
 MAX_WORKERS = 5
 REQUEST_TIMEOUT = 15
 RETRY_COUNT = 4
-OUTPUT_FILE = "a/kik.gif"
+OUTPUT_FILE = "playlist.m3u"
 
 MAX_PER_CATEGORY = 1000
 MAX_STREAMS = 15
