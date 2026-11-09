@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-"""
-DOUYU M3U PLAYLIST GENERATOR — FINAL v4
-"""
 
 import re
 import json
@@ -15,11 +11,11 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from curl_cffi import requests as cffi_requests
 
 # ─── Konfigurasi ─────────────────────────────────────────────────
-MAX_ROOMS_TOTAL = 5500
+MAX_ROOMS_TOTAL = 1500
 REQUEST_DELAY = 0
 TIMEOUT = 10
-MAX_WORKERS = 301
-PER_CATEGORY = 101
+MAX_WORKERS = 20
+PER_CATEGORY = 50
 
 _local = threading.local()
 
@@ -234,53 +230,45 @@ def get_all_categories():
 
 # ─── Step 1: Ambil rooms (adaptive) ─────────────────────────────
 def get_all_rooms(categories):
+    s = get_session()
     all_rooms = []
     seen_ids = set()
     lock = threading.Lock()
 
     def fetch_category(cat):
-        s = get_session()
-        results = []
-        page = 1
-        MAX_PAGE = 15
-        while page <= MAX_PAGE:
-            api = (
-                f"https://open.douyucdn.cn/api/RoomApi/live/{cat['short']}"
-                f"?limit=30&page={page}"
-            )
-            try:
-                r = s.get(api, timeout=TIMEOUT)
-                if r.status_code != 200:
-                    break
-                data = r.json()
-                if data.get('error') != 0:
-                    break
-                rooms = parse_response(data)
-                if not rooms:
-                    break
-                for item in rooms:
-                    room_id = str(item.get('room_id', ''))
-                    if not room_id or item.get('online', 0) <= 0:
-                        continue
-                    results.append({
-                        'id': room_id,
-                        'nick': item.get('nickname', ''),
-                        'introduction': item.get('room_name', ''),
-                        'screenshot': item.get('room_src', ''),
-                        'gameName': cat['name'],
-                        'viewers': item.get('online', 0),
-                    })
-                if len(rooms) < 30:
-                    break
-                page += 1
-            except Exception:
-                break
-        return results
+        api = (
+            f"https://open.douyucdn.cn/api/RoomApi/live/{cat['short']}"
+            f"?limit=30&page=1"
+        )
+        try:
+            r = s.get(api, timeout=TIMEOUT)
+            if r.status_code != 200:
+                return []
+            data = r.json()
+            if data.get('error') != 0:
+                return []
+            rooms = parse_response(data)
+            results = []
+            for item in rooms:
+                room_id = str(item.get('room_id', ''))
+                if not room_id or item.get('online', 0) <= 0:
+                    continue
+                results.append({
+                    'id': room_id,
+                    'nick': item.get('nickname', ''),
+                    'introduction': item.get('room_name', ''),
+                    'screenshot': item.get('room_src', ''),
+                    'gameName': cat['name'],
+                    'viewers': item.get('online', 0),
+                })
+            return results
+        except Exception:
+            return []
 
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         futures = {
             executor.submit(fetch_category, cat): cat
-            for cat in categories
+            for cat in categories  # ← SEMUA kategori, tanpa limit
         }
 
         done_count = 0
@@ -296,7 +284,7 @@ def get_all_rooms(categories):
             if done_count % 100 == 0:
                 print(f"  Progress: {done_count}/{len(categories)} | total rooms: {len(all_rooms)}")
 
-    return all_rooms
+    return all_rooms   
 
 
 # ─── Step 2: Stream URL (getH5PlayV1) ───────────────────────────
@@ -377,31 +365,31 @@ def fetch_worker(args):
 # ─── Step 4: Generate playlist ───────────────────────────────────
 def generate_playlist(output_file, max_rooms, max_workers=MAX_WORKERS):
     print("=" * 55)
-    print("  DOUYU M3U PLAYLIST GENERATOR (FINAL v4)")
-    print(f"  {max_rooms} rooms | {max_workers} threads | {PER_CATEGORY}/kategori")
+    print("  ✓)")
+    print(f"  {max_rooms} rooms | {max_workers} ✓ | {PER_CATEGORY}/kategori")
     print("=" * 55)
 
     # Step 0: Scrape semua kategori
-    print("\n[0/3] Scraping semua kategori...")
+    print("\n[0/3] semua kategori...")
     categories = get_all_categories()
-    print(f"  Kategori ditemukan: {len(categories)}")
+    print(f"  Kategori : {len(categories)}")
 
     if not categories:
-        print("  [ERROR] Tidak bisa ambil kategori!")
+        print("  [ERROR] Tidak bisa!")
         return
 
     # Step 1: Ambil rooms (adaptive)
-    print(f"\n[1/3] Mengambil rooms (adaptive, max {max_rooms})...")
+    print(f"\n[1/3] rooms (adaptive, max {max_rooms})...")
     all_rooms = get_all_rooms(categories)
 
     print(f"\n  Total rooms: {len(all_rooms)}")
 
     if not all_rooms:
-        print("\n  [ERROR] Tidak ada rooms live!")
+        print("\n  [ERROR] Tidak ada rooms!.")
         return
 
     # Step 2: Stream URL (PARALEL)
-    print(f"\n[2/3] Mengambil stream URL ({max_workers} threads)...")
+    print(f"\n[2/3] stream URL ({max_workers} )...")
     results = [None] * len(all_rooms)
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
@@ -419,7 +407,7 @@ def generate_playlist(output_file, max_rooms, max_workers=MAX_WORKERS):
                 print(f"  Progress: {done_count}/{len(all_rooms)}")
 
     # Step 3: Build playlist + translate
-    print(f"\n[3/3] Membangun playlist + translate...")
+    print(f"\n[3/3] Membangun playlist...")
     lines = ['#EXTM3U']
     live_count = 0
     offline_count = 0
@@ -465,13 +453,13 @@ def generate_playlist(output_file, max_rooms, max_workers=MAX_WORKERS):
 # ─── Main ────────────────────────────────────────────────────────
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='Douyu M3U Playlist Generator (Final v4)')
+        description='Douyu M3U Playlist Generator (Final v3)')
     parser.add_argument('--output', '-o', default='playlist.m3u',
-                        help='File output M3U (default: playlist.m3u)')
+                        help='File output M3U (default: )')
     parser.add_argument('--rooms', '-r', type=int, default=MAX_ROOMS_TOTAL,
                         help=f'Total room (default: {MAX_ROOMS_TOTAL})')
     parser.add_argument('--workers', '-w', type=int, default=MAX_WORKERS,
-                        help='Jumlah thread paralel (default: 301)')
+                        help='Jumlah thread paralel (default: 28)')
     parser.add_argument('--delay', '-d', type=float, default=REQUEST_DELAY,
                         help='Jeda antar request (default: 0)')
     parser.add_argument('--per-cat', '-p', type=int, default=PER_CATEGORY,
@@ -490,6 +478,11 @@ if __name__ == '__main__':
         max_rooms=args.rooms,
         max_workers=args.workers,
     )   
+
+
+
+
+
 
 
 
