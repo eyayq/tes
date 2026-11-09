@@ -26,7 +26,7 @@ from curl_cffi import requests as cffi_requests
 # ─── Konfigurasi ─────────────────────────────────────────────────
 MAX_ROOMS_TOTAL = 1001
 REQUEST_DELAY = 0
-TIMEOUT = 10
+TIMEOUT = 15
 MAX_WORKERS = 101
 PER_CATEGORY = 101
 
@@ -198,6 +198,22 @@ def parse_response(data, key='rooms'):
     return []
 
 
+# ─── Build stream URL dari rtmp_url + rtmp_live ─────────────────
+def build_stream_url(rtmp_url, rtmp_live):
+    """
+    rtmp_url  = "https://ws3.douyucdn.cn/live"
+    rtmp_live = "7571257rlA0tf0t5.flv?wsAuth=...&expire=300&..."
+    Hasil     = "https://ws3.douyucdn.cn/live/7571257rlA0tf0t5.flv?wsAuth=..."
+    """
+    if not rtmp_url or not rtmp_live:
+        return None
+    # Jika rtmp_url masih rtmp://, konversi ke http://
+    if rtmp_url.startswith('rtmp://'):
+        rtmp_url = rtmp_url.replace('rtmp://', 'http://')
+    # rtmp_live sudah mengandung .flv?params — langsung concatenate
+    return f"{rtmp_url}/{rtmp_live}"
+
+
 # ─── Step 0: Scrape SEMUA kategori (3222) ───────────────────────
 def get_all_categories():
     s = get_session()
@@ -312,11 +328,10 @@ def get_stream_url_method1(room_id):
             if data.get('error') == 0:
                 d = data.get('data', {})
                 if isinstance(d, dict):
-                    rtmp_url = d.get('rtmp_url', '')
-                    rtmp_live = d.get('rtmp_live', '')
-                    if rtmp_url and rtmp_live:
-                        http_base = rtmp_url.replace('rtmp://', 'http://')
-                        return f"{http_base}/{rtmp_live}"
+                    return build_stream_url(
+                        d.get('rtmp_url', ''),
+                        d.get('rtmp_live', '')
+                    )
     except Exception:
         pass
 
@@ -362,7 +377,7 @@ def get_stream_url_method2(room_id):
         'tt': ts,
         'did': did,
         'auth': auth,
-        'cdn': 'hw-h5',
+        'cdn': 'ws-h5',
         'rate': '0',
         'ver': 'Douyu_new',
         'iar': '0',
@@ -377,11 +392,10 @@ def get_stream_url_method2(room_id):
             if data.get('error') == 0:
                 d = data.get('data', {})
                 if isinstance(d, dict):
-                    rtmp_url = d.get('rtmp_url', '')
-                    rtmp_live = d.get('rtmp_live', '')
-                    if rtmp_url and rtmp_live:
-                        http_base = rtmp_url.replace('rtmp://', 'http://')
-                        return f"{http_base}/{rtmp_live}"
+                    return build_stream_url(
+                        d.get('rtmp_url', ''),
+                        d.get('rtmp_live', '')
+                    )
     except Exception:
         pass
 
@@ -412,11 +426,10 @@ def get_stream_url_method3(room_id):
             if data.get('error') == 0:
                 d = data.get('data', {})
                 if isinstance(d, dict):
-                    rtmp_url = d.get('rtmp_url', '')
-                    rtmp_live = d.get('rtmp_live', '')
-                    if rtmp_url and rtmp_live:
-                        http_base = rtmp_url.replace('rtmp://', 'http://')
-                        return f"{http_base}/{rtmp_live}"
+                    return build_stream_url(
+                        d.get('rtmp_url', ''),
+                        d.get('rtmp_live', '')
+                    )
     except Exception:
         pass
 
