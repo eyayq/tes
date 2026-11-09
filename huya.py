@@ -386,7 +386,7 @@ def build_m3u(streams: list[Stream]) -> str:
             f'tvg-logo="{s.tvg_logo}" '
             f'tvg-name="{s.channel_slug}" '
         )
-        lines.append(f"#EXTINF:-1 {attrs} {format_title(s)}")
+        lines.append(f"#EXTINF:-1 {attrs}, {format_title(s)}")
 
         # Kick → Worker URL (token selalu fresh via 302 redirect)
         # YouTube → URL langsung
@@ -561,7 +561,7 @@ def build_m3u_direct(streams: list[Stream]) -> str:
             f'tvg-logo="{s.tvg_logo}" '
             f'tvg-name="{s.channel_slug}" '
         )
-        lines.append(f"#EXTINF:-1 {attrs} {format_title(s)}")
+        lines.append(f"#EXTINF:-1 {attrs}, {format_title(s)}")
         lines.append(s.playback_url)
     return "\n".join(lines) + "\n"
 
