@@ -10,10 +10,10 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from curl_cffi import requests as cffi_requests
 
 # ─── Konfigurasi ─────────────────────────────────────────────────
-MAX_ROOMS_TOTAL = 5000
+MAX_ROOMS_TOTAL = 2500
 REQUEST_DELAY = 0
 TIMEOUT = 10
-MAX_WORKERS = 201
+MAX_WORKERS = 301
 PER_CATEGORY = 101
 
 _local = threading.local()
@@ -235,6 +235,7 @@ def get_all_rooms(categories):
 
     def fetch_category(cat):
         s = get_session()  # ← PINDAHKAN KE SINI (per-thread)
+        results = []
         page = 1
         while True:
             api = (
