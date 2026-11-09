@@ -1,17 +1,4 @@
-#!/usr/bin/env python3
-"""
-DOUYU M3U PLAYLIST GENERATOR — FINAL v4
-- Open API (open.douyucdn.cn) — TANPA AUTH
-- Auto-scrape kategori dari /api/RoomApi/game
-- Adaptive: iterate semua kategori sampai max_rooms tercapai
-- Filter online > 0 (hanya room live)
-- getH5PlayV1 (encryption) — SINGLE METHOD
-- curl_cffi (Chrome TLS fingerprint)
-- ThreadPoolExecutor (parallel)
-- tvg-logo + group-title otomatis
-- Chinese → English translation
-- Output: playlist.m3u (HTTP-FLV only)
-"""
+
 
 import re
 import json
@@ -25,9 +12,9 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from curl_cffi import requests as cffi_requests
 
 # ─── Konfigurasi ─────────────────────────────────────────────────
-MAX_ROOMS_TOTAL = 1001
+MAX_ROOMS_TOTAL = 1501
 REQUEST_DELAY = 0
-TIMEOUT = 15
+TIMEOUT = 10
 MAX_WORKERS = 201
 PER_CATEGORY = 101
 
@@ -242,7 +229,7 @@ def get_all_categories():
     return categories
 
 
-# ─── Step 1: Ambil rooms (adaptive, filter online > 0) ─────────
+# ─── Step 1: Ambil rooms (adaptive) ─────────────────────────────
 def get_all_rooms(max_rooms, categories):
     s = get_session()
     all_rooms = []
@@ -274,11 +261,6 @@ def get_all_rooms(max_rooms, categories):
             room_id = str(item.get('room_id', ''))
             if not room_id or room_id in seen_ids:
                 continue
-
-            # FILTER: hanya room yang sedang live
-            if item.get('online', 0) <= 0:
-                continue
-
             seen_ids.add(room_id)
 
             all_rooms.append({
@@ -385,7 +367,7 @@ def fetch_worker(args):
 # ─── Step 4: Generate playlist ───────────────────────────────────
 def generate_playlist(output_file, max_rooms, max_workers=MAX_WORKERS):
     print("=" * 55)
-    print("  DOUYU M3U PLAYLIST GENERATOR (FINAL v4)")
+    print("  DOUYU M3U PLAYLIST GENERATOR (FINAL v3)")
     print(f"  {max_rooms} rooms | {max_workers} threads | {PER_CATEGORY}/kategori")
     print("=" * 55)
 
@@ -398,14 +380,14 @@ def generate_playlist(output_file, max_rooms, max_workers=MAX_WORKERS):
         print("  [ERROR] Tidak bisa ambil kategori!")
         return
 
-    # Step 1: Ambil rooms (adaptive, filter online > 0)
+    # Step 1: Ambil rooms (adaptive)
     print(f"\n[1/3] Mengambil rooms (adaptive, max {max_rooms})...")
     all_rooms = get_all_rooms(max_rooms, categories)
 
-    print(f"\n  Total rooms (live): {len(all_rooms)}")
+    print(f"\n  Total rooms: {len(all_rooms)}")
 
     if not all_rooms:
-        print("\n  [ERROR] Tidak ada rooms live!")
+        print("\n  [ERROR] Tidak ada rooms! IP mungkin di-ban.")
         return
 
     # Step 2: Stream URL (PARALEL)
@@ -473,7 +455,7 @@ def generate_playlist(output_file, max_rooms, max_workers=MAX_WORKERS):
 # ─── Main ────────────────────────────────────────────────────────
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='Douyu M3U Playlist Generator (Final v4)')
+        description='Douyu M3U Playlist Generator (Final v3)')
     parser.add_argument('--output', '-o', default='playlist.m3u',
                         help='File output M3U (default: playlist.m3u)')
     parser.add_argument('--rooms', '-r', type=int, default=MAX_ROOMS_TOTAL,
@@ -498,3 +480,9 @@ if __name__ == '__main__':
         max_rooms=args.rooms,
         max_workers=args.workers,
     )   
+
+
+
+
+
+
