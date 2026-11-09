@@ -26,9 +26,9 @@ from curl_cffi import requests as cffi_requests
 # ─── Konfigurasi ─────────────────────────────────────────────────
 MAX_ROOMS_TOTAL = 1001
 REQUEST_DELAY = 0
-TIMEOUT = 15
+TIMEOUT = 10
 MAX_WORKERS = 101
-PER_CATEGORY = 50
+PER_CATEGORY = 101
 
 _local = threading.local()
 
@@ -316,7 +316,7 @@ def get_stream_url_method1(room_id):
                     rtmp_live = d.get('rtmp_live', '')
                     if rtmp_url and rtmp_live:
                         http_base = rtmp_url.replace('rtmp://', 'http://')
-                        return f"{http_base}/{rtmp_live}.flv"
+                        return f"{http_base}/{rtmp_live}"
     except Exception:
         pass
 
@@ -381,7 +381,7 @@ def get_stream_url_method2(room_id):
                     rtmp_live = d.get('rtmp_live', '')
                     if rtmp_url and rtmp_live:
                         http_base = rtmp_url.replace('rtmp://', 'http://')
-                        return f"{http_base}/{rtmp_live}.flv"
+                        return f"{http_base}/{rtmp_live}"
     except Exception:
         pass
 
@@ -416,7 +416,7 @@ def get_stream_url_method3(room_id):
                     rtmp_live = d.get('rtmp_live', '')
                     if rtmp_url and rtmp_live:
                         http_base = rtmp_url.replace('rtmp://', 'http://')
-                        return f"{http_base}/{rtmp_live}.flv"
+                        return f"{http_base}/{rtmp_live}"
     except Exception:
         pass
 
