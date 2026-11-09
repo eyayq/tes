@@ -1,7 +1,4 @@
-#!/usr/bin/env python3
-"""
-DOUYU M3U PLAYLIST GENERATOR — FINAL v5
-"""
+
 
 import re
 import json
@@ -18,7 +15,7 @@ from curl_cffi import requests as cffi_requests
 MAX_ROOMS_TOTAL = 2500
 REQUEST_DELAY = 0.1
 TIMEOUT = 10
-MAX_WORKERS = 28
+MAX_WORKERS = 30
 PER_CATEGORY = 30
 
 _local = threading.local()
