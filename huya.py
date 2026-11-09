@@ -271,7 +271,6 @@ def get_all_rooms(categories):
         except Exception:
             break
         return results   
-            return []
 
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         futures = {
