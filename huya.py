@@ -270,8 +270,7 @@ def get_all_rooms(categories):
             page += 1
         except Exception:
             break
-    return results   
-        except Exception:
+        return results   
             return []
 
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
@@ -463,7 +462,7 @@ def generate_playlist(output_file, max_rooms, max_workers=MAX_WORKERS):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Douyu M3U Playlist Generator (Final v3)')
-    parser.add_argument('--output', '-o', default='playlist.m3u',
+    parser.add_argument('--output', '-o', default='playlist.m3u8',
                         help='File output M3U (default: a/doyo.gif)')
     parser.add_argument('--rooms', '-r', type=int, default=MAX_ROOMS_TOTAL,
                         help=f'Total room (default: {MAX_ROOMS_TOTAL})')
