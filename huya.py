@@ -391,7 +391,7 @@ def build_m3u(streams: list[Stream]) -> str:
         # Kick → Worker URL (token selalu fresh via 302 redirect)
         # YouTube → URL langsung
         if s.platform == "Kick":
-            lines.append(f"{WORKER_URL}/0.m3u8/{s.channel_slug}")
+            lines.append(f"{WORKER_URL}/0.m3u8?id={s.channel_slug}")
         else:
             lines.append(s.playback_url)
 
