@@ -21,7 +21,7 @@ REQUEST_TIMEOUT = 15
 RETRY_COUNT = 4
 OUTPUT_FILE = "playlist.m3u"
 
-MAX_PER_CATEGORY = 100
+MAX_PER_CATEGORY = 1001
 MAX_STREAMS = 1000
 LANGUAGE = "id"
 CATEGORIES = ["games", "irl", "music", "gambling", "creative"]
@@ -382,11 +382,11 @@ def build_m3u(streams: list[Stream]) -> str:
     for s in streams:
         attrs = (
             f'tvg-id="{s.platform}.{s.group_title}.{s.channel_slug}",'
-            f'tvg-name="{s.channel_slug}",'
-            f'tvg-logo="{s.tvg_logo}",'
             f'group-title="{s.group_title}"'
+            f'tvg-logo="{s.tvg_logo}"'
+            f'tvg-name="{s.channel_slug}"'
         )
-        lines.append(f"#EXTINF:-1,{attrs} {format_title(s)}")
+        lines.append(f"#EXTINF:-1 {attrs} {format_title(s)}")
 
         # Kick → Worker URL (token selalu fresh via 302 redirect)
         # YouTube → URL langsung
@@ -557,9 +557,9 @@ def build_m3u_direct(streams: list[Stream]) -> str:
     for s in streams:
         attrs = (
             f'tvg-id="{s.platform}.{s.group_title}.{s.channel_slug}",'
-            f'tvg-name="{s.channel_slug}",'
-            f'tvg-logo="{s.tvg_logo}",'
             f'group-title="{s.group_title}"'
+            f'tvg-logo="{s.tvg_logo}"'
+            f'tvg-name="{s.channel_slug}"'
         )
         lines.append(f"#EXTINF:-1 {attrs} {format_title(s)}")
         lines.append(s.playback_url)
