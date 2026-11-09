@@ -230,47 +230,68 @@ def get_all_categories():
 
 # ─── Step 1: Ambil rooms (adaptive) ─────────────────────────────
 def get_all_rooms(categories):
-    s = get_session()
     all_rooms = []
     seen_ids = set()
     lock = threading.Lock()
 
     def fetch_category(cat):
-    results = []
-    page = 1
-    while True:
-        api = (
-            f"https://open.douyucdn.cn/api/RoomApi/live/{cat['short']}"
-            f"?limit=30&page={page}"
-        )
-        try:
-            r = s.get(api, timeout=TIMEOUT)
-            if r.status_code != 200:
+        s = get_session()  # ← PINDAHKAN KE SINI (per-thread)
+        results = []
+        page = 1
+        while True:
+            api = (
+                f"https://open.douyucdn.cn/api/RoomApi/live/{cat['short']}"
+                f"?limit=30&page={page}"
+            )
+            try:
+                r = s.get(api, timeout=TIMEOUT)
+                if r.status_code != 200:
+                    break
+                data = r.json()
+                if data.get('error') != 0:
+                    break
+                rooms = parse_response(data)
+                if not rooms:
+                    break
+                for item in rooms:
+                    room_id = str(item.get('room_id', ''))
+                    if not room_id or item.get('online', 0) <= 0:
+                        continue
+                    results.append({
+                        'id': room_id,
+                        'nick': item.get('nickname', ''),
+                        'introduction': item.get('room_name', ''),
+                        'screenshot': item.get('room_src', ''),
+                        'gameName': cat['name'],
+                        'viewers': item.get('online', 0),
+                    })
+                if len(rooms) < 30:
+                    break
+                page += 1
+            except Exception:
                 break
-            data = r.json()
-            if data.get('error') != 0:
-                break
-            rooms = parse_response(data)
-            if not rooms:
-                break
-            for item in rooms:
-                room_id = str(item.get('room_id', ''))
-                if not room_id or item.get('online', 0) <= 0:
-                    continue
-                results.append({
-                    'id': room_id,
-                    'nick': item.get('nickname', ''),
-                    'introduction': item.get('room_name', ''),
-                    'screenshot': item.get('room_src', ''),
-                    'gameName': cat['name'],
-                    'viewers': item.get('online', 0),
-                })
-            if len(rooms) < 30:  # page terakhir
-                break
-            page += 1
-        except Exception:
-            break
-    return results   
+        return results
+
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+        futures = {
+            executor.submit(fetch_category, cat): cat
+            for cat in categories
+        }
+
+        done_count = 0
+        for future in as_completed(futures):
+            rooms = future.result()
+            with lock:
+                for room in rooms:
+                    if room['id'] in seen_ids:
+                        continue
+                    seen_ids.add(room['id'])
+                    all_rooms.append(room)
+            done_count += 1
+            if done_count % 100 == 0:
+                print(f"  Progress: {done_count}/{len(categories)} | total rooms: {len(all_rooms)}")
+
+    return all_rooms   
 
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         futures = {
