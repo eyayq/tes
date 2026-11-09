@@ -1,3 +1,16 @@
+#!/usr/bin/env python3
+"""
+DOUYU M3U PLAYLIST GENERATOR — FINAL
+- Open API (open.douyucdn.cn) — TANPA AUTH
+- Auto-scrape 3222 kategori dari /api/RoomApi/game
+- Adaptive: iterate semua kategori sampai max_rooms tercapai
+- coapi.douyucdn.cn (MD5 sign) + getH5PlayV1 (encryption) + hlsH5Preview
+- curl_cffi (Chrome TLS fingerprint)
+- ThreadPoolExecutor (parallel)
+- tvg-logo + group-title otomatis
+- Chinese → English translation
+- Output: playlist.m3u
+"""
 
 import re
 import json
@@ -11,7 +24,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from curl_cffi import requests as cffi_requests
 
 # ─── Konfigurasi ─────────────────────────────────────────────────
-MAX_ROOMS_TOTAL = 1000
+MAX_ROOMS_TOTAL = 1001
 REQUEST_DELAY = 0
 TIMEOUT = 15
 MAX_WORKERS = 101
@@ -302,7 +315,8 @@ def get_stream_url_method1(room_id):
                     rtmp_url = d.get('rtmp_url', '')
                     rtmp_live = d.get('rtmp_live', '')
                     if rtmp_url and rtmp_live:
-                        return f"{rtmp_url}/{rtmp_live}"
+                        http_base = rtmp_url.replace('rtmp://', 'http://')
+                        return f"{http_base}/{rtmp_live}.flv"
     except Exception:
         pass
 
@@ -366,7 +380,8 @@ def get_stream_url_method2(room_id):
                     rtmp_url = d.get('rtmp_url', '')
                     rtmp_live = d.get('rtmp_live', '')
                     if rtmp_url and rtmp_live:
-                        return f"{rtmp_url}/{rtmp_live}"
+                        http_base = rtmp_url.replace('rtmp://', 'http://')
+                        return f"{http_base}/{rtmp_live}.flv"
     except Exception:
         pass
 
@@ -397,11 +412,11 @@ def get_stream_url_method3(room_id):
             if data.get('error') == 0:
                 d = data.get('data', {})
                 if isinstance(d, dict):
+                    rtmp_url = d.get('rtmp_url', '')
                     rtmp_live = d.get('rtmp_live', '')
-                    if rtmp_live:
-                        key_match = re.search(r'(\d+r\w+)', rtmp_live)
-                        if key_match:
-                            return f"http://vplay1a.douyucdn.cn/live/{key_match.group(1)}.flv?uuid={did}"
+                    if rtmp_url and rtmp_live:
+                        http_base = rtmp_url.replace('rtmp://', 'http://')
+                        return f"{http_base}/{rtmp_live}.flv"
     except Exception:
         pass
 
@@ -530,9 +545,9 @@ if __name__ == '__main__':
     parser.add_argument('--rooms', '-r', type=int, default=MAX_ROOMS_TOTAL,
                         help=f'Total room (default: {MAX_ROOMS_TOTAL})')
     parser.add_argument('--workers', '-w', type=int, default=MAX_WORKERS,
-                        help='Jumlah thread paralel (default: 18)')
+                        help='Jumlah thread paralel (default: 28)')
     parser.add_argument('--delay', '-d', type=float, default=REQUEST_DELAY,
-                        help='Jeda antar request (default: 0.2)')
+                        help='Jeda antar request (default: 0)')
     parser.add_argument('--per-cat', '-p', type=int, default=PER_CATEGORY,
                         help=f'Room per kategori (default: {PER_CATEGORY})')
     parser.add_argument('--no-translate', action='store_true',
