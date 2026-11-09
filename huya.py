@@ -8,7 +8,6 @@ import re
 import json
 import os
 import uuid
-from pathlib import Path
 from datetime import datetime, timezone
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
@@ -22,9 +21,10 @@ REQUEST_TIMEOUT = 15
 RETRY_COUNT = 4
 OUTPUT_FILE = "playlist.m3u"
 
-MAX_PER_CATEGORY = 10    # stream per kategori
-MAX_STREAMS = 1000       # total maksimal stream
-LANGUAGES = ["id", "jp", "en"] # multi-language untuk hasil lebih banyak
+MAX_PER_CATEGORY = 10
+MAX_STREAMS = 1000
+LANGUAGE = "id"
+CATEGORIES = ["games", "irl", "music", "gambling", "creative"]
 
 # ─── SESSION TOKEN ────────────────────────────────────────────────────────────
 KICK_SESSION_TOKEN = os.getenv("KICK_SESSION_TOKEN", "kat_aBAhHd_aLVu-4dyfYCzpja9SVvFyEXbOeXwoYHfxAuQ")
@@ -74,108 +74,66 @@ def smart_sleep(base=0.3):
     time.sleep(base + random.uniform(0, 0.4))
 
 
-def web_get(path: str, params: dict | None = None) -> Optional[dict]:
-    url = f"https://web.kick.com/api/v1{path}"
-    for attempt in range(RETRY_COUNT):
-        try:
-            r = get_session().get(url, params=params, timeout=REQUEST_TIMEOUT)
-            if r.status_code == 200:
-                return r.json()
-            elif r.status_code == 401:
-                log.error("401: Token expired!")
-                return None
-            elif r.status_code == 429:
-                wait = 5 * (3 ** attempt)
-                log.warning("429! Tunggu %ds", wait)
-                time.sleep(wait)
-            else:
-                time.sleep(1)
-        except Exception:
-            time.sleep(2)
-    return None
-
-
-def web_post(path: str, json_body: dict) -> Optional[dict]:
-    url = f"https://web.kick.com/api/v1{path}"
-    for attempt in range(RETRY_COUNT):
-        try:
-            r = get_session().post(url, json=json_body, timeout=REQUEST_TIMEOUT)
-            if r.status_code == 200:
-                return r.json()
-            elif r.status_code == 401:
-                log.error("401: Token expired!")
-                return None
-            elif r.status_code == 429:
-                wait = 5 * (3 ** attempt)
-                log.warning("429! Tunggu %ds", wait)
-                time.sleep(wait)
-            else:
-                time.sleep(1)
-        except Exception:
-            time.sleep(2)
-    return None
-
-
-# ─── KICK: Fetch streams ──────────────────────────────────────────────────────
-def fetch_featured(language: str) -> list[dict]:
-    data = web_get("/livestreams/featured", params={"language": language})
-    if not data:
-        return []
-    return (data.get("data") or {}).get("livestreams", [])
-
-
-def fetch_recommended(language: str, max_streams: int) -> list[dict]:
+# ─── KICK: Fetch list streams (kick.com) ─────────────────────────────────────
+def fetch_livestreams(category: str, language: str, max_streams: int = 100) -> list[dict]:
+    """
+    GET kick.com/stream/livestreams/{lang}?page=X&limit=50&category=Y
+    → metadata + stream id (playback_url di sini TANPA token, tidak bisa diputar)
+    """
     all_streams = []
-    cursor = None
+    page = 1
+
     while len(all_streams) < max_streams:
-        params = {"limit": 50, "language": language}
-        if cursor:
-            params["cursor"] = cursor
-        data = web_get("/recommendations/livestreams/list", params=params)
+        params = {"page": page, "limit": 50, "category": category}
+        url = f"https://kick.com/stream/livestreams/{language}"
+
+        for attempt in range(RETRY_COUNT):
+            try:
+                r = get_session().get(url, params=params, timeout=REQUEST_TIMEOUT)
+                if r.status_code == 200:
+                    data = r.json()
+                    break
+                elif r.status_code == 429:
+                    wait = 5 * (3 ** attempt)
+                    log.warning("429 (list)! Tunggu %ds", wait)
+                    time.sleep(wait)
+                else:
+                    time.sleep(1)
+            except Exception:
+                time.sleep(2)
+        else:
+            break
+
+        if 'data' not in dir():
+            data = None
+
         if not data:
             break
-        inner = data.get("data") or {}
-        items = inner.get("livestreams", [])
+
+        items = data.get("data", [])
         if not items:
             break
+
         all_streams.extend(items[:max_streams - len(all_streams)])
-        cursor = (inner.get("pagination") or {}).get("next_cursor", "")
-        if not cursor:
+
+        last_page = data.get("last_page", 0)
+        if last_page and page >= last_page:
             break
+        if len(items) < 50:
+            break
+
+        page += 1
         smart_sleep(0.2)
-    return all_streams[:max_streams]
-
-
-def fetch_all_streams(languages: list[str], max_streams: int) -> list[dict]:
-    """Fetch dari multiple language untuk hasil maksimal."""
-    all_streams: list[dict] = []
-    seen: set[str] = set()
-
-    for lang in languages:
-        featured = fetch_featured(lang)
-        for s in featured:
-            sid = s.get("id", "")
-            if sid and sid not in seen:
-                seen.add(sid)
-                all_streams.append(s)
-
-        rec = fetch_recommended(lang, max_streams)
-        for s in rec:
-            sid = s.get("id", "")
-            if sid and sid not in seen:
-                seen.add(sid)
-                all_streams.append(s)
-
-        log.info("  lang=%s: total %d stream", lang, len(all_streams))
-        if len(all_streams) >= max_streams:
-            break
-        smart_sleep(0.5)
 
     return all_streams[:max_streams]
 
 
-# ─── KICK: Playback URL ───────────────────────────────────────────────────────
-def fetch_playback_url(stream_id: str) -> Optional[str]:
+# ─── KICK: Fetch playback_url dengan token (web.kick.com) ────────────────────
+def fetch_playback_with_token(stream_id: int) -> Optional[str]:
+    """
+    POST web.kick.com/api/v1/stream/{id}/playback
+    → playback_url["live"] = "https://...m3u8?token=eyJ..."
+    """
     body = {
         "video_player": {
             "player": {
@@ -207,18 +165,30 @@ def fetch_playback_url(stream_id: str) -> Optional[str]:
             "gdpr": 0,
         },
     }
-    data = web_post(f"/stream/{stream_id}/playback", json_body=body)
-    if not data:
-        return None
-    pb = data.get("playback_url")
-    if isinstance(pb, dict):
-        return pb.get("live") or ""
+
+    url = f"https://web.kick.com/api/v1/stream/{stream_id}/playback"
+
+    for attempt in range(RETRY_COUNT):
+        try:
+            r = get_session().post(url, json=body, timeout=REQUEST_TIMEOUT)
+            if r.status_code == 200:
+                data = r.json()
+                pb = data.get("playback_url", {})
+                return pb.get("live") or ""
+            elif r.status_code == 429:
+                wait = 5 * (3 ** attempt)
+                log.warning("429 (playback)! Tunggu %ds", wait)
+                time.sleep(wait)
+            else:
+                time.sleep(1)
+        except Exception:
+            time.sleep(2)
     return None
 
 
-# ─── KICK: Process ────────────────────────────────────────────────────────────
+# ─── KICK: Process stream ─────────────────────────────────────────────────────
 def process_kick_stream(stream_data: dict) -> Optional[Stream]:
-    stream_id = stream_data.get("id", "")
+    stream_id = stream_data.get("id")
     if not stream_id:
         return None
 
@@ -227,16 +197,20 @@ def process_kick_stream(stream_data: dict) -> Optional[Stream]:
     if not channel_slug:
         return None
 
-    viewers = stream_data.get("viewer_count", 0)
-    title = stream_data.get("title", "Untitled")
-    started_at = stream_data.get("start_time")
-    category = stream_data.get("category", {})
-    group_name = category.get("name", "Unknown")
-    tvg_logo = channel.get("profile_pic", f"https://kick.com/{channel_slug}/profile")
-
-    playback_url = fetch_playback_url(stream_id)
+    # Fetch playback_url dengan token (WAJIB)
+    playback_url = fetch_playback_with_token(stream_id)
     if not playback_url:
         return None
+
+    viewers = stream_data.get("viewer_count") or stream_data.get("viewers") or 0
+    title = stream_data.get("session_title", "Untitled")
+    started_at = stream_data.get("start_time")
+
+    categories = stream_data.get("categories", [])
+    group_name = categories[0].get("name", "Unknown") if categories else "Unknown"
+
+    user = channel.get("user", {})
+    tvg_logo = user.get("profilepic", f"https://kick.com/{channel_slug}/profile")
 
     return Stream(
         channel_slug=channel_slug,
@@ -302,10 +276,13 @@ def format_title(s: Stream) -> str:
     if s.started_at:
         try:
             raw = s.started_at
-            if raw.isdigit() or (raw.replace('.', '', 1).isdigit() and '.' in raw):
-                dt = datetime.fromtimestamp(float(raw), tz=timezone.utc).astimezone()
+            if raw.isdigit():
+                dt = datetime.fromtimestamp(int(raw), tz=timezone.utc).astimezone()
             else:
-                dt = datetime.fromisoformat(raw.replace("Z", "+00:00")).astimezone()
+                try:
+                    dt = datetime.fromisoformat(raw).replace(tzinfo=timezone.utc).astimezone()
+                except ValueError:
+                    dt = datetime.fromisoformat(raw.replace("Z", "+00:00")).astimezone()
             base = f"{base} [{dt.strftime('%H:%M')} {dt.strftime('%d/%m/%Y')}]"
         except (ValueError, TypeError, OSError):
             pass
@@ -335,16 +312,16 @@ def main():
     parser.add_argument("--yt-only", action="store_true")
     parser.add_argument("--max-per-category", type=int, default=MAX_PER_CATEGORY)
     parser.add_argument("--max-streams", type=int, default=MAX_STREAMS)
-    parser.add_argument("--languages", type=str, default=",".join(LANGUAGES),
-                        help="Comma-separated languages (default: id,en)")
+    parser.add_argument("--language", "-l", default=LANGUAGE)
+    parser.add_argument("--categories", type=str, default=",".join(CATEGORIES))
     args = parser.parse_args()
 
-    languages = [l.strip() for l in args.languages.split(",") if l.strip()]
+    categories = [c.strip() for c in args.categories.split(",") if c.strip()]
 
     t0 = time.time()
     log.info("=== Kick + YouTube M3U Scraper ===")
-    log.info("Settings: max-per-cat=%d, max-streams=%d, langs=%s",
-             args.max_per_category, args.max_streams, languages)
+    log.info("Settings: max-per-cat=%d, max-streams=%d, lang=%s, cats=%s",
+             args.max_per_category, args.max_streams, args.language, categories)
 
     if "paste_token" in KICK_SESSION_TOKEN and not args.yt_only:
         log.error("❌ Set KICK_SESSION_TOKEN!")
@@ -357,31 +334,48 @@ def main():
     if not args.yt_only:
         log.info("─── KICK ───")
 
-        # Multi-language fetch
-        all_raw = fetch_all_streams(languages, args.max_streams)
+        # Step 1: Fetch list per kategori (parallel)
+        all_raw: list[dict] = []
+        seen: set[str] = set()
+
+        with ThreadPoolExecutor(max_workers=args.workers) as pool:
+            futures = {
+                pool.submit(fetch_livestreams, cat, args.language, args.max_streams): cat
+                for cat in categories
+            }
+            for fut in as_completed(futures):
+                cat = futures[fut]
+                try:
+                    streams = fut.result()
+                    for s in streams:
+                        slug = s.get("channel", {}).get("slug", "")
+                        if slug and slug not in seen:
+                            seen.add(slug)
+                            all_raw.append(s)
+                    log.info("  %s: %d stream", cat, len(streams))
+                except Exception as e:
+                    log.debug("Error %s: %s", cat, e)
+                if len(all_raw) >= args.max_streams:
+                    break
 
         # Filter per kategori
-        seen: set[str] = set()
         per_cat_count: dict[str, int] = {}
         filtered: list[dict] = []
         for s in all_raw:
-            slug = s.get("channel", {}).get("slug", "")
-            cat = s.get("category", {}).get("name", "Unknown")
-            if not slug or slug in seen:
-                continue
-            seen.add(slug)
-            per_cat_count[cat] = per_cat_count.get(cat, 0) + 1
-            if per_cat_count[cat] <= args.max_per_category:
+            cats = s.get("categories", [])
+            cat_name = cats[0].get("name", "Unknown") if cats else "Unknown"
+            per_cat_count[cat_name] = per_cat_count.get(cat_name, 0) + 1
+            if per_cat_count[cat_name] <= args.max_per_category:
                 filtered.append(s)
             if len(filtered) >= args.max_streams:
                 break
 
         all_raw = filtered
-        log.info("Stream unik: %d (fetch: %.1fs)", len(all_raw), time.time() - t0)
+        log.info("Stream unik: %d (list: %.1fs)", len(all_raw), time.time() - t0)
 
-        # Fetch playback_url
+        # Step 2: Fetch playback_url dengan token (parallel)
         if all_raw:
-            log.info("Fetching playback_url...")
+            log.info("Fetching playback_url (dengan token)...")
             with ThreadPoolExecutor(max_workers=args.workers) as pool:
                 futures = {pool.submit(process_kick_stream, s): s for s in all_raw}
                 done = 0
