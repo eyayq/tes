@@ -11,11 +11,11 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from curl_cffi import requests as cffi_requests
 
 # ─── Konfigurasi ─────────────────────────────────────────────────
-MAX_ROOMS_TOTAL = 5000
+MAX_ROOMS_TOTAL = 11500
 REQUEST_DELAY = 0
 TIMEOUT = 10
 MAX_WORKERS = 201
-PER_CATEGORY = 1010
+PER_CATEGORY = 101
 
 _local = threading.local()
 
@@ -236,19 +236,23 @@ def get_all_rooms(categories):
     lock = threading.Lock()
 
     def fetch_category(cat):
+    results = []
+    page = 1
+    while True:
         api = (
             f"https://open.douyucdn.cn/api/RoomApi/live/{cat['short']}"
-            f"?limit=30&page=1"
+            f"?limit=30&page={page}"
         )
         try:
             r = s.get(api, timeout=TIMEOUT)
             if r.status_code != 200:
-                return []
+                break
             data = r.json()
             if data.get('error') != 0:
-                return []
+                break
             rooms = parse_response(data)
-            results = []
+            if not rooms:
+                break
             for item in rooms:
                 room_id = str(item.get('room_id', ''))
                 if not room_id or item.get('online', 0) <= 0:
@@ -261,7 +265,12 @@ def get_all_rooms(categories):
                     'gameName': cat['name'],
                     'viewers': item.get('online', 0),
                 })
-            return results
+            if len(rooms) < 30:  # page terakhir
+                break
+            page += 1
+        except Exception:
+            break
+    return results   
         except Exception:
             return []
 
@@ -454,7 +463,7 @@ def generate_playlist(output_file, max_rooms, max_workers=MAX_WORKERS):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Douyu M3U Playlist Generator (Final v3)')
-    parser.add_argument('--output', '-o', default='a/doyo.gif',
+    parser.add_argument('--output', '-o', default='playlist.m3u',
                         help='File output M3U (default: a/doyo.gif)')
     parser.add_argument('--rooms', '-r', type=int, default=MAX_ROOMS_TOTAL,
                         help=f'Total room (default: {MAX_ROOMS_TOTAL})')
