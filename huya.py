@@ -22,7 +22,7 @@ RETRY_COUNT = 4
 OUTPUT_FILE = "playlist.m3u"
 
 MAX_PER_CATEGORY = 1001
-MAX_STREAMS = 1000
+MAX_STREAMS = 1500
 LANGUAGE = "id"
 CATEGORIES = ["games", "irl", "music", "gambling", "creative"]
 LANGUAGES = ["id", "jp", "ja", "en"]
@@ -168,7 +168,7 @@ def fetch_recommended(language: str, max_streams: int = 50) -> list[dict]:
     cursor = None
 
     while len(all_streams) < max_streams:
-        params = {"limit": 50, "language": language}
+        params = {"limit": 150, "language": language}
         if cursor:
             params["cursor"] = cursor
 
@@ -381,10 +381,10 @@ def build_m3u(streams: list[Stream]) -> str:
     lines = ["#EXTM3U"]
     for s in streams:
         attrs = (
-            f'tvg-id="{s.platform}.{s.group_title}.{s.channel_slug}",'
-            f'group-title="{s.group_title}"'
-            f'tvg-logo="{s.tvg_logo}"'
-            f'tvg-name="{s.channel_slug}"'
+            f'tvg-id="{s.platform}.{s.group_title}.{s.channel_slug}" '
+            f'group-title="{s.group_title}" '
+            f'tvg-logo="{s.tvg_logo}" '
+            f'tvg-name="{s.channel_slug}" '
         )
         lines.append(f"#EXTINF:-1 {attrs} {format_title(s)}")
 
@@ -557,9 +557,9 @@ def build_m3u_direct(streams: list[Stream]) -> str:
     for s in streams:
         attrs = (
             f'tvg-id="{s.platform}.{s.group_title}.{s.channel_slug}",'
-            f'group-title="{s.group_title}"'
-            f'tvg-logo="{s.tvg_logo}"'
-            f'tvg-name="{s.channel_slug}"'
+            f'group-title="{s.group_title}" '
+            f'tvg-logo="{s.tvg_logo}" '
+            f'tvg-name="{s.channel_slug}" '
         )
         lines.append(f"#EXTINF:-1 {attrs} {format_title(s)}")
         lines.append(s.playback_url)
