@@ -4,12 +4,12 @@ DOUYU M3U PLAYLIST GENERATOR — FINAL
 - Open API (open.douyucdn.cn) — TANPA AUTH
 - Auto-scrape 3222 kategori dari /api/RoomApi/game
 - Adaptive: iterate semua kategori sampai max_rooms tercapai
-- coapi.douyucdn.cn (MD5 sign) + getH5PlayV1 (encryption) + hlsH5Preview
+- coapi.douyucdn.cn (MD5 sign) + getH5PlayV1 (encryption)
 - curl_cffi (Chrome TLS fingerprint)
 - ThreadPoolExecutor (parallel)
 - tvg-logo + group-title otomatis
 - Chinese → English translation
-- Output: playlist.m3u
+- Output: playlist.m3u (HTTP-FLV only)
 """
 
 import re
@@ -27,7 +27,7 @@ from curl_cffi import requests as cffi_requests
 MAX_ROOMS_TOTAL = 1001
 REQUEST_DELAY = 0
 TIMEOUT = 15
-MAX_WORKERS = 101
+MAX_WORKERS = 201
 PER_CATEGORY = 101
 
 _local = threading.local()
@@ -198,7 +198,7 @@ def parse_response(data, key='rooms'):
     return []
 
 
-# ─── Build stream URL dari rtmp_url + rtmp_live ─────────────────
+# ─── Build stream URL (FLV only) ─────────────────────────────────
 def build_stream_url(rtmp_url, rtmp_live):
     """
     rtmp_url  = "https://ws3.douyucdn.cn/live"
@@ -207,10 +207,12 @@ def build_stream_url(rtmp_url, rtmp_live):
     """
     if not rtmp_url or not rtmp_live:
         return None
-    # Jika rtmp_url masih rtmp://, konversi ke http://
+    # Tolak URL m3u8 — kita mau FLV saja
+    if '.m3u8' in rtmp_live:
+        return None
+    # Jika masih rtmp://, konversi ke http://
     if rtmp_url.startswith('rtmp://'):
         rtmp_url = rtmp_url.replace('rtmp://', 'http://')
-    # rtmp_live sudah mengandung .flv?params — langsung concatenate
     return f"{rtmp_url}/{rtmp_live}"
 
 
@@ -319,7 +321,7 @@ def get_stream_url_method1(room_id):
 
     api = (
         f"https://coapi.douyucdn.cn/lapi/live/thirdPart/getPlay/{room_id}"
-        f"?rate=0&auth={sign}"
+        f"?rate=0&cdn=ws-h5&auth={sign}"
     )
     try:
         r = s.get(api, timeout=TIMEOUT)
@@ -402,41 +404,7 @@ def get_stream_url_method2(room_id):
     return None
 
 
-# ─── Step 4: Stream URL — Method 3 (hlsH5Preview) ───────────────
-def get_stream_url_method3(room_id):
-    s = get_session()
-    did = uuid.uuid4().hex
-    t13 = str(int(time.time()))
-    auth = hashlib.md5((str(room_id) + t13).encode('utf-8')).hexdigest()
-
-    api = f"https://playweb.douyucdn.cn/lapi/live/hlsH5Preview/{room_id}"
-    headers = {
-        'rid': str(room_id),
-        'time': t13,
-        'auth': auth,
-    }
-    form_data = {
-        'rid': str(room_id),
-        'did': did,
-    }
-    try:
-        r = s.post(api, headers=headers, data=form_data, timeout=TIMEOUT)
-        if r.status_code == 200:
-            data = r.json()
-            if data.get('error') == 0:
-                d = data.get('data', {})
-                if isinstance(d, dict):
-                    return build_stream_url(
-                        d.get('rtmp_url', ''),
-                        d.get('rtmp_live', '')
-                    )
-    except Exception:
-        pass
-
-    return None
-
-
-# ─── Step 5: Get stream URL (try all methods) ───────────────────
+# ─── Step 4: Get stream URL (try all methods) ───────────────────
 def get_stream_url(room_id):
     url = get_stream_url_method1(room_id)
     if url:
@@ -444,13 +412,10 @@ def get_stream_url(room_id):
     url = get_stream_url_method2(room_id)
     if url:
         return url
-    url = get_stream_url_method3(room_id)
-    if url:
-        return url
     return None
 
 
-# ─── Step 6: Worker ──────────────────────────────────────────────
+# ─── Step 5: Worker ──────────────────────────────────────────────
 def fetch_worker(args):
     idx, room = args
     room_id = room['id']
@@ -461,7 +426,7 @@ def fetch_worker(args):
     return (idx, room, stream_url, None)
 
 
-# ─── Step 7: Generate playlist ───────────────────────────────────
+# ─── Step 6: Generate playlist ───────────────────────────────────
 def generate_playlist(output_file, max_rooms, max_workers=MAX_WORKERS):
     print("=" * 55)
     print("  DOUYU M3U PLAYLIST GENERATOR (FINAL)")
