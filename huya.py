@@ -23,12 +23,12 @@ RETRY_COUNT = 4
 OUTPUT_FILE = "playlist.m3u"
 
 MAX_PER_CATEGORY = 10    # stream per kategori
-MAX_STREAMS = 1000       # total maksimal stream
+MAX_STREAMS = 100       # total maksimal stream
 LANGUAGE = "id"
 
 # ─── SESSION TOKEN ────────────────────────────────────────────────────────────
 # Cara ambil: F12 → Application → Cookies → kick.com → session_token
-KICK_SESSION_TOKEN = os.getenv("KICK_SESSION_TOKEN", "kat_paste_token_disini")
+KICK_SESSION_TOKEN = os.getenv("KICK_SESSION_TOKEN", "kat_aBAhHd_aLVu-4dyfYCzpja9SVvFyEXbOeXwoYHfxAuQ")   
 
 YOUTUBE_CHANNELS = [
     ("https://www.youtube.com/@MPLIndonesia/live", "MPL Indonesia"),
