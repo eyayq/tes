@@ -235,42 +235,42 @@ def get_all_rooms(categories):
     seen_ids = set()
     lock = threading.Lock()
 
-        def fetch_category(cat):
-        results = []
-        page = 1
-        while True:
-            api = (
-                f"https://open.douyucdn.cn/api/RoomApi/live/{cat['short']}"
-                f"?limit=30&page={page}"
-            )
-            try:
-                r = s.get(api, timeout=TIMEOUT)
-                if r.status_code != 200:
-                    break
-                data = r.json()
-                if data.get('error') != 0:
-                    break
-                rooms = parse_response(data)
-                if not rooms:
-                    break
-                for item in rooms:
-                    room_id = str(item.get('room_id', ''))
-                    if not room_id or item.get('online', 0) <= 0:
-                        continue
-                    results.append({
-                        'id': room_id,
-                        'nick': item.get('nickname', ''),
-                        'introduction': item.get('room_name', ''),
-                        'screenshot': item.get('room_src', ''),
-                        'gameName': cat['name'],
-                        'viewers': item.get('online', 0),
-                    })
-                if len(rooms) < 30:
-                    break
-                page += 1
-            except Exception:
+    def fetch_category(cat):
+    results = []
+    page = 1
+    while True:
+        api = (
+            f"https://open.douyucdn.cn/api/RoomApi/live/{cat['short']}"
+            f"?limit=30&page={page}"
+        )
+        try:
+            r = s.get(api, timeout=TIMEOUT)
+            if r.status_code != 200:
                 break
-        return results   
+            data = r.json()
+            if data.get('error') != 0:
+                break
+            rooms = parse_response(data)
+            if not rooms:
+                break
+            for item in rooms:
+                room_id = str(item.get('room_id', ''))
+                if not room_id or item.get('online', 0) <= 0:
+                    continue
+                results.append({
+                    'id': room_id,
+                    'nick': item.get('nickname', ''),
+                    'introduction': item.get('room_name', ''),
+                    'screenshot': item.get('room_src', ''),
+                    'gameName': cat['name'],
+                    'viewers': item.get('online', 0),
+                })
+            if len(rooms) < 30:  # page terakhir
+                break
+            page += 1
+        except Exception:
+            break
+    return results   
 
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         futures = {
