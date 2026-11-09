@@ -1,511 +1,571 @@
-
-
+import time
+import random
+import logging
+import argparse
+import subprocess
+import threading
 import re
 import json
-import time
-import hashlib
-import threading
-import argparse
-import uuid
+import os
+import uuid as uuid_lib
+from datetime import datetime, timezone
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from dataclasses import dataclass
+from typing import Optional
 
-from curl_cffi import requests as cffi_requests
+import requests
 
-# ─── Konfigurasi ─────────────────────────────────────────────────
-MAX_ROOMS_TOTAL = 2500
-REQUEST_DELAY = 0.1
-TIMEOUT = 10
-MAX_WORKERS = 30
-PER_CATEGORY = 30
+# ─── DEFAULTS ─────────────────────────────────────────────────────────────────
+MAX_WORKERS = 5
+REQUEST_TIMEOUT = 15
+RETRY_COUNT = 4
+OUTPUT_FILE = "playlist.m3u"
 
+MAX_PER_CATEGORY = 1000
+MAX_STREAMS = 1500
+LANGUAGE = "id"
+CATEGORIES = ["games", "irl", "music", "gambling", "creative"]
+LANGUAGES = ["id", "jp", "ja", "en"]
+
+# ─── CLOUDFLARE WORKER (302 redirect, token selalu fresh) ────────────────────
+WORKER_URL = "https://pl-gratosv-al.bhns.workers.dev"
+
+# ─── SESSION TOKEN ────────────────────────────────────────────────────────────
+KICK_SESSION_TOKEN = os.getenv(
+    "KICK_SESSION_TOKEN",
+    "kat_aBAhHd_aLVu-4dyfYCzpja9SVvFyEXbOeXwoYHfxAuQ"
+)
+
+YOUTUBE_CHANNELS = [
+    ("https://www.youtube.com/@MPLIndonesia/live", "MPL Indonesia"),
+    ("https://www.youtube.com/@mlbbindonesia/live", "MLBB Indonesia"),
+]
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
+log = logging.getLogger("kick-m3u")
+
+
+@dataclass
+class Stream:
+    channel_slug: str
+    title: str
+    playback_url: str
+    group_title: str
+    tvg_logo: str
+    started_at: Optional[str]
+    viewers: int
+    platform: str = "Kick"
+
+
+# ─── HTTP ─────────────────────────────────────────────────────────────────────
 _local = threading.local()
 
-
-def get_session():
-    if not hasattr(_local, 'session'):
-        _local.session = cffi_requests.Session(impersonate="chrome")
-        try:
-            _local.session.get("https://www.douyu.com/", timeout=TIMEOUT)
-        except Exception:
-            pass
+def get_session() -> requests.Session:
+    if not hasattr(_local, "session"):
+        _local.session = requests.Session()
+        _local.session.headers.update({
+            "Authorization": f"Bearer {KICK_SESSION_TOKEN}",
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "User-Agent": ("Mozilla/5.0 (Linux; Android 10; K) "
+                           "AppleWebKit/537.36 (KHTML, like Gecko) "
+                           "Chrome/156.0.0.0 Mobile Safari/537.36"),
+            "x-app-platform": "web",
+            "Origin": "https://kick.com",
+            "Referer": "https://kick.com/",
+        })
     return _local.session
 
 
-# ─── Terjemahan Chinese → English ────────────────────────────────
-GAME_TRANSLATION = {
-    '英雄联盟': 'League of Legends',
-    'CS2': 'CS2',
-    '无畏契约': 'Valorant',
-    'DOTA2': 'Dota 2',
-    'Dota2': 'Dota 2',
-    '王者荣耀': 'Honor of Kings',
-    '和平精英': 'Game for Peace',
-    '绝地求生': 'PUBG',
-    '炉石传说': 'Hearthstone',
-    '魔兽世界': 'World of Warcraft',
-    '坦克世界': 'World of Tanks',
-    '守望先锋': 'Overwatch',
-    '穿越火线': 'CrossFire',
-    '地下城与勇士': 'DNF',
-    '冒险岛': 'MapleStory',
-    '剑灵': 'Blade & Soul',
-    '永恒之塔': 'Aion',
-    '黑色沙漠': 'Black Desert',
-    '天堂': 'Paradise',
-    'FF14': 'FFXIV',
-    '命运方舟': 'Lost Ark',
-    '我的世界': 'Minecraft',
-    '主机游戏': 'Console',
-    '体育': 'Sports',
-    '户外': 'Outdoor',
-    '星秀': 'Star Show',
-    '二次元': 'Anime',
-    '音乐': 'Music',
-    '美食': 'Food',
-    '交友': 'Social',
-    '原创': 'Original',
-    '颜值': 'Beauty',
-    '一起看': 'Watch Together',
-    '上分': 'Ranking Up',
-    '怀旧游戏': 'Retro',
-    '军事游戏': 'Military',
-    '动作游戏': 'Action',
-    'MMORPG': 'MMORPG',
-    '射击综合游戏': 'Shooter',
-    '综合手游': 'Mobile General',
-    '二次元手游': 'Anime Mobile',
-    '棋牌休闲': 'Board/Card Games',
-    'QQ飞车': 'QQ Speed',
-    'QQ飞车手游': 'QQ Speed Mobile',
-    'CF手游': 'CF Mobile',
-    'LOL手游': 'LoL Mobile',
-    '原神': 'Genshin Impact',
-    '第五人格': 'Identity V',
-    '蛋仔派对': 'Eggy Party',
-    '崩坏：星穹铁道': 'Honkai: Star Rail',
-    '鸣潮': 'Wuthering Waves',
-    '绝区零': 'Zenless Zone Zero',
-    '暗区突围': 'Arena Breakout',
-    '永劫无间': 'Naraka',
-    '幻塔': 'Tower of Fantasy',
-    '明日之后': 'LifeAfter',
-    '球球大作战': 'Ball Battle',
-    '荒野乱斗': 'Brawl Stars',
-    '皇室战争': 'Clash Royale',
-    '部落冲突': 'Clash of Clans',
-    '罗布乐思': 'Roblox',
-    '迷你世界': 'Mini World',
-    '植物大战僵尸': 'Plants vs Zombies',
-    '鹅鸭杀': 'Goose Goose Duck',
-    '恐鬼症': 'Phasmophobia',
-    '森林之子': 'Sons of the Forest',
-    '方舟': 'ARK',
-    '全面战争': 'Total War',
-    '帝国时代4': 'Age of Empires 4',
-    '极限竞速：地平线': 'Forza Horizon',
-    '刺客信条': "Assassin's Creed",
-    '看门狗：军团': 'Watch Dogs Legion',
-    '最终幻想系列': 'Final Fantasy',
-    '体育游戏': 'Sports Games',
-    '中国象棋': 'Chinese Chess',
-    '欢乐斗地主': 'Happy Landlord',
-    'JJ斗地主': 'JJ Landlord',
-    '欢乐麻将': 'Happy Mahjong',
-    '三国杀': '3 Kingdoms Kill',
-    '拳皇15': 'KOF 15',
-    '星际争霸': 'StarCraft',
-    '魔兽争霸3': 'Warcraft 3',
-    '战争雷霆': 'War Thunder',
-    '艾尔登法环': 'Elden Ring',
-    '只狼：影逝二度': 'Sekiro',
-    '黑神话悟空': 'Black Myth: Wukong',
-    '逃离塔科夫': 'Escape from Tarkov',
-    '彩虹六号': 'Rainbow Six',
-    '恐怖游戏': 'Horror',
-    '格斗游戏': 'Fighting',
-    '小游戏': 'Mini Games',
-    '桌游': 'Board Games',
-    '旅游': 'Travel',
-    '科技': 'Tech',
-    '虚拟偶像': 'Virtual Idol',
-    'Apex英雄': 'Apex Legends',
-    '怪物猎人：荒野': 'Monster Hunter Wilds',
-    '博德之门3': "Baldur's Gate 3",
-    '盗贼之海': 'Sea of Thieves',
-    '环世界': 'RimWorld',
-    '双人成行': 'It Takes Two',
-    '生死狙击': 'Sniper Strike',
-    '逆战': 'Counter-Strike',
-    'CFHD': 'CFHD',
-    'COD手游': 'COD Mobile',
-    '火影忍者手游': 'Naruto Mobile',
-    '王者万象棋': 'HoK Chess',
-    '金铲铲之战': 'TFT Mobile',
-    'LOL云顶之弈': 'TFT',
-    'lol云顶之弈': 'TFT',
-    '炉石战棋': 'Hearthstone BG',
-    '三角洲行动': 'Delta Force',
-    '天天吃鸡': 'PUBG Mobile',
-    '失控进化-RUST': 'Rust',
-    '失控进化-Rust': 'Rust',
-    'KPL年度总决赛': 'KPL Finals',
-    '斯诺克': 'Snooker',
-    '2026S16': 'LPL S16',
-}
-
-_translation_cache = {}
+def smart_sleep(base=0.3):
+    time.sleep(base + random.uniform(0, 0.4))
 
 
-def translate_text(text):
-    if not text:
-        return text
-    if text in _translation_cache:
-        return _translation_cache[text]
-    if text in GAME_TRANSLATION:
-        _translation_cache[text] = GAME_TRANSLATION[text]
-        return GAME_TRANSLATION[text]
-    if re.search(r'[\u4e00-\u9fff]', text):
+def _get(url: str, params: dict | None = None) -> Optional[dict]:
+    for attempt in range(RETRY_COUNT):
         try:
-            from deep_translator import GoogleTranslator
-            result = GoogleTranslator(source='zh-CN', target='en').translate(text)
-            _translation_cache[text] = result
-            return result
-        except Exception:
-            pass
-    _translation_cache[text] = text
-    return text
-
-
-# ─── Parse response ─────────────────────────────────────────────
-def parse_response(data, key='rooms'):
-    data_field = data.get('data', [])
-    if isinstance(data_field, list):
-        return data_field
-    elif isinstance(data_field, dict):
-        return data_field.get(key, [])
-    return []
-
-
-# ─── Build stream URL (FLV only) ─────────────────────────────────
-def build_stream_url(rtmp_url, rtmp_live):
-    if not rtmp_url or not rtmp_live:
-        return None
-    if '.m3u8' in rtmp_live:
-        return None
-    if rtmp_url.startswith('rtmp://'):
-        rtmp_url = rtmp_url.replace('rtmp://', 'http://')
-    return f"{rtmp_url}/{rtmp_live}"
-
-
-# ─── Encryption cache (fetch 1x, pakai untuk semua room) ─────────
-_enc_cache = {}
-_enc_lock = threading.Lock()
-
-
-def get_encryption():
-    """Fetch encryption data 1x, cache untuk semua thread (60 detik)."""
-    with _enc_lock:
-        if _enc_cache.get('key') and time.time() - _enc_cache.get('ts', 0) < 60:
-            return _enc_cache
-    s = get_session()
-    did = uuid.uuid4().hex
-    enc_api = f"https://www.douyu.com/wgapi/livenc/liveweb/websec/getEncryption?did={did}"
-    try:
-        r = s.get(enc_api, timeout=TIMEOUT)
-        if r.status_code != 200:
-            return None
-        data = r.json()
-        if data.get('error') != 0:
-            return None
-        enc_data = data.get('data', {})
-        if not isinstance(enc_data, dict):
-            return None
-        enc_data['did'] = did
-        enc_data['ts'] = time.time()
-        with _enc_lock:
-            _enc_cache.clear()
-            _enc_cache.update(enc_data)
-        return enc_data
-    except Exception:
-        return None
-
-
-# ─── Step 0: Scrape SEMUA kategori ──────────────────────────────
-def get_all_categories():
-    s = get_session()
-    api = "https://open.douyucdn.cn/api/RoomApi/game"
-
-    try:
-        r = s.get(api, timeout=TIMEOUT)
-        if r.status_code != 200:
-            return []
-        data = r.json()
-    except Exception:
-        return []
-
-    if data.get('error') != 0:
-        return []
-
-    games = parse_response(data, key='games')
-    if not games:
-        games = data.get('data', [])
-        if not isinstance(games, list):
-            return []
-
-    categories = []
-    for item in games:
-        short = item.get('short_name', '')
-        name = item.get('game_name', '')
-        if short and name:
-            categories.append({'short': short.lower(), 'name': name})
-
-    return categories
-
-
-# ─── Step 1: Ambil rooms (adaptive) ─────────────────────────────
-def get_all_rooms(categories):
-    all_rooms = []
-    seen_ids = set()
-    lock = threading.Lock()
-
-    def fetch_category(cat):
-        s = get_session()
-        api = (
-            f"https://open.douyucdn.cn/api/RoomApi/live/{cat['short']}"
-            f"?limit=30&page=1"
-        )
-        try:
-            r = s.get(api, timeout=TIMEOUT)
-            if r.status_code != 200:
-                return []
-            data = r.json()
-            if data.get('error') != 0:
-                return []
-            rooms = parse_response(data)
-            results = []
-            for item in rooms:
-                room_id = str(item.get('room_id', ''))
-                if not room_id or item.get('online', 0) <= 0:
-                    continue
-                results.append({
-                    'id': room_id,
-                    'nick': item.get('nickname', ''),
-                    'introduction': item.get('room_name', ''),
-                    'screenshot': item.get('room_src', ''),
-                    'gameName': cat['name'],
-                    'viewers': item.get('online', 0),
-                })
-            return results
-        except Exception:
-            return []
-
-    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-        futures = {
-            executor.submit(fetch_category, cat): cat
-            for cat in categories
-        }
-
-        done_count = 0
-        for future in as_completed(futures):
-            rooms = future.result()
-            with lock:
-                for room in rooms:
-                    if room['id'] in seen_ids:
-                        continue
-                    seen_ids.add(room['id'])
-                    all_rooms.append(room)
-            done_count += 1
-            if done_count % 100 == 0:
-                print(f"  Progress: {done_count}/{len(categories)} | total rooms: {len(all_rooms)}")
-
-    return all_rooms
-
-
-# ─── Step 2: Stream URL (getH5PlayV1 + cache + retry) ───────────
-def get_stream_url(room_id, retries=2):
-    for attempt in range(retries + 1):
-        enc = get_encryption()
-        if not enc:
-            time.sleep(1)
-            continue
-
-        did = enc.get('did', uuid.uuid4().hex)
-        key = enc.get('key', '')
-        rand_str = enc.get('rand_str', '')
-        enc_time = int(enc.get('enc_time', 0))
-        enc_data_str = enc.get('enc_data', '')
-
-        if not key or not rand_str:
-            time.sleep(1)
-            continue
-
-        ts = str(int(time.time()))
-        f = rand_str
-        for _ in range(enc_time):
-            f = hashlib.md5((f + key).encode('utf-8')).hexdigest()
-        auth = hashlib.md5((f + key + str(room_id) + ts).encode('utf-8')).hexdigest()
-
-        s = get_session()
-        api = f"https://www.douyu.com/lapi/live/getH5PlayV1/{room_id}"
-        form_data = {
-            'enc_data': enc_data_str,
-            'tt': ts,
-            'did': did,
-            'auth': auth,
-            'cdn': 'ws-h5',
-            'rate': '0',
-            'ver': 'Douyu_new',
-            'iar': '0',
-            'ive': '0',
-            'prev': '1',
-            'bs': '2',
-        }
-        try:
-            r = s.post(api, data=form_data, timeout=TIMEOUT)
+            r = get_session().get(url, params=params, timeout=REQUEST_TIMEOUT)
             if r.status_code == 200:
-                data = r.json()
-                if data.get('error') == 0:
-                    d = data.get('data', {})
-                    if isinstance(d, dict):
-                        url = build_stream_url(
-                            d.get('rtmp_url', ''),
-                            d.get('rtmp_live', '')
-                        )
-                        if url:
-                            return url
-            if attempt < retries:
-                time.sleep(1 + attempt)
-        except Exception:
-            if attempt < retries:
+                return r.json()
+            elif r.status_code == 429:
+                wait = 5 * (3 ** attempt)
+                log.warning("429! Tunggu %ds", wait)
+                time.sleep(wait)
+            else:
                 time.sleep(1)
-
+        except Exception:
+            time.sleep(2)
     return None
 
 
-# ─── Step 3: Worker ──────────────────────────────────────────────
-def fetch_worker(args):
-    idx, room = args
-    room_id = room['id']
+def _post(url: str, json_body: dict) -> Optional[dict]:
+    for attempt in range(RETRY_COUNT):
+        try:
+            r = get_session().post(url, json=json_body, timeout=REQUEST_TIMEOUT)
+            if r.status_code == 200:
+                return r.json()
+            elif r.status_code == 429:
+                wait = 5 * (3 ** attempt)
+                log.warning("429! Tunggu %ds", wait)
+                time.sleep(wait)
+            else:
+                time.sleep(1)
+        except Exception:
+            time.sleep(2)
+    return None
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SOURCE 1: kick.com/stream/livestreams (PAGINATION)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def fetch_livestreams(category: str, language: str, max_streams: int = 200) -> list[dict]:
+    all_streams = []
+    page = 1
+
+    while len(all_streams) < max_streams:
+        data = _get(f"https://kick.com/stream/livestreams/{language}",
+                    params={"page": page, "limit": 50, "category": category})
+        if not data:
+            break
+
+        items = data.get("data", [])
+        if not items:
+            break
+
+        all_streams.extend(items[:max_streams - len(all_streams)])
+
+        last_page = data.get("last_page", 0)
+        if last_page and page >= last_page:
+            break
+        if len(items) < 50:
+            break
+
+        page += 1
+        smart_sleep(0.2)
+
+    return all_streams[:max_streams]
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SOURCE 2: web.kick.com featured
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def fetch_featured(language: str) -> list[dict]:
+    data = _get("https://web.kick.com/api/v1/livestreams/featured",
+                params={"language": language})
+    if not data:
+        return []
+    return (data.get("data") or {}).get("livestreams", [])
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SOURCE 3: web.kick.com recommended
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def fetch_recommended(language: str, max_streams: int = 50) -> list[dict]:
+    all_streams = []
+    cursor = None
+
+    while len(all_streams) < max_streams:
+        params = {"limit": 50, "language": language}
+        if cursor:
+            params["cursor"] = cursor
+
+        data = _get("https://web.kick.com/api/v1/recommendations/livestreams/list",
+                    params=params)
+        if not data:
+            break
+
+        inner = data.get("data") or {}
+        items = inner.get("livestreams", [])
+        if not items:
+            break
+
+        all_streams.extend(items[:max_streams - len(all_streams)])
+
+        cursor = (inner.get("pagination") or {}).get("next_cursor", "")
+        if not cursor:
+            break
+        smart_sleep(0.2)
+
+    return all_streams[:max_streams]
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# TOKEN: kick.com/api/v2/channels/{slug} → playback_url (DENGAN TOKEN)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def fetch_channel_playback(channel_slug: str) -> Optional[str]:
+    data = _get(f"https://kick.com/api/v2/channels/{channel_slug}")
+    if not data:
+        return None
+    pb = data.get("playback_url", "")
+    if isinstance(pb, str) and pb.startswith("http"):
+        return pb
+    return None
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# TOKEN (FALLBACK): POST web.kick.com/api/v1/stream/{uuid}/playback
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def fetch_playback_by_uuid(stream_uuid: str) -> Optional[str]:
+    body = {
+        "video_player": {
+            "player": {
+                "player_name": "web_mobile",
+                "player_version": "web_mobile_fd20d6ce",
+                "player_software": "IVS Player",
+                "player_software_version": "1.56.2",
+            },
+            "mux_sdk": {"sdk_available": True},
+            "pal_sdk": {"sdk_available": False, "nonce": ""},
+            "datazoom_sdk": {"sdk_available": True, "datazoom_sdk_version": "2.33.0", "om_sdk_version": "1.6.6"},
+            "google_ads_sdk": {"sdk_available": False},
+            "ima_sdk": {"sdk_available": False},
+        },
+        "video_session": {
+            "page_type": "channel",
+            "player_remote_played": False,
+            "enable_sampling": False,
+            "url_path": "",
+            "autoplay_behaviour": "click",
+            "play_muted": False,
+            "viewer_connection_type": "",
+        },
+        "user_session": {
+            "session_id": str(uuid_lib.uuid4()),
+            "player_device_id": str(uuid_lib.uuid4()),
+            "browser_lang": "id",
+            "non_personalised_ads": True,
+            "gdpr": 0,
+        },
+    }
+
+    data = _post(f"https://web.kick.com/api/v1/stream/{stream_uuid}/playback",
+                 json_body=body)
+    if not data:
+        return None
+    pb = data.get("playback_url", {})
+    if isinstance(pb, dict):
+        return pb.get("live") or ""
+    return None
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PROCESS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def process_stream(stream_data: dict) -> Optional[Stream]:
+    channel = stream_data.get("channel", {})
+    channel_slug = channel.get("slug", "")
+    if not channel_slug:
+        return None
+
+    # Fetch playback_url (untuk verifikasi channel masih live)
+    playback_url = fetch_channel_playback(channel_slug)
+
+    # Fallback: POST by UUID
+    if not playback_url:
+        stream_uuid = stream_data.get("id", "")
+        if stream_uuid and "-" in stream_uuid:
+            playback_url = fetch_playback_by_uuid(stream_uuid)
+
+    if not playback_url:
+        return None
+
+    # Metadata
+    viewers = stream_data.get("viewer_count") or stream_data.get("viewers") or 0
+    title = stream_data.get("session_title") or stream_data.get("title") or "Untitled"
+    started_at = stream_data.get("start_time")
+
+    # Category
+    categories = stream_data.get("categories", [])
+    if categories:
+        group_name = categories[0].get("name", "Unknown")
+    else:
+        group_name = stream_data.get("category", {}).get("name", "Unknown")
+
+    # Logo
+    user = channel.get("user", {})
+    tvg_logo = (user.get("profilepic")
+                or user.get("profile_pic")
+                or channel.get("profile_pic")
+                or f"https://kick.com/{channel_slug}/profile")
+
+    return Stream(
+        channel_slug=channel_slug,
+        title=title,
+        playback_url=playback_url,
+        group_title=group_name,
+        tvg_logo=tvg_logo,
+        started_at=started_at,
+        viewers=viewers,
+    )
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# YOUTUBE
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def get_youtube_m3u8(channel_url: str) -> Optional[str]:
     try:
-        stream_url = get_stream_url(room_id)
-    except Exception as e:
-        return (idx, room, None, str(e))
-    return (idx, room, stream_url, None)
+        r = subprocess.run(
+            ["yt-dlp", "-g", "-f", "b[protocol=m3u8]",
+             "--extractor-args", "youtube:player_client=web_safari",
+             "--no-warnings", "--socket-timeout", "15",
+             channel_url],
+            capture_output=True, text=True, timeout=30,
+        )
+        if r.returncode == 0 and r.stdout.strip():
+            return r.stdout.strip()
+    except Exception:
+        pass
+    return None
 
 
-# ─── Step 4: Generate playlist ───────────────────────────────────
-def generate_playlist(output_file, max_rooms, max_workers=MAX_WORKERS):
-    print("=" * 55)
-    print("  DOUYU M3U PLAYLIST GENERATOR (FINAL v5)")
-    print(f"  {max_rooms} rooms | {max_workers} threads | {PER_CATEGORY}/kategori")
-    print("=" * 55)
-
-    # Step 0: Scrape semua kategori
-    print("\n[0/3] Scraping semua kategori...")
-    categories = get_all_categories()
-    print(f"  Kategori ditemukan: {len(categories)}")
-
-    if not categories:
-        print("  [ERROR] Tidak bisa ambil kategori!")
-        return
-
-    # Step 1: Ambil rooms (adaptive)
-    print(f"\n[1/3] Mengambil rooms (adaptive, max {max_rooms})...")
-    all_rooms = get_all_rooms(categories)
-
-    print(f"\n  Total rooms: {len(all_rooms)}")
-
-    if not all_rooms:
-        print("\n  [ERROR] Tidak ada rooms live!")
-        return
-
-    # Step 2: Stream URL (PARALEL)
-    print(f"\n[2/3] Mengambil stream URL ({max_workers} threads)...")
-    results = [None] * len(all_rooms)
-
-    with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        futures = {
-            executor.submit(fetch_worker, (i, room)): i
-            for i, room in enumerate(all_rooms)
-        }
-
-        done_count = 0
-        for future in as_completed(futures):
-            idx, room, stream_url, error = future.result()
-            results[idx] = (room, stream_url, error)
-            done_count += 1
-            if done_count % 50 == 0:
-                print(f"  Progress: {done_count}/{len(all_rooms)}")
-
-    # Step 3: Build playlist + translate
-    print(f"\n[3/3] Membangun playlist + translate...")
-    lines = ['#EXTM3U']
-    live_count = 0
-    offline_count = 0
-    error_count = 0
-
-    for item in results:
-        if item is None:
-            continue
-        room, stream_url, error = item
-
-        if error:
-            error_count += 1
-            continue
-        if not stream_url:
-            offline_count += 1
-            continue
-
-        game_name = room.get('gameName', '')
-        logo = room.get('screenshot', '')
-
-        name = translate_text(room['nick'] or room['introduction'] or f"Douyu {room['id']}")
-        group_title = translate_text(game_name) if game_name else 'Douyu'
-
-        extinf = f'#EXTINF:-1'
-        if logo:
-            extinf += f' tvg-logo="{logo}"'
-        extinf += f' group-title="{group_title}"'
-        extinf += f',{name}'
-
-        lines.append(extinf)
-        lines.append(stream_url)
-        live_count += 1
-
-    with open(output_file, 'w', encoding='utf-8') as f:
-        f.write('\n'.join(lines) + '\n')
-
-    print(f"\n{'=' * 55}")
-    print(f"  SELESAI: {live_count} live | {offline_count} offline | {error_count} error")
-    print(f"  Output: {output_file}")
-    print(f"{'=' * 55}")
+def get_youtube_channel_logo(channel_url: str) -> str:
+    try:
+        r = requests.get(channel_url.replace("/live", ""), timeout=REQUEST_TIMEOUT)
+        if r.status_code == 200:
+            match = re.search(r'og:image"\s+content="([^"]+)"', r.text)
+            if match:
+                return match.group(1)
+    except Exception:
+        pass
+    return "https://www.youtube.com/img/icons/1x/channel-icon.png"
 
 
-# ─── Main ────────────────────────────────────────────────────────
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(
-        description='Douyu M3U Playlist Generator (Final v5)')
-    parser.add_argument('--output', '-o', default='playlist.m3u',
-                        help='File output M3U (default: playlist.m3u)')
-    parser.add_argument('--rooms', '-r', type=int, default=MAX_ROOMS_TOTAL,
-                        help=f'Total room (default: {MAX_ROOMS_TOTAL})')
-    parser.add_argument('--workers', '-w', type=int, default=MAX_WORKERS,
-                        help='Jumlah thread paralel (default: 28)')
-    parser.add_argument('--delay', '-d', type=float, default=REQUEST_DELAY,
-                        help='Jeda antar request (default: 0.1)')
-    parser.add_argument('--per-cat', '-p', type=int, default=PER_CATEGORY,
-                        help=f'Room per kategori (default: {PER_CATEGORY})')
-    parser.add_argument('--no-translate', action='store_true',
-                        help='Nonaktifkan terjemahan (lebih cepat)')
+def process_youtube(item: tuple) -> Optional[Stream]:
+    url, name = item
+    m3u8 = get_youtube_m3u8(url)
+    if not m3u8:
+        return None
+    logo = get_youtube_channel_logo(url)
+    return Stream(
+        channel_slug=name.lower().replace(" ", "_"),
+        title=f"{name} LIVE",
+        playback_url=m3u8,
+        group_title="YouTube",
+        tvg_logo=logo,
+        started_at=None,
+        viewers=0,
+        platform="YouTube",
+    )
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# M3U
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def format_title(s: Stream) -> str:
+    base = s.title
+    if s.started_at:
+        try:
+            raw = s.started_at
+            if raw.isdigit():
+                dt = datetime.fromtimestamp(int(raw), tz=timezone.utc).astimezone()
+            else:
+                try:
+                    dt = datetime.fromisoformat(raw).replace(tzinfo=timezone.utc).astimezone()
+                except ValueError:
+                    dt = datetime.fromisoformat(raw.replace("Z", "+00:00")).astimezone()
+            base = f"{base} [{dt.strftime('%H:%M')} {dt.strftime('%d/%m/%Y')}]"
+        except (ValueError, TypeError, OSError):
+            pass
+    return base
+
+
+def build_m3u(streams: list[Stream]) -> str:
+    lines = ["#EXTM3U"]
+    for s in streams:
+        attrs = (
+            f'tvg-id="{s.platform}.{s.group_title}.{s.channel_slug}" '
+            f'tvg-name="{s.channel_slug}" '
+            f'tvg-logo="{s.tvg_logo}" '
+            f'group-title="{s.group_title}",'
+        )
+        lines.append(f"#EXTINF:-1 {attrs}, {format_title(s)}")
+
+        # Kick → Worker URL (token selalu fresh via 302 redirect)
+        # YouTube → URL langsung
+        if s.platform == "Kick":
+            lines.append(f"{WORKER_URL}/0.m3u8?id={s.channel_slug}")
+        else:
+            lines.append(s.playback_url)
+
+    return "\n".join(lines) + "\n"
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# MAIN
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def main():
+    parser = argparse.ArgumentParser(description="Kick + YouTube M3U Scraper")
+    parser.add_argument("--output", "-o", default=OUTPUT_FILE)
+    parser.add_argument("--workers", "-w", type=int, default=MAX_WORKERS)
+    parser.add_argument("--kick-only", action="store_true")
+    parser.add_argument("--yt-only", action="store_true")
+    parser.add_argument("--max-per-category", type=int, default=MAX_PER_CATEGORY)
+    parser.add_argument("--max-streams", type=int, default=MAX_STREAMS)
+    parser.add_argument("--language", "-l", default=LANGUAGE)
+    parser.add_argument("--categories", type=str, default=",".join(CATEGORIES))
+    parser.add_argument("--languages", type=str, default=",".join(LANGUAGES))
+    parser.add_argument("--direct-url", action="store_true",
+                        help="Pakai URL langsung (bukan Worker) — token bisa expired")
     args = parser.parse_args()
 
-    if args.no_translate:
-        translate_text = lambda x: x or ''
+    categories = [c.strip() for c in args.categories.split(",") if c.strip()]
+    languages = [l.strip() for l in args.languages.split(",") if l.strip()]
 
-    REQUEST_DELAY = args.delay
-    PER_CATEGORY = args.per_cat
-    generate_playlist(
-        output_file=args.output,
-        max_rooms=args.rooms,
-        max_workers=args.workers,
-    )   
+    t0 = time.time()
+    log.info("=== Kick + YouTube M3U Scraper ===")
+    log.info("Settings: max-per-cat=%d, max-streams=%d, lang=%s, cats=%s",
+             args.max_per_category, args.max_streams, args.language, categories)
+    log.info("Mode: %s", "DIRECT URL" if args.direct_url else f"WORKER ({WORKER_URL})")
+
+    all_streams: list[Stream] = []
+
+    # ─── KICK ────────────────────────────────────────────────────────────────
+    if not args.yt_only:
+        log.info("─── KICK ───")
+
+        all_raw: list[dict] = []
+        seen: set[str] = set()
+
+        # SOURCE 1: kick.com/stream/livestreams (pagination)
+        log.info("[1/3] kick.com/stream/livestreams...")
+        with ThreadPoolExecutor(max_workers=args.workers) as pool:
+            futures = {
+                pool.submit(fetch_livestreams, cat, args.language, args.max_streams): cat
+                for cat in categories
+            }
+            for fut in as_completed(futures):
+                cat = futures[fut]
+                try:
+                    streams = fut.result()
+                    for s in streams:
+                        slug = s.get("channel", {}).get("slug", "")
+                        if slug and slug not in seen:
+                            seen.add(slug)
+                            all_raw.append(s)
+                    log.info("  livestreams/%s: %d", cat, len(streams))
+                except Exception as e:
+                    log.debug("Error %s: %s", cat, e)
+                if len(all_raw) >= args.max_streams:
+                    break
+
+        # SOURCE 2: web.kick.com featured
+        log.info("[2/3] web.kick.com featured...")
+        for lang in languages:
+            featured = fetch_featured(lang)
+            for s in featured:
+                slug = s.get("channel", {}).get("slug", "")
+                if slug and slug not in seen:
+                    seen.add(slug)
+                    all_raw.append(s)
+            log.info("  featured/%s: %d", lang, len(featured))
+            smart_sleep(0.3)
+
+        # SOURCE 3: web.kick.com recommended
+        log.info("[3/3] web.kick.com recommended...")
+        for lang in languages:
+            recommended = fetch_recommended(lang, args.max_streams)
+            for s in recommended:
+                slug = s.get("channel", {}).get("slug", "")
+                if slug and slug not in seen:
+                    seen.add(slug)
+                    all_raw.append(s)
+            log.info("  recommended/%s: %d", lang, len(recommended))
+            smart_sleep(0.3)
+
+        log.info("Stream total: %d (fetch: %.1fs)", len(all_raw), time.time() - t0)
+
+        # Filter per kategori
+        per_cat_count: dict[str, int] = {}
+        filtered: list[dict] = []
+        for s in all_raw:
+            cats = s.get("categories", [])
+            if cats:
+                cat_name = cats[0].get("name", "Unknown")
+            else:
+                cat_name = s.get("category", {}).get("name", "Unknown")
+            per_cat_count[cat_name] = per_cat_count.get(cat_name, 0) + 1
+            if per_cat_count[cat_name] <= args.max_per_category:
+                filtered.append(s)
+            if len(filtered) >= args.max_streams:
+                break
+
+        log.info("After filter: %d stream", len(filtered))
+
+        # Fetch playback_url (verifikasi + token)
+        if filtered:
+            log.info("Fetching playback_url...")
+            with ThreadPoolExecutor(max_workers=args.workers) as pool:
+                futures = {pool.submit(process_stream, s): s for s in filtered}
+                done = 0
+                for fut in as_completed(futures):
+                    done += 1
+                    if done % 20 == 0:
+                        log.info("  Playback: %d/%d", done, len(futures))
+                    try:
+                        s = fut.result()
+                        if s:
+                            all_streams.append(s)
+                    except Exception:
+                        pass
+
+        kick_count = sum(1 for s in all_streams if s.platform == "Kick")
+        log.info("Kick valid: %d", kick_count)
+
+    # ─── YOUTUBE ─────────────────────────────────────────────────────────────
+    if not args.kick_only and YOUTUBE_CHANNELS:
+        log.info("─── YOUTUBE ───")
+        with ThreadPoolExecutor(max_workers=3) as pool:
+            for fut in as_completed(pool.submit(process_youtube, ch) for ch in YOUTUBE_CHANNELS):
+                try:
+                    s = fut.result()
+                    if s:
+                        log.info("  ✅ %s LIVE", s.title)
+                        all_streams.append(s)
+                except Exception:
+                    pass
+
+    # ── Output ──
+    all_streams.sort(key=lambda s: s.viewers, reverse=True)
+    if len(all_streams) > args.max_streams:
+        all_streams = all_streams[:args.max_streams]
+
+    # Build M3U (Worker URL atau Direct)
+    if args.direct_url:
+        # Mode direct: pakai playback_url langsung (token bisa expired ~1 jam)
+        m3u_content = build_m3u_direct(all_streams)
+    else:
+        # Mode worker: pakai Worker URL (token selalu fresh)
+        m3u_content = build_m3u(all_streams)
+
+    with open(args.output, "w") as f:
+        f.write(m3u_content)
+    log.info("✅ %d stream → %s (%.1fs)", len(all_streams), args.output, time.time() - t0)
+
+
+def build_m3u_direct(streams: list[Stream]) -> str:
+    """M3U dengan URL langsung (token bisa expired)."""
+    lines = ["#EXTM3U"]
+    for s in streams:
+        attrs = (
+            f'tvg-id="{s.platform}.{s.group_title}.{s.channel_slug}",'
+            f'tvg-name="{s.channel_slug}" '
+            f'tvg-logo="{s.tvg_logo}" '
+            f'group-title="{s.group_title} [vip tes 2]",'
+        )
+        lines.append(f"#EXTINF:-1 {attrs}, {format_title(s)}")
+        lines.append(s.playback_url)
+    return "\n".join(lines) + "\n"
+
+
+if __name__ == "__main__":
+    main()   
+
