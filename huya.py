@@ -11,7 +11,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from curl_cffi import requests as cffi_requests
 
 # ─── Konfigurasi ─────────────────────────────────────────────────
-MAX_ROOMS_TOTAL = 1500
+MAX_ROOMS_TOTAL = 1000
 REQUEST_DELAY = 0
 TIMEOUT = 15
 MAX_WORKERS = 101
