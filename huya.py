@@ -382,9 +382,9 @@ def build_m3u(streams: list[Stream]) -> str:
     for s in streams:
         attrs = (
             f'tvg-id="{s.platform}.{s.group_title}.{s.channel_slug}" '
-            f'group-title="{s.group_title}" '
-            f'tvg-logo="{s.tvg_logo}" '
             f'tvg-name="{s.channel_slug}" '
+            f'tvg-logo="{s.tvg_logo}" '
+            f'group-title="{s.group_title}",'
         )
         lines.append(f"#EXTINF:-1 {attrs}, {format_title(s)}")
 
@@ -557,9 +557,9 @@ def build_m3u_direct(streams: list[Stream]) -> str:
     for s in streams:
         attrs = (
             f'tvg-id="{s.platform}.{s.group_title}.{s.channel_slug}",'
-            f'group-title="{s.group_title}" '
-            f'tvg-logo="{s.tvg_logo}" '
             f'tvg-name="{s.channel_slug}" '
+            f'tvg-logo="{s.tvg_logo}" '
+            f'group-title="{s.group_title}",'
         )
         lines.append(f"#EXTINF:-1 {attrs}, {format_title(s)}")
         lines.append(s.playback_url)
