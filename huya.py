@@ -1,4 +1,18 @@
 
+#!/usr/bin/env python3
+"""
+DOUYU M3U PLAYLIST GENERATOR — FINAL
+- Open API (open.douyucdn.cn) — TANPA AUTH
+- Auto-scrape 3222 kategori dari /api/RoomApi/game
+- Adaptive: iterate semua kategori sampai max_rooms tercapai
+- coapi.douyucdn.cn (MD5 sign) + getH5PlayV1 (encryption) + hlsH5Preview
+- curl_cffi (Chrome TLS fingerprint)
+- ThreadPoolExecutor (parallel)
+- tvg-logo + group-title otomatis
+- Chinese → English translation
+- Output: playlist.m3u
+"""
+
 import re
 import json
 import time
@@ -14,7 +28,7 @@ from curl_cffi import requests as cffi_requests
 MAX_ROOMS_TOTAL = 2000
 REQUEST_DELAY = 0
 TIMEOUT = 15
-MAX_WORKERS = 28
+MAX_WORKERS = 38
 PER_CATEGORY = 50
 
 _local = threading.local()
@@ -525,8 +539,8 @@ def generate_playlist(output_file, max_rooms, max_workers=MAX_WORKERS):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Douyu M3U Playlist Generator (Final)')
-    parser.add_argument('--output', '-o', default='playlist_douyu.m3u',
-                        help='File output M3U (default: playlist_douyu.m3u)')
+    parser.add_argument('--output', '-o', default='playlist.m3u',
+                        help='File output M3U (default: playlist.m3u)')
     parser.add_argument('--rooms', '-r', type=int, default=MAX_ROOMS_TOTAL,
                         help=f'Total room (default: {MAX_ROOMS_TOTAL})')
     parser.add_argument('--workers', '-w', type=int, default=MAX_WORKERS,
