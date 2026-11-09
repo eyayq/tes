@@ -21,8 +21,8 @@ REQUEST_TIMEOUT = 15
 RETRY_COUNT = 4
 OUTPUT_FILE = "playlist.m3u"
 
-MAX_PER_CATEGORY = 100
-MAX_STREAMS = 3000
+MAX_PER_CATEGORY = 20
+MAX_STREAMS = 1000
 LANGUAGE = "id"
 CATEGORIES = ["games", "irl", "music", "gambling", "creative"]
 LANGUAGES = ["id", "jp", "en"]  # untuk featured/recommended
