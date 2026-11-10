@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-TWITCH M3U PLAYLIST GENERATOR v16.4 (fix async response.json)
+TWITCH M3U PLAYLIST GENERATOR v16.5
 """
 
 import asyncio
@@ -19,9 +19,12 @@ GQL_HASH = "c101f277c6ab7de34f64e63c90d698edae0d83ed5fad8efe198596b472ef3337"
 
 PROXY = "https://pl-gratosv---al.bhns.workers.dev"
 
+# Kategori utama (di atas playlist)
+MAIN_CATEGORIES = {"sports", "mobile legends"}
+
 CATEGORIES = [
-    ("sports-1", "sports-1"),
-    ("mobile-legends-bang-bang", "mobile-legends-bang-bang"),
+    ("Sports", "sports-1"),
+    ("Mobile Legends", "mobile-legends-bang-bang"),
 ]
 
 _BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -78,7 +81,17 @@ def _deep_extract(obj, channels, seen, category_name=None):
             _deep_extract(item, channels, seen, category_name)
 
 
-# ─── Scrape kategori (FIX: await response.json() di async context) ──
+def _is_main_category(ch):
+    """Cek apakah channel masuk kategori utama (Sports/MLBB)."""
+    cat = ch.get("category", "").lower()
+    game = ch.get("game", "").lower()
+    for mc in MAIN_CATEGORIES:
+        if mc in cat or mc in game:
+            return True
+    return False
+
+
+# ─── Scrape kategori ────────────────────────────────────────────
 async def scrape_category(page, cat_name, cat_slug, channels, seen, max_wait=10):
     response_objects = []
 
@@ -101,13 +114,14 @@ async def scrape_category(page, cat_name, cat_slug, channels, seen, max_wait=10)
 
     await asyncio.sleep(max_wait)
 
-    for _ in range(5):
+    # Scroll 15x untuk lazy-load lebih banyak channel
+    for _ in range(15):
         await page.evaluate("window.scrollBy(0, 1000)")
-        await asyncio.sleep(1.5)
+        await asyncio.sleep(1)
 
     page.remove_listener("response", on_response)
 
-    # ── AWAIT response.json() di sini ──
+    # Parse responses
     for resp in response_objects:
         try:
             body = await resp.json()
@@ -121,7 +135,7 @@ async def scrape_category(page, cat_name, cat_slug, channels, seen, max_wait=10)
             pass
 
     added = len(channels) - before
-    print(f"    GQL responses: {len(response_objects)}, channels baru: +{added}")
+    print(f"    GQL: {len(response_objects)} responses, +{added} channels")
 
 
 # ─── Homepage queries ───────────────────────────────────────────
@@ -184,7 +198,7 @@ async def get_homepage_channels(page, hdrs, channels, seen):
         if "data" in d3: _deep_extract(d3["data"], channels, seen)
 
 
-# ─── Main (async) ───────────────────────────────────────────────
+# ─── Main ───────────────────────────────────────────────────────
 async def async_main(max_channels, headed):
     from playwright.async_api import async_playwright
 
@@ -222,18 +236,17 @@ async def async_main(max_channels, headed):
                 if integrity and not captured["integrity"]:
                     captured["integrity"] = integrity
 
-        def on_response_integrity(response):
-            if "gql.twitch.tv/integrity" in response.url:
-                # Simpan untuk di-await nanti
-                asyncio.ensure_future(_capture_integrity(response, captured))
-
-        async def _capture_integrity(response, captured):
+        async def _capture_integrity(response):
             try:
                 body = await response.json()
                 if body.get("token") and not captured["integrity"]:
                     captured["integrity"] = body["token"]
             except Exception:
                 pass
+
+        def on_response_integrity(response):
+            if "gql.twitch.tv/integrity" in response.url:
+                asyncio.ensure_future(_capture_integrity(response))
 
         page.on("request", on_request)
         page.on("response", on_response_integrity)
@@ -288,8 +301,14 @@ async def async_main(max_channels, headed):
     channels = channels[:max_channels]
     print(f"\n[3/3] Membangun playlist ({len(channels)} channels)...")
 
+    # Pisahkan: kategori utama vs lainnya
+    main_channels = [ch for ch in channels if _is_main_category(ch)]
+    other_channels = [ch for ch in channels if not _is_main_category(ch)]
+
     lines = ['#EXTM3U']
-    for ch in channels:
+
+    # ── ATAS: Sports + Mobile Legends ──
+    for ch in main_channels:
         name = ch.get("name", ch.get("id", ""))
         logo = ch.get("logo", "")
         title = ch.get("title", "")
@@ -305,12 +324,30 @@ async def async_main(max_channels, headed):
         lines.append(extinf)
         lines.append(f"{PROXY}/play.m3u8?id={ch['id']}")
 
+    # ── BAWAH: Lainnya (group-title "Twitch") ──
+    for ch in other_channels:
+        name = ch.get("name", ch.get("id", ""))
+        logo = ch.get("logo", "")
+        title = ch.get("title", "")
+        display_name = f"{name} — {title}" if title else name
+
+        extinf = f'#EXTINF:-1'
+        if logo:
+            extinf += f' tvg-logo="{logo}"'
+        extinf += f' group-title="Twitch"'
+        extinf += f',{display_name}'
+
+        lines.append(extinf)
+        lines.append(f"{PROXY}/play.m3u8?id={ch['id']}")
+
     output = "playlist.m3u"
     with open(output, 'w', encoding='utf-8') as f:
         f.write('\n'.join(lines) + '\n')
 
     print(f"\n{'=' * 55}")
     print(f"  SELESAI: {len(channels)} channels")
+    print(f"    Main (Sports/MLBB): {len(main_channels)}")
+    print(f"    Other (Twitch):     {len(other_channels)}")
     print(f"  Output: {output}")
     print(f"  Proxy:  {PROXY}")
     print(f"{'=' * 55}")
@@ -318,14 +355,15 @@ async def async_main(max_channels, headed):
 
 # ─── Entry point ─────────────────────────────────────────────────
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Twitch M3U v16.4')
-    parser.add_argument('--channels', '-c', type=int, default=100)
+    parser = argparse.ArgumentParser(description='Twitch M3U v16.5')
+    parser.add_argument('--channels', '-c', type=int, default=200)
     parser.add_argument('--headed', action='store_true')
     args = parser.parse_args()
 
     print("=" * 55)
-    print("  TWITCH M3U PLAYLIST GENERATOR v16.4")
+    print("  TWITCH M3U PLAYLIST GENERATOR v16.5")
     print(f"  Kategori: Sports + Mobile Legends")
+    print(f"  Max: {args.channels} channels")
     print(f"  Proxy: {PROXY}")
     print("=" * 55)
 
