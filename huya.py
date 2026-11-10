@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-TWITCH M3U PLAYLIST GENERATOR v13 (final)
+TWITCH M3U PLAYLIST GENERATOR v13.1
 """
 
 import time
@@ -80,16 +80,11 @@ def scrape_tokens():
         json.dump(captured, f, indent=2)
 
     print(f"[SCRAPE] Token di-capture & disimpan.")
-    print(f"  Auth Token:    {captured['auth_token'][:20]}...")
-    print(f"  Device ID:     {captured['device_id']}")
-    print(f"  Session ID:    {captured['session_id']}")
-    print(f"  Client Ver:    {captured['client_version']}")
     return captured
 
 
 def load_tokens():
     """Load tokens: cache → env vars → scrape."""
-    # 1. Cache
     if os.path.exists(_TOKENS_FILE):
         with open(_TOKENS_FILE) as f:
             tokens = json.load(f)
@@ -99,7 +94,6 @@ def load_tokens():
             return tokens
         print("[TOKENS] Cache expired (>14h)")
 
-    # 2. Env vars
     env_auth = os.environ.get("TWITCH_AUTH_TOKEN", "")
     env_device = os.environ.get("TWITCH_DEVICE_ID", "")
     env_session = os.environ.get("TWITCH_SESSION_ID", "")
@@ -113,7 +107,6 @@ def load_tokens():
             "scraped_at": time.time(),
         }
 
-    # 3. Scrape via browser
     return scrape_tokens()
 
 
@@ -122,7 +115,7 @@ _session = cffi_requests.Session(impersonate="chrome152")
 
 
 def _init_session(tokens):
-    """Set header GQL — PERSIS seperti browser (TANPA integrity/request-id)."""
+    """Set header GQL — PERSIS seperti browser Chrome 157 Linux."""
     _session.headers.update({
         "Client-ID": CLIENT_ID,
         "Origin": "https://www.twitch.tv",
@@ -132,14 +125,17 @@ def _init_session(tokens):
         "Client-Version": tokens["client_version"],
         "Content-Type": "text/plain;charset=UTF-8",
         "Authorization": f"OAuth {tokens['auth_token']}",
+        # Override headers untuk match Chrome 157 Linux (sesuai docs curl_cffi:
+        # "you can simply impersonate it with your own headers and the previous version")
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36",
+        "sec-ch-ua": '"Not-A.Brand";v="99", "Google Chrome";v="157", "Chromium";v="157"',
+        "sec-ch-ua-platform": '"Linux"',
     })
 
 
 def _gql_request(payload, retries=3):
     for attempt in range(retries + 1):
         try:
-            # TANPA Client-Integrity, TANPA Client-Request-Id
-            # (browser tidak mengirim header ini ke /gql)
             body = json.dumps(payload)
             r = _session.post(
                 "https://gql.twitch.tv/gql",
@@ -355,7 +351,7 @@ def fetch_worker(args):
 # ─── Generate playlist ───────────────────────────────────────────
 def generate_playlist(output_file, max_channels, max_workers):
     print("=" * 55)
-    print("  TWITCH M3U PLAYLIST GENERATOR v13")
+    print("  TWITCH M3U PLAYLIST GENERATOR v13.1")
     print(f"  {max_channels} channels | {max_workers} threads")
     print("=" * 55)
 
@@ -440,8 +436,8 @@ def generate_playlist(output_file, max_channels, max_workers):
 # ─── Main ────────────────────────────────────────────────────────
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='Twitch M3U Playlist Generator v13')
-    parser.add_argument('--output', '-o', default='playlist.m3u',
+        description='Twitch M3U Playlist Generator v13.1')
+    parser.add_argument('--output', '-o', default='twitch.m3u',
                         help='File output M3U')
     parser.add_argument('--channels', '-c', type=int, default=100,
                         help='Jumlah channel')
