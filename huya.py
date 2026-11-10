@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-TWITCH M3U PLAYLIST GENERATOR v14 (in-browser GQL)
+TWITCH M3U PLAYLIST GENERATOR v14.1 (in-browser GQL)
 """
 
 import time
@@ -11,7 +11,6 @@ import base64
 import json
 import os
 from urllib.parse import quote
-from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # ─── Konfigurasi ─────────────────────────────────────────────────
 MAX_WORKERS = 10
@@ -22,9 +21,8 @@ _BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 _BROWSER_PROFILE = os.path.join(_BASE_DIR, ".twitch_browser")
 
 
-# ─── In-browser GQL (via page.evaluate) ─────────────────────────
+# ─── In-browser GQL ─────────────────────────────────────────────
 def gql_in_browser(page, payload):
-    """Jalankan GQL request DARI DALAM browser (fetch API)."""
     js = """
     async (payload) => {
         const resp = await fetch('https://gql.twitch.tv/gql', {
@@ -158,10 +156,6 @@ def get_stream_url(page, channel):
     session_id = uuid.uuid4().hex
     p_val = random.randint(1000000, 9999999)
 
-    # Ambil client-version dari browser
-    client_version = page.evaluate("() => navigator.userAgent")  # fallback
-    # Sebenarnya ambil dari header yang sudah di-set browser:
-    # Tapi untuk acmb, kita bisa pakai fixed value:
     acmb_obj = {
         "AppVersion": "a989fade-ca86-4058-933e-10133becfe0f",
         "ClientApp": "twilight",
@@ -199,7 +193,7 @@ def get_stream_url(page, channel):
 
 # ─── Main ────────────────────────────────────────────────────────
 def main():
-    parser = argparse.ArgumentParser(description='Twitch M3U v14 (in-browser)')
+    parser = argparse.ArgumentParser(description='Twitch M3U v14.1 (in-browser)')
     parser.add_argument('--output', '-o', default='twitch.m3u')
     parser.add_argument('--channels', '-c', type=int, default=100)
     parser.add_argument('--headed', action='store_true',
@@ -209,7 +203,7 @@ def main():
     from playwright.sync_api import sync_playwright
 
     print("=" * 55)
-    print("  TWITCH M3U PLAYLIST GENERATOR v14 (in-browser)")
+    print("  TWITCH M3U PLAYLIST GENERATOR v14.1 (in-browser)")
     print(f"  {args.channels} channels")
     print("=" * 55)
 
@@ -223,18 +217,31 @@ def main():
 
         print(f"\n[1/3] Membuka twitch.tv...")
         page.goto("https://www.twitch.tv", timeout=60000)
-        page.wait_for_load_state("networkidle", timeout=30000)
+        # FIX: pakai domcontentloaded, bukan networkidle
+        page.wait_for_load_state("domcontentloaded", timeout=30000)
+        time.sleep(5)  # Kasih waktu untuk GQL requests initial
 
         # Cek apakah sudah login
-        is_logged_in = page.evaluate("() => !!document.cookie.includes('auth-token')")
+        is_logged_in = page.evaluate("() => document.cookie.includes('auth-token')")
         if not is_logged_in:
-            print("  [WARN] Belum login! Buka dengan --headed dan login manual.")
+            print("  [WARN] Belum login!")
             if not args.headed:
-                print("  Jalankan ulang dengan: python huya.py --headed")
+                print("  Jalankan dengan --headed untuk login manual.")
+                context.close()
+                return
+            # Tunggu user login (max 120 detik)
+            print("  Menunggu login... (max 2 menit)")
+            for _ in range(240):
+                time.sleep(0.5)
+                if page.evaluate("() => document.cookie.includes('auth-token')"):
+                    is_logged_in = True
+                    break
+            if not is_logged_in:
+                print("  [ERROR] Login timeout!")
                 context.close()
                 return
 
-        print(f"  Login: {'OK' if is_logged_in else 'TIDAK'}")
+        print(f"  Login: OK")
 
         print(f"\n[2/3] Fetching live channels...")
         channels = get_live_channels(page, count=args.channels)
