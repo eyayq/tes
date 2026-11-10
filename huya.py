@@ -22,11 +22,11 @@ GQL_HASH = "c101f277c6ab7de34f64e63c90d698edae0d83ed5fad8efe198596b472ef3337"
 PROXY = "https://pl-gratosv---al.bhns.workers.dev"
 # ═══════════════════════════════════════════════════════════════
 
-# ─── Kategori yang di-scrape ────────────────────────────────────
-# Format: (nama_tampil, slug_directory)
-# Slug = URL path di twitch.tv/directory/games/<slug>
+# ─── Kategori ───────────────────────────────────────────────────
+# Slug dari URL: twitch.tv/directory/category/<slug>
 CATEGORIES = [
-    ("Sports", "sports"),
+    ("Sports", "sports-1"),
+    ("Mobile Legends", "mobile-legends-bang-bang"),
     ("Just Chatting", "just-chatting"),
     ("Valorant", "valorant"),
     ("League of Legends", "league-of-legends"),
@@ -44,7 +44,6 @@ CATEGORIES = [
     ("IRL", "irl"),
     ("Music", "music"),
     ("ASMR", "asmr"),
-    ("Retro", "retro"),
     ("Speedruns", "speedruns"),
 ]
 
@@ -136,12 +135,8 @@ def _deep_extract(obj, channels, seen, category_name=None):
             _deep_extract(item, channels, seen, category_name)
 
 
-# ─── Scrape via page navigation (intercept GQL responses) ───────
+# ─── Scrape via page navigation ─────────────────────────────────
 def scrape_category_page(page, url, category_name, channels, seen, max_wait=8):
-    """
-    Navigate ke halaman kategori, intercept GQL responses,
-    extract channel data dari response yang mengandung stream info.
-    """
     responses_data = []
 
     def on_response(response):
@@ -155,12 +150,9 @@ def scrape_category_page(page, url, category_name, channels, seen, max_wait=8):
     page.on("response", on_response)
     page.goto(url, timeout=30000)
     page.wait_for_load_state("domcontentloaded", timeout=20000)
-
-    # Tunggu beberapa detik untuk GQL responses
     time.sleep(max_wait)
     page.remove_listener("response", on_response)
 
-    # Parse semua responses
     for data in responses_data:
         if isinstance(data, list):
             for item in data:
@@ -170,10 +162,8 @@ def scrape_category_page(page, url, category_name, channels, seen, max_wait=8):
             _deep_extract(data["data"], channels, seen, category_name)
 
 
-# ─── Fetch via persisted queries (homepage) ─────────────────────
+# ─── Homepage queries ───────────────────────────────────────────
 def get_homepage_channels(page, hdrs, channels, seen):
-    """Ambil channel dari homepage queries."""
-    # FrontPageNew_User
     payload1 = [{
         "operationName": "FrontPageNew_User",
         "variables": {"limit": 18},
@@ -191,7 +181,6 @@ def get_homepage_channels(page, hdrs, channels, seen):
         if "data" in data1:
             _deep_extract(data1["data"], channels, seen)
 
-    # Shelves
     payload3 = [{
         "operationName": "Shelves",
         "variables": {
@@ -226,15 +215,14 @@ def main():
     parser.add_argument('--channels', '-c', type=int, default=100)
     parser.add_argument('--headed', action='store_true')
     parser.add_argument('--categories', '-k', default="",
-                        help='Kategori spesifik (comma-separated). Kosong = semua di CATEGORIES')
+                        help='Kategori spesifik (comma-separated slug)')
     args = parser.parse_args()
 
     from playwright.sync_api import sync_playwright
 
-    # Parse kategori
     if args.categories:
-        cat_list = [c.strip() for c in args.categories.split(",")]
-        categories = [(c, c.replace(" ", "-").lower()) for c in cat_list]
+        slugs = [s.strip() for s in args.categories.split(",")]
+        categories = [(s, s) for s in slugs]
     else:
         categories = CATEGORIES
 
@@ -261,7 +249,6 @@ def main():
             context.add_cookies(cookies)
             print(f"\n[1/3] Cookies di-inject ({len(cookies)} cookies)")
 
-        # ── Capture headers dari homepage ──
         captured = {
             "session_id": None, "device_id": None,
             "client_version": None, "authorization": None, "integrity": None,
@@ -322,20 +309,18 @@ def main():
             "integrity": captured["integrity"] or "",
         }
 
-        # ── Step 2: Scrape channels ──
+        # ── Scrape ──
         print(f"\n[2/3] Scrape channels...")
 
-        # 2a. Homepage (persisted queries)
         print(f"  [Homepage] ...", end=" ", flush=True)
         get_homepage_channels(page, hdrs, channels, seen)
         print(f"{len(channels)} channels")
 
-        # 2b. Per kategori (navigate + intercept)
         for i, (cat_name, cat_slug) in enumerate(categories):
             if len(channels) >= args.channels:
                 break
 
-            url = f"https://www.twitch.tv/directory/games/{cat_slug}"
+            url = f"https://www.twitch.tv/directory/category/{cat_slug}"
             before = len(channels)
             print(f"  [{cat_name}] ", end="", flush=True)
 
@@ -346,11 +331,11 @@ def main():
                 continue
 
             print(f"+{len(channels) - before} (total: {len(channels)})")
-            time.sleep(1)  # Jeda antar kategori
+            time.sleep(1)
 
         context.close()
 
-    # ── Step 3: Build playlist ──
+    # ── Build playlist ──
     channels = channels[:args.channels]
     print(f"\n[3/3] Membangun playlist ({len(channels)} channels)...")
 
