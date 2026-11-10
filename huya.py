@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 """
-TWITCH M3U PLAYLIST GENERATOR
-- GQL API (gql.twitch.tv) — TANPA AUTH/OAuth
-- PlaybackAccessToken (persisted query)
-- Output: playlist.m3u (HLS .m3u8)
+TWITCH M3U PLAYLIST GENERATOR v2
+- Fetch channel LIVE dari Twitch API (bukan list hardcoded)
+- GQL PrefetchPlaybackAccessToken
+- Output: twitch.m3u (HLS .m3u8)
 - Token expired: ~6 jam
 """
 
-import re
 import json
 import time
 import threading
@@ -22,108 +21,8 @@ import requests
 TIMEOUT = 15
 MAX_WORKERS = 20
 CLIENT_ID = "kimne78kx3ncx6brgo4mv6wki5h1ko"
-
-# Hash terbaru (streamlink 8.0.0, Nov 2025)
 GQL_HASH = "c101f277c6ab7de34f64e63c90d698edae0d83ed5fad8efe198596b472ef3337"
 
-# ─── Default channels (olahraga + gaming populer) ────────────────
-DEFAULT_CHANNELS = [
-    # Olahraga
-    "twitchdrew",
-    "twitchsports",
-    "twitchnba",
-    "twitchnfl",
-    "twitchmlb",
-    "twitchnhl",
-    "twitchufc",
-    "twitchf1",
-    "twitchwwe",
-    "twitchpremierleague",
-    "twitchchampionsleague",
-    "twitchboxing",
-    "twitchgolf",
-    "twitchtennis",
-    # Gaming / Esport
-    "shroud",
-    "xqc",
-    "pokimane",
-    "ninja",
-    "summit1g",
-    "tenz",
-    "bugha",
-    "scout",
-    "faker",
-    "caps",
-    "donk",
-    "s1mple",
-    "zywoo",
-    "donk",
-    "m0NESY",
-    "twistzz",
-    "jks",
-    "nitr0",
-    "ropz",
-    "stewie2k",
-    "electronic",
-    "niko",
-    "device",
-    "matteo",
-    "fame",
-    "sjuush",
-    "jame",
-    "halluzinaati",
-    "b1t",
-    "spinx",
-    "kyxsan",
-    "mzinho",
-    "flamez",
-    "xertion",
-    "s3ren",
-    "twitchlol",
-    "twitchvalorant",
-    "twitchcs2",
-    "twitchdota2",
-    "twitchapex",
-    "twitchoverwatch",
-    "twitchfortnite",
-    "twitchrainbow6",
-    "twitchwarzone",
-    "twitchcallofduty",
-    "twitcheldenring",
-    "twitchgta",
-    "twitchminecraft",
-    "twitchleagueoflegends",
-    "twitchpubg",
-    "twitchapexlegends",
-    "twitchvalorant",
-    "twitchcs2",
-    "twitchdota2",
-    "twitchoverwatch2",
-    "twitchrainbowsix",
-    "twitchwarzone",
-    "twitchcallofduty",
-    "twitcheldenring",
-    "twitchgta",
-    "twitchminecraft",
-    "twitchleagueoflegends",
-    "twitchpubg",
-    "twitchapexlegends",
-    "twitchvalorant",
-    "twitchcs2",
-    "twitchdota2",
-    "twitchoverwatch2",
-    "twitchrainbowsix",
-    "twitchwarzone",
-    "twitchcallofduty",
-    "twitcheldenring",
-    "twitchgta",
-    "twitchminecraft",
-    "twitchleagueoflegends",
-    "twitchpubg",
-    "twitchapexlegends",
-]
-
-# ─── Session ─────────────────────────────────────────────────────
 _session = requests.Session()
 _session.headers.update({
     "Client-ID": CLIENT_ID,
@@ -131,9 +30,77 @@ _session.headers.update({
 })
 
 
+# ─── Fetch TOP LIVE channels dari Twitch ─────────────────────────
+def get_live_channels(count=100, category=None):
+    """Fetch channels yang SEDANG LIVE dari Twitch API."""
+    channels = []
+    offset = 0
+    page_size = 100
+
+    while len(channels) < count:
+        payload = {
+            "query": """
+            query TopStreams($first: Int!, $offset: Int, $category: String) {
+                topStreams(first: $first, offset: $offset, category: $category) {
+                    edges {
+                        node {
+                            id
+                            displayName
+                            game {
+                                name
+                            }
+                            viewerCount
+                            title
+                            stream {
+                                id
+                            }
+                            profileImageURL(width: 100)
+                        }
+                    }
+                    pageInfo {
+                        hasNextPage
+                    }
+                }
+            }
+            """,
+            "variables": {
+                "first": page_size,
+                "offset": offset,
+                "category": category,
+            }
+        }
+
+        try:
+            r = _session.post("https://gql.twitch.tv/gql", json=payload, timeout=TIMEOUT)
+            if r.status_code != 200:
+                break
+            data = r.json()
+            edges = data.get("data", {}).get("topStreams", {}).get("edges", [])
+            if not edges:
+                break
+            for edge in edges:
+                node = edge.get("node", {})
+                if node.get("stream"):
+                    channels.append({
+                        "id": node.get("displayName", "").lower(),
+                        "name": node.get("displayName", ""),
+                        "game": node.get("game", {}).get("name", "Unknown"),
+                        "viewers": node.get("viewerCount", 0),
+                        "title": node.get("title", ""),
+                        "logo": node.get("profileImageURL", ""),
+                    })
+            has_next = data.get("data", {}).get("topStreams", {}).get("pageInfo", {}).get("hasNextPage", False)
+            if not has_next:
+                break
+            offset += page_size
+        except Exception:
+            break
+
+    return channels[:count]
+
+
 # ─── Get stream URL via GQL ──────────────────────────────────────
 def get_stream_url(channel, retries=2):
-    """Get HLS URL for a Twitch channel via GQL PlaybackAccessToken."""
     for attempt in range(retries + 1):
         try:
             payload = [{
@@ -151,11 +118,7 @@ def get_stream_url(channel, retries=2):
                 }
             }]
 
-            r = _session.post(
-                "https://gql.twitch.tv/gql",
-                json=payload,
-                timeout=TIMEOUT,
-            )
+            r = _session.post("https://gql.twitch.tv/gql", json=payload, timeout=TIMEOUT)
 
             if r.status_code != 200:
                 if attempt < retries:
@@ -171,7 +134,6 @@ def get_stream_url(channel, retries=2):
             stream = stream_info.get("stream")
 
             if not stream:
-                # Channel offline
                 return None
 
             token_data = stream.get("playbackAccessToken", {})
@@ -184,7 +146,6 @@ def get_stream_url(channel, retries=2):
                     continue
                 return None
 
-            # Build m3u8 URL
             session_id = str(uuid.uuid4())
             url = (
                 f"https://usher.ttvnw.net/api/channel/hls/{channel}.m3u8"
@@ -207,71 +168,36 @@ def get_stream_url(channel, retries=2):
     return None
 
 
-# ─── Get channel info (name, game, viewers) ──────────────────────
-def get_channel_info(channel):
-    """Get basic info about a channel via GQL."""
-    try:
-        payload = [{
-            "operationName": "StreamMetadata",
-            "variables": {"channelLogin": channel},
-            "extensions": {
-                "persistedQuery": {
-                    "version": 1,
-                    "sha256Hash": "252a46e3f5b1ddc431b396e688331d8d020daec27079893ac7d4e6db759a7402",
-                }
-            }
-        }]
-
-        r = _session.post(
-            "https://gql.twitch.tv/gql",
-            json=payload,
-            timeout=TIMEOUT,
-        )
-
-        if r.status_code != 200:
-            return None
-
-        data = r.json()
-        if isinstance(data, list):
-            data = data[0]
-
-        info = data.get("data", {}).get("StreamMetadata", {})
-        if not info:
-            return None
-
-        return {
-            "channel": channel,
-            "name": info.get("broadcaster", {}).get("displayName", channel),
-            "game": info.get("game", {}).get("name", "Unknown"),
-            "viewers": info.get("viewers", 0),
-            "title": info.get("title", ""),
-            "logo": info.get("broadcaster", {}).get("profileImageURL", ""),
-        }
-
-    except Exception:
-        return None
-
-
 # ─── Worker ──────────────────────────────────────────────────────
 def fetch_worker(args):
-    idx, channel = args
+    idx, ch = args
     try:
-        url = get_stream_url(channel)
-        info = get_channel_info(channel) if url else None
-        return (idx, channel, url, info, None)
+        url = get_stream_url(ch["id"])
+        return (idx, ch, url, None)
     except Exception as e:
-        return (idx, channel, None, None, str(e))
+        return (idx, ch, None, str(e))
 
 
 # ─── Generate playlist ───────────────────────────────────────────
-def generate_playlist(output_file, channels, max_workers=MAX_WORKERS):
+def generate_playlist(output_file, max_channels, max_workers=MAX_WORKERS, category=None):
     print("=" * 55)
-    print("  TWITCH M3U PLAYLIST GENERATOR")
-    print(f"  {len(channels)} channels | {max_workers} threads")
+    print("  TWITCH M3U PLAYLIST GENERATOR v2")
+    print(f"  {max_channels} channels | {max_workers} threads")
+    if category:
+        print(f"  Kategori: {category}")
     print("=" * 55)
 
-    # Fetch all (PARALEL)
-    print(f"\n[1/2] Mengambil stream URL ({max_workers} threads)...")
+    # Step 1: Fetch live channels
+    print(f"\n[1/3] Fetching live channels...")
+    channels = get_live_channels(count=max_channels, category=category)
+    print(f"  Channel live ditemukan: {len(channels)}")
+
+    if not channels:
+        print("  [ERROR] Tidak ada channel live!")
+        return
+
+    # Step 2: Get stream URLs (PARALEL)
+    print(f"\n[2/3] Mengambil stream URL ({max_workers} threads)...")
     results = [None] * len(channels)
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
@@ -282,14 +208,14 @@ def generate_playlist(output_file, channels, max_workers=MAX_WORKERS):
 
         done_count = 0
         for future in as_completed(futures):
-            idx, channel, url, info, error = future.result()
-            results[idx] = (channel, url, info, error)
+            idx, ch, url, error = future.result()
+            results[idx] = (ch, url, error)
             done_count += 1
             if done_count % 20 == 0:
                 print(f"  Progress: {done_count}/{len(channels)}")
 
-    # Build playlist
-    print(f"\n[2/2] Membangun playlist...")
+    # Step 3: Build playlist
+    print(f"\n[3/3] Membangun playlist...")
     lines = ['#EXTM3U']
     live_count = 0
     offline_count = 0
@@ -298,7 +224,7 @@ def generate_playlist(output_file, channels, max_workers=MAX_WORKERS):
     for item in results:
         if item is None:
             continue
-        channel, url, info, error = item
+        ch, url, error = item
 
         if error:
             error_count += 1
@@ -307,17 +233,11 @@ def generate_playlist(output_file, channels, max_workers=MAX_WORKERS):
             offline_count += 1
             continue
 
-        # Get metadata
-        if info:
-            name = info.get("name", channel)
-            game = info.get("game", "Twitch")
-            logo = info.get("logo", "")
-            title = info.get("title", "")
-        else:
-            name = channel
-            game = "Twitch"
-            logo = ""
-            title = ""
+        name = ch.get("name", ch.get("id", ""))
+        game = ch.get("game", "Twitch")
+        logo = ch.get("logo", "")
+        title = ch.get("title", "")
+        viewers = ch.get("viewers", 0)
 
         display_name = f"{name} — {title}" if title else name
 
@@ -344,36 +264,20 @@ def generate_playlist(output_file, channels, max_workers=MAX_WORKERS):
 # ─── Main ────────────────────────────────────────────────────────
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='Twitch M3U Playlist Generator')
+        description='Twitch M3U Playlist Generator v2')
     parser.add_argument('--output', '-o', default='twitch.m3u',
                         help='File output M3U (default: twitch.m3u)')
+    parser.add_argument('--channels', '-c', type=int, default=100,
+                        help='Jumlah channel (default: 100)')
     parser.add_argument('--workers', '-w', type=int, default=MAX_WORKERS,
                         help='Jumlah thread paralel (default: 20)')
-    parser.add_argument('--channels', '-c', type=str, default=None,
-                        help='File berisi list channel (1 per baris)')
-    parser.add_argument('--channel', '-ch', type=str, default=None,
-                        help='Single channel untuk test')
+    parser.add_argument('--category', '-g', type=str, default=None,
+                        help='Filter kategori (misal: "Just Chatting", "Sports")')
     args = parser.parse_args()
-
-    # Determine channel list
-    if args.channel:
-        channels = [args.channel]
-    elif args.channels:
-        with open(args.channels, 'r') as f:
-            channels = [line.strip().lower() for line in f if line.strip()]
-    else:
-        channels = DEFAULT_CHANNELS
-
-    # Remove duplicates, preserve order
-    seen = set()
-    unique_channels = []
-    for ch in channels:
-        if ch not in seen:
-            seen.add(ch)
-            unique_channels.append(ch)
 
     generate_playlist(
         output_file=args.output,
-        channels=unique_channels,
+        max_channels=args.channels,
         max_workers=args.workers,
+        category=args.category,
     )   
