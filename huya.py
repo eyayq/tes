@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-TWITCH M3U PLAYLIST GENERATOR v14.2 (in-browser + cookie inject)
+TWITCH M3U PLAYLIST GENERATOR v14.3 (in-browser GQL + full headers)
 """
 
 import time
@@ -22,43 +22,53 @@ _COOKIES_FILE = os.path.join(_BASE_DIR, ".twitch_cookies.json")
 
 
 def _load_cookies():
-    """Load cookies: env var → file."""
-    # 1. Env var
     env_cookies = os.environ.get("TWITCH_COOKIES", "")
     if env_cookies:
         try:
             return json.loads(env_cookies)
         except json.JSONDecodeError:
             pass
-
-    # 2. File
     if os.path.exists(_COOKIES_FILE):
         with open(_COOKIES_FILE) as f:
             return json.load(f)
-
     return None
 
 
-# ─── In-browser GQL ─────────────────────────────────────────────
-def gql_in_browser(page, payload):
+# ─── In-browser GQL (dengan SEMUA header yang browser kirim) ────
+def gql_in_browser(page, payload, session_id):
+    """
+    Jalankan GQL request dari dalam browser.
+    Session ID di-generate sekali dan di-reuse untuk semua request.
+    """
     js = """
-    async (payload) => {
+    async ({payload, sessionId}) => {
+        // Baca cookies untuk auth & device ID
+        const cookies = document.cookie.split(';').reduce((acc, c) => {
+            const [name, value] = c.trim().split('=');
+            acc[name] = value;
+            return acc;
+        }, {});
+
         const resp = await fetch('https://gql.twitch.tv/gql', {
             method: 'POST',
             headers: {
                 'Content-Type': 'text/plain;charset=UTF-8',
-                'Client-ID': '%s'
+                'Client-ID': '%s',
+                'Authorization': 'OAuth ' + (cookies['auth-token'] || ''),
+                'X-Device-Id': cookies['unique_id'] || '',
+                'Client-Session-Id': sessionId,
+                'Client-Version': 'a989fade-ca86-4058-933e-10133becfe0f'
             },
             body: JSON.stringify(payload)
         });
         return await resp.json();
     }
     """ % CLIENT_ID
-    return page.evaluate(js, payload)
+    return page.evaluate(js, {"payload": payload, "sessionId": session_id})
 
 
 # ─── Fetch LIVE channels ─────────────────────────────────────────
-def get_live_channels(page, count=100):
+def get_live_channels(page, session_id, count=100):
     channels = []
     after = None
 
@@ -94,7 +104,7 @@ def get_live_channels(page, count=100):
             "after": after,
         }
 
-        data = gql_in_browser(page, {"query": query, "variables": variables})
+        data = gql_in_browser(page, {"query": query, "variables": variables}, session_id)
         if not data or "errors" in data:
             if data and "errors" in data:
                 print(f"  [GQL ERROR] {data['errors'][0].get('message', 'unknown')}")
@@ -126,7 +136,7 @@ def get_live_channels(page, count=100):
 
 
 # ─── Get stream URL (in-browser) ─────────────────────────────────
-def get_stream_url(page, channel):
+def get_stream_url(page, session_id, channel):
     payload = [{
         "operationName": "PrefetchPlaybackAccessToken",
         "variables": {
@@ -142,7 +152,7 @@ def get_stream_url(page, channel):
         }
     }]
 
-    data = gql_in_browser(page, payload)
+    data = gql_in_browser(page, payload, session_id)
     if not data:
         return None
 
@@ -171,7 +181,7 @@ def get_stream_url(page, channel):
         return None
 
     ch_lower = channel.lower()
-    session_id = uuid.uuid4().hex
+    play_session_id = uuid.uuid4().hex
     p_val = random.randint(1000000, 9999999)
 
     acmb_obj = {
@@ -196,7 +206,7 @@ def get_stream_url(page, channel):
         f"&os_version=undefined"
         f"&p={p_val}"
         f"&platform=web"
-        f"&play_session_id={session_id}"
+        f"&play_session_id={play_session_id}"
         f"&player_backend=mediaplayer"
         f"&player_version=1.59.0-rc.1"
         f"&playlist_include_framerate=true"
@@ -211,7 +221,7 @@ def get_stream_url(page, channel):
 
 # ─── Main ────────────────────────────────────────────────────────
 def main():
-    parser = argparse.ArgumentParser(description='Twitch M3U v14.2')
+    parser = argparse.ArgumentParser(description='Twitch M3U v14.3')
     parser.add_argument('--output', '-o', default='twitch.m3u')
     parser.add_argument('--channels', '-c', type=int, default=100)
     parser.add_argument('--headed', action='store_true',
@@ -221,7 +231,7 @@ def main():
     from playwright.sync_api import sync_playwright
 
     print("=" * 55)
-    print("  TWITCH M3U PLAYLIST GENERATOR v14.2")
+    print("  TWITCH M3U PLAYLIST GENERATOR v14.3")
     print(f"  {args.channels} channels")
     print("=" * 55)
 
@@ -235,7 +245,7 @@ def main():
         )
         page = context.pages[0] if context.pages else context.new_page()
 
-        # ── Inject cookies SEBELUM load page ──
+        # ── Inject cookies ──
         if cookies:
             context.add_cookies(cookies)
             print(f"\n[1/3] Cookies di-inject ({len(cookies)} cookies)")
@@ -252,13 +262,9 @@ def main():
         if not is_logged_in:
             print("  [WARN] Belum login!")
             if not args.headed:
-                print("  Solusi:")
-                print("    1. Set env var TWITCH_COOKIES (JSON array)")
-                print("    2. Atau buat file .twitch_cookies.json")
-                print("    3. Atau jalankan dengan --headed (butuh display)")
+                print("  Set TWITCH_COOKIES env var atau buat .twitch_cookies.json")
                 context.close()
                 return
-            # Tunggu login manual
             print("  Menunggu login... (max 2 menit)")
             for _ in range(240):
                 time.sleep(0.5)
@@ -272,8 +278,12 @@ def main():
 
         print(f"  Login: OK")
 
+        # ── Generate session ID (16 hex, konsisten untuk semua GQL calls) ──
+        gql_session_id = uuid.uuid4().hex[:16]
+        print(f"  GQL Session-ID: {gql_session_id}")
+
         print(f"\n[2/3] Fetching live channels...")
-        channels = get_live_channels(page, count=args.channels)
+        channels = get_live_channels(page, gql_session_id, count=args.channels)
         print(f"  Channel live: {len(channels)}")
 
         if not channels:
@@ -288,7 +298,7 @@ def main():
 
         for i, ch in enumerate(channels):
             time.sleep(random.uniform(0.1, 0.3))
-            url = get_stream_url(page, ch["id"])
+            url = get_stream_url(page, gql_session_id, ch["id"])
 
             if not url:
                 offline_count += 1
