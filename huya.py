@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-TWITCH M3U PLAYLIST GENERATOR v12 (final)
+TWITCH M3U PLAYLIST GENERATOR v13 (final)
 """
 
 import time
@@ -43,14 +43,12 @@ def scrape_tokens():
         if "gql.twitch.tv/gql" in request.url and not done:
             h = request.headers
             auth = h.get("authorization", "")
-            integrity = h.get("client-integrity", "")
             device_id = h.get("x-device-id", "")
             session_id = h.get("client-session-id", "")
             client_version = h.get("client-version", "")
 
-            if auth and integrity:
+            if auth and device_id and session_id:
                 captured["auth_token"] = auth.replace("OAuth ", "")
-                captured["integrity_token"] = integrity
                 captured["device_id"] = device_id
                 captured["session_id"] = session_id
                 captured["client_version"] = client_version
@@ -103,15 +101,15 @@ def load_tokens():
 
     # 2. Env vars
     env_auth = os.environ.get("TWITCH_AUTH_TOKEN", "")
-    env_integrity = os.environ.get("TWITCH_INTEGRITY_TOKEN", "")
-    if env_auth and env_integrity:
+    env_device = os.environ.get("TWITCH_DEVICE_ID", "")
+    env_session = os.environ.get("TWITCH_SESSION_ID", "")
+    if env_auth and env_device and env_session:
         print("[TOKENS] Menggunakan env vars")
         return {
             "auth_token": env_auth,
-            "integrity_token": env_integrity,
-            "device_id": os.environ.get("TWITCH_DEVICE_ID", ""),
-            "session_id": os.environ.get("TWITCH_SESSION_ID", ""),
-            "client_version": os.environ.get("TWITCH_CLIENT_VERSION", ""),
+            "device_id": env_device,
+            "session_id": env_session,
+            "client_version": os.environ.get("TWITCH_CLIENT_VERSION", "a989fade-ca86-4058-933e-10133becfe0f"),
             "scraped_at": time.time(),
         }
 
@@ -124,7 +122,7 @@ _session = cffi_requests.Session(impersonate="chrome152")
 
 
 def _init_session(tokens):
-    """Set header yang TIDAK di-handle oleh curl_cffi impersonate."""
+    """Set header GQL — PERSIS seperti browser (TANPA integrity/request-id)."""
     _session.headers.update({
         "Client-ID": CLIENT_ID,
         "Origin": "https://www.twitch.tv",
@@ -132,28 +130,20 @@ def _init_session(tokens):
         "X-Device-Id": tokens["device_id"],
         "Client-Session-Id": tokens["session_id"],
         "Client-Version": tokens["client_version"],
+        "Content-Type": "text/plain;charset=UTF-8",
+        "Authorization": f"OAuth {tokens['auth_token']}",
     })
 
 
-def _gen_request_id():
-    return ''.join(random.choices(string.ascii_letters + string.digits, k=32))
-
-
-def _gql_request(payload, tokens, retries=3):
+def _gql_request(payload, retries=3):
     for attempt in range(retries + 1):
         try:
-            headers = {
-                "Content-Type": "text/plain;charset=UTF-8",
-                "Client-Request-Id": _gen_request_id(),
-                "Client-Integrity": tokens["integrity_token"],
-                "Authorization": f"OAuth {tokens['auth_token']}",
-            }
-
+            # TANPA Client-Integrity, TANPA Client-Request-Id
+            # (browser tidak mengirim header ini ke /gql)
             body = json.dumps(payload)
             r = _session.post(
                 "https://gql.twitch.tv/gql",
                 data=body,
-                headers=headers,
                 timeout=TIMEOUT,
             )
 
@@ -194,7 +184,7 @@ def _gql_request(payload, tokens, retries=3):
 
 
 # ─── Fetch LIVE channels ─────────────────────────────────────────
-def get_live_channels(tokens, count=100):
+def get_live_channels(count=100):
     channels = []
     after = None
 
@@ -230,7 +220,7 @@ def get_live_channels(tokens, count=100):
             "after": after,
         }
 
-        data = _gql_request({"query": query, "variables": variables}, tokens, retries=4)
+        data = _gql_request({"query": query, "variables": variables}, retries=4)
         if data is None:
             break
 
@@ -278,7 +268,7 @@ def get_stream_url(channel, tokens, retries=2):
                 }
             }]
 
-            data = _gql_request(payload, tokens, retries=0)
+            data = _gql_request(payload, retries=0)
             if data is None:
                 if attempt < retries:
                     time.sleep(1)
@@ -365,7 +355,7 @@ def fetch_worker(args):
 # ─── Generate playlist ───────────────────────────────────────────
 def generate_playlist(output_file, max_channels, max_workers):
     print("=" * 55)
-    print("  TWITCH M3U PLAYLIST GENERATOR v12")
+    print("  TWITCH M3U PLAYLIST GENERATOR v13")
     print(f"  {max_channels} channels | {max_workers} threads")
     print("=" * 55)
 
@@ -377,13 +367,12 @@ def generate_playlist(output_file, max_channels, max_workers):
     _init_session(tokens)
 
     print(f"\n[1/3] Fetching live channels...")
-    channels = get_live_channels(tokens, count=max_channels)
+    channels = get_live_channels(count=max_channels)
     print(f"  Channel live ditemukan: {len(channels)}")
 
     if not channels:
         print("  [ERROR] Tidak ada channel live!")
-        print("  Kemungkinan integrity token expired (>16h).")
-        print("  Ambil yang baru dari browser DevTools dan update env vars.")
+        print("  Kemungkinan session ID expired — update dari browser.")
         return
 
     print(f"\n[2/3] Mengambil stream URL ({max_workers} threads)...")
@@ -451,7 +440,7 @@ def generate_playlist(output_file, max_channels, max_workers):
 # ─── Main ────────────────────────────────────────────────────────
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='Twitch M3U Playlist Generator v12')
+        description='Twitch M3U Playlist Generator v13')
     parser.add_argument('--output', '-o', default='playlist.m3u',
                         help='File output M3U')
     parser.add_argument('--channels', '-c', type=int, default=100,
