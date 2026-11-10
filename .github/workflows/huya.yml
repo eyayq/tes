@@ -14,11 +14,10 @@ jobs:
   bhns0:
     runs-on: ubuntu-latest
     env:
-      TWITCH_AUTH_TOKEN: "i6znx2o7mcfa0ut0d2vq2ksp7otyzs"
-      TWITCH_INTEGRITY_TOKEN: "v4.local.vZtXWtRlmEThh7UOI5fEE1UkGyEB06LxtAYW9eY6hkB4AzkZB0Eisg1IETihjlH0_Gfx4kLe3fnUh5EVeDw4Hzi5xchMfNDKiwbtCUoVZomlldXBX4MdpeYeBPGW4xJ7wKkX43741kHAgoAA0oVKAgXeAdrsZqVvQtnLcHZvVpddxZ8Pjeb-GarmJHd3Nwp-LjzNLI8JdO7BU9slN959XrCUP_hFh-qn6UbEXsNuejIqHipdaHMA6ny-BSVdjhN3QTgkhTZoT4G1xrWX1eY6B3uwmCMwK_aLp2qxlwrsPxOuy7-sQ0oKbJTFvpVBy8nZCYLK7YcZR0A85w7fk1b-8VP26MwzIg3lya4z2NS8JSZrgldyYooH6mh8rpBf9-n_Ju0auLLpvpgvn4SU9Ypf2WznUN1VbevSLoMiBX-aEHRsb5UdZpabNjnl5usVyZ8ErG3x994vos5GL19bEP-pLNVgArQ"
-      TWITCH_DEVICE_ID: "a69b3a50148aacf5"
-      TWITCH_SESSION_ID: "3b78f72447134b2e"
-      TWITCH_CLIENT_VERSION: "a989fade-ca86-4058-933e-10133becfe0f"
+  TWITCH_AUTH_TOKEN: "i6znx2o7mcfa0ut0d2vq2ksp7otyzs"
+  TWITCH_DEVICE_ID: "a69b3a50148aacf5"
+  TWITCH_SESSION_ID: "0c870fc0b6b3408f"
+  TWITCH_CLIENT_VERSION: "a989fade-ca86-4058-933e-10133becfe0f"
     steps:
       - uses: actions/checkout@v4
 
