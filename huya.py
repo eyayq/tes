@@ -1,8 +1,15 @@
 #!/usr/bin/env python3
 """
-TWITCH M3U PLAYLIST GENERATOR v4.1 (FIXED)
+TWITCH M3U PLAYLIST GENERATOR v4 (FINAL)
+- GQL API: streams query (cursor pagination)
+- PrefetchPlaybackAccessToken
+- Rate limit 429/503 handling + exponential backoff
+- Fallback ke known channels jika API down
+- Output: twitch.m3u (HLS .m3u8)
+- Token expired: ~6 jam
 """
 
+import json
 import time
 import argparse
 import uuid
@@ -14,7 +21,7 @@ import requests
 
 # ─── Konfigurasi ─────────────────────────────────────────────────
 TIMEOUT = 15
-MAX_WORKERS = 10
+MAX_WORKERS = 1
 CLIENT_ID = "kimne78kx3ncx6brgo4mv6wki5h1ko"
 GQL_HASH = "c101f277c6ab7de34f64e63c90d698edae0d83ed5fad8efe198596b472ef3337"
 
@@ -27,8 +34,8 @@ _session.headers.update({
 })
 
 
-def _gql_request(payload, retries=3):
-    """GQL request dengan retry untuk 429 DAN 'server error' di body."""
+# ─── GQL Request (retry + backoff) ───────────────────────────────
+def _gql_request(payload, retries=5):
     for attempt in range(retries + 1):
         try:
             r = _session.post(
@@ -36,42 +43,34 @@ def _gql_request(payload, retries=3):
                 json=payload,
                 timeout=TIMEOUT,
             )
-
-            # HTTP level errors
             if r.status_code == 429:
-                wait = 2 ** attempt + random.uniform(0, 1)
+                wait = 2 ** attempt + random.uniform(0, 2)
                 print(f"  [RATE LIMIT] Waiting {wait:.1f}s...")
                 time.sleep(wait)
                 continue
+            if r.status_code == 503:
+                wait = 3 ** attempt
+                print(f"  [SERVER 503] Waiting {wait}s...")
+                time.sleep(wait)
+                continue
             if r.status_code != 200:
-                print(f"  [HTTP {r.status_code}] on GQL request")
                 if attempt < retries:
                     time.sleep(2)
                     continue
                 return None
-
             data = r.json()
-
-            # ── Cek error di body (termasuk "server error") ──
-            errors = data.get("errors") if isinstance(data, dict) else None
-            if errors:
-                msg = errors[0].get("message", "unknown")
-                # "server error" dan "service error" = transient, retry
-                if msg.lower() in ("server error", "service error") and attempt < retries:
-                    wait = 2 ** attempt + random.uniform(0, 2)
-                    print(f"  [TRANSIENT] '{msg}' — retry in {wait:.1f}s")
+            # Cek "server error" di body
+            if isinstance(data, list) and data and "errors" in data[0]:
+                msg = data[0]["errors"][0].get("message", "")
+                if "server error" in msg.lower() or "service error" in msg.lower():
+                    wait = 2 ** attempt + random.uniform(0, 1)
+                    print(f"  [SERVER ERROR] Retry in {wait:.1f}s...")
                     time.sleep(wait)
                     continue
-                print(f"  [ERROR] {msg}")
-                return None
-
             return data
-
-        except Exception as e:
+        except Exception:
             if attempt < retries:
                 time.sleep(2)
-                print(f"  [EXCEPTION] {e} — retry...")
-
     return None
 
 
@@ -112,8 +111,12 @@ def get_live_channels(count=100):
             "after": after,
         }
 
-        data = _gql_request({"query": query, "variables": variables}, retries=4)
+        data = _gql_request({"query": query, "variables": variables}, retries=5)
         if data is None:
+            break
+
+        if "errors" in data:
+            print(f"  [ERROR] {data['errors'][0]['message']}")
             break
 
         streams_data = data.get("data", {}).get("streams", {})
@@ -138,6 +141,31 @@ def get_live_channels(count=100):
             break
         after = page_info.get("endCursor")
 
+    # FALLBACK: jika streams query gagal total
+    if not channels:
+        print("  [FALLBACK] Streams query gagal, pakai known channels...")
+        fallback = [
+            "shroud", "xqc", "pokimane", "ninja", "summit1g",
+            "tenz", "bugha", "scout", "faker", "caps",
+            "donk", "s1mple", "zywoo", "m0nesy", "twistzz",
+            "jks", "nitr0", "ropz", "stewie2k", "electronic",
+            "niko", "device", "fame", "sjuush", "jame",
+            "b1t", "spinx", "kyxsan", "mzinho", "flamez",
+            "dr_disrespect", "trainwreckstv", "wellplay",
+            "moistcr1tdial", "lirik", "jynxzi", "vergel",
+            "sneaky", "lirik", "austinholovious", "adrian",
+            "dexterzhang", "tarik", "bighos", "sodapoppin",
+        ]
+        for ch in fallback:
+            channels.append({
+                "id": ch,
+                "name": ch.capitalize(),
+                "game": "Unknown",
+                "viewers": 0,
+                "title": "",
+                "logo": "",
+            })
+
     return channels[:count]
 
 
@@ -149,7 +177,7 @@ def get_stream_url(channel, retries=2):
                 "operationName": "PrefetchPlaybackAccessToken",
                 "variables": {
                     "login": channel,
-                    "playerType": "site",
+                    "playerType": "embed",
                     "platform": "web",
                 },
                 "extensions": {
@@ -169,6 +197,12 @@ def get_stream_url(channel, retries=2):
 
             if isinstance(data, list):
                 data = data[0]
+
+            if "errors" in data:
+                if attempt < retries:
+                    time.sleep(1)
+                    continue
+                return None
 
             stream_info = data.get("data", {}).get("streamerInfo", {})
             stream = stream_info.get("stream")
@@ -225,7 +259,7 @@ def fetch_worker(args):
 # ─── Generate playlist ───────────────────────────────────────────
 def generate_playlist(output_file, max_channels, max_workers=MAX_WORKERS):
     print("=" * 55)
-    print("  TWITCH M3U PLAYLIST GENERATOR v4.1")
+    print("  TWITCH M3U PLAYLIST GENERATOR v4")
     print(f"  {max_channels} channels | {max_workers} threads")
     print("=" * 55)
 
@@ -302,7 +336,7 @@ def generate_playlist(output_file, max_channels, max_workers=MAX_WORKERS):
 # ─── Main ────────────────────────────────────────────────────────
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='Twitch M3U Playlist Generator v4.1')
+        description='Twitch M3U Playlist Generator v4')
     parser.add_argument('--output', '-o', default='twitch.m3u',
                         help='File output M3U (default: twitch.m3u)')
     parser.add_argument('--channels', '-c', type=int, default=100,
