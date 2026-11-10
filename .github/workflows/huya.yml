@@ -28,7 +28,7 @@ jobs:
           playwright install chromium
 
       - name: Run Scraper
-        run: python huya.py
+        run: python huya.py -c 100 -t "i6znx2o7mcfa0ut0d2vq2ksp7otyzs"
 
       - name: Commit and Push
         run: |
