@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """
-TWITCH M3U PLAYLIST GENERATOR v3 (FINAL)
+TWITCH M3U PLAYLIST GENERATOR v4 (FIXED)
 """
 
 import json
 import time
 import argparse
 import uuid
+import random
 from urllib.parse import quote
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -14,15 +15,44 @@ import requests
 
 # ─── Konfigurasi ─────────────────────────────────────────────────
 TIMEOUT = 15
-MAX_WORKERS = 20
+MAX_WORKERS = 10          # dikurangi dari 20 untuk hindari rate-limit
 CLIENT_ID = "kimne78kx3ncx6brgo4mv6wki5h1ko"
 GQL_HASH = "c101f277c6ab7de34f64e63c90d698edae0d83ed5fad8efe198596b472ef3337"
 
 _session = requests.Session()
 _session.headers.update({
     "Client-ID": CLIENT_ID,
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+    "Origin": "https://www.twitch.tv",
+    "Referer": "https://www.twitch.tv/",
 })
+
+
+def _gql_request(payload, retries=3):
+    """GQL request dengan retry + backoff untuk 429."""
+    for attempt in range(retries + 1):
+        try:
+            r = _session.post(
+                "https://gql.twitch.tv/gql",
+                json=payload,
+                timeout=TIMEOUT,
+            )
+            if r.status_code == 429:
+                wait = 2 ** attempt + random.uniform(0, 1)
+                print(f"  [RATE LIMIT] Waiting {wait:.1f}s...")
+                time.sleep(wait)
+                continue
+            if r.status_code != 200:
+                print(f"  [HTTP {r.status_code}] on GQL request")
+                if attempt < retries:
+                    time.sleep(1)
+                    continue
+                return None
+            return r.json()
+        except Exception as e:
+            if attempt < retries:
+                time.sleep(1)
+    return None
 
 
 # ─── Fetch LIVE channels ─────────────────────────────────────────
@@ -62,46 +92,35 @@ def get_live_channels(count=100):
             "after": after,
         }
 
-        try:
-            r = _session.post(
-                "https://gql.twitch.tv/gql",
-                json={"query": query, "variables": variables},
-                timeout=TIMEOUT,
-            )
-            if r.status_code != 200:
-                break
-
-            data = r.json()
-
-            if "errors" in data:
-                print(f"  [ERROR] {data['errors'][0]['message']}")
-                break
-
-            streams_data = data.get("data", {}).get("streams", {})
-            edges = streams_data.get("edges", [])
-            if not edges:
-                break
-
-            for edge in edges:
-                node = edge.get("node", {})
-                broadcaster = node.get("broadcaster", {})
-                channels.append({
-                    "id": broadcaster.get("displayName", "").lower(),
-                    "name": broadcaster.get("displayName", ""),
-                    "game": node.get("game", {}).get("name", "Unknown"),
-                    "viewers": node.get("viewersCount", 0),
-                    "title": node.get("title", ""),
-                    "logo": broadcaster.get("profileImageURL", ""),
-                })
-
-            page_info = streams_data.get("pageInfo", {})
-            if not page_info.get("hasNextPage", False):
-                break
-            after = page_info.get("endCursor")
-
-        except Exception as e:
-            print(f"  [ERROR] {e}")
+        data = _gql_request({"query": query, "variables": variables})
+        if data is None:
             break
+
+        if "errors" in data:
+            print(f"  [ERROR] {data['errors'][0]['message']}")
+            break
+
+        streams_data = data.get("data", {}).get("streams", {})
+        edges = streams_data.get("edges", [])
+        if not edges:
+            break
+
+        for edge in edges:
+            node = edge.get("node", {})
+            broadcaster = node.get("broadcaster", {})
+            channels.append({
+                "id": broadcaster.get("displayName", "").lower(),
+                "name": broadcaster.get("displayName", ""),
+                "game": node.get("game", {}).get("name", "Unknown"),
+                "viewers": node.get("viewersCount", 0),
+                "title": node.get("title", ""),
+                "logo": broadcaster.get("profileImageURL", ""),
+            })
+
+        page_info = streams_data.get("pageInfo", {})
+        if not page_info.get("hasNextPage", False):
+            break
+        after = page_info.get("endCursor")
 
     return channels[:count]
 
@@ -114,7 +133,7 @@ def get_stream_url(channel, retries=2):
                 "operationName": "PrefetchPlaybackAccessToken",
                 "variables": {
                     "login": channel,
-                    "playerType": "site",
+                    "playerType": "embed",       # ← diubah dari "site"
                     "platform": "web",
                 },
                 "extensions": {
@@ -125,15 +144,13 @@ def get_stream_url(channel, retries=2):
                 }
             }]
 
-            r = _session.post("https://gql.twitch.tv/gql", json=payload, timeout=TIMEOUT)
-
-            if r.status_code != 200:
+            data = _gql_request(payload, retries=0)
+            if data is None:
                 if attempt < retries:
                     time.sleep(1)
                     continue
                 return None
 
-            data = r.json()
             if isinstance(data, list):
                 data = data[0]
 
@@ -160,16 +177,20 @@ def get_stream_url(channel, retries=2):
                 return None
 
             session_id = str(uuid.uuid4())
+            ch_lower = channel.lower()
+
+            # ── Usher v2 (endpoint baru) ──
             url = (
-                f"https://usher.ttvnw.net/api/channel/hls/{channel}.m3u8"
-                f"?sig={sig}"
+                f"https://usher.ttvnw.net/api/v2/channel/hls/{ch_lower}.m3u8"
+                f"?sig={quote(sig, safe='')}"
                 f"&token={quote(token, safe='')}"
+                f"&platform=web"
                 f"&allow_source=true"
                 f"&allow_audio_only=true"
-                f"&player_backend=mediaplayer"
                 f"&playlist_include_framerate=true"
+                f"&supported_codecs=av1,h265,h264"
+                f"&player_backend=mediaplayer"
                 f"&player_version=1.41.0-rc.1"
-                f"&platform=web"
                 f"&play_session_id={session_id}"
             )
             return url
@@ -185,6 +206,8 @@ def get_stream_url(channel, retries=2):
 def fetch_worker(args):
     idx, ch = args
     try:
+        # Jeda kecil antar request untuk hindari rate-limit
+        time.sleep(random.uniform(0.05, 0.15))
         url = get_stream_url(ch["id"])
         return (idx, ch, url, None)
     except Exception as e:
@@ -194,7 +217,7 @@ def fetch_worker(args):
 # ─── Generate playlist ───────────────────────────────────────────
 def generate_playlist(output_file, max_channels, max_workers=MAX_WORKERS):
     print("=" * 55)
-    print("  TWITCH M3U PLAYLIST GENERATOR v3")
+    print("  TWITCH M3U PLAYLIST GENERATOR v4")
     print(f"  {max_channels} channels | {max_workers} threads")
     print("=" * 55)
 
@@ -271,13 +294,13 @@ def generate_playlist(output_file, max_channels, max_workers=MAX_WORKERS):
 # ─── Main ────────────────────────────────────────────────────────
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='Twitch M3U Playlist Generator v3')
+        description='Twitch M3U Playlist Generator v4')
     parser.add_argument('--output', '-o', default='twitch.m3u',
                         help='File output M3U (default: twitch.m3u)')
     parser.add_argument('--channels', '-c', type=int, default=100,
                         help='Jumlah channel (default: 100)')
     parser.add_argument('--workers', '-w', type=int, default=MAX_WORKERS,
-                        help='Jumlah thread paralel (default: 20)')
+                        help='Jumlah thread paralel (default: 10)')
     args = parser.parse_args()
 
     generate_playlist(
