@@ -36,8 +36,8 @@ TWITCH_COOKIES = [
 MAIN_CATEGORIES = {"mobile legends", "sports"}
 
 CATEGORIES = [
-    ("Sports", "sports-1"),
     ("Mobile Legends", "mobile-legends-bang-bang"),
+    ("Sports", "sports-1"),
 ]
 
 _BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -235,9 +235,9 @@ async def async_main(max_channels, headed):
 
         if cookies:
             await context.add_cookies(cookies)
-            print(f"\n[1/3] Cookies di-inject ({len(cookies)} cookies)")
+            print(f"\n[1/3] ✓ inject ({len(cookies)} Ok...)")
         else:
-            print(f"\n[1/3] [ERROR] No cookies found!")
+            print(f"\n[1/3] [ERROR] ❌!")
             return
 
         captured = {
@@ -275,7 +275,7 @@ async def async_main(max_channels, headed):
         await page.goto("https://www.twitch.tv", timeout=60000)
         await page.wait_for_load_state("domcontentloaded", timeout=30000)
 
-        print("  Menunggu headers...")
+        print("  Menunggu...")
         for _ in range(120):
             if captured["session_id"] and captured["integrity"]:
                 break
@@ -283,17 +283,17 @@ async def async_main(max_channels, headed):
         await asyncio.sleep(2)
 
         if not captured["session_id"]:
-            print("  [ERROR] Gagal capture session info!")
+            print("  [ERROR] Gagal!")
             await context.close()
             return
 
         is_logged_in = await page.evaluate("() => document.cookie.includes('auth-token')")
         if not is_logged_in:
-            print("  [WARN] Belum login!")
+            print("  [WARN] login!")
             await context.close()
             return
 
-        print(f"  Login: OK")
+        print(f"  Login: ✓")
 
         hdrs = {
             "session_id": captured["session_id"],
@@ -304,23 +304,23 @@ async def async_main(max_channels, headed):
         }
 
         # ── Scrape ──
-        print(f"\n[2/3] Scrape channels...")
+        print(f"\n[2/3] ✓...")
 
-        print(f"  [Homepage] ...", end=" ", flush=True)
+        print(f"  [Hp] ...", end=" ", flush=True)
         await get_homepage_channels(page, hdrs, channels, seen)
         print(f"{len(channels)} channels")
 
         for cat_name, cat_slug in CATEGORIES:
             print(f"  [{cat_name}] ...", end=" ", flush=True)
             await scrape_category(page, cat_name, cat_slug, channels, seen, max_wait=10)
-            print(f"(total: {len(channels)})")
+            print(f"(✓: {len(channels)})")
             await asyncio.sleep(2)
 
         await context.close()
 
     # ── Build playlist ──
     channels = channels[:max_channels]
-    print(f"\n[3/3] Membangun playlist ({len(channels)} channels)...")
+    print(f"\n[3/3] ✓ ({len(channels)} channels)...")
 
     main_channels = [ch for ch in channels if _is_main_category(ch)]
     other_channels = [ch for ch in channels if not _is_main_category(ch)]
@@ -338,7 +338,7 @@ async def async_main(max_channels, headed):
         extinf = f'#EXTINF:-1'
         if logo:
             extinf += f' tvg-logo="{logo}"'
-        extinf += f' group-title="{category} [tes vip twitch]"'
+        extinf += f' group-title="{category} [vip tes twitch]"'
         extinf += f',{display_name}'
 
         lines.append(extinf)
@@ -354,7 +354,7 @@ async def async_main(max_channels, headed):
         extinf = f'#EXTINF:-1'
         if logo:
             extinf += f' tvg-logo="{logo}"'
-        extinf += f' group-title="Twitch"'
+        extinf += f' group-title="Twitch [vip tes twitch]"'
         extinf += f',{display_name}'
 
         lines.append(extinf)
@@ -366,25 +366,25 @@ async def async_main(max_channels, headed):
 
     print(f"\n{'=' * 55}")
     print(f"  SELESAI: {len(channels)} channels")
-    print(f"    Main (Sports/MLBB): {len(main_channels)}")
-    print(f"    Other (Twitch):     {len(other_channels)}")
-    print(f"  Output: {output}")
-    print(f"  Proxy:  {PROXY}")
+    print(f"   ✓Main (Sp/ML): {len(main_channels)}")
+    print(f"   ✓Other (Twitch):     {len(other_channels)}")
+    print(f"  ✓: {output}")
+    print(f"  ✓Px:  {PROXY}")
     print(f"{'=' * 55}")
 
 
 # ─── Entry point ─────────────────────────────────────────────────
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Twitch M3U v16.5')
+    parser = argparse.ArgumentParser(description='Twitch v16.5')
     parser.add_argument('--channels', '-c', type=int, default=200)
     parser.add_argument('--headed', action='store_true')
     args = parser.parse_args()
 
     print("=" * 55)
-    print("  TWITCH M3U PLAYLIST GENERATOR v16.5")
-    print(f"  Kategori: Sports + Mobile Legends")
-    print(f"  Max: {args.channels} channels")
-    print(f"  Proxy: {PROXY}")
+    print("  ✓ TWITCH v16.5")
+    print(f"  ✓ : Sp + ML")
+    print(f"  Mx: {args.channels} Rb")
+    print(f"  Px: {PROXY}")
     print("=" * 55)
 
     asyncio.run(async_main(args.channels, args.headed))   
