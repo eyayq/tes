@@ -3,77 +3,77 @@
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/777/res=1080p/file/master.m3u8?hdnts=exp=1794350565~acl=/stream/777/res=1080p/file/master.m3u8!/stream/777/file/*/aac/*!/stream/777/file/*/*-1080p/*!/stream/777/file/*/*-720p/*!/stream/777/file/*/*-480p/*!/stream/777/file/*/*-360p/*~id=allUsers~hmac=6420a94c43f93a44b85b5194afd3d22fb5a94c5e150358ac642a369c788dc859
+https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/777/res=1080p/file/master.m3u8?hdnts=exp=1794351079~acl=/stream/777/res=1080p/file/master.m3u8!/stream/777/file/*/aac/*!/stream/777/file/*/*-1080p/*!/stream/777/file/*/*-720p/*!/stream/777/file/*/*-480p/*!/stream/777/file/*/*-360p/*~id=allUsers~hmac=ab747b9fea4f5246cda892f07cbdd910cc05f05f6c92345928ea9a9c3a44a5e4
 #EXTINF:-1 tvg-id="6441" tvg-name="TVRI" tvg-logo="" group-title="TVRI",TVRI
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/6441/res=1080p/file/master.m3u8?hdnts=exp=1794350567~acl=/stream/6441/res=1080p/file/master.m3u8!/stream/6441/file/*/aac/*!/stream/6441/file/*/*-1080p/*!/stream/6441/file/*/*-720p/*!/stream/6441/file/*/*-480p/*!/stream/6441/file/*/*-360p/*~id=allUsers~hmac=c5bd483f48e4cad2d3dffe9ad82c9832a365e8923f5ccabc57a881b4b401cdaf
+https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/6441/res=1080p/file/master.m3u8?hdnts=exp=1794351081~acl=/stream/6441/res=1080p/file/master.m3u8!/stream/6441/file/*/aac/*!/stream/6441/file/*/*-1080p/*!/stream/6441/file/*/*-720p/*!/stream/6441/file/*/*-480p/*!/stream/6441/file/*/*-360p/*~id=allUsers~hmac=09431ab356366d95bbb1721ad4342441c9c1fe46da9ff48daa9e043b2375e8b8
 #EXTINF:-1 tvg-id="6165" tvg-name="BTV" tvg-logo="" group-title="BTV",BTV
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/6165/res=1080p/file/master.m3u8?hdnts=exp=1794350568~acl=/stream/6165/res=1080p/file/master.m3u8!/stream/6165/file/*/aac/*!/stream/6165/file/*/*-1080p/*!/stream/6165/file/*/*-720p/*!/stream/6165/file/*/*-480p/*!/stream/6165/file/*/*-360p/*~id=allUsers~hmac=347587e1b04ddfd6e652ce8657dcc64ed5755c8eaae0d65357286fbf7f4784d7
+https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/6165/res=1080p/file/master.m3u8?hdnts=exp=1794351082~acl=/stream/6165/res=1080p/file/master.m3u8!/stream/6165/file/*/aac/*!/stream/6165/file/*/*-1080p/*!/stream/6165/file/*/*-720p/*!/stream/6165/file/*/*-480p/*!/stream/6165/file/*/*-360p/*~id=allUsers~hmac=200653ea2315858ce665ce4d50a50418d1403381d61349fd81853c3e3c6c1e34
 #EXTINF:-1 tvg-id="18280" tvg-name="Berita Satu" tvg-logo="" group-title="Berita Satu",Berita Satu
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/18280/res=1080p/file/master.m3u8?hdnts=exp=1794350569~acl=/stream/18280/res=1080p/file/master.m3u8!/stream/18280/file/*/aac/*!/stream/18280/file/*/*-1080p/*!/stream/18280/file/*/*-720p/*!/stream/18280/file/*/*-480p/*!/stream/18280/file/*/*-360p/*~id=allUsers~hmac=6d3dbfc2a0641c297ab15f11614858518c6a66886b0ae6604c21601cf78e83e6
+https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/18280/res=1080p/file/master.m3u8?hdnts=exp=1794351083~acl=/stream/18280/res=1080p/file/master.m3u8!/stream/18280/file/*/aac/*!/stream/18280/file/*/*-1080p/*!/stream/18280/file/*/*-720p/*!/stream/18280/file/*/*-480p/*!/stream/18280/file/*/*-360p/*~id=allUsers~hmac=10d0525425abc7171cb2ad0759e94eae265693f6e3c8e3f8d6109b4c4e70216b
 #EXTINF:-1 tvg-id="18162" tvg-name="Garuda TV" tvg-logo="" group-title="Garuda TV",Garuda TV
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/18162/res=1080p/file/master.m3u8?hdnts=exp=1794350570~acl=/stream/18162/res=1080p/file/master.m3u8!/stream/18162/file/*/aac/*!/stream/18162/file/*/*-1080p/*!/stream/18162/file/*/*-720p/*!/stream/18162/file/*/*-480p/*!/stream/18162/file/*/*-360p/*~id=allUsers~hmac=cebc4db94d8e1d17820e6161937a1b1be36ecadb9590ef8dfc126ea0c0a2311b
+https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/18162/res=1080p/file/master.m3u8?hdnts=exp=1794351084~acl=/stream/18162/res=1080p/file/master.m3u8!/stream/18162/file/*/aac/*!/stream/18162/file/*/*-1080p/*!/stream/18162/file/*/*-720p/*!/stream/18162/file/*/*-480p/*!/stream/18162/file/*/*-360p/*~id=allUsers~hmac=71e91bfeadc11a2690ebcdb5af20bd0030d8d1b88851b7144db9feade32ff9cc
 #EXTINF:-1 tvg-id="5415" tvg-name="Jaktv" tvg-logo="" group-title="Jaktv",Jaktv
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/5415/res=1080p/file/master.m3u8?hdnts=exp=1794350571~acl=/stream/5415/res=1080p/file/master.m3u8!/stream/5415/file/*/aac/*!/stream/5415/file/*/*-1080p/*!/stream/5415/file/*/*-720p/*!/stream/5415/file/*/*-480p/*!/stream/5415/file/*/*-360p/*~id=allUsers~hmac=12c87449bafe6e033118742c4612fa215ebb62bdb1b563e82ccbc568f8272a11
+https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/5415/res=1080p/file/master.m3u8?hdnts=exp=1794351086~acl=/stream/5415/res=1080p/file/master.m3u8!/stream/5415/file/*/aac/*!/stream/5415/file/*/*-1080p/*!/stream/5415/file/*/*-720p/*!/stream/5415/file/*/*-480p/*!/stream/5415/file/*/*-360p/*~id=allUsers~hmac=dd90280708722f26508dd07b83bb7e4423748f0c2e7aeb13bcde804fb621e4b0
 #EXTINF:-1 tvg-id="9713" tvg-name="JTV" tvg-logo="" group-title="JTV",JTV
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/9713/res=1080p/file/master.m3u8?hdnts=exp=1794350572~acl=/stream/9713/res=1080p/file/master.m3u8!/stream/9713/file/*/aac/*!/stream/9713/file/*/*-1080p/*!/stream/9713/file/*/*-720p/*!/stream/9713/file/*/*-480p/*!/stream/9713/file/*/*-360p/*~id=allUsers~hmac=a13b99be667bfe37861436745f8e3124fff26040b757a2bee6abd243e0041cd0
+https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/9713/res=1080p/file/master.m3u8?hdnts=exp=1794351087~acl=/stream/9713/res=1080p/file/master.m3u8!/stream/9713/file/*/aac/*!/stream/9713/file/*/*-1080p/*!/stream/9713/file/*/*-720p/*!/stream/9713/file/*/*-480p/*!/stream/9713/file/*/*-360p/*~id=allUsers~hmac=1f0e7229e55a151f278fa34e966e0e83942684b508e8fef6f0a2c79c1b0628ab
 #EXTINF:-1 tvg-id="7432" tvg-name="Nusantara TV" tvg-logo="" group-title="Nusantara TV",Nusantara TV
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/7432/res=1080p/file/master.m3u8?hdnts=exp=1794350574~acl=/stream/7432/res=1080p/file/master.m3u8!/stream/7432/file/*/aac/*!/stream/7432/file/*/*-1080p/*!/stream/7432/file/*/*-720p/*!/stream/7432/file/*/*-480p/*!/stream/7432/file/*/*-360p/*~id=allUsers~hmac=9a8c807a9bc8bfc4421c9688d86b7d4069414dbed9e109d42120c9bd4ba4aa25
+https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/7432/res=1080p/file/master.m3u8?hdnts=exp=1794351088~acl=/stream/7432/res=1080p/file/master.m3u8!/stream/7432/file/*/aac/*!/stream/7432/file/*/*-1080p/*!/stream/7432/file/*/*-720p/*!/stream/7432/file/*/*-480p/*!/stream/7432/file/*/*-360p/*~id=allUsers~hmac=f817b59b2ce1562159396d73e480a95c52f357f8ee47285aac967bfd3c4b09f9
 #EXTINF:-1 tvg-id="9714" tvg-name="jawaposTV" tvg-logo="" group-title="jawaposTV",jawaposTV
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/9714/res=1080p/file/master.m3u8?hdnts=exp=1794350574~acl=/stream/9714/res=1080p/file/master.m3u8!/stream/9714/file/*/aac/*!/stream/9714/file/*/*-1080p/*!/stream/9714/file/*/*-720p/*!/stream/9714/file/*/*-480p/*!/stream/9714/file/*/*-360p/*~id=allUsers~hmac=184931a27599fc6224d0a94bb5a1fbc2e19a65c2c3c8d7e46eba562bf9184081
+https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/9714/res=1080p/file/master.m3u8?hdnts=exp=1794351089~acl=/stream/9714/res=1080p/file/master.m3u8!/stream/9714/file/*/aac/*!/stream/9714/file/*/*-1080p/*!/stream/9714/file/*/*-720p/*!/stream/9714/file/*/*-480p/*!/stream/9714/file/*/*-360p/*~id=allUsers~hmac=c5befe2e20fe1b9fdf82a1839fbd791fed0794640e412e4f004eec3cf7a354a6
 #EXTINF:-1 tvg-id="19046" tvg-name="Sin Po TV" tvg-logo="" group-title="Sin Po TV",Sin Po TV
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/19046/res=1080p/file/master.m3u8?hdnts=exp=1794350576~acl=/stream/19046/res=1080p/file/master.m3u8!/stream/19046/file/*/aac/*!/stream/19046/file/*/*-1080p/*!/stream/19046/file/*/*-720p/*!/stream/19046/file/*/*-480p/*!/stream/19046/file/*/*-360p/*~id=allUsers~hmac=f8f540495cc5d32c2f29d50c3956d0973017d1c2a29c00fc9b1340f2aed6cbbd
+https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/19046/res=1080p/file/master.m3u8?hdnts=exp=1794351090~acl=/stream/19046/res=1080p/file/master.m3u8!/stream/19046/file/*/aac/*!/stream/19046/file/*/*-1080p/*!/stream/19046/file/*/*-720p/*!/stream/19046/file/*/*-480p/*!/stream/19046/file/*/*-360p/*~id=allUsers~hmac=e8d7bc71bebe5abdb5fa99adc605b2a8684ffc7c79c89ed4f1d8515021e6b7b5
 #EXTINF:-1 tvg-id="6482" tvg-name="DAAI TV" tvg-logo="" group-title="DAAI TV",DAAI TV
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/6482/res=1080p/file/master.m3u8?hdnts=exp=1794350576~acl=/stream/6482/res=1080p/file/master.m3u8!/stream/6482/file/*/aac/*!/stream/6482/file/*/*-1080p/*!/stream/6482/file/*/*-720p/*!/stream/6482/file/*/*-480p/*!/stream/6482/file/*/*-360p/*~id=allUsers~hmac=11b8fa04041193accfc50906b061cfc450531afb3795b14882994021f72119de
+https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/6482/res=1080p/file/master.m3u8?hdnts=exp=1794351092~acl=/stream/6482/res=1080p/file/master.m3u8!/stream/6482/file/*/aac/*!/stream/6482/file/*/*-1080p/*!/stream/6482/file/*/*-720p/*!/stream/6482/file/*/*-480p/*!/stream/6482/file/*/*-360p/*~id=allUsers~hmac=305fa9fd01df3b8f6fa3eace12a5a111b61c7bd4619f2156a5874791fb3ce0a8
 #EXTINF:-1 tvg-id="7464" tvg-name="AJWA TV" tvg-logo="" group-title="AJWA TV",AJWA TV
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/7464/res=1080p/file/master.m3u8?hdnts=exp=1794350577~acl=/stream/7464/res=1080p/file/master.m3u8!/stream/7464/file/*/aac/*!/stream/7464/file/*/*-1080p/*!/stream/7464/file/*/*-720p/*!/stream/7464/file/*/*-480p/*!/stream/7464/file/*/*-360p/*~id=allUsers~hmac=bcc6d68260b66f940edabdd4695088077ab0a4a99330e8c777ae9c54438fc2c0
+https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/7464/res=1080p/file/master.m3u8?hdnts=exp=1794351093~acl=/stream/7464/res=1080p/file/master.m3u8!/stream/7464/file/*/aac/*!/stream/7464/file/*/*-1080p/*!/stream/7464/file/*/*-720p/*!/stream/7464/file/*/*-480p/*!/stream/7464/file/*/*-360p/*~id=allUsers~hmac=6a7a3d836d03f0f3a887a6f2f859053af24b043e216daf922bbb1708f823af1b
 #EXTINF:-1 tvg-id="6784" tvg-name="Arirang" tvg-logo="" group-title="Arirang",Arirang
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/6784/res=1080p/file/master.m3u8?hdnts=exp=1794350579~acl=/stream/6784/res=1080p/file/master.m3u8!/stream/6784/file/*/aac/*!/stream/6784/file/*/*-1080p/*!/stream/6784/file/*/*-720p/*!/stream/6784/file/*/*-480p/*!/stream/6784/file/*/*-360p/*~id=allUsers~hmac=7e41cb449db52160f904f212858cbfc5e47671b3dd19efb0f51d05333fe0a837
+https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/6784/res=1080p/file/master.m3u8?hdnts=exp=1794351094~acl=/stream/6784/res=1080p/file/master.m3u8!/stream/6784/file/*/aac/*!/stream/6784/file/*/*-1080p/*!/stream/6784/file/*/*-720p/*!/stream/6784/file/*/*-480p/*!/stream/6784/file/*/*-360p/*~id=allUsers~hmac=3c66d4f20193f474abd5c7967829fdc9ab76a9f7096e1b4ca3cdec8d960a4675
 #EXTINF:-1 tvg-id="7150" tvg-name="ABC Australia" tvg-logo="" group-title="ABC Australia",ABC Australia
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/7150/res=1080p/file/master.m3u8?hdnts=exp=1794350580~acl=/stream/7150/res=1080p/file/master.m3u8!/stream/7150/file/*/aac/*!/stream/7150/file/*/*-1080p/*!/stream/7150/file/*/*-720p/*!/stream/7150/file/*/*-480p/*!/stream/7150/file/*/*-360p/*~id=allUsers~hmac=45f063b250f62e04b092ccd35597b3c1e23ed0abdb343d72c8aac42a51e02d0c
+https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/7150/res=1080p/file/master.m3u8?hdnts=exp=1794351095~acl=/stream/7150/res=1080p/file/master.m3u8!/stream/7150/file/*/aac/*!/stream/7150/file/*/*-1080p/*!/stream/7150/file/*/*-720p/*!/stream/7150/file/*/*-480p/*!/stream/7150/file/*/*-360p/*~id=allUsers~hmac=f4763be53b2b7a6245b3775a9022b3decc0aafbb4291b816f6cf75e43c03c866
 #EXTINF:-1 tvg-id="6412" tvg-name="Euronews" tvg-logo="" group-title="Euronews",Euronews
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/6412/res=1080p/file/master.m3u8?hdnts=exp=1794350581~acl=/stream/6412/res=1080p/file/master.m3u8!/stream/6412/file/*/aac/*!/stream/6412/file/*/*-1080p/*!/stream/6412/file/*/*-720p/*!/stream/6412/file/*/*-480p/*!/stream/6412/file/*/*-360p/*~id=allUsers~hmac=807c397a322e8d55b4b0275c4b375021be6fa13d1669b681f2f95772492c2f7b
+https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/6412/res=1080p/file/master.m3u8?hdnts=exp=1794351096~acl=/stream/6412/res=1080p/file/master.m3u8!/stream/6412/file/*/aac/*!/stream/6412/file/*/*-1080p/*!/stream/6412/file/*/*-720p/*!/stream/6412/file/*/*-480p/*!/stream/6412/file/*/*-360p/*~id=allUsers~hmac=8d8473d7c0b083b10ec1c0c549b7a9add3ad22c8c6f25003ecc604ac3d2d8253
 #EXTINF:-1 tvg-id="6411" tvg-name="CNA" tvg-logo="" group-title="CNA",CNA
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
@@ -83,22 +83,22 @@ https://d2e1asnsl7br7b.cloudfront.net/7782e205e72f43aeb4a48ec97f66ebbe/index.m3u
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/6852/res=1080p/file/master.m3u8?hdnts=exp=1794350583~acl=/stream/6852/res=1080p/file/master.m3u8!/stream/6852/file/*/aac/*!/stream/6852/file/*/*-1080p/*!/stream/6852/file/*/*-720p/*!/stream/6852/file/*/*-480p/*!/stream/6852/file/*/*-360p/*~id=allUsers~hmac=71f527335947df240374907c250e80f3157ed00afe2e8706989e1a7b58d61159
+https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/6852/res=1080p/file/master.m3u8?hdnts=exp=1794351098~acl=/stream/6852/res=1080p/file/master.m3u8!/stream/6852/file/*/aac/*!/stream/6852/file/*/*-1080p/*!/stream/6852/file/*/*-720p/*!/stream/6852/file/*/*-480p/*!/stream/6852/file/*/*-360p/*~id=allUsers~hmac=9d57f562d163354c874cc3d716ab109b8d4ebac79b7b4e109d3a6fff49ec32bc
 #EXTINF:-1 tvg-id="7619" tvg-name="MUSICA" tvg-logo="" group-title="MUSICA",MUSICA
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/7619/res=1080p/file/master.m3u8?hdnts=exp=1794350584~acl=/stream/7619/res=1080p/file/master.m3u8!/stream/7619/file/*/aac/*!/stream/7619/file/*/*-1080p/*!/stream/7619/file/*/*-720p/*!/stream/7619/file/*/*-480p/*!/stream/7619/file/*/*-360p/*~id=allUsers~hmac=9d04794cb1f81c1fc7627409ecfb5baac5c19a9a9b9934e4663c7756056fedd3
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/7619/res=1080p/file/master.m3u8?hdnts=exp=1794351099~acl=/stream/7619/res=1080p/file/master.m3u8!/stream/7619/file/*/aac/*!/stream/7619/file/*/*-1080p/*!/stream/7619/file/*/*-720p/*!/stream/7619/file/*/*-480p/*!/stream/7619/file/*/*-360p/*~id=allUsers~hmac=55f6c70a4f50ffffc73c32b5fba4923875552aef952f92cde3684bea776cf464
 #EXTINF:-1 tvg-id="6898" tvg-name="U-Channel TV" tvg-logo="" group-title="U-Channel TV",U-Channel TV
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/6898/res=1080p/file/master.m3u8?hdnts=exp=1794350585~acl=/stream/6898/res=1080p/file/master.m3u8!/stream/6898/file/*/aac/*!/stream/6898/file/*/*-1080p/*!/stream/6898/file/*/*-720p/*!/stream/6898/file/*/*-480p/*!/stream/6898/file/*/*-360p/*~id=allUsers~hmac=1aafc7befdd06b88069ba4c672097dfa81af5b8576768096cebb56c92dcb7396
+https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/6898/res=1080p/file/master.m3u8?hdnts=exp=1794351101~acl=/stream/6898/res=1080p/file/master.m3u8!/stream/6898/file/*/aac/*!/stream/6898/file/*/*-1080p/*!/stream/6898/file/*/*-720p/*!/stream/6898/file/*/*-480p/*!/stream/6898/file/*/*-360p/*~id=allUsers~hmac=f0fb8c070c225e6c51c683b663d6b02747205e3136fd2c79b67664804c725d6d
 #EXTINF:-1 tvg-id="12607" tvg-name="DMI TV" tvg-logo="" group-title="DMI TV",DMI TV
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/12607/res=1080p/file/master.m3u8?hdnts=exp=1794350586~acl=/stream/12607/res=1080p/file/master.m3u8!/stream/12607/file/*/aac/*!/stream/12607/file/*/*-1080p/*!/stream/12607/file/*/*-720p/*!/stream/12607/file/*/*-480p/*!/stream/12607/file/*/*-360p/*~id=allUsers~hmac=dc6aed29e314c38431b69294cb074d1b82e0fc651bf5abeaabf2188da3ff371d
+https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/12607/res=1080p/file/master.m3u8?hdnts=exp=1794351102~acl=/stream/12607/res=1080p/file/master.m3u8!/stream/12607/file/*/aac/*!/stream/12607/file/*/*-1080p/*!/stream/12607/file/*/*-720p/*!/stream/12607/file/*/*-480p/*!/stream/12607/file/*/*-360p/*~id=allUsers~hmac=8099dfd6c7338272a8156138604da7de4917f0b2612642fedac67192cb5d2aa5
 #EXTINF:-1 tvg-id="7230" tvg-name="Magna TV" tvg-logo="" group-title="Magna TV",Magna TV
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
@@ -108,7 +108,7 @@ https://edge.medcom.id/live-edge/smil:magna.smil/playlist.m3u8
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/10975/res=1080p/file/master.m3u8?hdnts=exp=1794350588~acl=/stream/10975/res=1080p/file/master.m3u8!/stream/10975/file/*/aac/*!/stream/10975/file/*/*-1080p/*!/stream/10975/file/*/*-720p/*!/stream/10975/file/*/*-480p/*!/stream/10975/file/*/*-360p/*~id=allUsers~hmac=596ff6ecebd45d568ad858032e21bd57c160fb2452b19f0774eb544cbb78780a
+https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/10975/res=1080p/file/master.m3u8?hdnts=exp=1794351105~acl=/stream/10975/res=1080p/file/master.m3u8!/stream/10975/file/*/aac/*!/stream/10975/file/*/*-1080p/*!/stream/10975/file/*/*-720p/*!/stream/10975/file/*/*-480p/*!/stream/10975/file/*/*-360p/*~id=allUsers~hmac=07af95195b18ad1593bbeb52f7f93cd46ef59f4a761c777a893a49092286f4da
 #EXTINF:-1 tvg-id="22337" tvg-name="France24" tvg-logo="" group-title="France24",France24
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
