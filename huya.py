@@ -2,11 +2,7 @@
 """
 Vidio Live TV → M3U Playlist Generator
 ========================================
-1. Visit m.vidio.com → ambil cookie luws
-2. GET /livestreamings?stream_type=tv_stream → semua channel
-3. GET /livestreamings/{id}/stream?initialize=true → non-DRM HLS URL
-   (x-signature = HMAC-SHA256(key="V1d10D3v:{t}", msg=str(t)))
-4. Fallback: DRM pattern jika step 3 gagal
+Ambil SEMUA channel (live, upcoming, schedule, offline) + stream URL.
 
 Dependencies:
     pip install "curl-cffi<0.14"
@@ -37,16 +33,12 @@ SITE_URL = "https://m.vidio.com"
 OUTPUT_FILE = "playlist.m3u"
 IMPERSONATE = "chrome"
 DELAY = 0.5
+RETRY_DELAY = 3.0
+RETRY_WAIT = 5
 
 API_KEY = (
     "CH1ZFsN4N/MIfAds1DL9mP151CNqIpWHqZGRr+LkvUyiq3FRPuP1Kt6aK+pG3nEC1FXt0ZAAJ5FKP8QU8CZ5"
     "/ieyIuWEkvNBqXdsdlXM2838+3SFjs9rtlntv7l7DHkBHWK1q/4vLGad8GAj3vfLciRFnquHuZMMW+4EX8yTe1w="
-)
-
-# Fallback: DRM pattern
-STREAM_DRM_PATTERN = (
-    "https://etslive-v3-vidio-com-tokenized.akamaized.net"
-    "/stream/{id}/file/drm/hls/master.m3u8"
 )
 
 USER_AGENT = (
@@ -67,45 +59,41 @@ log = logging.getLogger("vidio-m3u")
 
 # ==================== X-SIGNATURE ====================
 def generate_x_signature() -> tuple:
-    """
-    Generate x-signature dan x-client untuk Vidio API.
-    Algoritma: HMAC-SHA256(key="V1d10D3v:{t}", message=str(t))
-    """
+    """HMAC-SHA256(key="V1d10D3v:{t}", msg=str(t))"""
     t = int(time.time())
     secret_key = f"V1d10D3v:{t}"
     message = str(t)
-
     signature = hmac.new(
         secret_key.encode(),
         message.encode(),
         hashlib.sha256
     ).hexdigest()
-
-    x_client = str(t)
-    return x_client, signature
+    return str(t), signature
 
 
-# ==================== STEP 1: GET LUWS COOKIE ====================
+# ==================== STEP 1: GET LUWS ====================
 def get_luws(session) -> str:
-    """Visit m.vidio.com untuk mendapatkan cookie luws."""
-    log.info("Visiting %s untuk ambil cookie luws ...", SITE_URL)
+    """Visit m.vidio.com untuk cookie luws."""
+    log.info("Visiting %s ...", SITE_URL)
     try:
-        resp = session.get(SITE_URL, timeout=30)
+        session.get(SITE_URL, timeout=30)
         luws = session.cookies.get("luws")
         if luws:
             log.info("  luws: %s", luws)
             return luws
     except Exception as e:
-        log.warning("  Error visit site: %s", e)
+        log.warning("  Error: %s", e)
 
-    # Fallback: generate UUID sendiri
-    log.info("  luws tidak di-set server, generate UUID baru")
+    log.info("  Generate luws baru")
     return f"{str(uuid.uuid4()).upper()}_"
 
 
 # ==================== STEP 2: FETCH ALL CHANNELS ====================
 def fetch_all_channels(session, luws: str) -> list:
-    """GET /livestreamings?stream_type=tv_stream → semua channel."""
+    """
+    GET /livestreamings?stream_type=tv_stream
+    Mengembalikan SEMUA channel: live, upcoming, schedule, offline.
+    """
     url = f"{API_BASE}/livestreamings"
     params = {"stream_type": "tv_stream"}
     headers = {
@@ -123,7 +111,7 @@ def fetch_all_channels(session, luws: str) -> list:
         "Origin": ORIGIN,
     }
 
-    log.info("Fetching %s?stream_type=tv_stream ...", url)
+    log.info("Fetching all channels ...")
     try:
         resp = session.get(url, params=params, headers=headers, timeout=30)
         if resp.status_code != 200:
@@ -147,6 +135,9 @@ def fetch_all_channels(session, luws: str) -> list:
             "title": attrs.get("title", "Unknown"),
             "cover_url": attrs.get("cover_url", ""),
             "web_url": attrs.get("web_url", ""),
+            "is_live": attrs.get("is_live", False),
+            "start_time": attrs.get("start_time", ""),
+            "end_time": attrs.get("end_time", ""),
         })
 
     log.info("  Found %d channels", len(channels))
@@ -155,10 +146,7 @@ def fetch_all_channels(session, luws: str) -> list:
 
 # ==================== STEP 3: FETCH STREAM URL ====================
 def fetch_stream_url(session, luws: str, ch_id: int) -> str:
-    """
-    GET /livestreamings/{id}/stream?initialize=true
-    Dengan x-signature (HMAC-SHA256) + luws + x-client
-    """
+    """GET /livestreamings/{id}/stream?initialize=true"""
     url = f"{API_BASE}/livestreamings/{ch_id}/stream?initialize=true"
     x_client, x_signature = generate_x_signature()
 
@@ -182,12 +170,8 @@ def fetch_stream_url(session, luws: str, ch_id: int) -> str:
             hls = data.get("data", {}).get("attributes", {}).get("hls", "")
             if hls:
                 return hls
-            else:
-                log.debug("  No hls in response: %s", json.dumps(data)[:200])
-        else:
-            log.debug("  HTTP %d for channel %d", resp.status_code, ch_id)
-    except Exception as e:
-        log.debug("  Exception: %s", e)
+    except Exception:
+        pass
 
     return ""
 
@@ -201,9 +185,11 @@ def generate_m3u(channels: list, stream_urls: dict, output_file: str):
         ch_id = ch["id"]
         group = ch["title"]
         logo = ch["cover_url"]
+        stream_url = stream_urls.get(ch_id, "")
 
-        # Prioritas: non-DRM (dari API) > DRM (pattern)
-        stream_url = stream_urls.get(ch_id) or STREAM_DRM_PATTERN.format(id=ch_id)
+        if not stream_url:
+            log.warning("  [SKIP] No stream: %s", group)
+            continue
 
         lines.append(
             f'#EXTINF:-1 tvg-id="{ch_id}" '
@@ -226,18 +212,13 @@ def generate_m3u(channels: list, stream_urls: dict, output_file: str):
 def main():
     parser = argparse.ArgumentParser(description="Vidio Live TV M3U Generator")
     parser.add_argument("-o", "--output", type=str, default=OUTPUT_FILE)
-    parser.add_argument("--drm-only", action="store_true",
-                        help="Skip non-DRM, langsung pakai DRM pattern")
-    parser.add_argument("--debug", action="store_true",
-                        help="Enable debug logging")
+    parser.add_argument("--retries", type=int, default=2,
+                        help="Max retry attempts (default: 2)")
     args = parser.parse_args()
-
-    if args.debug:
-        logging.getLogger().setLevel(logging.DEBUG)
 
     print("=" * 55)
     print("  Vidio Live TV → M3U Playlist Generator")
-    print("  x-signature: HMAC-SHA256(V1d10D3v:{t}, str(t))")
+    print("  ALL channels: live + upcoming + schedule + offline")
     print("=" * 55)
 
     session = cffi_requests.Session(impersonate=IMPERSONATE)
@@ -245,35 +226,73 @@ def main():
     # Step 1: Get luws
     luws = get_luws(session)
 
-    # Step 2: Fetch all channels
+    # Step 2: Fetch ALL channels
     channels = fetch_all_channels(session, luws)
     if not channels:
         log.error("Tidak ada channel ditemukan.")
         sys.exit(1)
 
-    log.info("\n  Channels (%d):", len(channels))
-    for ch in channels[:10]:
-        log.info("    [%s] %s", ch["id"], ch["title"])
-    if len(channels) > 10:
-        log.info("    ... +%d more", len(channels) - 10)
+    # Show summary
+    live_count = sum(1 for c in channels if c.get("is_live"))
+    log.info("\n  Total: %d channels (%d live, %d offline/upcoming)",
+             len(channels), live_count, len(channels) - live_count)
 
-    # Step 3: Fetch stream URLs
+    for ch in channels:
+        status = "● LIVE" if ch.get("is_live") else "○ OFF"
+        log.info("    [%s] %s  %s", ch["id"], ch["title"], status)
+
+    # Step 3: Fetch stream URLs (semua channel, bukan hanya yang live)
+    log.info("\nFetching stream URLs ...")
     stream_urls = {}
-    if not args.drm_only:
-        log.info("\nFetching non-DRM stream URLs ...")
-        for i, ch in enumerate(channels, 1):
+    failed = []
+
+    for i, ch in enumerate(channels, 1):
+        ch_id = ch["id"]
+        hls = fetch_stream_url(session, luws, ch_id)
+        if hls:
+            stream_urls[ch_id] = hls
+            log.info("  [%d/%d] %s ✓", i, len(channels), ch["title"])
+        else:
+            failed.append(ch)
+            log.warning("  [%d/%d] %s ✗", i, len(channels), ch["title"])
+        time.sleep(DELAY)
+
+    # Step 4: Retry failed
+    for attempt in range(1, args.retries + 1):
+        if not failed:
+            break
+
+        log.info("\nRetry %d/%d (%d channels, wait %ds) ...",
+                 attempt, args.retries, len(failed), RETRY_WAIT)
+        time.sleep(RETRY_WAIT)
+
+        still_failed = []
+        for ch in failed:
             ch_id = ch["id"]
             hls = fetch_stream_url(session, luws, ch_id)
             if hls:
                 stream_urls[ch_id] = hls
-                log.info("  [%d/%d] %s ✓ (non-DRM)", i, len(channels), ch["title"])
+                log.info("  [RETRY %d] %s ✓", attempt, ch["title"])
             else:
-                log.warning("  [%d/%d] %s ✗ (fallback DRM)", i, len(channels), ch["title"])
-            time.sleep(DELAY)
+                still_failed.append(ch)
+                log.warning("  [RETRY %d] %s ✗", attempt, ch["title"])
+            time.sleep(RETRY_DELAY)
 
-        log.info("\n  Non-DRM: %d/%d", len(stream_urls), len(channels))
+        failed = still_failed
 
-    # Step 4: Generate M3U
+    # Summary
+    log.info("\n  ─────────────────────────────────")
+    log.info("  Total channels : %d", len(channels))
+    log.info("  Stream OK      : %d", len(stream_urls))
+    log.info("  Stream gagal   : %d", len(failed))
+    log.info("  ─────────────────────────────────")
+
+    if failed:
+        log.info("  Channel tanpa stream:")
+        for ch in failed:
+            log.info("    - [%s] %s", ch["id"], ch["title"])
+
+    # Step 5: Generate M3U
     log.info("\nGenerating M3U ...")
     generate_m3u(channels, stream_urls, args.output)
 
