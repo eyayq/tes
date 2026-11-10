@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-TWITCH M3U PLAYLIST GENERATOR v15 (in-browser, persisted queries)
+TWITCH M3U PLAYLIST GENERATOR v15 (in-browser + proxy output)
 """
 
 import time
@@ -15,6 +15,12 @@ from urllib.parse import quote
 # ─── Konfigurasi ─────────────────────────────────────────────────
 GQL_CLIENT_ID = "kimne78kx3ncx6brgo4mv6wki5h1ko"
 GQL_HASH = "c101f277c6ab7de34f64e63c90d698edae0d83ed5fad8efe198596b472ef3337"
+
+# ═══════════════════════════════════════════════════════════════
+# PROXY — GANTI DENGAN URL WORKER-MU
+# ═══════════════════════════════════════════════════════════════
+PROXY = "https://pl-gratosv---al.bhns.workers.dev"
+# ═══════════════════════════════════════════════════════════════
 
 _BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 _BROWSER_PROFILE = os.path.join(_BASE_DIR, ".twitch_browser")
@@ -124,7 +130,7 @@ def get_live_channels(page, hdrs, count=100):
             data1 = data1[0]
         if "data" in data1:
             _deep_extract(data1["data"], channels, seen)
-        print(f"  FrontPageNew_User: {len(channels)} channels")
+    print(f"  FrontPageNew_User: {len(channels)} channels")
 
     # 2. FeaturedContentCarouselStreams (max 8)
     before = len(channels)
@@ -146,7 +152,7 @@ def get_live_channels(page, hdrs, count=100):
             _deep_extract(data2["data"], channels, seen)
     print(f"  +FeaturedContent: {len(channels) - before} baru")
 
-    # 3. Shelves (variable, bisa 20-50+)
+    # 3. Shelves
     before = len(channels)
     payload3 = [{
         "operationName": "Shelves",
@@ -181,7 +187,7 @@ def get_live_channels(page, hdrs, count=100):
             _deep_extract(data3["data"], channels, seen)
     print(f"  +Shelves: {len(channels) - before} baru")
 
-    # 4. Coba lagi Shelves dengan limit lebih besar
+    # 4. Shelves limit 10
     if len(channels) < count:
         before = len(channels)
         payload4 = [{
@@ -220,93 +226,9 @@ def get_live_channels(page, hdrs, count=100):
     return channels[:count]
 
 
-# ─── Get stream URL ──────────────────────────────────────────────
-def get_stream_url(page, hdrs, channel):
-    payload = [{
-        "operationName": "PrefetchPlaybackAccessToken",
-        "variables": {
-            "login": channel,
-            "playerType": "site",
-            "platform": "web",
-        },
-        "extensions": {
-            "persistedQuery": {
-                "version": 1,
-                "sha256Hash": GQL_HASH,
-            }
-        }
-    }]
-
-    data = gql_in_browser(page, payload, hdrs)
-    if not data:
-        return None
-
-    if isinstance(data, list):
-        data = data[0]
-
-    if "errors" in data:
-        return None
-
-    token = ""
-    sig = ""
-
-    spa = data.get("data", {}).get("streamPlaybackAccessToken", {})
-    if spa:
-        token = spa.get("value", "")
-        sig = spa.get("signature", "")
-
-    if not token:
-        stream_info = data.get("data", {}).get("streamerInfo", {})
-        stream = stream_info.get("stream", {})
-        token_data = stream.get("playbackAccessToken", {})
-        token = token_data.get("value", "")
-        sig = token_data.get("signature", "")
-
-    if not token or not sig:
-        return None
-
-    ch_lower = channel.lower()
-    play_session_id = uuid.uuid4().hex
-    p_val = random.randint(1000000, 9999999)
-
-    acmb_obj = {
-        "AppVersion": hdrs.get("client_version", "a989fade-ca86-4058-933e-10133becfe0f"),
-        "ClientApp": "twilight",
-        "URL": "https://www.twitch.tv/"
-    }
-    acmb = base64.b64encode(json.dumps(acmb_obj, separators=(',', ':')).encode()).decode()
-
-    url = (
-        f"https://usher.ttvnw.net/api/v2/channel/hls/{ch_lower}.m3u8"
-        f"?acmb={acmb}"
-        f"&allow_source=true"
-        f"&browser_family=chrome"
-        f"&browser_version=157.0"
-        f"&cdm=wv"
-        f"&enable_score=true"
-        f"&fast_bread=true"
-        f"&include_unavailable=true"
-        f"&lang=en"
-        f"&os_name=Linux"
-        f"&os_version=undefined"
-        f"&p={p_val}"
-        f"&platform=web"
-        f"&play_session_id={play_session_id}"
-        f"&player_backend=mediaplayer"
-        f"&player_version=1.59.0-rc.1"
-        f"&playlist_include_framerate=true"
-        f"&reassignments_supported=true"
-        f"&sig={quote(sig, safe='')}"
-        f"&supported_codecs=av1,h265,h264"
-        f"&token={quote(token, safe='')}"
-        f"&transcode_mode=cbr_v1"
-    )
-    return url
-
-
 # ─── Main ────────────────────────────────────────────────────────
 def main():
-    parser = argparse.ArgumentParser(description='Twitch M3U v15')
+    parser = argparse.ArgumentParser(description='Twitch M3U v15 (proxy)')
     parser.add_argument('--output', '-o', default='twitch.m3u')
     parser.add_argument('--channels', '-c', type=int, default=100)
     parser.add_argument('--headed', action='store_true')
@@ -315,8 +237,9 @@ def main():
     from playwright.sync_api import sync_playwright
 
     print("=" * 55)
-    print("  TWITCH M3U PLAYLIST GENERATOR v15")
+    print("  TWITCH M3U PLAYLIST GENERATOR v15 (proxy)")
     print(f"  Max {args.channels} channels")
+    print(f"  Proxy: {PROXY}")
     print("=" * 55)
 
     cookies = _load_cookies()
@@ -393,7 +316,6 @@ def main():
 
         print(f"  Login:         OK")
         print(f"  Session-ID:    {captured['session_id']}")
-        print(f"  Device-ID:     {captured['device_id']}")
         print(f"  Integrity:     {'SET' if captured['integrity'] else 'NOT FOUND'}")
 
         hdrs = {
@@ -404,7 +326,7 @@ def main():
             "integrity": captured["integrity"] or "",
         }
 
-        # ── Fetch channels (persisted queries) ──
+        # ── Fetch channels ──
         print(f"\n[2/3] Fetching live channels...")
         channels = get_live_channels(page, hdrs, count=args.channels)
         print(f"  Total channel: {len(channels)}")
@@ -414,48 +336,42 @@ def main():
             context.close()
             return
 
-        # ── Get stream URLs ──
-        print(f"\n[3/3] Mengambil stream URL ({len(channels)} channels)...")
-        lines = ['#EXTM3U']
-        live_count = 0
-        offline_count = 0
-
-        for i, ch in enumerate(channels):
-            time.sleep(random.uniform(0.1, 0.3))
-            url = get_stream_url(page, hdrs, ch["id"])
-
-            if not url:
-                offline_count += 1
-                continue
-
-            name = ch.get("name", ch.get("id", ""))
-            game = ch.get("game", "Twitch")
-            logo = ch.get("logo", "")
-            title = ch.get("title", "")
-            display_name = f"{name} — {title}" if title else name
-
-            extinf = f'#EXTINF:-1'
-            if logo:
-                extinf += f' tvg-logo="{logo}"'
-            extinf += f' group-title="{game}"'
-            extinf += f',{display_name}'
-
-            lines.append(extinf)
-            lines.append(url)
-            live_count += 1
-
-            if (i + 1) % 10 == 0:
-                print(f"  Progress: {i + 1}/{len(channels)}")
-
         context.close()
+
+    # ── Build playlist (PROXY URLs) ──
+    print(f"\n[3/3] Membangun playlist ({len(channels)} channels)...")
+    lines = ['#EXTM3U']
+    live_count = 0
+
+    for i, ch in enumerate(channels):
+        name = ch.get("name", ch.get("id", ""))
+        game = ch.get("game", "Twitch")
+        logo = ch.get("logo", "")
+        title = ch.get("title", "")
+        display_name = f"{name} — {title}" if title else name
+
+        extinf = f'#EXTINF:-1'
+        if logo:
+            extinf += f' tvg-logo="{logo}"'
+        extinf += f' group-title="{game}"'
+        extinf += f',{display_name}'
+
+        lines.append(extinf)
+        # ← URL PROXY (bukan usher langsung)
+        lines.append(f"{PROXY}/play.m3u8?id={ch['id']}")
+        live_count += 1
+
+        if (i + 1) % 10 == 0:
+            print(f"  Progress: {i + 1}/{len(channels)}")
 
     with open(args.output, 'w', encoding='utf-8') as f:
         f.write('\n'.join(lines) + '\n')
 
     print(f"\n{'=' * 55}")
-    print(f"  SELESAI: {live_count} live | {offline_count} offline")
+    print(f"  SELESAI: {live_count} channels")
     print(f"  Output: {args.output}")
-    print(f"  Stream token expired: ~6 jam")
+    print(f"  Proxy:  {PROXY}")
+    print(f"  Token:  auto-refresh oleh worker (tidak perlu regenerate)")
     print(f"{'=' * 55}")
 
 
