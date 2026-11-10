@@ -1,9 +1,6 @@
-
-
-
 #!/usr/bin/env python3
 """
-TWITCH M3U PLAYLIST GENERATOR v8
+TWITCH M3U PLAYLIST GENERATOR v9 (curl_cffi)
 """
 
 import time
@@ -16,31 +13,30 @@ import json
 from urllib.parse import quote
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-import requests
+from curl_cffi import requests as cffi_requests
 
 # ─── Konfigurasi ─────────────────────────────────────────────────
 TIMEOUT = 15
-MAX_WORKERS = 10
+MAX_WORKERS = 1
 CLIENT_ID = "kimne78kx3ncx6brgo4mv6wki5h1ko"
 GQL_HASH = "c101f277c6ab7de34f64e63c90d698edae0d83ed5fad8efe198596b472ef3337"
 
-# ===== ISI TOKEN DARI BROWSER DEVTOOLS (Network → GQL request → authorization header) =====
-AUTH_TOKEN = "i6znx2o7mcfa0ut0d2vq2ksp7otyzs"  # contoh: "i6znx2o7mcfa0ut0d2vq2ksp7otyzs"
-# =========================================================================================
+# ===== ISI TOKEN DARI BROWSER DEVTOOLS =====
+AUTH_TOKEN = ""
+# ============================================
 
-# ─── Session & Identitas ─────────────────────────────────────────
-_session = requests.Session()
+# ─── Session (curl_cffi impersonate chrome) ──────────────────────
+_session = cffi_requests.Session(impersonate="chrome")
 
 _DEVICE_ID = uuid.uuid4().hex[:16]
 _CLIENT_SESSION_ID = uuid.uuid4().hex[:16]
 _CLIENT_VERSION = None
 
+# Header dasar — JANGAN set User-Agent (curl_cffi handle otomatis)
 _session.headers.update({
     "Client-ID": CLIENT_ID,
-    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36",
     "Origin": "https://www.twitch.tv",
     "Referer": "https://www.twitch.tv/",
-    "Content-Type": "application/json",
     "X-Device-Id": _DEVICE_ID,
     "Client-Session-Id": _CLIENT_SESSION_ID,
 })
@@ -79,10 +75,6 @@ def get_client_integrity():
         return _client_integrity
 
     headers = {
-        "Client-ID": CLIENT_ID,
-        "X-Device-Id": _DEVICE_ID,
-        "Client-Session-Id": _CLIENT_SESSION_ID,
-        "Client-Version": _get_client_version(),
         "Client-Request-Id": _gen_request_id(),
     }
     if AUTH_TOKEN:
@@ -165,9 +157,10 @@ def _gql_request(payload, retries=3):
 
             return data
 
-        except Exception:
+        except Exception as e:
             if attempt < retries:
                 time.sleep(2)
+                print(f"  [EXC] {e}")
 
     return None
 
@@ -344,7 +337,7 @@ def fetch_worker(args):
 # ─── Generate playlist ───────────────────────────────────────────
 def generate_playlist(output_file, max_channels, max_workers=MAX_WORKERS):
     print("=" * 55)
-    print("  TWITCH M3U PLAYLIST GENERATOR v8")
+    print("  TWITCH M3U PLAYLIST GENERATOR v9 (curl_cffi)")
     print(f"  {max_channels} channels | {max_workers} threads")
     print("=" * 55)
 
@@ -354,6 +347,7 @@ def generate_playlist(output_file, max_channels, max_workers=MAX_WORKERS):
     print(f"  Device-ID:      {_DEVICE_ID}")
     print(f"  Session-ID:     {_CLIENT_SESSION_ID}")
     print(f"  Auth-Token:     {'SET' if AUTH_TOKEN else 'NOT SET'}")
+    print(f"  TLS:            curl_cffi (impersonate=chrome)")
 
     integrity = get_client_integrity()
     if integrity:
@@ -434,8 +428,8 @@ def generate_playlist(output_file, max_channels, max_workers=MAX_WORKERS):
 # ─── Main ────────────────────────────────────────────────────────
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='Twitch M3U Playlist Generator v8')
-    parser.add_argument('--output', '-o', default='twitch.m3u',
+        description='Twitch M3U Playlist Generator v9 (curl_cffi)')
+    parser.add_argument('--output', '-o', default='playlist.m3u',
                         help='File output M3U (default: twitch.m3u)')
     parser.add_argument('--channels', '-c', type=int, default=100,
                         help='Jumlah channel (default: 100)')
@@ -446,15 +440,12 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.auth_token:
-        # Override global
-        globals()['AUTH_TOKEN'] = args.auth_token
-        # Also set on session
+        AUTH_TOKEN = args.auth_token
         _session.headers["Authorization"] = f"OAuth {args.auth_token}"
 
     if not AUTH_TOKEN:
         print("[ERROR] AUTH_TOKEN kosong!")
         print("  Ambil dari browser: DevTools → Network → GQL request → header 'authorization'")
-        print("  Format: OAuth <token>")
         print("  Atau pakai flag: --auth-token <token>")
         exit(1)
 
