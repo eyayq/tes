@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-TWITCH M3U PLAYLIST GENERATOR v14.7 (capture integrity from /integrity response)
+TWITCH M3U PLAYLIST GENERATOR v14.8 (system Chrome)
 """
 
 import time
@@ -34,25 +34,21 @@ def _load_cookies():
     return None
 
 
-# ─── In-browser GQL via page.evaluate ────────────────────────────
+# ─── In-browser GQL ─────────────────────────────────────────────
 def gql_in_browser(page, payload, hdrs):
-    """
-    Fetch GQL dari dalam page context.
-    Menggunakan SEMUA header termasuk client-integrity.
-    """
     js = """
     async ({payload, headers}) => {
-        const h = {};
-        h['Content-Type'] = headers.contentType;
-        h['Client-ID'] = headers.clientId;
-        h['Authorization'] = headers.authorization;
-        h['X-Device-Id'] = headers.xDeviceId;
-        h['Client-Session-Id'] = headers.clientSessionId;
-        h['Client-Version'] = headers.clientVersion;
+        const h = {
+            'Content-Type': 'text/plain;charset=UTF-8',
+            'Client-ID': headers.clientId,
+            'Authorization': headers.authorization,
+            'X-Device-Id': headers.xDeviceId,
+            'Client-Session-Id': headers.clientSessionId,
+            'Client-Version': headers.clientVersion
+        };
         if (headers.clientIntegrity) {
             h['Client-Integrity'] = headers.clientIntegrity;
         }
-
         const resp = await fetch('https://gql.twitch.tv/gql', {
             method: 'POST',
             headers: h,
@@ -64,7 +60,6 @@ def gql_in_browser(page, payload, hdrs):
     return page.evaluate(js, {
         "payload": payload,
         "headers": {
-            "contentType": "text/plain;charset=UTF-8",
             "clientId": CLIENT_ID,
             "authorization": hdrs.get("authorization", ""),
             "xDeviceId": hdrs.get("device_id", ""),
@@ -229,7 +224,7 @@ def get_stream_url(page, hdrs, channel):
 
 # ─── Main ────────────────────────────────────────────────────────
 def main():
-    parser = argparse.ArgumentParser(description='Twitch M3U v14.7')
+    parser = argparse.ArgumentParser(description='Twitch M3U v14.8')
     parser.add_argument('--output', '-o', default='twitch.m3u')
     parser.add_argument('--channels', '-c', type=int, default=100)
     parser.add_argument('--headed', action='store_true')
@@ -238,21 +233,23 @@ def main():
     from playwright.sync_api import sync_playwright
 
     print("=" * 55)
-    print("  TWITCH M3U PLAYLIST GENERATOR v14.7")
+    print("  TWITCH M3U PLAYLIST GENERATOR v14.8")
     print(f"  {args.channels} channels")
     print("=" * 55)
 
     cookies = _load_cookies()
 
     with sync_playwright() as p:
+        # ── FIX: channel="chrome" → pakai Chrome system (v157),
+        #    bukan Chromium 1254 bawaan Playwright ──
         context = p.chromium.launch_persistent_context(
             _BROWSER_PROFILE,
             headless=not args.headed,
+            channel="chrome",  # ← INI FIX UTAMANYA
             args=["--disable-blink-features=AutomationControlled"],
         )
         page = context.pages[0] if context.pages else context.new_page()
 
-        # ── Inject cookies ──
         if cookies:
             context.add_cookies(cookies)
             print(f"\n[1/3] Cookies di-inject ({len(cookies)} cookies)")
@@ -265,10 +262,9 @@ def main():
             "device_id": None,
             "client_version": None,
             "authorization": None,
-            "integrity": None,  # ← BARU: dari /integrity response
+            "integrity": None,
         }
 
-        # Intercept GQL request (untuk session_id, device_id, dll.)
         def on_request(request):
             if "gql.twitch.tv/gql" in request.url:
                 h = request.headers
@@ -277,12 +273,10 @@ def main():
                     captured["device_id"] = h.get("x-device-id")
                     captured["client_version"] = h.get("client-version")
                     captured["authorization"] = h.get("authorization")
-                # Jika ada integrity di request, capture juga
                 integrity = h.get("client-integrity")
                 if integrity and not captured["integrity"]:
                     captured["integrity"] = integrity
 
-        # Intercept /integrity RESPONSE (untuk dapat token langsung)
         def on_response(response):
             if "gql.twitch.tv/integrity" in response.url:
                 try:
@@ -300,21 +294,11 @@ def main():
         page.goto("https://www.twitch.tv", timeout=60000)
         page.wait_for_load_state("domcontentloaded", timeout=30000)
 
-        # Tunggu sampai session info + integrity tersedia
         print("  Menunggu headers dari halaman...")
-        for i in range(120):  # max 60 detik
+        for _ in range(120):
             if captured["session_id"] and captured["integrity"]:
                 break
             time.sleep(0.5)
-
-        # Jika integrity belum ada, tunggu lebih lama
-        if not captured["integrity"]:
-            print("  Integrity belum ada, menunggu tambahan...")
-            for i in range(60):  # max 30 detik lagi
-                if captured["integrity"]:
-                    break
-                time.sleep(0.5)
-
         time.sleep(2)
 
         if not captured["session_id"]:
@@ -322,7 +306,6 @@ def main():
             context.close()
             return
 
-        # Cek login
         is_logged_in = page.evaluate("() => document.cookie.includes('auth-token')")
         if not is_logged_in:
             print("  [WARN] Belum login!")
@@ -332,19 +315,13 @@ def main():
         print(f"  Login:         OK")
         print(f"  Session-ID:    {captured['session_id']}")
         print(f"  Device-ID:     {captured['device_id']}")
-        print(f"  Auth:          {captured['authorization'][:30]}...")
-        print(f"  Integrity:     {'SET (' + captured['integrity'][:30] + '...)' if captured['integrity'] else 'NOT FOUND'}")
+        print(f"  Integrity:     {'SET' if captured['integrity'] else 'NOT FOUND'}")
 
-        if not captured["integrity"]:
-            print("  [WARN] Integrity token tidak tersedia — mungkin gagal.")
-            print("  GQL kemungkinan tetap reject tanpa header ini.")
-
-        # ── Build headers ──
         hdrs = {
             "session_id": captured["session_id"],
             "device_id": captured["device_id"],
             "client_version": captured["client_version"] or "a989fade-ca86-4058-933e-10133becfe0f",
-            "authorization": captured["authorization"] or f"OAuth {cookies[0]['value'] if cookies else ''}",
+            "authorization": captured["authorization"] or "",
             "integrity": captured["integrity"] or "",
         }
 
