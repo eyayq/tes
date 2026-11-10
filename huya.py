@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-TWITCH M3U PLAYLIST GENERATOR v14.1 (in-browser GQL)
+TWITCH M3U PLAYLIST GENERATOR v14.2 (in-browser + cookie inject)
 """
 
 import time
@@ -13,12 +13,30 @@ import os
 from urllib.parse import quote
 
 # ─── Konfigurasi ─────────────────────────────────────────────────
-MAX_WORKERS = 10
 CLIENT_ID = "kimne78kx3ncx6brgo4mv6wki5h1ko"
 GQL_HASH = "c101f277c6ab7de34f64e63c90d698edae0d83ed5fad8efe198596b472ef3337"
 
 _BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 _BROWSER_PROFILE = os.path.join(_BASE_DIR, ".twitch_browser")
+_COOKIES_FILE = os.path.join(_BASE_DIR, ".twitch_cookies.json")
+
+
+def _load_cookies():
+    """Load cookies: env var → file."""
+    # 1. Env var
+    env_cookies = os.environ.get("TWITCH_COOKIES", "")
+    if env_cookies:
+        try:
+            return json.loads(env_cookies)
+        except json.JSONDecodeError:
+            pass
+
+    # 2. File
+    if os.path.exists(_COOKIES_FILE):
+        with open(_COOKIES_FILE) as f:
+            return json.load(f)
+
+    return None
 
 
 # ─── In-browser GQL ─────────────────────────────────────────────
@@ -193,7 +211,7 @@ def get_stream_url(page, channel):
 
 # ─── Main ────────────────────────────────────────────────────────
 def main():
-    parser = argparse.ArgumentParser(description='Twitch M3U v14.1 (in-browser)')
+    parser = argparse.ArgumentParser(description='Twitch M3U v14.2')
     parser.add_argument('--output', '-o', default='twitch.m3u')
     parser.add_argument('--channels', '-c', type=int, default=100)
     parser.add_argument('--headed', action='store_true',
@@ -203,9 +221,11 @@ def main():
     from playwright.sync_api import sync_playwright
 
     print("=" * 55)
-    print("  TWITCH M3U PLAYLIST GENERATOR v14.1 (in-browser)")
+    print("  TWITCH M3U PLAYLIST GENERATOR v14.2")
     print(f"  {args.channels} channels")
     print("=" * 55)
+
+    cookies = _load_cookies()
 
     with sync_playwright() as p:
         context = p.chromium.launch_persistent_context(
@@ -215,21 +235,30 @@ def main():
         )
         page = context.pages[0] if context.pages else context.new_page()
 
-        print(f"\n[1/3] Membuka twitch.tv...")
-        page.goto("https://www.twitch.tv", timeout=60000)
-        # FIX: pakai domcontentloaded, bukan networkidle
-        page.wait_for_load_state("domcontentloaded", timeout=30000)
-        time.sleep(5)  # Kasih waktu untuk GQL requests initial
+        # ── Inject cookies SEBELUM load page ──
+        if cookies:
+            context.add_cookies(cookies)
+            print(f"\n[1/3] Cookies di-inject ({len(cookies)} cookies)")
+        else:
+            print(f"\n[1/3] No cookies found")
 
-        # Cek apakah sudah login
+        # Load page
+        page.goto("https://www.twitch.tv", timeout=60000)
+        page.wait_for_load_state("domcontentloaded", timeout=30000)
+        time.sleep(5)
+
+        # Cek login
         is_logged_in = page.evaluate("() => document.cookie.includes('auth-token')")
         if not is_logged_in:
             print("  [WARN] Belum login!")
             if not args.headed:
-                print("  Jalankan dengan --headed untuk login manual.")
+                print("  Solusi:")
+                print("    1. Set env var TWITCH_COOKIES (JSON array)")
+                print("    2. Atau buat file .twitch_cookies.json")
+                print("    3. Atau jalankan dengan --headed (butuh display)")
                 context.close()
                 return
-            # Tunggu user login (max 120 detik)
+            # Tunggu login manual
             print("  Menunggu login... (max 2 menit)")
             for _ in range(240):
                 time.sleep(0.5)
