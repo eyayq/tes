@@ -1,6 +1,12 @@
+
+
+
+
+
+
 #!/usr/bin/env python3
 """
-TWITCH M3U PLAYLIST GENERATOR v12 (auto-scrape tokens via Playwright)
+TWITCH M3U PLAYLIST GENERATOR v12
 """
 
 import time
@@ -22,19 +28,18 @@ MAX_WORKERS = 10
 CLIENT_ID = "kimne78kx3ncx6brgo4mv6wki5h1ko"
 GQL_HASH = "c101f277c6ab7de34f64e63c90d698edae0d83ed5fad8efe198596b472ef3337"
 
-# ─── File untuk cache tokens ─────────────────────────────────────
-_TOKENS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".twitch_tokens.json")
-_BROWSER_PROFILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".twitch_browser")
+# ─── File cache ──────────────────────────────────────────────────
+_BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+_TOKENS_FILE = os.path.join(_BASE_DIR, ".twitch_tokens.json")
+_BROWSER_PROFILE = os.path.join(_BASE_DIR, ".twitch_browser")
 
 
-# ─── Step 1: Scrape tokens via Playwright ────────────────────────
+# ─── Scrape tokens via Playwright ────────────────────────────────
 def scrape_tokens():
-    """Buka browser, intercept GQL requests, capture semua headers."""
     from playwright.sync_api import sync_playwright
 
-    print("[SCRAPE] Membuka browser...")
-    print("[SCRAPE] Jika belum login, silakan login di window browser.")
-    print("[SCRAPE] Menunggu GQL requests...\n")
+    print("[SCRAPE] Membuka browser (headed, butuh X server / xvfb)...")
+    print("[SCRAPE] Login jika diminta. Menunggu GQL requests...\n")
 
     captured = {}
     done = False
@@ -68,7 +73,6 @@ def scrape_tokens():
         page.on("request", on_request)
         page.goto("https://www.twitch.tv", timeout=60000)
 
-        # Tunggu sampai GQL request ter-capture (max 60 detik)
         for _ in range(120):
             if done:
                 break
@@ -77,16 +81,14 @@ def scrape_tokens():
         context.close()
 
     if not done:
-        print("[SCRAPE] Gagal capture tokens! Pastikan sudah login di browser.")
+        print("[SCRAPE] Gagal capture tokens!")
         return None
 
-    # Simpan ke file
     with open(_TOKENS_FILE, "w") as f:
         json.dump(captured, f, indent=2)
 
-    print(f"\n[SCRAPE] Token berhasil di-capture & disimpan ke {_TOKENS_FILE}")
+    print(f"[SCRAPE] Token di-capture & disimpan.")
     print(f"  Auth Token:    {captured['auth_token'][:20]}...")
-    print(f"  Integrity:     v4.local.{captured['integrity_token'][8:20]}...")
     print(f"  Device ID:     {captured['device_id']}")
     print(f"  Session ID:    {captured['session_id']}")
     print(f"  Client Ver:    {captured['client_version']}")
@@ -94,24 +96,40 @@ def scrape_tokens():
 
 
 def load_tokens():
-    """Load tokens dari cache, atau scrape baru jika tidak ada/expired."""
+    """Load tokens: cache → env vars → scrape."""
+    # 1. Cache
     if os.path.exists(_TOKENS_FILE):
         with open(_TOKENS_FILE) as f:
             tokens = json.load(f)
-        # Integrity token valid ~16 jam
         if time.time() - tokens.get("scraped_at", 0) < 14 * 3600:
+            age_h = (time.time() - tokens["scraped_at"]) / 3600
+            print(f"[TOKENS] Cache valid ({age_h:.1f}h lalu)")
             return tokens
-        print("[TOKENS] Integrity token expired (>14h) — scrape ulang...")
+        print("[TOKENS] Cache expired (>14h)")
 
+    # 2. Env vars (untuk CI)
+    env_auth = os.environ.get("TWITCH_AUTH_TOKEN", "")
+    env_integrity = os.environ.get("TWITCH_INTEGRITY_TOKEN", "")
+    if env_auth and env_integrity:
+        print("[TOKENS] Menggunakan env vars")
+        return {
+            "auth_token": env_auth,
+            "integrity_token": env_integrity,
+            "device_id": os.environ.get("TWITCH_DEVICE_ID", ""),
+            "session_id": os.environ.get("TWITCH_SESSION_ID", ""),
+            "client_version": os.environ.get("TWITCH_CLIENT_VERSION", ""),
+            "scraped_at": time.time(),
+        }
+
+    # 3. Scrape via browser
     return scrape_tokens()
 
 
-# ─── Step 2: GQL Request (curl_cffi) ─────────────────────────────
+# ─── GQL Session ─────────────────────────────────────────────────
 _session = cffi_requests.Session(impersonate="chrome")
 
 
 def _init_session(tokens):
-    """Setup session headers dari scraped tokens."""
     _session.headers.update({
         "Client-ID": CLIENT_ID,
         "Origin": "https://www.twitch.tv",
@@ -175,11 +193,12 @@ def _gql_request(payload, tokens, retries=3):
         except Exception as e:
             if attempt < retries:
                 time.sleep(2)
+                print(f"  [EXC] {e}")
 
     return None
 
 
-# ─── Step 3: Fetch LIVE channels ─────────────────────────────────
+# ─── Fetch LIVE channels ─────────────────────────────────────────
 def get_live_channels(tokens, count=100):
     channels = []
     after = None
@@ -245,7 +264,7 @@ def get_live_channels(tokens, count=100):
     return channels[:count]
 
 
-# ─── Step 4: Get stream URL ──────────────────────────────────────
+# ─── Get stream URL ──────────────────────────────────────────────
 def get_stream_url(channel, tokens, retries=2):
     for attempt in range(retries + 1):
         try:
@@ -337,7 +356,7 @@ def get_stream_url(channel, tokens, retries=2):
     return None
 
 
-# ─── Step 5: Worker ──────────────────────────────────────────────
+# ─── Worker ──────────────────────────────────────────────────────
 def fetch_worker(args):
     idx, ch, tokens = args
     try:
@@ -348,17 +367,16 @@ def fetch_worker(args):
         return (idx, ch, None, str(e))
 
 
-# ─── Step 6: Generate playlist ───────────────────────────────────
+# ─── Generate playlist ───────────────────────────────────────────
 def generate_playlist(output_file, max_channels, max_workers):
     print("=" * 55)
     print("  TWITCH M3U PLAYLIST GENERATOR v12")
     print(f"  {max_channels} channels | {max_workers} threads")
     print("=" * 55)
 
-    # Load/Scrape tokens
     tokens = load_tokens()
     if not tokens:
-        print("[ERROR] Gagal scrape tokens.")
+        print("[ERROR] Gagal load tokens.")
         return
 
     _init_session(tokens)
@@ -369,7 +387,7 @@ def generate_playlist(output_file, max_channels, max_workers):
 
     if not channels:
         print("  [ERROR] Tidak ada channel live!")
-        print("  Hapus file .twitch_tokens.json dan coba lagi (login ulang).")
+        print("  Hapus .twitch_tokens.json dan coba lagi.")
         return
 
     print(f"\n[2/3] Mengambil stream URL ({max_workers} threads)...")
@@ -437,7 +455,7 @@ def generate_playlist(output_file, max_channels, max_workers):
 # ─── Main ────────────────────────────────────────────────────────
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='Twitch M3U Playlist Generator v12 (auto-scrape)')
+        description='Twitch M3U Playlist Generator v12')
     parser.add_argument('--output', '-o', default='twitch.m3u',
                         help='File output M3U')
     parser.add_argument('--channels', '-c', type=int, default=100,
@@ -445,13 +463,12 @@ if __name__ == '__main__':
     parser.add_argument('--workers', '-w', type=int, default=MAX_WORKERS,
                         help='Jumlah thread')
     parser.add_argument('--refresh', '-r', action='store_true',
-                        help='Paksa scrape token baru (abaikan cache)')
+                        help='Paksa scrape token baru')
     args = parser.parse_args()
 
-    if args.refresh:
-        if os.path.exists(_TOKENS_FILE):
-            os.remove(_TOKENS_FILE)
-        print("[REFRESH] Token cache dihapus — akan scrape baru.\n")
+    if args.refresh and os.path.exists(_TOKENS_FILE):
+        os.remove(_TOKENS_FILE)
+        print("[REFRESH] Cache dihapus — akan scrape baru.\n")
 
     generate_playlist(
         output_file=args.output,
