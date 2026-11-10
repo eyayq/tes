@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-TWITCH M3U PLAYLIST GENERATOR v16.2 (2 kategori + parallel + scroll)
+TWITCH M3U PLAYLIST GENERATOR v16.3 (2 kategori, same page, debug)
 """
 
 import asyncio
@@ -21,8 +21,8 @@ PROXY = "https://pl-gratosv---al.bhns.workers.dev"
 
 # ─── Kategori ───────────────────────────────────────────────────
 CATEGORIES = [
-    ("Sports", "sports-1"),
-    ("Mobile Legends", "mobile-legends-bang-bang"),
+    ("sports-1", "sports-1"),
+    ("mobile-legends-bang-bang", "mobile-legends-bang-bang"),
 ]
 
 _BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -79,9 +79,9 @@ def _deep_extract(obj, channels, seen, category_name=None):
             _deep_extract(item, channels, seen, category_name)
 
 
-# ─── Async: Scrape 1 kategori (dengan verifikasi URL + scroll) ──
-async def scrape_category(context, cat_name, cat_slug, channels, seen, max_wait=10):
-    page = await context.new_page()
+# ─── Scrape kategori di PAGE YANG SAMA ──────────────────────────
+async def scrape_category(page, cat_name, cat_slug, channels, seen, max_wait=10):
+    """Navigasi ke kategori di page yang sama (session preserved)."""
     responses_data = []
 
     def on_response(response):
@@ -95,26 +95,23 @@ async def scrape_category(context, cat_name, cat_slug, channels, seen, max_wait=
     page.on("response", on_response)
 
     url = f"https://www.twitch.tv/directory/category/{cat_slug}"
+    before = len(channels)
 
-    # Load langsung ke URL kategori
+    # Navigasi di page yang sama
     await page.goto(url, timeout=30000, wait_until="commit")
     await page.wait_for_load_state("domcontentloaded", timeout=20000)
 
-    # ── VERIFIKASI: pastikan tidak di-redirect ke homepage ──
+    # Verifikasi URL
     current_url = page.url
     if "/directory/category/" not in current_url:
-        await page.goto(url, timeout=30000, wait_until="commit")
-        await page.wait_for_load_state("domcontentloaded", timeout=20000)
-        current_url = page.url
-        if "/directory/category/" not in current_url:
-            print(f"  [WARN] Redirect ke: {current_url}")
-            await page.close()
-            return
+        print(f"    [WARN] Redirect: {current_url}")
+        page.remove_listener("response", on_response)
+        return
 
-    # Tunggu GQL responses awal
+    # Tunggu GQL responses
     await asyncio.sleep(max_wait)
 
-    # ── SCROLL untuk trigger lazy-load ──
+    # Scroll untuk lazy-load
     for _ in range(5):
         await page.evaluate("window.scrollBy(0, 1000)")
         await asyncio.sleep(1.5)
@@ -130,10 +127,11 @@ async def scrape_category(context, cat_name, cat_slug, channels, seen, max_wait=
         elif isinstance(data, dict) and "data" in data:
             _deep_extract(data["data"], channels, seen, cat_name)
 
-    await page.close()
+    added = len(channels) - before
+    print(f"    GQL responses: {len(responses_data)}, channels baru: +{added}")
 
 
-# ─── Async: Homepage queries ────────────────────────────────────
+# ─── Homepage queries ───────────────────────────────────────────
 async def get_homepage_channels(page, hdrs, channels, seen):
     js = """
     async ({payload, headers}) => {
@@ -283,13 +281,12 @@ async def async_main(max_channels, headed):
         await get_homepage_channels(page, hdrs, channels, seen)
         print(f"{len(channels)} channels")
 
-        # Kategori: PARALLEL (2 page sekaligus)
-        print(f"  [Sports + Mobile Legends] (parallel)...")
-        await asyncio.gather(*[
-            scrape_category(context, cat_name, cat_slug, channels, seen, max_wait=10)
-            for cat_name, cat_slug in CATEGORIES
-        ])
-        print(f"  Total: {len(channels)} channels")
+        # Kategori: SEKUENSIAL di page yang sama
+        for cat_name, cat_slug in CATEGORIES:
+            print(f"  [{cat_name}] ...", end=" ", flush=True)
+            await scrape_category(page, cat_name, cat_slug, channels, seen, max_wait=10)
+            print(f"(total: {len(channels)})")
+            await asyncio.sleep(2)  # Jeda antar kategori
 
         await context.close()
 
@@ -327,14 +324,14 @@ async def async_main(max_channels, headed):
 
 # ─── Entry point ─────────────────────────────────────────────────
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Twitch M3U v16.2')
+    parser = argparse.ArgumentParser(description='Twitch M3U v16.3')
     parser.add_argument('--channels', '-c', type=int, default=100)
     parser.add_argument('--headed', action='store_true')
     args = parser.parse_args()
 
     print("=" * 55)
-    print("  TWITCH M3U PLAYLIST GENERATOR v16.2")
-    print(f"  Kategori: Sports + Mobile Legends (parallel)")
+    print("  TWITCH M3U PLAYLIST GENERATOR v16.3")
+    print(f"  Kategori: Sports + Mobile Legends")
     print(f"  Proxy: {PROXY}")
     print("=" * 55)
 
