@@ -25,8 +25,9 @@ jobs:
       - name: Install Dependencies
         run: |
           pip install requests curl_cffi beautifulsoup4 websockets pycryptodome brotli zstandard playwright
-          playwright install chromium
-
+          playwright install chromium --with-deps
+          sudo apt-get update && sudo apt-get install -y xvfb
+          
       - name: Run Scraper
         run: python huya.py -c 100 
       - name: Commit and Push
