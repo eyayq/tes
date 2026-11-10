@@ -23,7 +23,6 @@ PROXY = "https://pl-gratosv---al.bhns.workers.dev"
 # ═══════════════════════════════════════════════════════════════
 
 # ─── Kategori ───────────────────────────────────────────────────
-# Slug dari URL: twitch.tv/directory/category/<slug>
 CATEGORIES = [
     ("Sports", "sports-1"),
     ("Mobile Legends", "mobile-legends-bang-bang"),
@@ -110,7 +109,10 @@ def _extract_channel(node, channels, seen, category_name=None):
     if name and name.lower() not in seen:
         seen.add(name.lower())
         game = node.get("game", {})
-        game_name = game.get("name", category_name or "Unknown") if isinstance(game, dict) else (category_name or "Unknown")
+        # FIX: pakai game actual dari node, bukan category_name
+        game_name = game.get("name", "") if isinstance(game, dict) else ""
+        if not game_name:
+            game_name = category_name or "Unknown"
         channels.append({
             "id": name.lower(),
             "name": name,
@@ -118,7 +120,7 @@ def _extract_channel(node, channels, seen, category_name=None):
             "viewers": node.get("viewersCount", 0),
             "title": node.get("title", ""),
             "logo": b.get("profileImageURL", "") or node.get("profileImageURL", ""),
-            "category": category_name or game_name,
+            "category": game_name,  # ← FIX: group-title dari game actual
         })
 
 
