@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-TWITCH M3U PLAYLIST GENERATOR v14.8 (system Chrome)
+TWITCH M3U PLAYLIST GENERATOR v15 (in-browser, persisted queries)
 """
 
 import time
@@ -13,7 +13,7 @@ import os
 from urllib.parse import quote
 
 # ─── Konfigurasi ─────────────────────────────────────────────────
-CLIENT_ID = "kimne78kx3ncx6brgo4mv6wki5h1ko"
+GQL_CLIENT_ID = "kimne78kx3ncx6brgo4mv6wki5h1ko"
 GQL_HASH = "c101f277c6ab7de34f64e63c90d698edae0d83ed5fad8efe198596b472ef3337"
 
 _BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -60,7 +60,7 @@ def gql_in_browser(page, payload, hdrs):
     return page.evaluate(js, {
         "payload": payload,
         "headers": {
-            "clientId": CLIENT_ID,
+            "clientId": GQL_CLIENT_ID,
             "authorization": hdrs.get("authorization", ""),
             "xDeviceId": hdrs.get("device_id", ""),
             "clientSessionId": hdrs.get("session_id", ""),
@@ -70,70 +70,152 @@ def gql_in_browser(page, payload, hdrs):
     })
 
 
-# ─── Fetch LIVE channels ─────────────────────────────────────────
+# ─── Parse helpers ──────────────────────────────────────────────
+def _extract_channel(node, channels, seen):
+    b = node.get("broadcaster", {})
+    name = b.get("displayName", "")
+    if not name:
+        name = node.get("displayName", "") or node.get("login", "")
+    if name and name.lower() not in seen:
+        seen.add(name.lower())
+        game = node.get("game", {})
+        channels.append({
+            "id": name.lower(),
+            "name": name,
+            "game": game.get("name", "Unknown") if isinstance(game, dict) else "Unknown",
+            "viewers": node.get("viewersCount", 0),
+            "title": node.get("title", ""),
+            "logo": b.get("profileImageURL", "") or node.get("profileImageURL", ""),
+        })
+
+
+def _deep_extract(obj, channels, seen):
+    if isinstance(obj, dict):
+        if "broadcaster" in obj and "displayName" in obj.get("broadcaster", {}):
+            _extract_channel(obj, channels, seen)
+        elif "login" in obj and "displayName" in obj:
+            _extract_channel(obj, channels, seen)
+        for v in obj.values():
+            _deep_extract(v, channels, seen)
+    elif isinstance(obj, list):
+        for item in obj:
+            _deep_extract(item, channels, seen)
+
+
+# ─── Fetch LIVE channels (persisted queries) ────────────────────
 def get_live_channels(page, hdrs, count=100):
     channels = []
-    after = None
+    seen = set()
 
-    while len(channels) < count:
-        query = """
-        query Streams($first: Int!, $after: Cursor) {
-            streams(first: $first, after: $after) {
-                edges {
-                    node {
-                        id
-                        title
-                        viewersCount
-                        broadcaster {
-                            id
-                            displayName
-                            profileImageURL(width: 100)
-                        }
-                        game {
-                            name
-                        }
-                    }
-                }
-                pageInfo {
-                    hasNextPage
-                    endCursor
-                }
+    # 1. FrontPageNew_User (max 18)
+    payload1 = [{
+        "operationName": "FrontPageNew_User",
+        "variables": {"limit": 18},
+        "extensions": {
+            "persistedQuery": {
+                "version": 1,
+                "sha256Hash": "64bd07a2cbaca80699d62636d966cf6395a5d14a1f0a14282067dcb28b13eb11"
             }
         }
-        """
+    }]
+    data1 = gql_in_browser(page, payload1, hdrs)
+    if data1:
+        if isinstance(data1, list):
+            data1 = data1[0]
+        if "data" in data1:
+            _deep_extract(data1["data"], channels, seen)
+        print(f"  FrontPageNew_User: {len(channels)} channels")
 
-        variables = {
-            "first": min(30, count - len(channels)),
-            "after": after,
+    # 2. FeaturedContentCarouselStreams (max 8)
+    before = len(channels)
+    payload2 = [{
+        "operationName": "FeaturedContentCarouselStreams",
+        "variables": {"language": "en", "first": 8, "acceptedMature": True},
+        "extensions": {
+            "persistedQuery": {
+                "version": 1,
+                "sha256Hash": "4c96356ae0f580a65a4b16fc131e95434e3a2f631b4a325b7e1c4059487f6f15"
+            }
         }
+    }]
+    data2 = gql_in_browser(page, payload2, hdrs)
+    if data2:
+        if isinstance(data2, list):
+            data2 = data2[0]
+        if "data" in data2:
+            _deep_extract(data2["data"], channels, seen)
+    print(f"  +FeaturedContent: {len(channels) - before} baru")
 
-        data = gql_in_browser(page, {"query": query, "variables": variables}, hdrs)
-        if not data or "errors" in data:
-            if data and "errors" in data:
-                print(f"  [GQL ERROR] {data['errors'][0].get('message', 'unknown')}")
-            break
+    # 3. Shelves (variable, bisa 20-50+)
+    before = len(channels)
+    payload3 = [{
+        "operationName": "Shelves",
+        "variables": {
+            "imageWidth": 50,
+            "itemsPerRow": 4,
+            "platform": "web",
+            "limit": 5,
+            "requestID": "",
+            "includeCostreaming": True,
+            "context": {
+                "clientApp": "twilight",
+                "location": "home",
+                "referrerDomain": "www.twitch.tv",
+                "viewportHeight": 1760,
+                "viewportWidth": 980
+            },
+            "verbose": False
+        },
+        "extensions": {
+            "persistedQuery": {
+                "version": 1,
+                "sha256Hash": "e563ef7d38b54b509d6744a01f65a9ad9e761209d561908d3d46628fa32a06b5"
+            }
+        }
+    }]
+    data3 = gql_in_browser(page, payload3, hdrs)
+    if data3:
+        if isinstance(data3, list):
+            data3 = data3[0]
+        if "data" in data3:
+            _deep_extract(data3["data"], channels, seen)
+    print(f"  +Shelves: {len(channels) - before} baru")
 
-        streams_data = data.get("data", {}).get("streams", {})
-        edges = streams_data.get("edges", [])
-        if not edges:
-            break
-
-        for edge in edges:
-            node = edge.get("node", {})
-            broadcaster = node.get("broadcaster", {})
-            channels.append({
-                "id": broadcaster.get("displayName", "").lower(),
-                "name": broadcaster.get("displayName", ""),
-                "game": node.get("game", {}).get("name", "Unknown"),
-                "viewers": node.get("viewersCount", 0),
-                "title": node.get("title", ""),
-                "logo": broadcaster.get("profileImageURL", ""),
-            })
-
-        page_info = streams_data.get("pageInfo", {})
-        if not page_info.get("hasNextPage", False):
-            break
-        after = page_info.get("endCursor")
+    # 4. Coba lagi Shelves dengan limit lebih besar
+    if len(channels) < count:
+        before = len(channels)
+        payload4 = [{
+            "operationName": "Shelves",
+            "variables": {
+                "imageWidth": 50,
+                "itemsPerRow": 4,
+                "platform": "web",
+                "limit": 10,
+                "requestID": "",
+                "includeCostreaming": True,
+                "context": {
+                    "clientApp": "twilight",
+                    "location": "home",
+                    "referrerDomain": "www.twitch.tv",
+                    "viewportHeight": 1760,
+                    "viewportWidth": 980
+                },
+                "verbose": False
+            },
+            "extensions": {
+                "persistedQuery": {
+                    "version": 1,
+                    "sha256Hash": "e563ef7d38b54b509d6744a01f65a9ad9e761209d561908d3d46628fa32a06b5"
+                }
+            }
+        }]
+        data4 = gql_in_browser(page, payload4, hdrs)
+        if data4:
+            if isinstance(data4, list):
+                data4 = data4[0]
+            if "data" in data4:
+                _deep_extract(data4["data"], channels, seen)
+        print(f"  +Shelves(10): {len(channels) - before} baru")
 
     return channels[:count]
 
@@ -224,7 +306,7 @@ def get_stream_url(page, hdrs, channel):
 
 # ─── Main ────────────────────────────────────────────────────────
 def main():
-    parser = argparse.ArgumentParser(description='Twitch M3U v14.8')
+    parser = argparse.ArgumentParser(description='Twitch M3U v15')
     parser.add_argument('--output', '-o', default='twitch.m3u')
     parser.add_argument('--channels', '-c', type=int, default=100)
     parser.add_argument('--headed', action='store_true')
@@ -233,19 +315,17 @@ def main():
     from playwright.sync_api import sync_playwright
 
     print("=" * 55)
-    print("  TWITCH M3U PLAYLIST GENERATOR v14.8")
-    print(f"  {args.channels} channels")
+    print("  TWITCH M3U PLAYLIST GENERATOR v15")
+    print(f"  Max {args.channels} channels")
     print("=" * 55)
 
     cookies = _load_cookies()
 
     with sync_playwright() as p:
-        # ── FIX: channel="chrome" → pakai Chrome system (v157),
-        #    bukan Chromium 1254 bawaan Playwright ──
         context = p.chromium.launch_persistent_context(
             _BROWSER_PROFILE,
             headless=not args.headed,
-            channel="chrome",  # ← INI FIX UTAMANYA
+            channel="chrome",
             args=["--disable-blink-features=AutomationControlled"],
         )
         page = context.pages[0] if context.pages else context.new_page()
@@ -281,9 +361,8 @@ def main():
             if "gql.twitch.tv/integrity" in response.url:
                 try:
                     body = response.json()
-                    token = body.get("token")
-                    if token and not captured["integrity"]:
-                        captured["integrity"] = token
+                    if body.get("token") and not captured["integrity"]:
+                        captured["integrity"] = body["token"]
                 except Exception:
                     pass
 
@@ -325,10 +404,10 @@ def main():
             "integrity": captured["integrity"] or "",
         }
 
-        # ── Fetch channels ──
+        # ── Fetch channels (persisted queries) ──
         print(f"\n[2/3] Fetching live channels...")
         channels = get_live_channels(page, hdrs, count=args.channels)
-        print(f"  Channel live: {len(channels)}")
+        print(f"  Total channel: {len(channels)}")
 
         if not channels:
             print("  [ERROR] Tidak ada channel live!")
@@ -336,7 +415,7 @@ def main():
             return
 
         # ── Get stream URLs ──
-        print(f"\n[3/3] Mengambil stream URL...")
+        print(f"\n[3/3] Mengambil stream URL ({len(channels)} channels)...")
         lines = ['#EXTM3U']
         live_count = 0
         offline_count = 0
@@ -365,7 +444,7 @@ def main():
             lines.append(url)
             live_count += 1
 
-            if (i + 1) % 20 == 0:
+            if (i + 1) % 10 == 0:
                 print(f"  Progress: {i + 1}/{len(channels)}")
 
         context.close()
@@ -376,6 +455,7 @@ def main():
     print(f"\n{'=' * 55}")
     print(f"  SELESAI: {live_count} live | {offline_count} offline")
     print(f"  Output: {args.output}")
+    print(f"  Stream token expired: ~6 jam")
     print(f"{'=' * 55}")
 
 
