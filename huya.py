@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-TWITCH M3U PLAYLIST GENERATOR v14.4 (in-browser, intercept session ID)
+TWITCH M3U PLAYLIST GENERATOR v14.5 (capture ALL headers from page)
 """
 
 import time
@@ -34,14 +34,13 @@ def _load_cookies():
     return None
 
 
-# ─── Intercept session ID dari request halaman sendiri ──────────
-def capture_session_info(page):
+# ─── Intercept SEMUA header dari GQL request halaman ────────────
+def capture_all_headers(page):
     """
-    Intercept GQL request yang dibuat halaman Twitch sendiri
-    untuk mendapatkan client-session-id, x-device-id, client-version
-    yang valid (di-generate oleh JS Twitch, bukan random).
+    Intercept request GQL dari halaman dan capture SEMUA header,
+    termasuk client-integrity yang di-add oleh Apollo client.
     """
-    info = {"session_id": None, "device_id": None, "client_version": None}
+    headers = {}
     done = False
 
     def on_request(request):
@@ -50,52 +49,57 @@ def capture_session_info(page):
             return
         if "gql.twitch.tv/gql" in request.url:
             h = request.headers
-            info["session_id"] = h.get("client-session-id")
-            info["device_id"] = h.get("x-device-id")
-            info["client_version"] = h.get("client-version")
-            if info["session_id"] and info["device_id"]:
+            # Capture semua header yang relevan
+            headers["client_id"] = h.get("client-id", CLIENT_ID)
+            headers["authorization"] = h.get("authorization", "")
+            headers["client_integrity"] = h.get("client-integrity", "")
+            headers["x_device_id"] = h.get("x-device-id", "")
+            headers["client_session_id"] = h.get("client-session-id", "")
+            headers["client_version"] = h.get("client-version", "")
+            headers["content_type"] = h.get("content-type", "text/plain;charset=UTF-8")
+            if headers["client_session_id"] and headers["x_device_id"]:
                 done = True
 
     page.on("request", on_request)
-    return info, on_request
+    return headers, on_request
 
 
-# ─── In-browser GQL (pakai session ID dari halaman) ─────────────
-def gql_in_browser(page, payload, session_info):
+# ─── In-browser GQL (dengan SEMUA header termasuk integrity) ────
+def gql_in_browser(page, payload, hdrs):
     js = """
-    async ({payload, sessionId, deviceId, clientVersion}) => {
-        const cookies = document.cookie.split(';').reduce((acc, c) => {
-            const idx = c.indexOf('=');
-            if (idx === -1) return acc;
-            acc[c.substring(0, idx).trim()] = c.substring(idx + 1).trim();
-            return acc;
-        }, {});
-
+    async ({payload, headers}) => {
         const resp = await fetch('https://gql.twitch.tv/gql', {
             method: 'POST',
             headers: {
-                'Content-Type': 'text/plain;charset=UTF-8',
-                'Client-ID': '%s',
-                'Authorization': 'OAuth ' + (cookies['auth-token'] || ''),
-                'X-Device-Id': deviceId,
-                'Client-Session-Id': sessionId,
-                'Client-Version': clientVersion
+                'Content-Type': headers.contentType,
+                'Client-ID': headers.clientId,
+                'Authorization': headers.authorization,
+                'X-Device-Id': headers.xDeviceId,
+                'Client-Session-Id': headers.clientSessionId,
+                'Client-Version': headers.clientVersion,
+                'Client-Integrity': headers.clientIntegrity
             },
             body: JSON.stringify(payload)
         });
         return await resp.json();
     }
-    """ % CLIENT_ID
+    """
     return page.evaluate(js, {
         "payload": payload,
-        "sessionId": session_info["session_id"],
-        "deviceId": session_info["device_id"],
-        "clientVersion": session_info["client_version"] or "a989fade-ca86-4058-933e-10133becfe0f",
+        "headers": {
+            "contentType": hdrs.get("content_type", "text/plain;charset=UTF-8"),
+            "clientId": hdrs.get("client_id", CLIENT_ID),
+            "authorization": hdrs.get("authorization", ""),
+            "xDeviceId": hdrs.get("x_device_id", ""),
+            "clientSessionId": hdrs.get("client_session_id", ""),
+            "clientVersion": hdrs.get("client_version", ""),
+            "clientIntegrity": hdrs.get("client_integrity", ""),
+        }
     })
 
 
 # ─── Fetch LIVE channels ─────────────────────────────────────────
-def get_live_channels(page, session_info, count=100):
+def get_live_channels(page, hdrs, count=100):
     channels = []
     after = None
 
@@ -131,7 +135,7 @@ def get_live_channels(page, session_info, count=100):
             "after": after,
         }
 
-        data = gql_in_browser(page, {"query": query, "variables": variables}, session_info)
+        data = gql_in_browser(page, {"query": query, "variables": variables}, hdrs)
         if not data or "errors" in data:
             if data and "errors" in data:
                 print(f"  [GQL ERROR] {data['errors'][0].get('message', 'unknown')}")
@@ -163,7 +167,7 @@ def get_live_channels(page, session_info, count=100):
 
 
 # ─── Get stream URL (in-browser) ─────────────────────────────────
-def get_stream_url(page, session_info, channel):
+def get_stream_url(page, hdrs, channel):
     payload = [{
         "operationName": "PrefetchPlaybackAccessToken",
         "variables": {
@@ -179,7 +183,7 @@ def get_stream_url(page, session_info, channel):
         }
     }]
 
-    data = gql_in_browser(page, payload, session_info)
+    data = gql_in_browser(page, payload, hdrs)
     if not data:
         return None
 
@@ -212,7 +216,7 @@ def get_stream_url(page, session_info, channel):
     p_val = random.randint(1000000, 9999999)
 
     acmb_obj = {
-        "AppVersion": session_info.get("client_version", "a989fade-ca86-4058-933e-10133becfe0f"),
+        "AppVersion": hdrs.get("client_version", "a989fade-ca86-4058-933e-10133becfe0f"),
         "ClientApp": "twilight",
         "URL": "https://www.twitch.tv/"
     }
@@ -248,7 +252,7 @@ def get_stream_url(page, session_info, channel):
 
 # ─── Main ────────────────────────────────────────────────────────
 def main():
-    parser = argparse.ArgumentParser(description='Twitch M3U v14.4')
+    parser = argparse.ArgumentParser(description='Twitch M3U v14.5')
     parser.add_argument('--output', '-o', default='twitch.m3u')
     parser.add_argument('--channels', '-c', type=int, default=100)
     parser.add_argument('--headed', action='store_true')
@@ -257,7 +261,7 @@ def main():
     from playwright.sync_api import sync_playwright
 
     print("=" * 55)
-    print("  TWITCH M3U PLAYLIST GENERATOR v14.4")
+    print("  TWITCH M3U PLAYLIST GENERATOR v14.5")
     print(f"  {args.channels} channels")
     print("=" * 55)
 
@@ -279,24 +283,23 @@ def main():
             print(f"\n[1/3] No cookies found")
 
         # ── Setup interceptor SEBELUM load page ──
-        session_info, on_req = capture_session_info(page)
+        hdrs, on_req = capture_all_headers(page)
 
         # Load page
         page.goto("https://www.twitch.tv", timeout=60000)
         page.wait_for_load_state("domcontentloaded", timeout=30000)
 
-        # Tunggu sampai halaman membuat GQL request (untuk capture session info)
+        # Tunggu halaman membuat GQL request (untuk capture headers)
         print("  Menunggu GQL request dari halaman...")
         for _ in range(60):
-            if session_info["session_id"]:
+            if hdrs.get("client_session_id"):
                 break
             time.sleep(0.5)
 
         time.sleep(3)
 
-        if not session_info["session_id"]:
-            print("  [ERROR] Gagal capture session ID dari halaman!")
-            print("  Halaman mungkin tidak membuat GQL request (belum login?).")
+        if not hdrs.get("client_session_id"):
+            print("  [ERROR] Gagal capture headers dari halaman!")
             context.close()
             return
 
@@ -308,17 +311,21 @@ def main():
             return
 
         print(f"  Login: OK")
-        print(f"  Session-ID:  {session_info['session_id']}")
-        print(f"  Device-ID:   {session_info['device_id']}")
-        print(f"  Client-Ver:  {session_info['client_version']}")
+        print(f"  Session-ID:   {hdrs.get('client_session_id')}")
+        print(f"  Device-ID:    {hdrs.get('x_device_id')}")
+        print(f"  Client-Ver:   {hdrs.get('client_version')}")
+        print(f"  Integrity:    {'SET (' + hdrs.get('client_integrity', '')[:30] + '...)' if hdrs.get('client_integrity') else 'NOT CAPTURED'}")
 
         # ── Fetch channels ──
         print(f"\n[2/3] Fetching live channels...")
-        channels = get_live_channels(page, session_info, count=args.channels)
+        channels = get_live_channels(page, hdrs, count=args.channels)
         print(f"  Channel live: {len(channels)}")
 
         if not channels:
             print("  [ERROR] Tidak ada channel live!")
+            if not hdrs.get("client_integrity"):
+                print("  [HINT] Client-Integrity tidak ter-capture.")
+                print("  Coba reload halaman atau tunggu lebih lama.")
             context.close()
             return
 
@@ -330,7 +337,7 @@ def main():
 
         for i, ch in enumerate(channels):
             time.sleep(random.uniform(0.1, 0.3))
-            url = get_stream_url(page, session_info, ch["id"])
+            url = get_stream_url(page, hdrs, ch["id"])
 
             if not url:
                 offline_count += 1
