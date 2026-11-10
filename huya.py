@@ -23,6 +23,10 @@ PROXY = "https://pl-gratosv---al.bhns.workers.dev"
 # COOKIES — UPDATE DI SINI SAJA (dari browser DevTools)
 # ═══════════════════════════════════════════════════════════════
 TWITCH_COOKIES = '[{"name":"auth-token","value":"i6znx2o7mcfa0ut0d2vq2ksp7otyzs","domain":".twitch.tv","path":"/"},{"name":"login","value":"bhianesse","domain":".twitch.tv","path":"/"},{"name":"name","value":"bhianesse","domain":".twitch.tv","path":"/"},{"name":"unique_id","value":"a69b3a50148aacf5","domain":".twitch.tv","path":"/"},{"name":"persistent","value":"1607987695::e00t5uzcsonvt8e8x8juh0m331yano","domain":".twitch.tv","path":"/"},{"name":"twilight-user","value":"{\"authToken\":\"i6znx2o7mcfa0ut0d2vq2ksp7otyzs\",\"displayName\":\"bhianesse\",\"id\":\"1607987695\",\"login\":\"bhianesse\",\"roles\":{\"isStaff\":false},\"version\":2}","domain":".twitch.tv","path":"/"}]'
+TWITCH_AUTH_TOKEN: "i6znx2o7mcfa0ut0d2vq2ksp7otyzs"
+TWITCH_DEVICE_ID: "a69b3a50148aacf5"
+TWITCH_SESSION_ID: "0c870fc0b6b3408f"
+TWITCH_CLIENT_VERSION: "a989fade-ca86-4058-933e-10133becfe0f"
 # ═══════════════════════════════════════════════════════════════
 
 # Kategori utama (di atas playlist)
