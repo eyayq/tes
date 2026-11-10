@@ -1,20 +1,4 @@
 #EXTM3U
-#EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/bc1a802f-6bb8-4768-8035-d3fcb120a415-profile_image-150x150.png" group-title="Football Manager 27",DoctorBenjy
-https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=doctorbenjy
-#EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/6380434c-4a7c-461d-99a3-2716ed1f832d-profile_image-150x150.png" group-title="Just Chatting",Kimmikichi
-https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=kimmikichi
-#EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/ccf7380d-7c61-417b-9dcf-ee055c8e293f-profile_image-150x150.png" group-title="Sea of Thieves",LoupScar
-https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=loupscar
-#EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/66784cd9-24c3-4aa4-b90e-d558ca68f01d-profile_image-150x150.png" group-title="Just Chatting",TJ77
-https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=tj77
-#EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/30bac8f0-9ff0-434e-98a7-35cfc83c5c57-profile_image-150x150.png" group-title="RISK: The Game of Global Domination",Kylted
-https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=kylted
-#EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/be700459-ec7b-4a81-ad3d-776f487bda6e-profile_image-150x150.png" group-title="Resident Evil Village",georose
-https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=georose
-#EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/f591a8fb-52f7-4553-8ec1-190e921ce434-profile_image-150x150.png" group-title="IRL",EpicVoyages
-https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=epicvoyages
-#EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/a7c9da81-2161-4aaa-ba52-70e15c6f1bb1-profile_image-150x150.png" group-title="Genshin Impact",larissarochefort
-https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=larissarochefort
 #EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/bf6a04cf-3f44-4986-8eed-5c36bfad542b-profile_image-50x50.png" group-title="Grand Theft Auto V",KaiCenat
 https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=kaicenat
 #EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/3fcaaf01-88a7-408e-a29e-3b622facefca-profile_image-50x50.png" group-title="World of Warcraft",Charlyne
@@ -23,24 +7,22 @@ https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=charlyne
 https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=jokerdtv
 #EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/483a37ac-58fd-4e2f-8dc3-2c68a0164112-profile_image-50x50.png" group-title="League of Legends",Caedrel
 https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=caedrel
+#EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/e9f84ea0-72b8-486f-9afd-4a5e8c62305f-profile_image-50x50.png" group-title="Just Chatting",Asmongold247
+https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=asmongold247
 #EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/2c55537b-09a8-4ebd-a1bc-6c24baf30e1c-profile_image-50x50.png" group-title="Just Chatting",homefit_94
 https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=homefit_94
-#EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/7b68c481-63db-4c51-aa81-9c0529a930a4-profile_image-50x50.png" group-title="Just Chatting",StrawberryTabby
-https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=strawberrytabby
 #EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/7fc292f5-672e-4052-b387-35b14679d856-profile_image-50x50.png" group-title="Just Chatting",yogaus
 https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=yogaus
-#EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/b1a7937e-1188-44f4-9af2-75d4361c5987-profile_image-50x50.png" group-title="Just Chatting",anny
-https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=anny
-#EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/d4d79c6d-e57c-487d-912d-e13e85d1a7bf-profile_image-50x50.png" group-title="Escape from Tarkov",Glorious_E
-https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=glorious_e
+#EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/7b68c481-63db-4c51-aa81-9c0529a930a4-profile_image-50x50.png" group-title="Just Chatting",StrawberryTabby
+https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=strawberrytabby
 #EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/76e05185-d15d-4818-9267-1806b05fa2d1-profile_image-50x50.png" group-title="Overwatch",Emongg
 https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=emongg
-#EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/1f594c2d-a8bf-4814-9395-36b195022fb3-profile_image-50x50.png" group-title="Call of Duty: Warzone",Camy
-https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=camy
 #EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/c41395c8-7eb3-48e1-8169-36fac4391e0c-profile_image-50x50.png" group-title="Escape from Tarkov",WillerZ
 https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=willerz
-#EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/a54fbe1c-2719-4f79-bcd6-ef9b2fdb2257-profile_image-50x50.png" group-title="VALORANT",mooda
-https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=mooda
+#EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/0a9c70fb-0c55-4c71-8560-de15f3617854-profile_image-50x50.png" group-title="Call of Duty: Warzone",TeePee
+https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=teepee
+#EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/d4d79c6d-e57c-487d-912d-e13e85d1a7bf-profile_image-50x50.png" group-title="Escape from Tarkov",Glorious_E
+https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=glorious_e
 #EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/cbca3490-64b6-49a8-96d8-d4c6e0841230-profile_image-50x50.png" group-title="DJs",BeesustheDJ
 https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=beesusthedj
 #EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/fe6575bc-a05b-45a6-8e28-1c7799bcfbf5-profile_image-50x50.png" group-title="Music",LofiGirl
@@ -61,18 +43,18 @@ https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=nickeh30
 https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=linkus7
 #EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/bobross-profile_image-0b9dd167a9bb16b5-50x50.jpeg" group-title="Art",BobRoss
 https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=bobross
-#EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/cb1cc352-19c1-4a9c-990a-a955dc0dee7d-profile_image-50x50.png" group-title="Art",kingu_ch
-https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=kingu_ch
 #EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/4075733f-efa1-4bc8-989a-3fbadd194030-profile_image-50x50.png" group-title="Art",LITA
 https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=lita
-#EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/004a790a-fccd-4f19-92ba-f2b616821b92-profile_image-50x50.png" group-title="Just Chatting",kiara_irl
-https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=kiara_irl
-#EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/227139b7-3ec3-45f1-92c3-9adb10bb23bd-profile_image-50x50.png" group-title="Just Chatting",Yoon_Froggy
-https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=yoon_froggy
+#EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/cb1cc352-19c1-4a9c-990a-a955dc0dee7d-profile_image-50x50.png" group-title="Art",kingu_ch
+https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=kingu_ch
+#EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/22b459fd-fde1-428d-bcf9-f296e82fc8bf-profile_image-50x50.png" group-title="Just Chatting",deenthegreattwitch
+https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=deenthegreattwitch
 #EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/6289b83b-75bb-4343-bce9-6dbaad1de8d3-profile_image-50x50.png" group-title="Just Chatting",StreamDatabase
 https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=streamdatabase
-#EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/19121d28-a1eb-46bc-9eae-27179de0ccc2-profile_image-50x50.png" group-title="Just Chatting",littlebear36
-https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=littlebear36
+#EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/f03ca1a6-9b96-4296-a50a-c33778238c72-profile_image-50x50.png" group-title="Just Chatting",Giantwaffle
+https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=giantwaffle
+#EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/37567ea1-8246-4385-bcf6-8a3cdb9ca93b-profile_image-50x50.png" group-title="Just Chatting",Jinnytty
+https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=jinnytty
 #EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/7c03dc7b-f2df-4646-9fc6-6bd69bf9eecd-profile_image-50x50.png" group-title="Deadlock",MikaelS1
 https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=mikaels1
 #EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/f37f760d-3fa0-482b-9609-453033822e5d-profile_image-50x50.png" group-title="Deadlock",Winton_OW2
@@ -81,3 +63,29 @@ https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=winton_ow2
 https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=trackingthepros
 #EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/3ca65c72-26bc-4fcb-878d-cc29d2f45bfe-profile_image-50x50.png" group-title="League of Legends",agurin
 https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=agurin
+#EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/user-default-pictures-uv/215b7342-def9-11e9-9a66-784f43822e80-profile_image-70x70.png" group-title="Sports",BackupComputer
+https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=backupcomputer
+#EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/3a02d84d-1caf-415f-bd3b-a4b5b78da53c-profile_image-70x70.png" group-title="Sports",cozygamingcave_
+https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=cozygamingcave_
+#EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/8d9cb4bf-5930-4b3f-87ff-e0892734da17-profile_image-70x70.png" group-title="Sports",evelynomadera
+https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=evelynomadera
+#EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/bf3b7f4a-f7c4-4f7a-a423-36cadd1edf23-profile_image-70x70.png" group-title="Sports",StephenGeorg
+https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=stephengeorg
+#EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/476ee93d-66a6-4e57-b3a9-db1ceb168ad8-profile_image-70x70.png" group-title="Sports",EsfandTV
+https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=esfandtv
+#EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/be45309c-e89a-4374-b69f-6b4368eef40a-profile_image-70x70.png" group-title="Sports",wendolynortizz
+https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=wendolynortizz
+#EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/273f15a6-bb3b-40eb-ac76-c3a08e082678-profile_image-70x70.png" group-title="Just Chatting",HutchMF
+https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=hutchmf
+#EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/towelliee-profile_image-f9752afc441702cc-70x70.jpeg" group-title="Just Chatting",Towelliee
+https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=towelliee
+#EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/b04e20be-6c0b-4379-b163-7f9a928e03f0-profile_image-70x70.png" group-title="Just Chatting",NICKMERCS
+https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=nickmercs
+#EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/996d2d80-c1c4-4dd7-99dd-074c47cf7196-profile_image-70x70.png" group-title="Just Chatting",Payo
+https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=payo
+#EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/148c3b8a-a78b-4139-a429-7d3d90ce8a27-profile_image-70x70.png" group-title="Just Chatting",CohhCarnage
+https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=cohhcarnage
+#EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/2bb20958-ae41-486e-9df9-7311b39c5675-profile_image-70x70.png" group-title="Just Chatting",BarbarousKing
+https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=barbarousking
+#EXTINF:-1 tvg-logo="https://static-cdn.jtvnw.net/jtv_user_pictures/b79e636b-26ad-49f8-8fd1-60a6e4cf9cca-profile_image-70x70.png" group-title="Counter-Strike",Xaryu
+https://pl-gratosv---al.bhns.workers.dev/play.m3u8?id=xaryu
