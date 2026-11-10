@@ -1,12 +1,6 @@
-
-
-
-
-
-
 #!/usr/bin/env python3
 """
-TWITCH M3U PLAYLIST GENERATOR v12
+TWITCH M3U PLAYLIST GENERATOR v12 (final)
 """
 
 import time
@@ -107,7 +101,7 @@ def load_tokens():
             return tokens
         print("[TOKENS] Cache expired (>14h)")
 
-    # 2. Env vars (untuk CI)
+    # 2. Env vars
     env_auth = os.environ.get("TWITCH_AUTH_TOKEN", "")
     env_integrity = os.environ.get("TWITCH_INTEGRITY_TOKEN", "")
     if env_auth and env_integrity:
@@ -126,10 +120,11 @@ def load_tokens():
 
 
 # ─── GQL Session ─────────────────────────────────────────────────
-_session = cffi_requests.Session(impersonate="chrome")
+_session = cffi_requests.Session(impersonate="chrome152")
 
 
 def _init_session(tokens):
+    """Set header yang TIDAK di-handle oleh curl_cffi impersonate."""
     _session.headers.update({
         "Client-ID": CLIENT_ID,
         "Origin": "https://www.twitch.tv",
@@ -137,7 +132,6 @@ def _init_session(tokens):
         "X-Device-Id": tokens["device_id"],
         "Client-Session-Id": tokens["session_id"],
         "Client-Version": tokens["client_version"],
-        "Content-Type": "text/plain;charset=UTF-8",
     })
 
 
@@ -149,6 +143,7 @@ def _gql_request(payload, tokens, retries=3):
     for attempt in range(retries + 1):
         try:
             headers = {
+                "Content-Type": "text/plain;charset=UTF-8",
                 "Client-Request-Id": _gen_request_id(),
                 "Client-Integrity": tokens["integrity_token"],
                 "Authorization": f"OAuth {tokens['auth_token']}",
@@ -387,7 +382,8 @@ def generate_playlist(output_file, max_channels, max_workers):
 
     if not channels:
         print("  [ERROR] Tidak ada channel live!")
-        print("  Hapus .twitch_tokens.json dan coba lagi.")
+        print("  Kemungkinan integrity token expired (>16h).")
+        print("  Ambil yang baru dari browser DevTools dan update env vars.")
         return
 
     print(f"\n[2/3] Mengambil stream URL ({max_workers} threads)...")
@@ -456,7 +452,7 @@ def generate_playlist(output_file, max_channels, max_workers):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Twitch M3U Playlist Generator v12')
-    parser.add_argument('--output', '-o', default='twitch.m3u',
+    parser.add_argument('--output', '-o', default='playlist.m3u',
                         help='File output M3U')
     parser.add_argument('--channels', '-c', type=int, default=100,
                         help='Jumlah channel')
