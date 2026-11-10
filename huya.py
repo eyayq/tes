@@ -69,7 +69,6 @@ def get_luws(session) -> str:
     log.info("Visiting %s untuk ambil cookie luws ...", SITE_URL)
     try:
         resp = session.get(SITE_URL, timeout=30)
-        # luws di-set sebagai cookie oleh server
         luws = session.cookies.get("luws")
         if luws:
             log.info("  luws: %s", luws)
@@ -79,7 +78,7 @@ def get_luws(session) -> str:
 
     # Fallback: generate UUID sendiri (format sama)
     log.info("  luws tidak di-set server, generate UUID baru")
-    return f"{uuid.uuid4().upper()}_"
+    return f"{str(uuid.uuid4()).upper()}_"
 
 
 # ==================== STEP 2: FETCH ALL CHANNELS ====================
