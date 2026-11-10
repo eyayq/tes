@@ -17,9 +17,14 @@ from curl_cffi import requests as cffi_requests
 
 # ─── Konfigurasi ─────────────────────────────────────────────────
 TIMEOUT = 15
-MAX_WORKERS = 1
+MAX_WORKERS = 10
 CLIENT_ID = "kimne78kx3ncx6brgo4mv6wki5h1ko"
 GQL_HASH = "c101f277c6ab7de34f64e63c90d698edae0d83ed5fad8efe198596b472ef3337"
+
+# ===== TOKEN (dari browser DevTools) =====
+AUTH_TOKEN = "i6znx2o7mcfa0ut0d2vq2ksp7otyzs"
+INTEGRITY_TOKEN = "v4.local.vZtXWtRlmEThh7UOI5fEE1UkGyEB06LxtAYW9eY6hkB4AzkZB0Eisg1IETihjlH0_Gfx4kLe3fnUh5EVeDw4Hzi5xchMfNDKiwbtCUoVZomlldXBX4MdpeYeBPGW4xJ7wKkX43741kHAgoAA0oVKAgXeAdrsZqVvQtnLcHZvVpddxZ8Pjeb-GarmJHd3Nwp-LjzNLI8JdO7BU9slN959XrCUP_hFh-qn6UbEXsNuejIqHipdaHMA6ny-BSVdjhN3QTgkhTZoT4G1xrWX1eY6B3uwmCMwK_aLp2qxlwrsPxOuy7-sQ0oKbJTFvpVBy8nZCYLK7YcZR0A85w7fk1b-8VP26MwzIg3lya4z2NS8JSZrgldyYooH6mh8rpBf9-n_Ju0auLLpvpgvn4SU9Ypf2WznUN1VbevSLoMiBX-aEHRsb5UdZpabNjnl5usVyZ8ErG3x994vos5GL19bEP-pLNVgArQ"
+# ==========================================
 
 # ─── Session ─────────────────────────────────────────────────────
 _session = cffi_requests.Session(impersonate="chrome")
@@ -296,8 +301,8 @@ def generate_playlist(output_file, max_channels, max_workers, auth_token, integr
     print(f"  Client-Version: {_get_client_version()}")
     print(f"  Device-ID:      {_DEVICE_ID}")
     print(f"  Session-ID:     {_CLIENT_SESSION_ID}")
-    print(f"  Auth-Token:     {'SET' if auth_token else 'NOT SET'}")
-    print(f"  Integrity:      {'SET' if integrity_token else 'NOT SET'}")
+    print(f"  Auth-Token:     SET")
+    print(f"  Integrity:      SET")
     print(f"  TLS:            curl_cffi (impersonate=chrome)")
 
     print(f"\n[1/3] Fetching live channels...")
@@ -306,7 +311,7 @@ def generate_playlist(output_file, max_channels, max_workers, auth_token, integr
 
     if not channels:
         print("  [ERROR] Tidak ada channel live!")
-        print("  Kemungkinan integrity token expired — ambil yang baru dari browser.")
+        print("  Kemungkinan token expired — ambil yang baru dari browser.")
         return
 
     print(f"\n[2/3] Mengambil stream URL ({max_workers} threads)...")
@@ -376,33 +381,17 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Twitch M3U Playlist Generator v10')
     parser.add_argument('--output', '-o', default='twitch.m3u',
-                        help='File output M3U (default: twitch.m3u)')
+                        help='File output M3U')
     parser.add_argument('--channels', '-c', type=int, default=100,
-                        help='Jumlah channel (default: 100)')
+                        help='Jumlah channel')
     parser.add_argument('--workers', '-w', type=int, default=MAX_WORKERS,
-                        help='Jumlah thread paralel (default: 10)')
-    parser.add_argument('--auth-token', '-t', default="",
-                        help='OAuth token dari browser DevTools')
-    parser.add_argument('--integrity', '-i', default="",
-                        help='Client-Integrity token dari browser DevTools')
+                        help='Jumlah thread')
     args = parser.parse_args()
-
-    if not args.auth_token:
-        print("[ERROR] --auth-token (-t) wajib!")
-        print("  Cara ambil: DevTools → Network → GQL request → header 'authorization'")
-        print("  Format: OAuth <token> → pass hanya bagian <token>")
-        exit(1)
-
-    if not args.integrity:
-        print("[ERROR] --integrity (-i) wajib!")
-        print("  Cara ambil: DevTools → Network → GQL request → header 'client-integrity'")
-        print("  Format: v4.local.<base64> (paste seluruhnya)")
-        exit(1)
 
     generate_playlist(
         output_file=args.output,
         max_channels=args.channels,
         max_workers=args.workers,
-        auth_token=args.auth_token,
-        integrity_token=args.integrity,
+        auth_token=AUTH_TOKEN,
+        integrity_token=INTEGRITY_TOKEN,
     )   
