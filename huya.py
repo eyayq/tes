@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 """
-TWITCH M3U PLAYLIST GENERATOR v6
+TWITCH M3U PLAYLIST GENERATOR v7
 """
 
 import time
 import argparse
 import uuid
 import random
+import string
 import base64
+import json
 from urllib.parse import quote
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -19,28 +21,59 @@ MAX_WORKERS = 10
 CLIENT_ID = "kimne78kx3ncx6brgo4mv6wki5h1ko"
 GQL_HASH = "c101f277c6ab7de34f64e63c90d698edae0d83ed5fad8efe198596b472ef3337"
 
-# ─── Session ─────────────────────────────────────────────────────
+# ─── Session & Identitas ─────────────────────────────────────────
 _session = requests.Session()
+
+# Device ID: 16 hex chars (persistent per process)
+_DEVICE_ID = uuid.uuid4().hex[:16]
+# Client-Session-Id: 16 hex chars (persistent per process)
+_CLIENT_SESSION_ID = uuid.uuid4().hex[:16]
+# Client-Version: UUID4 (dihubungi dari manifest)
+_CLIENT_VERSION = None
+
 _session.headers.update({
     "Client-ID": CLIENT_ID,
     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36",
     "Origin": "https://www.twitch.tv",
     "Referer": "https://www.twitch.tv/",
     "Content-Type": "application/json",
+    "X-Device-Id": _DEVICE_ID,
+    "Client-Session-Id": _CLIENT_SESSION_ID,
 })
 
-# Device ID (persist per session)
-_DEVICE_ID = uuid.uuid4().hex[:16]
+
+def _get_client_version():
+    """Fetch Client-Version (UUID) dari Twitch manifest."""
+    global _CLIENT_VERSION
+    if _CLIENT_VERSION:
+        return _CLIENT_VERSION
+    try:
+        r = _session.get(
+            "https://static.twitchcdn.net/config/manifest.json",
+            params={"v": "1"},
+            timeout=TIMEOUT,
+        )
+        _CLIENT_VERSION = r.json().get("buildId", str(uuid.uuid4()))
+    except Exception:
+        _CLIENT_VERSION = str(uuid.uuid4())
+    _session.headers["Client-Version"] = _CLIENT_VERSION
+    return _CLIENT_VERSION
+
+
+def _gen_request_id():
+    """Generate random 32-char alphanumeric Client-Request-Id."""
+    return ''.join(random.choices(string.ascii_letters + string.digits, k=32))
+
+
+# ─── Client Integrity Token ──────────────────────────────────────
 _client_integrity = None
 _integrity_expiry = 0
 
 
-# ─── Client Integrity Token ──────────────────────────────────────
 def get_client_integrity():
-    """Ambil/refresh client-integrity token dari gql.twitch.tv/integrity."""
+    """Ambil/refresh client-integrity token."""
     global _client_integrity, _integrity_expiry
 
-    # Refresh jika expired (token valid ~16 jam, refresh di 14 jam)
     if _client_integrity and time.time() < _integrity_expiry:
         return _client_integrity
 
@@ -49,8 +82,10 @@ def get_client_integrity():
         json={},
         headers={
             "Client-ID": CLIENT_ID,
-            "X-Device-ID": _DEVICE_ID,
-            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36",
+            "X-Device-Id": _DEVICE_ID,
+            "Client-Session-Id": _CLIENT_SESSION_ID,
+            "Client-Version": _get_client_version(),
+            "Client-Request-Id": _gen_request_id(),
         },
         timeout=TIMEOUT,
     )
@@ -62,29 +97,27 @@ def get_client_integrity():
     data = r.json()
     token = data.get("token")
     if not token:
-        print(f"  [INTEGRITY] No token in response: {data}")
+        print(f"  [INTEGRITY] No token: {data}")
         return None
 
     expiry = data.get("expiration", 0)
-    # expiry in ms → convert to seconds, subtract 2 hours buffer
     _client_integrity = token
     _integrity_expiry = (expiry / 1000) - 7200 if expiry else time.time() + 14 * 3600
-
-    print(f"  [INTEGRITY] Token acquired (expires in ~16h)")
     return token
 
 
 # ─── GQL Request ─────────────────────────────────────────────────
 def _gql_request(payload, retries=3):
-    """GQL request dengan client-integrity + retry."""
+    """GQL request dengan semua header wajib + retry."""
     integrity = get_client_integrity()
 
     for attempt in range(retries + 1):
         try:
-            headers = {}
+            headers = {
+                "Client-Request-Id": _gen_request_id(),
+            }
             if integrity:
                 headers["Client-Integrity"] = integrity
-            headers["X-Device-ID"] = _DEVICE_ID
 
             r = _session.post(
                 "https://gql.twitch.tv/gql",
@@ -106,40 +139,36 @@ def _gql_request(payload, retries=3):
 
             data = r.json()
 
-            # Handle batch response (list) atau single
             if isinstance(data, list):
                 data = data[0]
 
             errors = data.get("errors") if isinstance(data, dict) else None
             if errors:
                 msg = errors[0].get("message", "unknown")
-                # "server error" tanpa integrity = perlu refresh token
-                if msg.lower() in ("server error", "service error"):
-                    if attempt < retries:
-                        # Coba refresh integrity token
-                        global _client_integrity, _integrity_expiry
-                        _client_integrity = None
-                        _integrity_expiry = 0
-                        integrity = get_client_integrity()
-                        wait = 2 ** attempt + random.uniform(0, 2)
-                        print(f"  [TRANSIENT] '{msg}' — refreshing integrity, retry in {wait:.1f}s")
-                        time.sleep(wait)
-                        continue
+                if msg.lower() in ("server error", "service error") and attempt < retries:
+                    # Refresh integrity & retry
+                    global _client_integrity, _integrity_expiry
+                    _client_integrity = None
+                    _integrity_expiry = 0
+                    integrity = get_client_integrity()
+                    wait = 2 ** attempt + random.uniform(0, 2)
+                    print(f"  [TRANSIENT] '{msg}' — retry in {wait:.1f}s")
+                    time.sleep(wait)
+                    continue
                 print(f"  [GQL ERROR] {msg}")
                 return None
 
             return data
 
-        except Exception as e:
+        except Exception:
             if attempt < retries:
                 time.sleep(2)
 
     return None
 
 
-# ─── Fetch LIVE channels (Helix via GQL fallback) ────────────────
+# ─── Fetch LIVE channels ─────────────────────────────────────────
 def get_live_channels(count=100):
-    """Ambil list channel live via GQL (dengan integrity)."""
     channels = []
     after = None
 
@@ -230,17 +259,15 @@ def get_stream_url(channel, retries=2):
                     continue
                 return None
 
-            # ── Parse token: support both old & new response format ──
+            # ── Parse token (support both formats) ──
             token = ""
             sig = ""
 
-            # New format: data.streamPlaybackAccessToken
             spa = data.get("data", {}).get("streamPlaybackAccessToken", {})
             if spa:
                 token = spa.get("value", "")
                 sig = spa.get("signature", "")
 
-            # Old format: data.streamerInfo.stream.playbackAccessToken
             if not token:
                 stream_info = data.get("data", {}).get("streamerInfo", {})
                 stream = stream_info.get("stream", {})
@@ -254,13 +281,18 @@ def get_stream_url(channel, retries=2):
                     continue
                 return None
 
-            # ── Build usher v2 URL (matching current browser params) ──
+            # ── Build usher v2 URL ──
             ch_lower = channel.lower()
             session_id = uuid.uuid4().hex
             p_val = random.randint(1000000, 9999999)
 
-            # acmb = base64 of empty JSON object (same as browser when no app context)
-            acmb = base64.b64encode(b'{}').decode()  # "e30="
+            # acmb = base64 JSON with AppVersion (Client-Version UUID)
+            acmb_obj = {
+                "AppVersion": _get_client_version(),
+                "ClientApp": "twilight",
+                "URL": "https://www.twitch.tv/"
+            }
+            acmb = base64.b64encode(json.dumps(acmb_obj, separators=(',', ':')).encode()).decode()
 
             url = (
                 f"https://usher.ttvnw.net/api/v2/channel/hls/{ch_lower}.m3u8"
@@ -310,14 +342,21 @@ def fetch_worker(args):
 # ─── Generate playlist ───────────────────────────────────────────
 def generate_playlist(output_file, max_channels, max_workers=MAX_WORKERS):
     print("=" * 55)
-    print("  TWITCH M3U PLAYLIST GENERATOR v6")
+    print("  TWITCH M3U PLAYLIST GENERATOR v7")
     print(f"  {max_channels} channels | {max_workers} threads")
     print("=" * 55)
 
-    print(f"\n[0/3] Acquiring client-integrity token...")
+    print(f"\n[0/3] Initializing...")
+    cv = _get_client_version()
+    print(f"  Client-Version: {cv}")
+    print(f"  Device-ID:      {_DEVICE_ID}")
+    print(f"  Session-ID:     {_CLIENT_SESSION_ID}")
+
     integrity = get_client_integrity()
-    if not integrity:
-        print("  [WARN] Gagal ambil integrity token — mungkin tetap bisa jalan.")
+    if integrity:
+        print(f"  Integrity:      OK (v4.local.{integrity[8:20]}...)")
+    else:
+        print(f"  Integrity:      FAILED")
 
     print(f"\n[1/3] Fetching live channels...")
     channels = get_live_channels(count=max_channels)
@@ -386,15 +425,14 @@ def generate_playlist(output_file, max_channels, max_workers=MAX_WORKERS):
     print(f"  SELESAI: {live_count} live | {offline_count} offline | {error_count} error")
     print(f"  Output: {output_file}")
     print(f"  Stream token expired: ~6 jam")
-    print(f"  Integrity token expired: ~16 jam")
     print(f"{'=' * 55}")
 
 
 # ─── Main ────────────────────────────────────────────────────────
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='Twitch M3U Playlist Generator v6')
-    parser.add_argument('--output', '-o', default='playlist.m3u',
+        description='Twitch M3U Playlist Generator v7')
+    parser.add_argument('--output', '-o', default='twitch.m3u',
                         help='File output M3U (default: twitch.m3u)')
     parser.add_argument('--channels', '-c', type=int, default=100,
                         help='Jumlah channel (default: 100)')
