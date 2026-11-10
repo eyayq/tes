@@ -1,22 +1,22 @@
 #!/usr/bin/env python3
 """
-Vidio Live TV → M3U Playlist Generator
-========================================
-Ambil SEMUA channel + stream URL non-DRM.
+Vidio Live TV → M3U Playlist Generator (Hybrid)
+================================================
+Playwright (ambil luws) → curl_cffi (semua API calls)
 
 Dependencies:
-    pip install "curl-cffi<0.14"
+    pip install "curl-cffi<0.14" playwright
+    playwright install chromium --with-deps
 
 Run:
     python vidio_m3u.py
-    python vidio_m3u.py --luws "4A9909D0-CF68-0189-70C6-1F4612D7E32D_"
+    python vidio_m3u.py --luws "1EA8FFB6-2EA1-317B-91DF-F3625D79BB13_"
 """
 
 import argparse
 import hashlib
 import hmac
 import json
-import re
 import sys
 import time
 import uuid
@@ -28,6 +28,12 @@ try:
 except ImportError:
     print("Error: pip install 'curl-cffi<0.14'")
     sys.exit(1)
+
+try:
+    from playwright.sync_api import sync_playwright
+    HAS_PLAYWRIGHT = True
+except ImportError:
+    HAS_PLAYWRIGHT = False
 
 # ==================== KONFIGURASI ====================
 API_BASE = "https://api.vidio.com"
@@ -62,13 +68,12 @@ log = logging.getLogger("vidio-m3u")
 # ==================== X-SIGNATURE ====================
 def generate_x_signature() -> tuple:
     """
-    Generate x-signature dan x-client.
-    x-client = float timestamp (seperti browser: Date.now()/1000)
+    x-client = float timestamp (seperti browser)
     x-signature = HMAC-SHA256(key="V1d10D3v:{int_t}", msg=x_client)
     """
     t_float = time.time()
     t_int = int(t_float)
-    x_client = f"{t_float}"  # "1794347755.042"
+    x_client = f"{t_float}"
     secret_key = f"V1d10D3v:{t_int}"
     signature = hmac.new(
         secret_key.encode(),
@@ -79,66 +84,70 @@ def generate_x_signature() -> tuple:
 
 
 # ==================== STEP 1: GET LUWS ====================
-def get_luws(session, manual_luws: str = "") -> str:
+def get_luws_playwright() -> str:
     """
-    Ambil cookie luws:
+    Load m.vidio.com di Playwright → JS set document.cookie luws → ambil.
+    Hanya butuh 1 page load (~3-5 detik).
+    """
+    if not HAS_PLAYWRIGHT:
+        log.warning("Playwright tidak tersedia")
+        return ""
+
+    log.info("Mengambil luws via Playwright ...")
+    with sync_playwright() as p:
+        browser = p.chromium.launch(
+            headless=True,
+            args=["--no-sandbox", "--disable-dev-shm-usage"],
+        )
+        context = browser.new_context(
+            user_agent=USER_AGENT,
+            viewport={"width": 412, "height": 915},
+            locale="id-ID",
+        )
+        page = context.new_page()
+        page.goto(SITE_URL, wait_until="domcontentloaded", timeout=30000)
+
+        # Tunggu JS set cookie luws
+        for _ in range(10):
+            cookies = context.cookies()
+            for c in cookies:
+                if c["name"] == "luws":
+                    browser.close()
+                    return c["value"]
+            time.sleep(1)
+
+        browser.close()
+
+    return ""
+
+
+def get_luws(manual: str = "") -> str:
+    """
+    Urutan:
     1. Manual (--luws)
-    2. Dari Set-Cookie header
-    3. Dari HTML (regex di script tag)
-    4. Fallback: random UUID
+    2. Playwright (otomatis)
+    3. Random UUID (fallback, 6 channel besar gagal)
     """
-    if manual_luws:
-        log.info("  luws (manual): %s", manual_luws)
-        return manual_luws
+    if manual:
+        log.info("  luws (manual): %s", manual)
+        return manual
 
-    log.info("Visiting %s ...", SITE_URL)
-    try:
-        resp = session.get(SITE_URL, timeout=30)
+    # Coba Playwright
+    luws = get_luws_playwright()
+    if luws:
+        log.info("  luws (playwright): %s", luws)
+        return luws
 
-        # Method 1: dari cookie jar
-        luws = session.cookies.get("luws")
-        if luws:
-            log.info("  luws (cookie): %s", luws)
-            return luws
-
-        # Method 2: dari Set-Cookie header
-        set_cookies = resp.headers.get("set-cookie", "")
-        m = re.search(r'luws=([^;]+)', set_cookies)
-        if m:
-            luws = m.group(1)
-            log.info("  luws (set-cookie): %s", luws)
-            return luws
-
-        # Method 3: dari HTML content (JS variable)
-        html = resp.text
-        # Cari pattern: luws = "UUID_" atau luws:"UUID_" atau "luws":"UUID_"
-        patterns = [
-            r'luws\s*[:=]\s*["\']([A-F0-9\-]{36}_)["\']',
-            r'"luws"\s*:\s*"([A-F0-9\-]{36}_)',
-            r'luws["\']?\s*[:=]\s*["\']([A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}_)',
-        ]
-        for pat in patterns:
-            m = re.search(pat, html)
-            if m:
-                luws = m.group(1)
-                log.info("  luws (html): %s", luws)
-                return luws
-
-    except Exception as e:
-        log.warning("  Error: %s", e)
-
-    # Fallback: random UUID
+    # Fallback
     luws = f"{str(uuid.uuid4()).upper()}_"
-    log.info("  luws (random fallback): %s", luws)
-    log.warning("  ⚠ 6 channel besar mungkin gagal tanpa luws asli dari server")
-    log.warning("  Tips: buka m.vidio.com di browser → DevTools → Cookies → copy luws")
-    log.warning("  Lalu: python vidio_m3u.py --luws \"VALUE_\"")
+    log.warning("  luws (random): %s", luws)
+    log.warning("  ⚠ 6 channel besar mungkin gagal")
     return luws
 
 
 # ==================== STEP 2: FETCH ALL CHANNELS ====================
 def fetch_all_channels(session, luws: str) -> list:
-    """GET /livestreamings?stream_type=tv_stream → SEMUA channel."""
+    """GET /livestreamings?stream_type=tv_stream"""
     url = f"{API_BASE}/livestreamings"
     params = {"stream_type": "tv_stream"}
     headers = {
@@ -175,12 +184,17 @@ def fetch_all_channels(session, luws: str) -> list:
         if not ch_id:
             continue
 
+        # Ambil logo: square_image atau image_landscape
+        square = attrs.get("square_image", {})
+        landscape = attrs.get("image_landscape_url", "")
+        logo = square.get("url", "") or landscape
+
         channels.append({
             "id": int(ch_id),
             "title": attrs.get("title", "Unknown"),
-            "cover_url": attrs.get("cover_url", ""),
-            "web_url": attrs.get("web_url", ""),
-            "is_live": attrs.get("is_live", False),
+            "cover_url": logo,
+            "web_url": attrs.get("links", {}).get("watchpage", ""),
+            "is_live": "ongoing_schedule" in item.get("relationships", {}),
         })
 
     log.info("  Found %d channels", len(channels))
@@ -255,21 +269,20 @@ def generate_m3u(channels: list, stream_urls: dict, output_file: str):
 def main():
     parser = argparse.ArgumentParser(description="Vidio Live TV M3U Generator")
     parser.add_argument("-o", "--output", type=str, default=OUTPUT_FILE)
-    parser.add_argument("--retries", type=int, default=2,
-                        help="Max retry attempts (default: 2)")
+    parser.add_argument("--retries", type=int, default=2)
     parser.add_argument("--luws", type=str, default="",
-                        help="luws cookie value (dari browser DevTools)")
+                        help="luws cookie (manual, dari browser DevTools)")
     args = parser.parse_args()
 
     print("=" * 55)
     print("  Vidio Live TV → M3U Playlist Generator")
-    print("  ALL channels + x-signature + luws")
+    print("  Hybrid: Playwright (luws) + curl_cffi (API)")
     print("=" * 55)
 
     session = cffi_requests.Session(impersonate=IMPERSONATE)
 
     # Step 1: Get luws
-    luws = get_luws(session, args.luws)
+    luws = get_luws(args.luws)
 
     # Step 2: Fetch ALL channels
     channels = fetch_all_channels(session, luws)
@@ -301,24 +314,20 @@ def main():
             log.warning("  [%d/%d] %s ✗", i, len(channels), ch["title"])
         time.sleep(DELAY)
 
-    # Step 4: Retry failed
+    # Step 4: Retry
     for attempt in range(1, args.retries + 1):
         if not failed:
             break
-        log.info("\nRetry %d/%d (%d channels, wait %ds) ...",
-                 attempt, args.retries, len(failed), RETRY_WAIT)
+        log.info("\nRetry %d/%d (%d channels) ...", attempt, args.retries, len(failed))
         time.sleep(RETRY_WAIT)
-
         still_failed = []
         for ch in failed:
-            ch_id = ch["id"]
-            hls = fetch_stream_url(session, luws, ch_id)
+            hls = fetch_stream_url(session, luws, ch["id"])
             if hls:
-                stream_urls[ch_id] = hls
+                stream_urls[ch["id"]] = hls
                 log.info("  [RETRY %d] %s ✓", attempt, ch["title"])
             else:
                 still_failed.append(ch)
-                log.warning("  [RETRY %d] %s ✗", attempt, ch["title"])
             time.sleep(RETRY_DELAY)
         failed = still_failed
 
@@ -330,11 +339,9 @@ def main():
     log.info("  ─────────────────────────────────")
 
     if failed:
-        log.info("  Tanpa stream (butuh --luws asli):")
+        log.info("  Tanpa stream:")
         for ch in failed:
             log.info("    - [%s] %s", ch["id"], ch["title"])
-        log.info("\n  Tips: Buka m.vidio.com → F12 → Application → Cookies")
-        log.info("  Copy nilai 'luws' → python vidio_m3u.py --luws \"VALUE\"")
 
     # Step 5: Generate M3U
     log.info("\nGenerating M3U ...")
