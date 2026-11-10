@@ -29,7 +29,7 @@ jobs:
           sudo apt-get update && sudo apt-get install -y xvfb
           
       - name: Run Scraper
-        run: python huya.py -c 100 
+        run: xvfb-run python huya.py -c 100 -o playlist.m3u
       - name: Commit and Push
         run: |
           git config --local user.email "eyayq@users.noreply.github.com"
