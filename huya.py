@@ -19,8 +19,14 @@ GQL_HASH = "c101f277c6ab7de34f64e63c90d698edae0d83ed5fad8efe198596b472ef3337"
 
 PROXY = "https://pl-gratosv---al.bhns.workers.dev"
 
+# ═══════════════════════════════════════════════════════════════
+# COOKIES — UPDATE DI SINI SAJA (dari browser DevTools)
+# ═══════════════════════════════════════════════════════════════
+TWITCH_COOKIES = '[{"name":"auth-token","value":"i6znx2o7mcfa0ut0d2vq2ksp7otyzs","domain":".twitch.tv","path":"/"},{"name":"login","value":"bhianesse","domain":".twitch.tv","path":"/"},{"name":"name","value":"bhianesse","domain":".twitch.tv","path":"/"},{"name":"unique_id","value":"a69b3a50148aacf5","domain":".twitch.tv","path":"/"},{"name":"persistent","value":"1607987695::e00t5uzcsonvt8e8x8juh0m331yano","domain":".twitch.tv","path":"/"},{"name":"twilight-user","value":"{\"authToken\":\"i6znx2o7mcfa0ut0d2vq2ksp7otyzs\",\"displayName\":\"bhianesse\",\"id\":\"1607987695\",\"login\":\"bhianesse\",\"roles\":{\"isStaff\":false},\"version\":2}","domain":".twitch.tv","path":"/"}]'
+# ═══════════════════════════════════════════════════════════════
+
 # Kategori utama (di atas playlist)
-MAIN_CATEGORIES = {"sports", "mobile legends"}
+MAIN_CATEGORIES = {"mobile legends", "sports"}
 
 CATEGORIES = [
     ("Sports", "sports-1"),
@@ -33,15 +39,26 @@ _COOKIES_FILE = os.path.join(_BASE_DIR, ".twitch_cookies.json")
 
 
 def _load_cookies():
+    # 1. Env var (prioritas)
     env_cookies = os.environ.get("TWITCH_COOKIES", "")
     if env_cookies:
         try:
             return json.loads(env_cookies)
         except json.JSONDecodeError:
             pass
+
+    # 2. Konstanta di script
+    if TWITCH_COOKIES:
+        try:
+            return json.loads(TWITCH_COOKIES)
+        except json.JSONDecodeError:
+            pass
+
+    # 3. File
     if os.path.exists(_COOKIES_FILE):
         with open(_COOKIES_FILE) as f:
             return json.load(f)
+
     return None
 
 
@@ -82,7 +99,6 @@ def _deep_extract(obj, channels, seen, category_name=None):
 
 
 def _is_main_category(ch):
-    """Cek apakah channel masuk kategori utama (Sports/MLBB)."""
     cat = ch.get("category", "").lower()
     game = ch.get("game", "").lower()
     for mc in MAIN_CATEGORIES:
@@ -114,14 +130,12 @@ async def scrape_category(page, cat_name, cat_slug, channels, seen, max_wait=10)
 
     await asyncio.sleep(max_wait)
 
-    # Scroll 15x untuk lazy-load lebih banyak channel
     for _ in range(15):
         await page.evaluate("window.scrollBy(0, 1000)")
         await asyncio.sleep(1)
 
     page.remove_listener("response", on_response)
 
-    # Parse responses
     for resp in response_objects:
         try:
             body = await resp.json()
@@ -218,6 +232,9 @@ async def async_main(max_channels, headed):
         if cookies:
             await context.add_cookies(cookies)
             print(f"\n[1/3] Cookies di-inject ({len(cookies)} cookies)")
+        else:
+            print(f"\n[1/3] [ERROR] No cookies found!")
+            return
 
         captured = {
             "session_id": None, "device_id": None,
@@ -301,13 +318,12 @@ async def async_main(max_channels, headed):
     channels = channels[:max_channels]
     print(f"\n[3/3] Membangun playlist ({len(channels)} channels)...")
 
-    # Pisahkan: kategori utama vs lainnya
     main_channels = [ch for ch in channels if _is_main_category(ch)]
     other_channels = [ch for ch in channels if not _is_main_category(ch)]
 
     lines = ['#EXTM3U']
 
-    # ── ATAS: Sports + Mobile Legends ──
+    # ATAS: Sports + Mobile Legends
     for ch in main_channels:
         name = ch.get("name", ch.get("id", ""))
         logo = ch.get("logo", "")
@@ -324,7 +340,7 @@ async def async_main(max_channels, headed):
         lines.append(extinf)
         lines.append(f"{PROXY}/play.m3u8?id={ch['id']}")
 
-    # ── BAWAH: Lainnya (group-title "Twitch") ──
+    # BAWAH: Lainnya (group-title "Twitch")
     for ch in other_channels:
         name = ch.get("name", ch.get("id", ""))
         logo = ch.get("logo", "")
