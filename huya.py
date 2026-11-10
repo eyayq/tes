@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-TWITCH M3U PLAYLIST GENERATOR v3
-- GQL API: streams query (bukan topStreams)
+TWITCH M3U PLAYLIST GENERATOR v3 (FIXED)
+- GQL API: streams query (cursor pagination)
 - PrefetchPlaybackAccessToken
 - Output: twitch.m3u (HLS .m3u8)
 - Token expired: ~6 jam
@@ -30,16 +30,14 @@ _session.headers.update({
 
 
 # ─── Fetch LIVE channels dari Twitch GQL ─────────────────────────
-def get_live_channels(count=100, category=None):
-    """Fetch channels yang SEDANG LIVE via GQL streams query."""
+def get_live_channels(count=100):
     channels = []
-    offset = 0
-    page_size = 100
+    after = None
 
     while len(channels) < count:
         query = """
-        query Streams($first: Int!, $offset: Int, $category: String) {
-            streams(first: $first, offset: $offset) {
+        query Streams($first: Int!, $after: String) {
+            streams(first: $first, after: $after) {
                 edges {
                     node {
                         id
@@ -57,14 +55,15 @@ def get_live_channels(count=100, category=None):
                 }
                 pageInfo {
                     hasNextPage
+                    endCursor
                 }
             }
         }
         """
 
         variables = {
-            "first": min(page_size, count - len(channels)),
-            "offset": offset,
+            "first": min(100, count - len(channels)),
+            "after": after,
         }
 
         try:
@@ -74,7 +73,6 @@ def get_live_channels(count=100, category=None):
                 timeout=TIMEOUT,
             )
             if r.status_code != 200:
-                print(f"  [ERROR] HTTP {r.status_code}")
                 break
 
             data = r.json()
@@ -83,7 +81,8 @@ def get_live_channels(count=100, category=None):
                 print(f"  [ERROR] {data['errors'][0]['message']}")
                 break
 
-            edges = data.get("data", {}).get("streams", {}).get("edges", [])
+            streams_data = data.get("data", {}).get("streams", {})
+            edges = streams_data.get("edges", [])
             if not edges:
                 break
 
@@ -99,10 +98,10 @@ def get_live_channels(count=100, category=None):
                     "logo": broadcaster.get("profileImageURL", ""),
                 })
 
-            has_next = data.get("data", {}).get("streams", {}).get("pageInfo", {}).get("hasNextPage", False)
-            if not has_next:
+            page_info = streams_data.get("pageInfo", {})
+            if not page_info.get("hasNextPage", False):
                 break
-            offset += page_size
+            after = page_info.get("endCursor")
 
         except Exception as e:
             print(f"  [ERROR] {e}")
@@ -293,4 +292,3 @@ if __name__ == '__main__':
         max_channels=args.channels,
         max_workers=args.workers,
     )   
-
