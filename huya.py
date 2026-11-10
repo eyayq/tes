@@ -3,20 +3,20 @@
 Vidio Live TV → M3U Playlist Generator
 ========================================
 Ambil SEMUA channel + stream URL non-DRM.
-6 channel besar (SCTV, Indosiar, TRANS TV, Trans7, Moji, Kompas TV)
-mungkin butuh penanganan khusus — debug block disertakan.
 
 Dependencies:
     pip install "curl-cffi<0.14"
 
 Run:
     python vidio_m3u.py
+    python vidio_m3u.py --luws "4A9909D0-CF68-0189-70C6-1F4612D7E32D_"
 """
 
 import argparse
 import hashlib
 import hmac
 import json
+import re
 import sys
 import time
 import uuid
@@ -61,33 +61,79 @@ log = logging.getLogger("vidio-m3u")
 
 # ==================== X-SIGNATURE ====================
 def generate_x_signature() -> tuple:
-    """HMAC-SHA256(key="V1d10D3v:{t}", msg=str(t))"""
-    t = int(time.time())
-    secret_key = f"V1d10D3v:{t}"
-    message = str(t)
+    """
+    Generate x-signature dan x-client.
+    x-client = float timestamp (seperti browser: Date.now()/1000)
+    x-signature = HMAC-SHA256(key="V1d10D3v:{int_t}", msg=x_client)
+    """
+    t_float = time.time()
+    t_int = int(t_float)
+    x_client = f"{t_float}"  # "1794347755.042"
+    secret_key = f"V1d10D3v:{t_int}"
     signature = hmac.new(
         secret_key.encode(),
-        message.encode(),
+        x_client.encode(),
         hashlib.sha256
     ).hexdigest()
-    return str(t), signature
+    return x_client, signature
 
 
 # ==================== STEP 1: GET LUWS ====================
-def get_luws(session) -> str:
-    """Visit m.vidio.com untuk cookie luws."""
+def get_luws(session, manual_luws: str = "") -> str:
+    """
+    Ambil cookie luws:
+    1. Manual (--luws)
+    2. Dari Set-Cookie header
+    3. Dari HTML (regex di script tag)
+    4. Fallback: random UUID
+    """
+    if manual_luws:
+        log.info("  luws (manual): %s", manual_luws)
+        return manual_luws
+
     log.info("Visiting %s ...", SITE_URL)
     try:
-        session.get(SITE_URL, timeout=30)
+        resp = session.get(SITE_URL, timeout=30)
+
+        # Method 1: dari cookie jar
         luws = session.cookies.get("luws")
         if luws:
-            log.info("  luws: %s", luws)
+            log.info("  luws (cookie): %s", luws)
             return luws
+
+        # Method 2: dari Set-Cookie header
+        set_cookies = resp.headers.get("set-cookie", "")
+        m = re.search(r'luws=([^;]+)', set_cookies)
+        if m:
+            luws = m.group(1)
+            log.info("  luws (set-cookie): %s", luws)
+            return luws
+
+        # Method 3: dari HTML content (JS variable)
+        html = resp.text
+        # Cari pattern: luws = "UUID_" atau luws:"UUID_" atau "luws":"UUID_"
+        patterns = [
+            r'luws\s*[:=]\s*["\']([A-F0-9\-]{36}_)["\']',
+            r'"luws"\s*:\s*"([A-F0-9\-]{36}_)',
+            r'luws["\']?\s*[:=]\s*["\']([A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}_)',
+        ]
+        for pat in patterns:
+            m = re.search(pat, html)
+            if m:
+                luws = m.group(1)
+                log.info("  luws (html): %s", luws)
+                return luws
+
     except Exception as e:
         log.warning("  Error: %s", e)
 
-    log.info("  Generate luws baru")
-    return f"{str(uuid.uuid4()).upper()}_"
+    # Fallback: random UUID
+    luws = f"{str(uuid.uuid4()).upper()}_"
+    log.info("  luws (random fallback): %s", luws)
+    log.warning("  ⚠ 6 channel besar mungkin gagal tanpa luws asli dari server")
+    log.warning("  Tips: buka m.vidio.com di browser → DevTools → Cookies → copy luws")
+    log.warning("  Lalu: python vidio_m3u.py --luws \"VALUE_\"")
+    return luws
 
 
 # ==================== STEP 2: FETCH ALL CHANNELS ====================
@@ -142,7 +188,7 @@ def fetch_all_channels(session, luws: str) -> list:
 
 
 # ==================== STEP 3: FETCH STREAM URL ====================
-def fetch_stream_url(session, luws: str, ch_id: int, verbose: bool = False) -> str:
+def fetch_stream_url(session, luws: str, ch_id: int) -> str:
     """GET /livestreamings/{id}/stream?initialize=true"""
     url = f"{API_BASE}/livestreamings/{ch_id}/stream?initialize=true"
     x_client, x_signature = generate_x_signature()
@@ -167,99 +213,10 @@ def fetch_stream_url(session, luws: str, ch_id: int, verbose: bool = False) -> s
             hls = data.get("data", {}).get("attributes", {}).get("hls", "")
             if hls:
                 return hls
-            if verbose:
-                log.info("  [DEBUG %d] 200 but no hls: %s", ch_id, json.dumps(data)[:400])
-        else:
-            if verbose:
-                log.info("  [DEBUG %d] HTTP %d: %s", ch_id, resp.status_code, resp.text[:300])
-    except Exception as e:
-        if verbose:
-            log.info("  [DEBUG %d] Exception: %s", ch_id, e)
+    except Exception:
+        pass
 
     return ""
-
-
-# ==================== DEBUG: TEST CHANNEL YANG GAGAL ====================
-def debug_failed_channels(session, luws: str, failed: list):
-    """Debug channel yang gagal untuk lihat response sebenarnya."""
-    if not failed:
-        return
-
-    log.info("\n" + "=" * 50)
-    log.info("DEBUG: Testing %d failed channels", len(failed))
-    log.info("=" * 50)
-
-    # Test satu channel pertama yang gagal
-    ch = failed[0]
-    ch_id = ch["id"]
-    url = f"{API_BASE}/livestreamings/{ch_id}/stream?initialize=true"
-    x_client, x_signature = generate_x_signature()
-
-    headers = {
-        "x-api-key": API_KEY,
-        "x-api-platform": "web-mobile",
-        "x-secure-level": "2",
-        "luws": luws,
-        "x-client": x_client,
-        "x-signature": x_signature,
-        "User-Agent": USER_AGENT,
-        "Referer": REFERER,
-        "Origin": ORIGIN,
-        "Accept": "*/*",
-    }
-
-    log.info("\n  Channel: %s (ID: %d)", ch["title"], ch_id)
-    log.info("  URL: %s", url)
-    log.info("  x-client: %s", x_client)
-    log.info("  x-signature: %s", x_signature)
-    log.info("  luws: %s", luws)
-
-    try:
-        resp = session.get(url, headers=headers, timeout=15)
-        log.info("  Status: %d", resp.status_code)
-        log.info("  Headers: %s", dict(resp.headers))
-        log.info("  Body: %s", resp.text[:500])
-    except Exception as e:
-        log.info("  Error: %s", e)
-
-    # Coba tanpa x-signature
-    log.info("\n  --- Coba TANPA x-signature ---")
-    headers_no_sig = {k: v for k, v in headers.items() if k != "x-signature"}
-    try:
-        resp2 = session.get(url, headers=headers_no_sig, timeout=15)
-        log.info("  Status: %d", resp2.status_code)
-        log.info("  Body: %s", resp2.text[:500])
-    except Exception as e:
-        log.info("  Error: %s", e)
-
-    # Coba dengan x-client float (seperti web-mobile asli)
-    log.info("\n  --- Coba x-client FLOAT ---")
-    t_float = f"{time.time()}"
-    x_sig_float = hmac.new(
-        f"V1d10D3v:{int(time.time())}".encode(),
-        t_float.encode(),
-        hashlib.sha256
-    ).hexdigest()
-    headers_float = {
-        "x-api-key": API_KEY,
-        "x-api-platform": "web-mobile",
-        "x-secure-level": "2",
-        "luws": luws,
-        "x-client": t_float,
-        "x-signature": x_sig_float,
-        "User-Agent": USER_AGENT,
-        "Referer": REFERER,
-        "Origin": ORIGIN,
-        "Accept": "*/*",
-    }
-    try:
-        resp3 = session.get(url, headers=headers_float, timeout=15)
-        log.info("  Status: %d", resp3.status_code)
-        log.info("  Body: %s", resp3.text[:500])
-    except Exception as e:
-        log.info("  Error: %s", e)
-
-    log.info("\n" + "=" * 50)
 
 
 # ==================== M3U GENERATOR ====================
@@ -300,19 +257,19 @@ def main():
     parser.add_argument("-o", "--output", type=str, default=OUTPUT_FILE)
     parser.add_argument("--retries", type=int, default=2,
                         help="Max retry attempts (default: 2)")
-    parser.add_argument("--debug", action="store_true",
-                        help="Debug failed channels")
+    parser.add_argument("--luws", type=str, default="",
+                        help="luws cookie value (dari browser DevTools)")
     args = parser.parse_args()
 
     print("=" * 55)
     print("  Vidio Live TV → M3U Playlist Generator")
-    print("  ALL channels + x-signature HMAC-SHA256")
+    print("  ALL channels + x-signature + luws")
     print("=" * 55)
 
     session = cffi_requests.Session(impersonate=IMPERSONATE)
 
     # Step 1: Get luws
-    luws = get_luws(session)
+    luws = get_luws(session, args.luws)
 
     # Step 2: Fetch ALL channels
     channels = fetch_all_channels(session, luws)
@@ -365,10 +322,6 @@ def main():
             time.sleep(RETRY_DELAY)
         failed = still_failed
 
-    # Step 5: Debug jika diminta
-    if failed and args.debug:
-        debug_failed_channels(session, luws, failed)
-
     # Summary
     log.info("\n  ─────────────────────────────────")
     log.info("  Total : %d", len(channels))
@@ -377,11 +330,13 @@ def main():
     log.info("  ─────────────────────────────────")
 
     if failed:
-        log.info("  Tanpa stream:")
+        log.info("  Tanpa stream (butuh --luws asli):")
         for ch in failed:
             log.info("    - [%s] %s", ch["id"], ch["title"])
+        log.info("\n  Tips: Buka m.vidio.com → F12 → Application → Cookies")
+        log.info("  Copy nilai 'luws' → python vidio_m3u.py --luws \"VALUE\"")
 
-    # Step 6: Generate M3U
+    # Step 5: Generate M3U
     log.info("\nGenerating M3U ...")
     generate_m3u(channels, stream_urls, args.output)
 
