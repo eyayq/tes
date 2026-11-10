@@ -1,6 +1,9 @@
+
+
+
 #!/usr/bin/env python3
 """
-TWITCH M3U PLAYLIST GENERATOR v7
+TWITCH M3U PLAYLIST GENERATOR v8
 """
 
 import time
@@ -21,14 +24,15 @@ MAX_WORKERS = 10
 CLIENT_ID = "kimne78kx3ncx6brgo4mv6wki5h1ko"
 GQL_HASH = "c101f277c6ab7de34f64e63c90d698edae0d83ed5fad8efe198596b472ef3337"
 
+# ===== ISI TOKEN DARI BROWSER DEVTOOLS (Network → GQL request → authorization header) =====
+AUTH_TOKEN = "i6znx2o7mcfa0ut0d2vq2ksp7otyzs"  # contoh: "i6znx2o7mcfa0ut0d2vq2ksp7otyzs"
+# =========================================================================================
+
 # ─── Session & Identitas ─────────────────────────────────────────
 _session = requests.Session()
 
-# Device ID: 16 hex chars (persistent per process)
 _DEVICE_ID = uuid.uuid4().hex[:16]
-# Client-Session-Id: 16 hex chars (persistent per process)
 _CLIENT_SESSION_ID = uuid.uuid4().hex[:16]
-# Client-Version: UUID4 (dihubungi dari manifest)
 _CLIENT_VERSION = None
 
 _session.headers.update({
@@ -43,7 +47,6 @@ _session.headers.update({
 
 
 def _get_client_version():
-    """Fetch Client-Version (UUID) dari Twitch manifest."""
     global _CLIENT_VERSION
     if _CLIENT_VERSION:
         return _CLIENT_VERSION
@@ -61,7 +64,6 @@ def _get_client_version():
 
 
 def _gen_request_id():
-    """Generate random 32-char alphanumeric Client-Request-Id."""
     return ''.join(random.choices(string.ascii_letters + string.digits, k=32))
 
 
@@ -71,22 +73,25 @@ _integrity_expiry = 0
 
 
 def get_client_integrity():
-    """Ambil/refresh client-integrity token."""
     global _client_integrity, _integrity_expiry
 
     if _client_integrity and time.time() < _integrity_expiry:
         return _client_integrity
 
+    headers = {
+        "Client-ID": CLIENT_ID,
+        "X-Device-Id": _DEVICE_ID,
+        "Client-Session-Id": _CLIENT_SESSION_ID,
+        "Client-Version": _get_client_version(),
+        "Client-Request-Id": _gen_request_id(),
+    }
+    if AUTH_TOKEN:
+        headers["Authorization"] = f"OAuth {AUTH_TOKEN}"
+
     r = _session.post(
         "https://gql.twitch.tv/integrity",
         json={},
-        headers={
-            "Client-ID": CLIENT_ID,
-            "X-Device-Id": _DEVICE_ID,
-            "Client-Session-Id": _CLIENT_SESSION_ID,
-            "Client-Version": _get_client_version(),
-            "Client-Request-Id": _gen_request_id(),
-        },
+        headers=headers,
         timeout=TIMEOUT,
     )
 
@@ -108,7 +113,6 @@ def get_client_integrity():
 
 # ─── GQL Request ─────────────────────────────────────────────────
 def _gql_request(payload, retries=3):
-    """GQL request dengan semua header wajib + retry."""
     integrity = get_client_integrity()
 
     for attempt in range(retries + 1):
@@ -118,6 +122,8 @@ def _gql_request(payload, retries=3):
             }
             if integrity:
                 headers["Client-Integrity"] = integrity
+            if AUTH_TOKEN:
+                headers["Authorization"] = f"OAuth {AUTH_TOKEN}"
 
             r = _session.post(
                 "https://gql.twitch.tv/gql",
@@ -146,7 +152,6 @@ def _gql_request(payload, retries=3):
             if errors:
                 msg = errors[0].get("message", "unknown")
                 if msg.lower() in ("server error", "service error") and attempt < retries:
-                    # Refresh integrity & retry
                     global _client_integrity, _integrity_expiry
                     _client_integrity = None
                     _integrity_expiry = 0
@@ -259,7 +264,6 @@ def get_stream_url(channel, retries=2):
                     continue
                 return None
 
-            # ── Parse token (support both formats) ──
             token = ""
             sig = ""
 
@@ -281,12 +285,10 @@ def get_stream_url(channel, retries=2):
                     continue
                 return None
 
-            # ── Build usher v2 URL ──
             ch_lower = channel.lower()
             session_id = uuid.uuid4().hex
             p_val = random.randint(1000000, 9999999)
 
-            # acmb = base64 JSON with AppVersion (Client-Version UUID)
             acmb_obj = {
                 "AppVersion": _get_client_version(),
                 "ClientApp": "twilight",
@@ -342,7 +344,7 @@ def fetch_worker(args):
 # ─── Generate playlist ───────────────────────────────────────────
 def generate_playlist(output_file, max_channels, max_workers=MAX_WORKERS):
     print("=" * 55)
-    print("  TWITCH M3U PLAYLIST GENERATOR v7")
+    print("  TWITCH M3U PLAYLIST GENERATOR v8")
     print(f"  {max_channels} channels | {max_workers} threads")
     print("=" * 55)
 
@@ -351,10 +353,11 @@ def generate_playlist(output_file, max_channels, max_workers=MAX_WORKERS):
     print(f"  Client-Version: {cv}")
     print(f"  Device-ID:      {_DEVICE_ID}")
     print(f"  Session-ID:     {_CLIENT_SESSION_ID}")
+    print(f"  Auth-Token:     {'SET' if AUTH_TOKEN else 'NOT SET'}")
 
     integrity = get_client_integrity()
     if integrity:
-        print(f"  Integrity:      OK (v4.local.{integrity[8:20]}...)")
+        print(f"  Integrity:      OK")
     else:
         print(f"  Integrity:      FAILED")
 
@@ -431,14 +434,29 @@ def generate_playlist(output_file, max_channels, max_workers=MAX_WORKERS):
 # ─── Main ────────────────────────────────────────────────────────
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='Twitch M3U Playlist Generator v7')
+        description='Twitch M3U Playlist Generator v8')
     parser.add_argument('--output', '-o', default='twitch.m3u',
                         help='File output M3U (default: twitch.m3u)')
     parser.add_argument('--channels', '-c', type=int, default=100,
                         help='Jumlah channel (default: 100)')
     parser.add_argument('--workers', '-w', type=int, default=MAX_WORKERS,
                         help='Jumlah thread paralel (default: 10)')
+    parser.add_argument('--auth-token', '-t', default=AUTH_TOKEN,
+                        help='OAuth token dari browser (wajib)')
     args = parser.parse_args()
+
+    if args.auth_token:
+        # Override global
+        globals()['AUTH_TOKEN'] = args.auth_token
+        # Also set on session
+        _session.headers["Authorization"] = f"OAuth {args.auth_token}"
+
+    if not AUTH_TOKEN:
+        print("[ERROR] AUTH_TOKEN kosong!")
+        print("  Ambil dari browser: DevTools → Network → GQL request → header 'authorization'")
+        print("  Format: OAuth <token>")
+        print("  Atau pakai flag: --auth-token <token>")
+        exit(1)
 
     generate_playlist(
         output_file=args.output,
