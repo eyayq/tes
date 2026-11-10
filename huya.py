@@ -1,390 +1,116 @@
-#!/usr/bin/env python3
-"""
-Vidio Live TV → M3U Playlist Generator
-========================================
-Ambil SEMUA channel + stream URL non-DRM.
-6 channel besar (SCTV, Indosiar, TRANS TV, Trans7, Moji, Kompas TV)
-mungkin butuh penanganan khusus — debug block disertakan.
-
-Dependencies:
-    pip install "curl-cffi<0.14"
-
-Run:
-    python vidio_m3u.py
-"""
-
-import argparse
-import hashlib
-import hmac
-import json
-import sys
-import time
-import uuid
-import logging
-from pathlib import Path
-
 try:
-    from curl_cffi import requests as cffi_requests
-except ImportError:
-    print("Error: pip install 'curl-cffi<0.14'")
-    sys.exit(1)
+	import requests as x, random, os, threading, sys, time
+except Exception as e :
+	print(" Module belum terinstall\n")
 
-# ==================== KONFIGURASI ====================
-API_BASE = "https://api.vidio.com"
-SITE_URL = "https://m.vidio.com"
-OUTPUT_FILE = "playlist.m3u"
-IMPERSONATE = "chrome"
-DELAY = 0.5
-RETRY_DELAY = 3.0
-RETRY_WAIT = 5
+domain = "@shutupfvckup.my.id"  # set domain here
+sandi = "@MaterACars"  # set password here
+capsolver_key = "" # set capsolver api key here
+api_spotify = "142b583129b2df829de3656f9eb484e6" # dont change if u dont know how to get api_spotify
 
-API_KEY = (
-    "CH1ZFsN4N/MIfAds1DL9mP151CNqIpWHqZGRr+LkvUyiq3FRPuP1Kt6aK+pG3nEC1FXt0ZAAJ5FKP8QU8CZ5"
-    "/ieyIuWEkvNBqXdsdlXM2838+3SFjs9rtlntv7l7DHkBHWK1q/4vLGad8GAj3vfLciRFnquHuZMMW+4EX8yTe1w="
-)
+class Spotify:
+    def __init__(self):
+        self.api = x.Session()
 
-USER_AGENT = (
-    "Mozilla/5.0 (Linux; Android 10; K) "
-    "AppleWebKit/537.36 (KHTML, like Gecko) "
-    "Chrome/157.0.0.0 Mobile Safari/537.36"
-)
-REFERER = "https://m.vidio.com/"
-ORIGIN = "https://m.vidio.com"
+    def user_data(self):
+        return self.api.get("http://api.suhu.my.id/v2/faker",headers={"User-Agent": "PanelNewbie/0.2 (Linux; rdhoni;) Termux/0.2"}).json()
+	
+    def create(self, ua, nama, email, sandi, ttl, gender):
+        return self.api.post("https://spclient.wg.spotify.com/signup/public/v2/account/create", json={"account_details":{"birthdate":ttl,"consent_flags":{"eula_agreed":True,"send_email":False,"third_party_email":False},"display_name":nama,"email_and_password_identifier":{"email":email,"password":sandi},"gender":gender},"callback_uri":"","client_info":{"api_key":api_spotify,"app_version":"v2","capabilities":[1],"installation_id":"","platform":""},"tracking":{"creation_flow":"","creation_point":"","referrer":""},"recaptcha_token":"","submission_id":""}, headers={"User-Agent":ua,"Content-Type":"application/json"})
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s",
-    datefmt="%H:%M:%S",
-)
-log = logging.getLogger("vidio-m3u")
+    def get_challege_id(self, ua, session_id):
+        return self.api.post("https://challenge.spotify.com/api/v1/get-session", json={"session_id":session_id}, headers={"User-Agent":ua}).json()["in_progress"]["challenge_details"]["challenge_id"]
+    
+    def get_recaptcha_token(self, clientKey):
+        taskId = self.api.post("https://api.capsolver.com/createTask", json={
+            "clientKey": clientKey,
+            "task": {
+                "type": "ReCaptchaV2TaskProxyLess",
+                "websiteURL": "https://www.spotify.com/id-id/signup",
+                "websiteKey": "6LeO36obAAAAALSBZrY6RYM1hcAY7RLvpDDcJLy3",
+                "pageAction": "signup"
+            }
+        }).json()["taskId"]
+        while(True):
+            gRecaptchaResponse = self.api.post("https://api.capsolver.com/getTaskResult", json={
+                "clientKey": clientKey,
+                "taskId": taskId
+            })
+            if("RecaptchaResponse" in gRecaptchaResponse.text):
+                return gRecaptchaResponse.json()["solution"]
+            time.sleep(5)
+            
+    def bypass_challenge_spotify(self, session_id, challenge_id, solution):
+        complete_session = self.api.post("https://challenge.spotify.com/api/v1/invoke-challenge-command", json={"session_id":session_id,"challenge_id":challenge_id,"recaptcha_challenge_v1":{"solve":{"recaptcha_token":solution["gRecaptchaResponse"]}}}, headers={"User-Agent":solution["userAgent"]})
+        if("completed" in complete_session.text):
+            return self.api.post("https://spclient.wg.spotify.com/signup/public/v2/account/complete-creation", json={"session_id": session_id})
 
-
-# ==================== X-SIGNATURE ====================
-def generate_x_signature() -> tuple:
-    """HMAC-SHA256(key="V1d10D3v:{t}", msg=str(t))"""
-    t = int(time.time())
-    secret_key = f"V1d10D3v:{t}"
-    message = str(t)
-    signature = hmac.new(
-        secret_key.encode(),
-        message.encode(),
-        hashlib.sha256
-    ).hexdigest()
-    return str(t), signature
-
-
-# ==================== STEP 1: GET LUWS ====================
-def get_luws(session) -> str:
-    """Visit m.vidio.com untuk cookie luws."""
-    log.info("Visiting %s ...", SITE_URL)
-    try:
-        session.get(SITE_URL, timeout=30)
-        luws = session.cookies.get("luws")
-        if luws:
-            log.info("  luws: %s", luws)
-            return luws
-    except Exception as e:
-        log.warning("  Error: %s", e)
-
-    log.info("  Generate luws baru")
-    return f"{str(uuid.uuid4()).upper()}_"
-
-
-# ==================== STEP 2: FETCH ALL CHANNELS ====================
-def fetch_all_channels(session, luws: str) -> list:
-    """GET /livestreamings?stream_type=tv_stream → SEMUA channel."""
-    url = f"{API_BASE}/livestreamings"
-    params = {"stream_type": "tv_stream"}
-    headers = {
-        "x-api-key": API_KEY,
-        "x-api-platform": "web-mobile",
-        "x-secure-level": "2",
-        "x-visitor-id": session.cookies.get("ahoy_visitor", ""),
-        "x-api-app-info": "js/m.vidio.com",
-        "x-user-login": "false",
-        "luws": luws,
-        "Accept": "application/json",
-        "Content-Type": "application/vnd.api+json",
-        "User-Agent": USER_AGENT,
-        "Referer": REFERER,
-        "Origin": ORIGIN,
-    }
-
-    log.info("Fetching all channels ...")
-    try:
-        resp = session.get(url, params=params, headers=headers, timeout=30)
-        if resp.status_code != 200:
-            log.warning("  HTTP %d", resp.status_code)
-            return []
-    except Exception as e:
-        log.error("  Error: %s", e)
-        return []
-
-    data = resp.json()
-    channels = []
-
-    for item in data.get("data", []):
-        attrs = item.get("attributes", {})
-        ch_id = item.get("id")
-        if not ch_id:
-            continue
-
-        channels.append({
-            "id": int(ch_id),
-            "title": attrs.get("title", "Unknown"),
-            "cover_url": attrs.get("cover_url", ""),
-            "web_url": attrs.get("web_url", ""),
-            "is_live": attrs.get("is_live", False),
-        })
-
-    log.info("  Found %d channels", len(channels))
-    return channels
-
-
-# ==================== STEP 3: FETCH STREAM URL ====================
-def fetch_stream_url(session, luws: str, ch_id: int, verbose: bool = False) -> str:
-    """GET /livestreamings/{id}/stream?initialize=true"""
-    url = f"{API_BASE}/livestreamings/{ch_id}/stream?initialize=true"
-    x_client, x_signature = generate_x_signature()
-
-    headers = {
-        "x-api-key": API_KEY,
-        "x-api-platform": "web-mobile",
-        "x-secure-level": "2",
-        "luws": luws,
-        "x-client": x_client,
-        "x-signature": x_signature,
-        "User-Agent": USER_AGENT,
-        "Referer": REFERER,
-        "Origin": ORIGIN,
-        "Accept": "*/*",
-    }
-
-    try:
-        resp = session.get(url, headers=headers, timeout=15)
-        if resp.status_code == 200:
-            data = resp.json()
-            hls = data.get("data", {}).get("attributes", {}).get("hls", "")
-            if hls:
-                return hls
-            if verbose:
-                log.info("  [DEBUG %d] 200 but no hls: %s", ch_id, json.dumps(data)[:400])
+class UserThread:
+    def main(self, domain, sandi):
+        generate_data = Spotify().user_data()
+        ua = generate_data["browser"]["user_agent"]
+        nama = generate_data["email"]
+        nama = nama.split("@")[0]
+        gender = random.randint(1, 4)
+        email = f'{nama.replace(" ","")}{domain}'.lower()
+        ttl = f"{random.randint(1990, 2002)}-{random.randint(10, 12)}-{random.randint(10, 31)}"
+        signup = Spotify().create(ua, nama, email, sandi, ttl, gender)
+        # print(signup.text)
+        if "login_token" in signup.text:
+            print(f" Created : {email}")
+            with open('account.txt', 'a') as f:
+                f.write(f'Email : {email} | Sandi : {sandi}\n')
+        elif "challenge" in signup.text:
+            print(" Captcha detected, wait...")
+            session_id = signup.json()["challenge"]["session_id"]
+            challenge_id = Spotify().get_challege_id(ua, session_id)
+            solution = Spotify().get_recaptcha_token(capsolver_key)
+            bypass = Spotify().bypass_challenge_spotify(session_id, challenge_id, solution)
+            if "login_token" in bypass.text:
+                print(f" Created : {email}")
+                with open('account.txt', 'a') as f:
+                    f.write(f'Email : {email} | Sandi : {sandi}\n')
         else:
-            if verbose:
-                log.info("  [DEBUG %d] HTTP %d: %s", ch_id, resp.status_code, resp.text[:300])
-    except Exception as e:
-        if verbose:
-            log.info("  [DEBUG %d] Exception: %s", ch_id, e)
+            None
 
-    return ""
+    def createThread(self):
+        try:
+            try:
+                amount = input(f' Amount : ')
+                if int(amount) > 20:  # jangan diganti biar ga error spam
+                    sys.exit(f'\n Sebaiknya jangan gegabah terlalu banyak')
+                else:
+                    print(f"\n Ready Create Spotify Account\n\n Kata sandi : {sandi}\n")
+                threads = []
+                count = 0
+                try:
+                    while count < int(amount):
+                        thread = threading.Thread(target=self.main, args=(domain, sandi))
+                        threads.append(thread)
+                        thread.start()
+                        count += 1
+                     
+                    for thread in threads:
+                        thread.join()
 
+                    # Credit jangan dihapus kontol
+                    print("\n Support Developer: \n - DANA (Aga): 0895415306281 \n - QRIS (Mater): @paymentmater ") 
+                    print("\n Detail: \n - Ch: @chsangkara\n - Tele: @MaterACars|@paymentmater")
+                    print("\n Take A note Please: \n The official MaterIsACars channel is not mine (MaterACars) anymore, \n so if you want to join my channel, please join @chsangkara, thank you.")
+                except KeyboardInterrupt:
+                    pass
 
-# ==================== DEBUG: TEST CHANNEL YANG GAGAL ====================
-def debug_failed_channels(session, luws: str, failed: list):
-    """Debug channel yang gagal untuk lihat response sebenarnya."""
-    if not failed:
-        return
+            except Exception as r:
+                None
 
-    log.info("\n" + "=" * 50)
-    log.info("DEBUG: Testing %d failed channels", len(failed))
-    log.info("=" * 50)
+        except Exception as r:
+            None
 
-    # Test satu channel pertama yang gagal
-    ch = failed[0]
-    ch_id = ch["id"]
-    url = f"{API_BASE}/livestreamings/{ch_id}/stream?initialize=true"
-    x_client, x_signature = generate_x_signature()
-
-    headers = {
-        "x-api-key": API_KEY,
-        "x-api-platform": "web-mobile",
-        "x-secure-level": "2",
-        "luws": luws,
-        "x-client": x_client,
-        "x-signature": x_signature,
-        "User-Agent": USER_AGENT,
-        "Referer": REFERER,
-        "Origin": ORIGIN,
-        "Accept": "*/*",
-    }
-
-    log.info("\n  Channel: %s (ID: %d)", ch["title"], ch_id)
-    log.info("  URL: %s", url)
-    log.info("  x-client: %s", x_client)
-    log.info("  x-signature: %s", x_signature)
-    log.info("  luws: %s", luws)
-
-    try:
-        resp = session.get(url, headers=headers, timeout=15)
-        log.info("  Status: %d", resp.status_code)
-        log.info("  Headers: %s", dict(resp.headers))
-        log.info("  Body: %s", resp.text[:500])
-    except Exception as e:
-        log.info("  Error: %s", e)
-
-    # Coba tanpa x-signature
-    log.info("\n  --- Coba TANPA x-signature ---")
-    headers_no_sig = {k: v for k, v in headers.items() if k != "x-signature"}
-    try:
-        resp2 = session.get(url, headers=headers_no_sig, timeout=15)
-        log.info("  Status: %d", resp2.status_code)
-        log.info("  Body: %s", resp2.text[:500])
-    except Exception as e:
-        log.info("  Error: %s", e)
-
-    # Coba dengan x-client float (seperti web-mobile asli)
-    log.info("\n  --- Coba x-client FLOAT ---")
-    t_float = f"{time.time()}"
-    x_sig_float = hmac.new(
-        f"V1d10D3v:{int(time.time())}".encode(),
-        t_float.encode(),
-        hashlib.sha256
-    ).hexdigest()
-    headers_float = {
-        "x-api-key": API_KEY,
-        "x-api-platform": "web-mobile",
-        "x-secure-level": "2",
-        "luws": luws,
-        "x-client": t_float,
-        "x-signature": x_sig_float,
-        "User-Agent": USER_AGENT,
-        "Referer": REFERER,
-        "Origin": ORIGIN,
-        "Accept": "*/*",
-    }
-    try:
-        resp3 = session.get(url, headers=headers_float, timeout=15)
-        log.info("  Status: %d", resp3.status_code)
-        log.info("  Body: %s", resp3.text[:500])
-    except Exception as e:
-        log.info("  Error: %s", e)
-
-    log.info("\n" + "=" * 50)
-
-
-# ==================== M3U GENERATOR ====================
-def generate_m3u(channels: list, stream_urls: dict, output_file: str):
-    lines = ["#EXTM3U"]
-    count = 0
-
-    for ch in channels:
-        ch_id = ch["id"]
-        group = ch["title"]
-        logo = ch["cover_url"]
-        stream_url = stream_urls.get(ch_id, "")
-
-        if not stream_url:
-            log.warning("  [SKIP] No stream: %s", group)
-            continue
-
-        lines.append(
-            f'#EXTINF:-1 tvg-id="{ch_id}" '
-            f'tvg-name="{group}" '
-            f'tvg-logo="{logo}" '
-            f'group-title="{group}",'
-            f'{group}'
-        )
-        lines.append(f'#EXTVLCOPT:http-user-agent={USER_AGENT}')
-        lines.append(f'#EXTVLCOPT:http-referrer={REFERER}')
-        lines.append(f'#EXTVLCOPT:http-origin={ORIGIN}')
-        lines.append(stream_url)
-        count += 1
-
-    Path(output_file).write_text("\n".join(lines) + "\n", encoding="utf-8")
-    log.info("[✓] %s (%d channels)", output_file, count)
-
-
-# ==================== MAIN ====================
-def main():
-    parser = argparse.ArgumentParser(description="Vidio Live TV M3U Generator")
-    parser.add_argument("-o", "--output", type=str, default=OUTPUT_FILE)
-    parser.add_argument("--retries", type=int, default=2,
-                        help="Max retry attempts (default: 2)")
-    parser.add_argument("--debug", action="store_true",
-                        help="Debug failed channels")
-    args = parser.parse_args()
-
-    print("=" * 55)
-    print("  Vidio Live TV → M3U Playlist Generator")
-    print("  ALL channels + x-signature HMAC-SHA256")
-    print("=" * 55)
-
-    session = cffi_requests.Session(impersonate=IMPERSONATE)
-
-    # Step 1: Get luws
-    luws = get_luws(session)
-
-    # Step 2: Fetch ALL channels
-    channels = fetch_all_channels(session, luws)
-    if not channels:
-        log.error("Tidak ada channel ditemukan.")
-        sys.exit(1)
-
-    live_count = sum(1 for c in channels if c.get("is_live"))
-    log.info("\n  Total: %d channels (%d live, %d off)",
-             len(channels), live_count, len(channels) - live_count)
-
-    for ch in channels:
-        status = "● LIVE" if ch.get("is_live") else "○ OFF"
-        log.info("    [%s] %s  %s", ch["id"], ch["title"], status)
-
-    # Step 3: Fetch stream URLs
-    log.info("\nFetching stream URLs ...")
-    stream_urls = {}
-    failed = []
-
-    for i, ch in enumerate(channels, 1):
-        ch_id = ch["id"]
-        hls = fetch_stream_url(session, luws, ch_id)
-        if hls:
-            stream_urls[ch_id] = hls
-            log.info("  [%d/%d] %s ✓", i, len(channels), ch["title"])
-        else:
-            failed.append(ch)
-            log.warning("  [%d/%d] %s ✗", i, len(channels), ch["title"])
-        time.sleep(DELAY)
-
-    # Step 4: Retry failed
-    for attempt in range(1, args.retries + 1):
-        if not failed:
-            break
-        log.info("\nRetry %d/%d (%d channels, wait %ds) ...",
-                 attempt, args.retries, len(failed), RETRY_WAIT)
-        time.sleep(RETRY_WAIT)
-
-        still_failed = []
-        for ch in failed:
-            ch_id = ch["id"]
-            hls = fetch_stream_url(session, luws, ch_id)
-            if hls:
-                stream_urls[ch_id] = hls
-                log.info("  [RETRY %d] %s ✓", attempt, ch["title"])
-            else:
-                still_failed.append(ch)
-                log.warning("  [RETRY %d] %s ✗", attempt, ch["title"])
-            time.sleep(RETRY_DELAY)
-        failed = still_failed
-
-    # Step 5: Debug jika diminta
-    if failed and args.debug:
-        debug_failed_channels(session, luws, failed)
-
-    # Summary
-    log.info("\n  ─────────────────────────────────")
-    log.info("  Total : %d", len(channels))
-    log.info("  OK    : %d", len(stream_urls))
-    log.info("  Fail  : %d", len(failed))
-    log.info("  ─────────────────────────────────")
-
-    if failed:
-        log.info("  Tanpa stream:")
-        for ch in failed:
-            log.info("    - [%s] %s", ch["id"], ch["title"])
-
-    # Step 6: Generate M3U
-    log.info("\nGenerating M3U ...")
-    generate_m3u(channels, stream_urls, args.output)
-
-
+    def user_main(self):
+        green = "\033[0;32m"
+        white = "\033[0;37m"
+        os.system('cls' if os.name == "nt" else 'clear')
+        print(f"{green}\n\n  ()                       \n  /\\          _/_   /)     \n /  )  _   __ /  o // __  ,\n/__/__/_)_(_)<__<_//_/ (_/_ {white}  Agathasangkara{green}\n     /           />     /  \n    '           </     '   \n{white}\n"); UserThread().createThread()
+        
 if __name__ == "__main__":
-    main()   
+    index = UserThread().user_main()
