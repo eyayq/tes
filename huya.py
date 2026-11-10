@@ -15,7 +15,7 @@ import requests
 
 # ─── Konfigurasi ─────────────────────────────────────────────────
 TIMEOUT = 15
-MAX_WORKERS = 10          # dikurangi dari 20 untuk hindari rate-limit
+MAX_WORKERS = 10
 CLIENT_ID = "kimne78kx3ncx6brgo4mv6wki5h1ko"
 GQL_HASH = "c101f277c6ab7de34f64e63c90d698edae0d83ed5fad8efe198596b472ef3337"
 
@@ -88,7 +88,7 @@ def get_live_channels(count=100):
         """
 
         variables = {
-            "first": min(100, count - len(channels)),
+            "first": min(30, count - len(channels)),
             "after": after,
         }
 
@@ -133,7 +133,7 @@ def get_stream_url(channel, retries=2):
                 "operationName": "PrefetchPlaybackAccessToken",
                 "variables": {
                     "login": channel,
-                    "playerType": "embed",       # ← diubah dari "site"
+                    "playerType": "embed",
                     "platform": "web",
                 },
                 "extensions": {
@@ -179,7 +179,6 @@ def get_stream_url(channel, retries=2):
             session_id = str(uuid.uuid4())
             ch_lower = channel.lower()
 
-            # ── Usher v2 (endpoint baru) ──
             url = (
                 f"https://usher.ttvnw.net/api/v2/channel/hls/{ch_lower}.m3u8"
                 f"?sig={quote(sig, safe='')}"
@@ -206,7 +205,6 @@ def get_stream_url(channel, retries=2):
 def fetch_worker(args):
     idx, ch = args
     try:
-        # Jeda kecil antar request untuk hindari rate-limit
         time.sleep(random.uniform(0.05, 0.15))
         url = get_stream_url(ch["id"])
         return (idx, ch, url, None)
