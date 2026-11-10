@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-TWITCH M3U PLAYLIST GENERATOR v9 (curl_cffi)
+TWITCH M3U PLAYLIST GENERATOR v10
 """
 
 import time
@@ -21,18 +21,13 @@ MAX_WORKERS = 1
 CLIENT_ID = "kimne78kx3ncx6brgo4mv6wki5h1ko"
 GQL_HASH = "c101f277c6ab7de34f64e63c90d698edae0d83ed5fad8efe198596b472ef3337"
 
-# ===== ISI TOKEN DARI BROWSER DEVTOOLS =====
-AUTH_TOKEN = ""
-# ============================================
-
-# ─── Session (curl_cffi impersonate chrome) ──────────────────────
+# ─── Session ─────────────────────────────────────────────────────
 _session = cffi_requests.Session(impersonate="chrome")
 
 _DEVICE_ID = uuid.uuid4().hex[:16]
 _CLIENT_SESSION_ID = uuid.uuid4().hex[:16]
 _CLIENT_VERSION = None
 
-# Header dasar — JANGAN set User-Agent (curl_cffi handle otomatis)
 _session.headers.update({
     "Client-ID": CLIENT_ID,
     "Origin": "https://www.twitch.tv",
@@ -63,59 +58,16 @@ def _gen_request_id():
     return ''.join(random.choices(string.ascii_letters + string.digits, k=32))
 
 
-# ─── Client Integrity Token ──────────────────────────────────────
-_client_integrity = None
-_integrity_expiry = 0
-
-
-def get_client_integrity():
-    global _client_integrity, _integrity_expiry
-
-    if _client_integrity and time.time() < _integrity_expiry:
-        return _client_integrity
-
-    headers = {
-        "Client-Request-Id": _gen_request_id(),
-    }
-    if AUTH_TOKEN:
-        headers["Authorization"] = f"OAuth {AUTH_TOKEN}"
-
-    r = _session.post(
-        "https://gql.twitch.tv/integrity",
-        json={},
-        headers=headers,
-        timeout=TIMEOUT,
-    )
-
-    if r.status_code != 200:
-        print(f"  [INTEGRITY] HTTP {r.status_code}")
-        return None
-
-    data = r.json()
-    token = data.get("token")
-    if not token:
-        print(f"  [INTEGRITY] No token: {data}")
-        return None
-
-    expiry = data.get("expiration", 0)
-    _client_integrity = token
-    _integrity_expiry = (expiry / 1000) - 7200 if expiry else time.time() + 14 * 3600
-    return token
-
-
 # ─── GQL Request ─────────────────────────────────────────────────
-def _gql_request(payload, retries=3):
-    integrity = get_client_integrity()
-
+def _gql_request(payload, auth_token, integrity_token, retries=3):
     for attempt in range(retries + 1):
         try:
             headers = {
                 "Client-Request-Id": _gen_request_id(),
+                "Client-Integrity": integrity_token,
             }
-            if integrity:
-                headers["Client-Integrity"] = integrity
-            if AUTH_TOKEN:
-                headers["Authorization"] = f"OAuth {AUTH_TOKEN}"
+            if auth_token:
+                headers["Authorization"] = f"OAuth {auth_token}"
 
             r = _session.post(
                 "https://gql.twitch.tv/gql",
@@ -143,11 +95,7 @@ def _gql_request(payload, retries=3):
             errors = data.get("errors") if isinstance(data, dict) else None
             if errors:
                 msg = errors[0].get("message", "unknown")
-                if msg.lower() in ("server error", "service error") and attempt < retries:
-                    global _client_integrity, _integrity_expiry
-                    _client_integrity = None
-                    _integrity_expiry = 0
-                    integrity = get_client_integrity()
+                if attempt < retries:
                     wait = 2 ** attempt + random.uniform(0, 2)
                     print(f"  [TRANSIENT] '{msg}' — retry in {wait:.1f}s")
                     time.sleep(wait)
@@ -166,7 +114,7 @@ def _gql_request(payload, retries=3):
 
 
 # ─── Fetch LIVE channels ─────────────────────────────────────────
-def get_live_channels(count=100):
+def get_live_channels(auth_token, integrity_token, count=100):
     channels = []
     after = None
 
@@ -202,7 +150,10 @@ def get_live_channels(count=100):
             "after": after,
         }
 
-        data = _gql_request({"query": query, "variables": variables}, retries=4)
+        data = _gql_request(
+            {"query": query, "variables": variables},
+            auth_token, integrity_token, retries=4
+        )
         if data is None:
             break
 
@@ -232,7 +183,7 @@ def get_live_channels(count=100):
 
 
 # ─── Get stream URL ──────────────────────────────────────────────
-def get_stream_url(channel, retries=2):
+def get_stream_url(channel, auth_token, integrity_token, retries=2):
     for attempt in range(retries + 1):
         try:
             payload = [{
@@ -250,7 +201,7 @@ def get_stream_url(channel, retries=2):
                 }
             }]
 
-            data = _gql_request(payload, retries=0)
+            data = _gql_request(payload, auth_token, integrity_token, retries=0)
             if data is None:
                 if attempt < retries:
                     time.sleep(1)
@@ -325,42 +276,37 @@ def get_stream_url(channel, retries=2):
 
 # ─── Worker ──────────────────────────────────────────────────────
 def fetch_worker(args):
-    idx, ch = args
+    idx, ch, auth_token, integrity_token = args
     try:
         time.sleep(random.uniform(0.05, 0.15))
-        url = get_stream_url(ch["id"])
+        url = get_stream_url(ch["id"], auth_token, integrity_token)
         return (idx, ch, url, None)
     except Exception as e:
         return (idx, ch, None, str(e))
 
 
 # ─── Generate playlist ───────────────────────────────────────────
-def generate_playlist(output_file, max_channels, max_workers=MAX_WORKERS):
+def generate_playlist(output_file, max_channels, max_workers, auth_token, integrity_token):
     print("=" * 55)
-    print("  TWITCH M3U PLAYLIST GENERATOR v9 (curl_cffi)")
+    print("  TWITCH M3U PLAYLIST GENERATOR v10")
     print(f"  {max_channels} channels | {max_workers} threads")
     print("=" * 55)
 
     print(f"\n[0/3] Initializing...")
-    cv = _get_client_version()
-    print(f"  Client-Version: {cv}")
+    print(f"  Client-Version: {_get_client_version()}")
     print(f"  Device-ID:      {_DEVICE_ID}")
     print(f"  Session-ID:     {_CLIENT_SESSION_ID}")
-    print(f"  Auth-Token:     {'SET' if AUTH_TOKEN else 'NOT SET'}")
+    print(f"  Auth-Token:     {'SET' if auth_token else 'NOT SET'}")
+    print(f"  Integrity:      {'SET' if integrity_token else 'NOT SET'}")
     print(f"  TLS:            curl_cffi (impersonate=chrome)")
 
-    integrity = get_client_integrity()
-    if integrity:
-        print(f"  Integrity:      OK")
-    else:
-        print(f"  Integrity:      FAILED")
-
     print(f"\n[1/3] Fetching live channels...")
-    channels = get_live_channels(count=max_channels)
+    channels = get_live_channels(auth_token, integrity_token, count=max_channels)
     print(f"  Channel live ditemukan: {len(channels)}")
 
     if not channels:
         print("  [ERROR] Tidak ada channel live!")
+        print("  Kemungkinan integrity token expired — ambil yang baru dari browser.")
         return
 
     print(f"\n[2/3] Mengambil stream URL ({max_workers} threads)...")
@@ -368,7 +314,7 @@ def generate_playlist(output_file, max_channels, max_workers=MAX_WORKERS):
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = {
-            executor.submit(fetch_worker, (i, ch)): i
+            executor.submit(fetch_worker, (i, ch, auth_token, integrity_token)): i
             for i, ch in enumerate(channels)
         }
 
@@ -428,29 +374,35 @@ def generate_playlist(output_file, max_channels, max_workers=MAX_WORKERS):
 # ─── Main ────────────────────────────────────────────────────────
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='Twitch M3U Playlist Generator v9 (curl_cffi)')
-    parser.add_argument('--output', '-o', default='playlist.m3u',
+        description='Twitch M3U Playlist Generator v10')
+    parser.add_argument('--output', '-o', default='twitch.m3u',
                         help='File output M3U (default: twitch.m3u)')
     parser.add_argument('--channels', '-c', type=int, default=100,
                         help='Jumlah channel (default: 100)')
     parser.add_argument('--workers', '-w', type=int, default=MAX_WORKERS,
                         help='Jumlah thread paralel (default: 10)')
-    parser.add_argument('--auth-token', '-t', default=AUTH_TOKEN,
-                        help='OAuth token dari browser (wajib)')
+    parser.add_argument('--auth-token', '-t', default="",
+                        help='OAuth token dari browser DevTools')
+    parser.add_argument('--integrity', '-i', default="",
+                        help='Client-Integrity token dari browser DevTools')
     args = parser.parse_args()
 
-    if args.auth_token:
-        AUTH_TOKEN = args.auth_token
-        _session.headers["Authorization"] = f"OAuth {args.auth_token}"
+    if not args.auth_token:
+        print("[ERROR] --auth-token (-t) wajib!")
+        print("  Cara ambil: DevTools → Network → GQL request → header 'authorization'")
+        print("  Format: OAuth <token> → pass hanya bagian <token>")
+        exit(1)
 
-    if not AUTH_TOKEN:
-        print("[ERROR] AUTH_TOKEN kosong!")
-        print("  Ambil dari browser: DevTools → Network → GQL request → header 'authorization'")
-        print("  Atau pakai flag: --auth-token <token>")
+    if not args.integrity:
+        print("[ERROR] --integrity (-i) wajib!")
+        print("  Cara ambil: DevTools → Network → GQL request → header 'client-integrity'")
+        print("  Format: v4.local.<base64> (paste seluruhnya)")
         exit(1)
 
     generate_playlist(
         output_file=args.output,
         max_channels=args.channels,
         max_workers=args.workers,
+        auth_token=args.auth_token,
+        integrity_token=args.integrity,
     )   
