@@ -2,7 +2,9 @@
 """
 Vidio Live TV → M3U Playlist Generator
 ========================================
-Ambil SEMUA channel (live, upcoming, schedule, offline) + stream URL.
+Ambil SEMUA channel + stream URL non-DRM.
+6 channel besar (SCTV, Indosiar, TRANS TV, Trans7, Moji, Kompas TV)
+mungkin butuh penanganan khusus — debug block disertakan.
 
 Dependencies:
     pip install "curl-cffi<0.14"
@@ -90,10 +92,7 @@ def get_luws(session) -> str:
 
 # ==================== STEP 2: FETCH ALL CHANNELS ====================
 def fetch_all_channels(session, luws: str) -> list:
-    """
-    GET /livestreamings?stream_type=tv_stream
-    Mengembalikan SEMUA channel: live, upcoming, schedule, offline.
-    """
+    """GET /livestreamings?stream_type=tv_stream → SEMUA channel."""
     url = f"{API_BASE}/livestreamings"
     params = {"stream_type": "tv_stream"}
     headers = {
@@ -136,8 +135,6 @@ def fetch_all_channels(session, luws: str) -> list:
             "cover_url": attrs.get("cover_url", ""),
             "web_url": attrs.get("web_url", ""),
             "is_live": attrs.get("is_live", False),
-            "start_time": attrs.get("start_time", ""),
-            "end_time": attrs.get("end_time", ""),
         })
 
     log.info("  Found %d channels", len(channels))
@@ -145,7 +142,7 @@ def fetch_all_channels(session, luws: str) -> list:
 
 
 # ==================== STEP 3: FETCH STREAM URL ====================
-def fetch_stream_url(session, luws: str, ch_id: int) -> str:
+def fetch_stream_url(session, luws: str, ch_id: int, verbose: bool = False) -> str:
     """GET /livestreamings/{id}/stream?initialize=true"""
     url = f"{API_BASE}/livestreamings/{ch_id}/stream?initialize=true"
     x_client, x_signature = generate_x_signature()
@@ -170,10 +167,99 @@ def fetch_stream_url(session, luws: str, ch_id: int) -> str:
             hls = data.get("data", {}).get("attributes", {}).get("hls", "")
             if hls:
                 return hls
-    except Exception:
-        pass
+            if verbose:
+                log.info("  [DEBUG %d] 200 but no hls: %s", ch_id, json.dumps(data)[:400])
+        else:
+            if verbose:
+                log.info("  [DEBUG %d] HTTP %d: %s", ch_id, resp.status_code, resp.text[:300])
+    except Exception as e:
+        if verbose:
+            log.info("  [DEBUG %d] Exception: %s", ch_id, e)
 
     return ""
+
+
+# ==================== DEBUG: TEST CHANNEL YANG GAGAL ====================
+def debug_failed_channels(session, luws: str, failed: list):
+    """Debug channel yang gagal untuk lihat response sebenarnya."""
+    if not failed:
+        return
+
+    log.info("\n" + "=" * 50)
+    log.info("DEBUG: Testing %d failed channels", len(failed))
+    log.info("=" * 50)
+
+    # Test satu channel pertama yang gagal
+    ch = failed[0]
+    ch_id = ch["id"]
+    url = f"{API_BASE}/livestreamings/{ch_id}/stream?initialize=true"
+    x_client, x_signature = generate_x_signature()
+
+    headers = {
+        "x-api-key": API_KEY,
+        "x-api-platform": "web-mobile",
+        "x-secure-level": "2",
+        "luws": luws,
+        "x-client": x_client,
+        "x-signature": x_signature,
+        "User-Agent": USER_AGENT,
+        "Referer": REFERER,
+        "Origin": ORIGIN,
+        "Accept": "*/*",
+    }
+
+    log.info("\n  Channel: %s (ID: %d)", ch["title"], ch_id)
+    log.info("  URL: %s", url)
+    log.info("  x-client: %s", x_client)
+    log.info("  x-signature: %s", x_signature)
+    log.info("  luws: %s", luws)
+
+    try:
+        resp = session.get(url, headers=headers, timeout=15)
+        log.info("  Status: %d", resp.status_code)
+        log.info("  Headers: %s", dict(resp.headers))
+        log.info("  Body: %s", resp.text[:500])
+    except Exception as e:
+        log.info("  Error: %s", e)
+
+    # Coba tanpa x-signature
+    log.info("\n  --- Coba TANPA x-signature ---")
+    headers_no_sig = {k: v for k, v in headers.items() if k != "x-signature"}
+    try:
+        resp2 = session.get(url, headers=headers_no_sig, timeout=15)
+        log.info("  Status: %d", resp2.status_code)
+        log.info("  Body: %s", resp2.text[:500])
+    except Exception as e:
+        log.info("  Error: %s", e)
+
+    # Coba dengan x-client float (seperti web-mobile asli)
+    log.info("\n  --- Coba x-client FLOAT ---")
+    t_float = f"{time.time()}"
+    x_sig_float = hmac.new(
+        f"V1d10D3v:{int(time.time())}".encode(),
+        t_float.encode(),
+        hashlib.sha256
+    ).hexdigest()
+    headers_float = {
+        "x-api-key": API_KEY,
+        "x-api-platform": "web-mobile",
+        "x-secure-level": "2",
+        "luws": luws,
+        "x-client": t_float,
+        "x-signature": x_sig_float,
+        "User-Agent": USER_AGENT,
+        "Referer": REFERER,
+        "Origin": ORIGIN,
+        "Accept": "*/*",
+    }
+    try:
+        resp3 = session.get(url, headers=headers_float, timeout=15)
+        log.info("  Status: %d", resp3.status_code)
+        log.info("  Body: %s", resp3.text[:500])
+    except Exception as e:
+        log.info("  Error: %s", e)
+
+    log.info("\n" + "=" * 50)
 
 
 # ==================== M3U GENERATOR ====================
@@ -214,11 +300,13 @@ def main():
     parser.add_argument("-o", "--output", type=str, default=OUTPUT_FILE)
     parser.add_argument("--retries", type=int, default=2,
                         help="Max retry attempts (default: 2)")
+    parser.add_argument("--debug", action="store_true",
+                        help="Debug failed channels")
     args = parser.parse_args()
 
     print("=" * 55)
     print("  Vidio Live TV → M3U Playlist Generator")
-    print("  ALL channels: live + upcoming + schedule + offline")
+    print("  ALL channels + x-signature HMAC-SHA256")
     print("=" * 55)
 
     session = cffi_requests.Session(impersonate=IMPERSONATE)
@@ -232,16 +320,15 @@ def main():
         log.error("Tidak ada channel ditemukan.")
         sys.exit(1)
 
-    # Show summary
     live_count = sum(1 for c in channels if c.get("is_live"))
-    log.info("\n  Total: %d channels (%d live, %d offline/upcoming)",
+    log.info("\n  Total: %d channels (%d live, %d off)",
              len(channels), live_count, len(channels) - live_count)
 
     for ch in channels:
         status = "● LIVE" if ch.get("is_live") else "○ OFF"
         log.info("    [%s] %s  %s", ch["id"], ch["title"], status)
 
-    # Step 3: Fetch stream URLs (semua channel, bukan hanya yang live)
+    # Step 3: Fetch stream URLs
     log.info("\nFetching stream URLs ...")
     stream_urls = {}
     failed = []
@@ -261,7 +348,6 @@ def main():
     for attempt in range(1, args.retries + 1):
         if not failed:
             break
-
         log.info("\nRetry %d/%d (%d channels, wait %ds) ...",
                  attempt, args.retries, len(failed), RETRY_WAIT)
         time.sleep(RETRY_WAIT)
@@ -277,22 +363,25 @@ def main():
                 still_failed.append(ch)
                 log.warning("  [RETRY %d] %s ✗", attempt, ch["title"])
             time.sleep(RETRY_DELAY)
-
         failed = still_failed
+
+    # Step 5: Debug jika diminta
+    if failed and args.debug:
+        debug_failed_channels(session, luws, failed)
 
     # Summary
     log.info("\n  ─────────────────────────────────")
-    log.info("  Total channels : %d", len(channels))
-    log.info("  Stream OK      : %d", len(stream_urls))
-    log.info("  Stream gagal   : %d", len(failed))
+    log.info("  Total : %d", len(channels))
+    log.info("  OK    : %d", len(stream_urls))
+    log.info("  Fail  : %d", len(failed))
     log.info("  ─────────────────────────────────")
 
     if failed:
-        log.info("  Channel tanpa stream:")
+        log.info("  Tanpa stream:")
         for ch in failed:
             log.info("    - [%s] %s", ch["id"], ch["title"])
 
-    # Step 5: Generate M3U
+    # Step 6: Generate M3U
     log.info("\nGenerating M3U ...")
     generate_m3u(channels, stream_urls, args.output)
 
