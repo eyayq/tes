@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-TWITCH M3U PLAYLIST GENERATOR v16.3 (2 kategori, same page, debug)
+TWITCH M3U PLAYLIST GENERATOR v16.4 (fix async response.json)
 """
 
 import asyncio
@@ -19,7 +19,6 @@ GQL_HASH = "c101f277c6ab7de34f64e63c90d698edae0d83ed5fad8efe198596b472ef3337"
 
 PROXY = "https://pl-gratosv---al.bhns.workers.dev"
 
-# ─── Kategori ───────────────────────────────────────────────────
 CATEGORIES = [
     ("sports-1", "sports-1"),
     ("mobile-legends-bang-bang", "mobile-legends-bang-bang"),
@@ -79,56 +78,50 @@ def _deep_extract(obj, channels, seen, category_name=None):
             _deep_extract(item, channels, seen, category_name)
 
 
-# ─── Scrape kategori di PAGE YANG SAMA ──────────────────────────
+# ─── Scrape kategori (FIX: await response.json() di async context) ──
 async def scrape_category(page, cat_name, cat_slug, channels, seen, max_wait=10):
-    """Navigasi ke kategori di page yang sama (session preserved)."""
-    responses_data = []
+    response_objects = []
 
     def on_response(response):
         if "gql.twitch.tv/gql" in response.url:
-            try:
-                body = response.json()
-                responses_data.append(body)
-            except Exception:
-                pass
+            response_objects.append(response)
 
     page.on("response", on_response)
 
     url = f"https://www.twitch.tv/directory/category/{cat_slug}"
     before = len(channels)
 
-    # Navigasi di page yang sama
     await page.goto(url, timeout=30000, wait_until="commit")
     await page.wait_for_load_state("domcontentloaded", timeout=20000)
 
-    # Verifikasi URL
-    current_url = page.url
-    if "/directory/category/" not in current_url:
-        print(f"    [WARN] Redirect: {current_url}")
+    if "/directory/category/" not in page.url:
+        print(f"    [WARN] Redirect: {page.url}")
         page.remove_listener("response", on_response)
         return
 
-    # Tunggu GQL responses
     await asyncio.sleep(max_wait)
 
-    # Scroll untuk lazy-load
     for _ in range(5):
         await page.evaluate("window.scrollBy(0, 1000)")
         await asyncio.sleep(1.5)
 
     page.remove_listener("response", on_response)
 
-    # Parse
-    for data in responses_data:
-        if isinstance(data, list):
-            for item in data:
-                if isinstance(item, dict) and "data" in item:
-                    _deep_extract(item["data"], channels, seen, cat_name)
-        elif isinstance(data, dict) and "data" in data:
-            _deep_extract(data["data"], channels, seen, cat_name)
+    # ── AWAIT response.json() di sini ──
+    for resp in response_objects:
+        try:
+            body = await resp.json()
+            if isinstance(body, list):
+                for item in body:
+                    if isinstance(item, dict) and "data" in item:
+                        _deep_extract(item["data"], channels, seen, cat_name)
+            elif isinstance(body, dict) and "data" in body:
+                _deep_extract(body["data"], channels, seen, cat_name)
+        except Exception:
+            pass
 
     added = len(channels) - before
-    print(f"    GQL responses: {len(responses_data)}, channels baru: +{added}")
+    print(f"    GQL responses: {len(response_objects)}, channels baru: +{added}")
 
 
 # ─── Homepage queries ───────────────────────────────────────────
@@ -212,7 +205,6 @@ async def async_main(max_channels, headed):
             await context.add_cookies(cookies)
             print(f"\n[1/3] Cookies di-inject ({len(cookies)} cookies)")
 
-        # ── Capture headers ──
         captured = {
             "session_id": None, "device_id": None,
             "client_version": None, "authorization": None, "integrity": None,
@@ -230,17 +222,21 @@ async def async_main(max_channels, headed):
                 if integrity and not captured["integrity"]:
                     captured["integrity"] = integrity
 
-        def on_response(response):
+        def on_response_integrity(response):
             if "gql.twitch.tv/integrity" in response.url:
-                try:
-                    body = response.json()
-                    if body.get("token") and not captured["integrity"]:
-                        captured["integrity"] = body["token"]
-                except Exception:
-                    pass
+                # Simpan untuk di-await nanti
+                asyncio.ensure_future(_capture_integrity(response, captured))
+
+        async def _capture_integrity(response, captured):
+            try:
+                body = await response.json()
+                if body.get("token") and not captured["integrity"]:
+                    captured["integrity"] = body["token"]
+            except Exception:
+                pass
 
         page.on("request", on_request)
-        page.on("response", on_response)
+        page.on("response", on_response_integrity)
 
         await page.goto("https://www.twitch.tv", timeout=60000)
         await page.wait_for_load_state("domcontentloaded", timeout=30000)
@@ -276,17 +272,15 @@ async def async_main(max_channels, headed):
         # ── Scrape ──
         print(f"\n[2/3] Scrape channels...")
 
-        # Homepage
         print(f"  [Homepage] ...", end=" ", flush=True)
         await get_homepage_channels(page, hdrs, channels, seen)
         print(f"{len(channels)} channels")
 
-        # Kategori: SEKUENSIAL di page yang sama
         for cat_name, cat_slug in CATEGORIES:
             print(f"  [{cat_name}] ...", end=" ", flush=True)
             await scrape_category(page, cat_name, cat_slug, channels, seen, max_wait=10)
             print(f"(total: {len(channels)})")
-            await asyncio.sleep(2)  # Jeda antar kategori
+            await asyncio.sleep(2)
 
         await context.close()
 
@@ -324,13 +318,13 @@ async def async_main(max_channels, headed):
 
 # ─── Entry point ─────────────────────────────────────────────────
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Twitch M3U v16.3')
+    parser = argparse.ArgumentParser(description='Twitch M3U v16.4')
     parser.add_argument('--channels', '-c', type=int, default=100)
     parser.add_argument('--headed', action='store_true')
     args = parser.parse_args()
 
     print("=" * 55)
-    print("  TWITCH M3U PLAYLIST GENERATOR v16.3")
+    print("  TWITCH M3U PLAYLIST GENERATOR v16.4")
     print(f"  Kategori: Sports + Mobile Legends")
     print(f"  Proxy: {PROXY}")
     print("=" * 55)
