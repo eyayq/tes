@@ -22,11 +22,14 @@ PROXY = "https://pl-gratosv---al.bhns.workers.dev"
 # ═══════════════════════════════════════════════════════════════
 # COOKIES — UPDATE DI SINI SAJA (dari browser DevTools)
 # ═══════════════════════════════════════════════════════════════
-TWITCH_COOKIES = '[{"name":"auth-token","value":"i6znx2o7mcfa0ut0d2vq2ksp7otyzs","domain":".twitch.tv","path":"/"},{"name":"login","value":"bhianesse","domain":".twitch.tv","path":"/"},{"name":"name","value":"bhianesse","domain":".twitch.tv","path":"/"},{"name":"unique_id","value":"a69b3a50148aacf5","domain":".twitch.tv","path":"/"},{"name":"persistent","value":"1607987695::e00t5uzcsonvt8e8x8juh0m331yano","domain":".twitch.tv","path":"/"},{"name":"twilight-user","value":"{\"authToken\":\"i6znx2o7mcfa0ut0d2vq2ksp7otyzs\",\"displayName\":\"bhianesse\",\"id\":\"1607987695\",\"login\":\"bhianesse\",\"roles\":{\"isStaff\":false},\"version\":2}","domain":".twitch.tv","path":"/"}]'
-TWITCH_AUTH_TOKEN: "i6znx2o7mcfa0ut0d2vq2ksp7otyzs"
-TWITCH_DEVICE_ID: "a69b3a50148aacf5"
-TWITCH_SESSION_ID: "0c870fc0b6b3408f"
-TWITCH_CLIENT_VERSION: "a989fade-ca86-4058-933e-10133becfe0f"
+TWITCH_COOKIES = [
+    {"name": "auth-token", "value": "i6znx2o7mcfa0ut0d2vq2ksp7otyzs", "domain": ".twitch.tv", "path": "/"},
+    {"name": "login", "value": "bhianesse", "domain": ".twitch.tv", "path": "/"},
+    {"name": "name", "value": "bhianesse", "domain": ".twitch.tv", "path": "/"},
+    {"name": "unique_id", "value": "a69b3a50148aacf5", "domain": ".twitch.tv", "path": "/"},
+    {"name": "persistent", "value": "1607987695::e00t5uzcsonvt8e8x8juh0m331yano", "domain": ".twitch.tv", "path": "/"},
+    {"name": "twilight-user", "value": '{"authToken":"i6znx2o7mcfa0ut0d2vq2ksp7otyzs","displayName":"bhianesse","id":"1607987695","login":"bhianesse","roles":{"isStaff":false},"version":2}', "domain": ".twitch.tv", "path": "/"},
+]
 # ═══════════════════════════════════════════════════════════════
 
 # Kategori utama (di atas playlist)
@@ -51,12 +54,9 @@ def _load_cookies():
         except json.JSONDecodeError:
             pass
 
-    # 2. Konstanta di script
+    # 2. List Python langsung di script
     if TWITCH_COOKIES:
-        try:
-            return json.loads(TWITCH_COOKIES)
-        except json.JSONDecodeError:
-            pass
+        return TWITCH_COOKIES
 
     # 3. File
     if os.path.exists(_COOKIES_FILE):
@@ -194,7 +194,7 @@ async def get_homepage_channels(page, hdrs, channels, seen):
     d1 = await gql([{
         "operationName": "FrontPageNew_User",
         "variables": {"limit": 18},
-        "extensions": {"persistedQuery": {"version": 1, "sha256Hash": "64bd07a2cbaca80699d62636d966cf6395a5d14a14282067dcb28b13eb11"}}
+        "extensions": {"persistedQuery": {"version": 1, "sha256Hash": "64bd07a2cbaca80699d62636d966cf6395a5d14a1f0a14282067dcb28b13eb11"}}
     }])
     if d1:
         if isinstance(d1, list): d1 = d1[0]
@@ -338,7 +338,7 @@ async def async_main(max_channels, headed):
         extinf = f'#EXTINF:-1'
         if logo:
             extinf += f' tvg-logo="{logo}"'
-        extinf += f' group-title="{category}"'
+        extinf += f' group-title="{category} [tes vip twitch]"'
         extinf += f',{display_name}'
 
         lines.append(extinf)
@@ -388,3 +388,5 @@ if __name__ == '__main__':
     print("=" * 55)
 
     asyncio.run(async_main(args.channels, args.headed))   
+
+
