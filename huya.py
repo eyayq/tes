@@ -5,6 +5,7 @@ Vidio Live TV → M3U Playlist Generator
 1. Visit m.vidio.com → ambil cookie luws
 2. GET /livestreamings?stream_type=tv_stream → semua channel
 3. GET /livestreamings/{id}/stream?initialize=true → non-DRM HLS URL
+   (x-signature = HMAC-SHA256(key="V1d10D3v:{t}", msg=str(t)))
 4. Fallback: DRM pattern jika step 3 gagal
 
 Dependencies:
@@ -15,8 +16,9 @@ Run:
 """
 
 import argparse
+import hashlib
+import hmac
 import json
-import re
 import sys
 import time
 import uuid
@@ -41,7 +43,7 @@ API_KEY = (
     "/ieyIuWEkvNBqXdsdlXM2838+3SFjs9rtlntv7l7DHkBHWK1q/4vLGad8GAj3vfLciRFnquHuZMMW+4EX8yTe1w="
 )
 
-# Fallback: DRM pattern (tanpa token, selalu aktif)
+# Fallback: DRM pattern
 STREAM_DRM_PATTERN = (
     "https://etslive-v3-vidio-com-tokenized.akamaized.net"
     "/stream/{id}/file/drm/hls/master.m3u8"
@@ -63,6 +65,26 @@ logging.basicConfig(
 log = logging.getLogger("vidio-m3u")
 
 
+# ==================== X-SIGNATURE ====================
+def generate_x_signature() -> tuple:
+    """
+    Generate x-signature dan x-client untuk Vidio API.
+    Algoritma: HMAC-SHA256(key="V1d10D3v:{t}", message=str(t))
+    """
+    t = int(time.time())
+    secret_key = f"V1d10D3v:{t}"
+    message = str(t)
+
+    signature = hmac.new(
+        secret_key.encode(),
+        message.encode(),
+        hashlib.sha256
+    ).hexdigest()
+
+    x_client = str(t)
+    return x_client, signature
+
+
 # ==================== STEP 1: GET LUWS COOKIE ====================
 def get_luws(session) -> str:
     """Visit m.vidio.com untuk mendapatkan cookie luws."""
@@ -76,7 +98,7 @@ def get_luws(session) -> str:
     except Exception as e:
         log.warning("  Error visit site: %s", e)
 
-    # Fallback: generate UUID sendiri (format sama)
+    # Fallback: generate UUID sendiri
     log.info("  luws tidak di-set server, generate UUID baru")
     return f"{str(uuid.uuid4()).upper()}_"
 
@@ -135,10 +157,10 @@ def fetch_all_channels(session, luws: str) -> list:
 def fetch_stream_url(session, luws: str, ch_id: int) -> str:
     """
     GET /livestreamings/{id}/stream?initialize=true
-    Butuh: luws header + x-client (timestamp)
+    Dengan x-signature (HMAC-SHA256) + luws + x-client
     """
     url = f"{API_BASE}/livestreamings/{ch_id}/stream?initialize=true"
-    x_client = f"{time.time()}"
+    x_client, x_signature = generate_x_signature()
 
     headers = {
         "x-api-key": API_KEY,
@@ -146,6 +168,7 @@ def fetch_stream_url(session, luws: str, ch_id: int) -> str:
         "x-secure-level": "2",
         "luws": luws,
         "x-client": x_client,
+        "x-signature": x_signature,
         "User-Agent": USER_AGENT,
         "Referer": REFERER,
         "Origin": ORIGIN,
@@ -159,8 +182,12 @@ def fetch_stream_url(session, luws: str, ch_id: int) -> str:
             hls = data.get("data", {}).get("attributes", {}).get("hls", "")
             if hls:
                 return hls
-    except Exception:
-        pass
+            else:
+                log.debug("  No hls in response: %s", json.dumps(data)[:200])
+        else:
+            log.debug("  HTTP %d for channel %d", resp.status_code, ch_id)
+    except Exception as e:
+        log.debug("  Exception: %s", e)
 
     return ""
 
@@ -201,11 +228,16 @@ def main():
     parser.add_argument("-o", "--output", type=str, default=OUTPUT_FILE)
     parser.add_argument("--drm-only", action="store_true",
                         help="Skip non-DRM, langsung pakai DRM pattern")
+    parser.add_argument("--debug", action="store_true",
+                        help="Enable debug logging")
     args = parser.parse_args()
+
+    if args.debug:
+        logging.getLogger().setLevel(logging.DEBUG)
 
     print("=" * 55)
     print("  Vidio Live TV → M3U Playlist Generator")
-    print("  /livestreamings?stream_type=tv_stream + luws cookie")
+    print("  x-signature: HMAC-SHA256(V1d10D3v:{t}, str(t))")
     print("=" * 55)
 
     session = cffi_requests.Session(impersonate=IMPERSONATE)
