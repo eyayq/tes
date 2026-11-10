@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """
-TWITCH M3U PLAYLIST GENERATOR v4 (FIXED)
+TWITCH M3U PLAYLIST GENERATOR v4.1 (FIXED)
 """
 
-import json
 import time
 import argparse
 import uuid
@@ -29,7 +28,7 @@ _session.headers.update({
 
 
 def _gql_request(payload, retries=3):
-    """GQL request dengan retry + backoff untuk 429."""
+    """GQL request dengan retry untuk 429 DAN 'server error' di body."""
     for attempt in range(retries + 1):
         try:
             r = _session.post(
@@ -37,6 +36,8 @@ def _gql_request(payload, retries=3):
                 json=payload,
                 timeout=TIMEOUT,
             )
+
+            # HTTP level errors
             if r.status_code == 429:
                 wait = 2 ** attempt + random.uniform(0, 1)
                 print(f"  [RATE LIMIT] Waiting {wait:.1f}s...")
@@ -45,13 +46,32 @@ def _gql_request(payload, retries=3):
             if r.status_code != 200:
                 print(f"  [HTTP {r.status_code}] on GQL request")
                 if attempt < retries:
-                    time.sleep(1)
+                    time.sleep(2)
                     continue
                 return None
-            return r.json()
+
+            data = r.json()
+
+            # ── Cek error di body (termasuk "server error") ──
+            errors = data.get("errors") if isinstance(data, dict) else None
+            if errors:
+                msg = errors[0].get("message", "unknown")
+                # "server error" dan "service error" = transient, retry
+                if msg.lower() in ("server error", "service error") and attempt < retries:
+                    wait = 2 ** attempt + random.uniform(0, 2)
+                    print(f"  [TRANSIENT] '{msg}' — retry in {wait:.1f}s")
+                    time.sleep(wait)
+                    continue
+                print(f"  [ERROR] {msg}")
+                return None
+
+            return data
+
         except Exception as e:
             if attempt < retries:
-                time.sleep(1)
+                time.sleep(2)
+                print(f"  [EXCEPTION] {e} — retry...")
+
     return None
 
 
@@ -92,12 +112,8 @@ def get_live_channels(count=100):
             "after": after,
         }
 
-        data = _gql_request({"query": query, "variables": variables})
+        data = _gql_request({"query": query, "variables": variables}, retries=4)
         if data is None:
-            break
-
-        if "errors" in data:
-            print(f"  [ERROR] {data['errors'][0]['message']}")
             break
 
         streams_data = data.get("data", {}).get("streams", {})
@@ -133,7 +149,7 @@ def get_stream_url(channel, retries=2):
                 "operationName": "PrefetchPlaybackAccessToken",
                 "variables": {
                     "login": channel,
-                    "playerType": "embed",
+                    "playerType": "site",
                     "platform": "web",
                 },
                 "extensions": {
@@ -153,12 +169,6 @@ def get_stream_url(channel, retries=2):
 
             if isinstance(data, list):
                 data = data[0]
-
-            if "errors" in data:
-                if attempt < retries:
-                    time.sleep(1)
-                    continue
-                return None
 
             stream_info = data.get("data", {}).get("streamerInfo", {})
             stream = stream_info.get("stream")
@@ -215,7 +225,7 @@ def fetch_worker(args):
 # ─── Generate playlist ───────────────────────────────────────────
 def generate_playlist(output_file, max_channels, max_workers=MAX_WORKERS):
     print("=" * 55)
-    print("  TWITCH M3U PLAYLIST GENERATOR v4")
+    print("  TWITCH M3U PLAYLIST GENERATOR v4.1")
     print(f"  {max_channels} channels | {max_workers} threads")
     print("=" * 55)
 
@@ -292,7 +302,7 @@ def generate_playlist(output_file, max_channels, max_workers=MAX_WORKERS):
 # ─── Main ────────────────────────────────────────────────────────
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='Twitch M3U Playlist Generator v4')
+        description='Twitch M3U Playlist Generator v4.1')
     parser.add_argument('--output', '-o', default='twitch.m3u',
                         help='File output M3U (default: twitch.m3u)')
     parser.add_argument('--channels', '-c', type=int, default=100,
