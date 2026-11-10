@@ -28,10 +28,7 @@ jobs:
           playwright install chromium
 
       - name: Run Scraper
-        run: python huya.py -c 100 \
-         -t "i6znx2o7mcfa0ut0d2vq2ksp7otyzs" \
-         -i "v4.local.vZtXWtRlmEThh7UOI5fEE1UkGyEB06LxtAYW9eY6hkB4AzkZB0Eisg1IETihjlH0_Gfx4kLe3fnUh5EVeDw4Hzi5xchMfNDKiwbtCUoVZomlldXBX4MdpeYeBPGW4xJ7wKkX43741kHAgoAA0oVKAgXeAdrsZqVvQtnLcHZvVpddxZ8Pjeb-GarmJHd3Nwp-LjzNLI8JdO7BU9slN959XrCUP_hFh-qn6UbEXsNuejIqHipdaHMA6ny-BSVdjhN3QTgkhTZoT4G1xrWX1eY6B3uwmCMwK_aLp2qxlwrsPxOuy7-sQ0oKbJTFvpVBy8nZCYLK7YcZR0A85w7fk1b-8VP26MwzIg3lya4z2NS8JSZrgldyYooH6mh8rpBf9-n_Ju0auLLpvpgvn4SU9Ypf2WznUN1VbevSLoMiBX-aEHRsb5UdZpabNjnl5usVyZ8ErG3x994vos5GL19bEP-pLNVgArQ"
-
+        run: python huya.py -c 100 
       - name: Commit and Push
         run: |
           git config --local user.email "eyayq@users.noreply.github.com"
