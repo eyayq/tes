@@ -1,10 +1,6 @@
 #!/usr/bin/env python3
 """
-TWITCH M3U PLAYLIST GENERATOR v3 (FIXED)
-- GQL API: streams query (cursor pagination)
-- PrefetchPlaybackAccessToken
-- Output: twitch.m3u (HLS .m3u8)
-- Token expired: ~6 jam
+TWITCH M3U PLAYLIST GENERATOR v3 (FINAL)
 """
 
 import json
@@ -29,14 +25,14 @@ _session.headers.update({
 })
 
 
-# ─── Fetch LIVE channels dari Twitch GQL ─────────────────────────
+# ─── Fetch LIVE channels ─────────────────────────────────────────
 def get_live_channels(count=100):
     channels = []
     after = None
 
     while len(channels) < count:
         query = """
-        query Streams($first: Int!, $after: String) {
+        query Streams($first: Int!, $after: Cursor) {
             streams(first: $first, after: $after) {
                 edges {
                     node {
@@ -110,7 +106,7 @@ def get_live_channels(count=100):
     return channels[:count]
 
 
-# ─── Get stream URL via GQL ──────────────────────────────────────
+# ─── Get stream URL ──────────────────────────────────────────────
 def get_stream_url(channel, retries=2):
     for attempt in range(retries + 1):
         try:
@@ -202,7 +198,6 @@ def generate_playlist(output_file, max_channels, max_workers=MAX_WORKERS):
     print(f"  {max_channels} channels | {max_workers} threads")
     print("=" * 55)
 
-    # Step 1: Fetch live channels
     print(f"\n[1/3] Fetching live channels...")
     channels = get_live_channels(count=max_channels)
     print(f"  Channel live ditemukan: {len(channels)}")
@@ -211,7 +206,6 @@ def generate_playlist(output_file, max_channels, max_workers=MAX_WORKERS):
         print("  [ERROR] Tidak ada channel live!")
         return
 
-    # Step 2: Get stream URLs (PARALEL)
     print(f"\n[2/3] Mengambil stream URL ({max_workers} threads)...")
     results = [None] * len(channels)
 
@@ -229,7 +223,6 @@ def generate_playlist(output_file, max_channels, max_workers=MAX_WORKERS):
             if done_count % 20 == 0:
                 print(f"  Progress: {done_count}/{len(channels)}")
 
-    # Step 3: Build playlist
     print(f"\n[3/3] Membangun playlist...")
     lines = ['#EXTM3U']
     live_count = 0
