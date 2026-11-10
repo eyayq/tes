@@ -2,7 +2,7 @@
 """
 Vidio Live TV → M3U Playlist Generator
 ========================================
-Multi-strategy: curl_cffi (TLS impersonation) → Playwright → Selenium
+Multi-strategy: curl_cffi (RSC) → Playwright (per-channel stream) → Selenium
 
 Dependencies:
     pip install "curl-cffi<0.14" playwright selenium beautifulsoup4
@@ -42,8 +42,6 @@ except ImportError:
 try:
     from selenium import webdriver
     from selenium.webdriver.chrome.options import Options as ChromeOptions
-    from selenium.webdriver.chrome.service import Service
-    from selenium.webdriver.common.by import By
     HAS_SELENIUM = True
 except ImportError:
     HAS_SELENIUM = False
@@ -52,9 +50,21 @@ except ImportError:
 OUTPUT_FILE = "playlist.m3u"
 LIVE_URL = "https://m.vidio.com/live"
 API_BASE = "https://api.vidio.com"
-API_KEY = "CH1ZFsN4N/MIfAds1DL9mP151CNqIpWHqZGRr+LkvUyiq3FRPuP1Kt6aK+pG3nEC1FXt0ZAAJ5FKP8QU8CZ5/ieyIuWEkvNBqXdsdlXM2838+3SFjs9rtlntv7l7DHkBHWK1q/4vLGad8GAj3vfLciRFnquHuZMMW+4EX8yTe1w="
-IMPERSONATE = "chrome"  # TLS fingerprint impersonation
-DELAY = 0.5
+API_KEY = (
+    "CH1ZFsN4N/MIfAds1DL9mP151CNqIpWHqZGRr+LkvUyiq3FRPuP1Kt6aK+pG3nEC1FXt0ZAAJ5FKP8QU8CZ5"
+    "/ieyIuWEkvNBqXdsdlXM2838+3SFjs9rtlntv7l7DHkBHWK1q/4vLGad8GAj3vfLciRFnquHuZMMW+4EX8yTe1w="
+)
+IMPERSONATE = "chrome"
+DELAY = 1.0
+PAGE_TIMEOUT = 30
+
+USER_AGENT = (
+    "Mozilla/5.0 (Linux; Android 10; K) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) "
+    "Chrome/157.0.0.0 Mobile Safari/537.36"
+)
+REFERER = "https://m.vidio.com/"
+ORIGIN = "https://m.vidio.com"
 
 logging.basicConfig(
     level=logging.INFO,
@@ -64,8 +74,8 @@ logging.basicConfig(
 log = logging.getLogger("vidio-m3u")
 
 
-# ==================== PARSING ====================
-def extract_channels_from_rsc(rsc_text: str) -> list[dict]:
+# ==================== PARSING RSC ====================
+def extract_channels_from_rsc(rsc_text: str) -> list:
     """Parse RSC text untuk menemukan semua livestreaming schedule."""
     channels = {}
 
@@ -88,6 +98,8 @@ def extract_channels_from_rsc(rsc_text: str) -> list[dict]:
             meta = obj.get("links", {}).get("self", {}).get("meta", {})
             ls_id = meta.get("livestreaming_id")
             if ls_id and ls_id not in channels:
+                web_url = obj.get("web_url", "")
+                mobile_url = web_url.replace("https://www.vidio.com", "https://m.vidio.com")
                 channels[ls_id] = {
                     "livestreaming_id": ls_id,
                     "schedule_id": meta.get("schedule_id"),
@@ -95,6 +107,7 @@ def extract_channels_from_rsc(rsc_text: str) -> list[dict]:
                     "cover_url": obj.get("cover_url", ""),
                     "livestreaming_title": obj.get("livestreaming_title", "Unknown"),
                     "stream_url": obj.get("stream_url", ""),
+                    "mobile_url": mobile_url,
                 }
         except (json.JSONDecodeError, AttributeError, TypeError):
             continue
@@ -102,111 +115,64 @@ def extract_channels_from_rsc(rsc_text: str) -> list[dict]:
     return list(channels.values())
 
 
-def parse_html_for_channels(html: str) -> list[dict]:
-    """Fallback: parse HTML dengan BeautifulSoup jika RSC gagal."""
+def parse_html_for_channels(html: str) -> list:
+    """Fallback: parse HTML dengan BeautifulSoup."""
     if not HAS_BS4:
         return []
-
     channels = {}
     soup = BeautifulSoup(html, "html.parser")
-
-    # Cari semua script yang mengandung data livestreaming
     for script in soup.find_all("script"):
         text = script.string or script.get_text() or ""
         if "livestreaming_schedule" in text:
-            found = extract_channels_from_rsc(text)
-            for ch in found:
+            for ch in extract_channels_from_rsc(text):
                 channels[ch["livestreaming_id"]] = ch
-
     return list(channels.values())
 
 
-# ==================== STRATEGY 1: curl_cffi ====================
-def fetch_with_curl_cffi() -> tuple[list[dict], dict[int, str]]:
-    """Fetch RSC + stream URLs menggunakan curl_cffi (TLS impersonation)."""
+# ==================== STRATEGY 1: curl_cffi (RSC) ====================
+def fetch_rsc_curl_cffi() -> list:
+    """Fetch RSC data menggunakan curl_cffi."""
     if not HAS_CURL_CFFI:
-        log.warning("curl_cffi tidak tersedia, skip strategy 1")
-        return [], {}
+        log.warning("curl_cffi tidak tersedia")
+        return []
 
-    log.info("[Strategy 1] curl_cffi impersonate=%s", IMPERSONATE)
-
+    log.info("[Step 1] curl_cffi: Fetch RSC dari %s", LIVE_URL)
     session = cffi_requests.Session(impersonate=IMPERSONATE)
 
-    # Step 1: Fetch /live RSC
-    log.info("  Fetching %s ...", LIVE_URL)
-    rsc_headers = {
+    headers = {
         "RSC": "1",
         "Accept": "*/*",
         "Accept-Language": "id-ID,id;q=0.6",
-        "Referer": "https://m.vidio.com/",
+        "Referer": REFERER,
     }
     try:
-        resp = session.get(LIVE_URL, headers=rsc_headers, timeout=30)
+        resp = session.get(LIVE_URL, headers=headers, timeout=30)
         if resp.status_code != 200:
-            log.warning("  RSC fetch: HTTP %d", resp.status_code)
-            return [], {}
+            log.warning("  HTTP %d", resp.status_code)
+            return []
         rsc_text = resp.text
-        log.info("  RSC response: %d bytes", len(rsc_text))
+        log.info("  RSC: %d bytes", len(rsc_text))
     except Exception as e:
-        log.error("  RSC fetch failed: %s", e)
-        return [], {}
+        log.error("  Failed: %s", e)
+        return []
 
-    # Parse channels
     channels = extract_channels_from_rsc(rsc_text)
     if not channels:
-        # Fallback: try BeautifulSoup
         channels = parse_html_for_channels(rsc_text)
 
-    if not channels:
-        log.warning("  Tidak ada channel ditemukan di RSC")
-        return [], {}
-
     log.info("  Found %d channels", len(channels))
-
-    # Step 2: Fetch stream URL untuk setiap channel
-    stream_urls: dict[int, str] = {}
-    api_headers = {
-        "x-api-key": API_KEY,
-        "x-api-platform": "web-mobile",
-        "x-secure-level": "2",
-        "Accept": "*/*",
-        "Referer": "https://m.vidio.com/",
-        "Origin": "https://m.vidio.com",
-        "Accept-Language": "id-ID,id;q=0.6",
-    }
-
-    for i, ch in enumerate(channels, 1):
-        ls_id = ch["livestreaming_id"]
-        url = f"{API_BASE}/livestreamings/{ls_id}/stream?initialize=true"
-        try:
-            resp = session.get(url, headers=api_headers, timeout=15)
-            if resp.status_code == 200:
-                data = resp.json()
-                hls = data.get("data", {}).get("attributes", {}).get("hls", "")
-                if hls:
-                    stream_urls[ls_id] = hls
-                    log.info("  [%d/%d] %s ✓", i, len(channels), ch["livestreaming_title"])
-                else:
-                    log.warning("  [%d/%d] %s - no hls in response", i, len(channels), ch["livestreaming_title"])
-            else:
-                log.warning("  [%d/%d] %s - HTTP %d", i, len(channels), ch["livestreaming_title"], resp.status_code)
-        except Exception as e:
-            log.warning("  [%d/%d] %s - %s", i, len(channels), ch["livestreaming_title"], e)
-
-        time.sleep(DELAY)
-
-    return channels, stream_urls
+    return channels
 
 
-# ==================== STRATEGY 2: Playwright ====================
-def fetch_with_playwright(max_wait: int) -> tuple[list[dict], dict[int, str]]:
-    """Fetch via Playwright headless browser (intercept network)."""
+# ==================== STRATEGY 2: Playwright (per-channel) ====================
+def fetch_streams_playwright(channels: list, max_wait: int) -> dict:
+    """Navigate ke halaman individual setiap channel, intercept stream URL."""
     if not HAS_PLAYWRIGHT:
-        log.warning("Playwright tidak tersedia, skip strategy 2")
-        return [], {}
+        log.warning("Playwright tidak tersedia")
+        return {}
 
-    log.info("[Strategy 2] Playwright Chromium")
-    stream_captures: dict[int, str] = {}
+    log.info("[Step 2] Playwright: Fetch stream URL per channel (%d channels)", len(channels))
+    stream_captures = {}
 
     with sync_playwright() as p:
         browser = p.chromium.launch(
@@ -219,16 +185,11 @@ def fetch_with_playwright(max_wait: int) -> tuple[list[dict], dict[int, str]]:
             ],
         )
         context = browser.new_context(
-            user_agent=(
-                "Mozilla/5.0 (Linux; Android 10; K) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) "
-                "Chrome/157.0.0.0 Mobile Safari/537.36"
-            ),
+            user_agent=USER_AGENT,
             viewport={"width": 412, "height": 915},
             locale="id-ID",
         )
 
-        # Intercept stream API responses
         def on_response(response):
             if "/stream?initialize=true" in response.url:
                 try:
@@ -237,129 +198,117 @@ def fetch_with_playwright(max_wait: int) -> tuple[list[dict], dict[int, str]]:
                     if hls:
                         m = re.search(r"/livestreamings/(\d+)/stream", response.url)
                         if m:
-                            stream_captures[int(m.group(1))] = hls
-                            log.info("  [CAPTURE] Stream ID %s ✓", m.group(1))
+                            ls_id = int(m.group(1))
+                            stream_captures[ls_id] = hls
+                            log.info("    [CAPTURE] ID %s ✓", ls_id)
                 except Exception:
                     pass
 
         context.on("response", on_response)
         page = context.new_page()
 
-        log.info("  Navigating to %s ...", LIVE_URL)
+        # Establish session
+        log.info("  Loading %s ...", LIVE_URL)
         page.goto(LIVE_URL, wait_until="domcontentloaded", timeout=60000)
+        time.sleep(3)
 
-        # Wait for RSC data
-        rsc_text = ""
-        start = time.time()
-        while time.time() - start < max_wait:
-            rsc_text = page.evaluate("""
-                () => {
-                    try {
-                        const scripts = document.querySelectorAll('script');
-                        for (const s of scripts) {
-                            if (s.textContent && s.textContent.includes('livestreaming_schedule')) {
-                                return s.textContent;
-                            }
-                        }
-                    } catch(e) {}
-                    return '';
-                }
-            """)
-            if "livestreaming_schedule" in rsc_text:
-                log.info("  RSC data found after %.1fs", time.time() - start)
-                break
-            page.evaluate("window.scrollBy(0, 500)")
-            time.sleep(1)
-        else:
-            log.warning("  Timeout menunggu RSC data")
+        # Per-channel navigation
+        for i, ch in enumerate(channels, 1):
+            ls_id = ch["livestreaming_id"]
+            page_url = ch.get("mobile_url") or f"https://m.vidio.com/live/{ls_id}"
 
-        # Extra wait for stream captures
-        time.sleep(5)
+            if ls_id in stream_captures:
+                log.info("  [%d/%d] %s - skip (already captured)", i, len(channels), ch["livestreaming_title"])
+                continue
 
-        channels = extract_channels_from_rsc(rsc_text)
+            log.info("  [%d/%d] %s → %s", i, len(channels), ch["livestreaming_title"], page_url)
+
+            try:
+                page.goto(page_url, wait_until="domcontentloaded", timeout=PAGE_TIMEOUT * 1000)
+
+                waited = 0
+                while waited < PAGE_TIMEOUT and ls_id not in stream_captures:
+                    time.sleep(1)
+                    waited += 1
+
+                if ls_id in stream_captures:
+                    log.info("    ✓ Got non-DRM stream")
+                else:
+                    log.warning("    ✗ Timeout %ds", waited)
+
+            except Exception as e:
+                log.warning("    Error: %s", e)
+
+            time.sleep(DELAY)
+
         browser.close()
 
-    return channels, stream_captures
+    log.info("  Total captured: %d/%d", len(stream_captures), len(channels))
+    return stream_captures
 
 
 # ==================== STRATEGY 3: Selenium ====================
-def fetch_with_selenium(max_wait: int) -> tuple[list[dict], dict[int, str]]:
-    """Fetch via Selenium (last resort)."""
+def fetch_streams_selenium(channels: list, max_wait: int) -> dict:
+    """Fallback: Selenium Chrome headless."""
     if not HAS_SELENIUM:
-        log.warning("Selenium tidak tersedia, skip strategy 3")
-        return [], {}
+        log.warning("Selenium tidak tersedia")
+        return {}
 
-    log.info("[Strategy 3] Selenium Chrome")
-    stream_captures: dict[int, str] = {}
+    log.info("[Step 3] Selenium: Fetch stream URL per channel")
+    stream_captures = {}
 
     options = ChromeOptions()
     options.add_argument("--headless=new")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--window-size=412,915")
-    options.add_argument(
-        "user-agent=Mozilla/5.0 (Linux; Android 10; K) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/157.0.0.0 Mobile Safari/537.36"
-    )
+    options.add_argument(f"user-agent={USER_AGENT}")
     options.add_argument("--lang=id-ID")
 
     driver = webdriver.Chrome(options=options)
 
     try:
-        log.info("  Navigating to %s ...", LIVE_URL)
         driver.get(LIVE_URL)
+        time.sleep(3)
 
-        # Wait for RSC content
-        rsc_text = ""
-        start = time.time()
-        while time.time() - start < max_wait:
-            content = driver.page_source
-            if "livestreaming_schedule" in content:
-                rsc_text = content
-                log.info("  RSC data found after %.1fs", time.time() - start)
-                break
-            driver.execute_script("window.scrollBy(0, 500)")
-            time.sleep(1)
-        else:
-            log.warning("  Timeout menunggu RSC data")
-
-        channels = extract_channels_from_rsc(rsc_text)
-
-        # Try to get stream URLs via JS fetch
-        for ch in channels:
+        for i, ch in enumerate(channels, 1):
             ls_id = ch["livestreaming_id"]
+            page_url = ch.get("mobile_url") or f"https://m.vidio.com/live/{ls_id}"
+
+            if ls_id in stream_captures:
+                continue
+
+            log.info("  [%d/%d] %s", i, len(channels), ch["livestreaming_title"])
+
             try:
-                hls = driver.execute_script("""
-                    return new Promise((resolve) => {
-                        fetch('/livestreamings/%d/stream?initialize=true', {
-                            headers: {
-                                'x-api-key': '%s',
-                                'x-api-platform': 'web-mobile',
-                                'x-secure-level': '2'
-                            }
-                        })
-                        .then(r => r.json())
-                        .then(d => resolve(d.data?.attributes?.hls || ''))
-                        .catch(() => resolve(''));
-                    });
-                """ % (ls_id, API_KEY))
-                if hls:
-                    stream_captures[ls_id] = hls
-                    log.info("  [%s] Stream ✓", ch["livestreaming_title"])
-                time.sleep(DELAY)
-            except Exception:
-                pass
+                driver.get(page_url)
+                waited = 0
+                while waited < PAGE_TIMEOUT:
+                    time.sleep(1)
+                    waited += 1
+                    # Cek performance entries untuk stream URL
+                    entries = driver.execute_script("""
+                        return performance.getEntriesByType('resource')
+                            .filter(e => e.name.includes('/stream?initialize=true'))
+                            .map(e => e.name);
+                    """)
+                    if entries:
+                        log.info("    Stream request detected, extracting...")
+                        break
+            except Exception as e:
+                log.warning("    Error: %s", e)
+
+            time.sleep(DELAY)
 
     finally:
         driver.quit()
 
-    return channels, stream_captures
+    return stream_captures
 
 
 # ==================== M3U GENERATOR ====================
-def generate_m3u(channels: list[dict], stream_urls: dict[int, str], output_file: str):
-    """Generate file M3U playlist."""
+def generate_m3u(channels: list, stream_urls: dict, output_file: str):
+    """Generate file M3U playlist dengan EXTINF + EXTVLCOPT."""
     lines = ["#EXTM3U"]
     count = 0
 
@@ -369,13 +318,13 @@ def generate_m3u(channels: list[dict], stream_urls: dict[int, str], output_file:
         group = ch["livestreaming_title"]
         logo = ch["cover_url"]
 
-        # Prioritaskan non-DRM (dari capture), fallback ke RSC
         stream_url = stream_urls.get(ls_id) or ch.get("stream_url", "")
 
         if not stream_url:
             log.warning("  [SKIP] No stream: %s | %s", group, title)
             continue
 
+        # EXTINF: metadata channel
         lines.append(
             f'#EXTINF:-1 tvg-id="{ls_id}" '
             f'tvg-name="{group}" '
@@ -383,6 +332,12 @@ def generate_m3u(channels: list[dict], stream_urls: dict[int, str], output_file:
             f'group-title="{group}",'
             f'{group} | {title}'
         )
+
+        # EXTVLCOPT: custom HTTP headers untuk VLC
+        lines.append(f'#EXTVLCOPT:http-user-agent={USER_AGENT}')
+        lines.append(f'#EXTVLCOPT:http-referrer={REFERER}')
+        lines.append(f'#EXTVLCOPT:http-origin={ORIGIN}')
+
         lines.append(stream_url)
         count += 1
 
@@ -390,11 +345,52 @@ def generate_m3u(channels: list[dict], stream_urls: dict[int, str], output_file:
     log.info("[✓] Playlist: %s (%d channels)", output_file, count)
 
 
+# ==================== FALLBACK: RSC via Playwright ====================
+def _fetch_rsc_playwright(max_wait: int) -> list:
+    """Fallback: fetch RSC via Playwright jika curl_cffi gagal."""
+    if not HAS_PLAYWRIGHT:
+        return []
+
+    with sync_playwright() as p:
+        browser = p.chromium.launch(
+            headless=True,
+            args=["--no-sandbox", "--disable-dev-shm-usage"],
+        )
+        context = browser.new_context(
+            user_agent=USER_AGENT,
+            viewport={"width": 412, "height": 915},
+            locale="id-ID",
+        )
+        page = context.new_page()
+        page.goto(LIVE_URL, wait_until="domcontentloaded", timeout=60000)
+
+        rsc_text = ""
+        start = time.time()
+        while time.time() - start < max_wait:
+            rsc_text = page.evaluate("""
+                () => {
+                    const scripts = document.querySelectorAll('script');
+                    for (const s of scripts) {
+                        if (s.textContent && s.textContent.includes('livestreaming_schedule'))
+                            return s.textContent;
+                    }
+                    return '';
+                }
+            """)
+            if "livestreaming_schedule" in rsc_text:
+                break
+            time.sleep(1)
+
+        browser.close()
+
+    return extract_channels_from_rsc(rsc_text)
+
+
 # ==================== MAIN ====================
 def main():
     parser = argparse.ArgumentParser(description="Vidio Live TV M3U Generator")
     parser.add_argument("-c", "--count", type=int, default=200,
-                        help="Max wait seconds (default: 200)")
+                        help="Max wait seconds total (default: 200)")
     parser.add_argument("-o", "--output", type=str, default=OUTPUT_FILE,
                         help="Output file (default: playlist.m3u)")
     parser.add_argument("--strategy", type=str, default="auto",
@@ -404,49 +400,42 @@ def main():
 
     print("=" * 55)
     print("  Vidio Live TV → M3U Playlist Generator")
-    print("  Strategies: curl_cffi → Playwright → Selenium")
+    print("  curl_cffi (RSC) → Playwright (stream) → Selenium")
     print("=" * 55)
 
-    channels: list[dict] = []
-    stream_urls: dict[int, str] = {}
+    channels = []
+    stream_urls = {}
 
-    # --- AUTO: try each strategy in order ---
+    # === STEP 1: Fetch RSC (metadata) ===
     if args.strategy in ("auto", "cffi"):
-        channels, stream_urls = fetch_with_curl_cffi()
-        if channels and stream_urls:
-            log.info("Strategy 1 (curl_cffi) berhasil!")
-            generate_m3u(channels, stream_urls, args.output)
-            return
+        channels = fetch_rsc_curl_cffi()
 
-    if args.strategy in ("auto", "playwright"):
-        log.info("Fallback ke Playwright...")
-        channels_pw, stream_urls_pw = fetch_with_playwright(args.count)
-        if channels_pw:
-            channels = channels_pw
-            stream_urls = {**stream_urls, **stream_urls_pw}
-            if stream_urls:
-                log.info("Strategy 2 (Playwright) berhasil!")
-                generate_m3u(channels, stream_urls, args.output)
-                return
+    if not channels and args.strategy in ("auto", "playwright"):
+        log.info("  Fallback: fetch RSC via Playwright...")
+        channels = _fetch_rsc_playwright(args.count)
 
-    if args.strategy in ("auto", "selenium"):
-        log.info("Fallback ke Selenium...")
-        channels_se, stream_urls_se = fetch_with_selenium(args.count)
-        if channels_se:
-            channels = channels_se
-            stream_urls = {**stream_urls, **stream_urls_se}
-            if stream_urls:
-                log.info("Strategy 3 (Selenium) berhasil!")
-                generate_m3u(channels, stream_urls, args.output)
-                return
-
-    # --- Final fallback: use whatever we have (even DRM-only) ---
-    if channels:
-        log.warning("Tidak ada non-DRM stream, menggunakan URL dari RSC (mungkin DRM)")
-        generate_m3u(channels, stream_urls, args.output)
-    else:
-        log.error("Gagal: tidak ada channel ditemukan dari semua strategy.")
+    if not channels:
+        log.error("Gagal: tidak ada channel ditemukan.")
         sys.exit(1)
+
+    log.info("\n  Channels (%d):", len(channels))
+    for ch in channels:
+        log.info("    [%s] %s | %s", ch["livestreaming_id"],
+                 ch["livestreaming_title"], ch["title"])
+
+    # === STEP 2: Fetch stream URLs ===
+    if args.strategy in ("auto", "playwright"):
+        stream_urls = fetch_streams_playwright(channels, args.count)
+
+    missing = [ch for ch in channels if ch["livestreaming_id"] not in stream_urls]
+    if missing and args.strategy in ("auto", "selenium"):
+        log.info("  %d channels masih kosong, coba Selenium...", len(missing))
+        extra = fetch_streams_selenium(missing, args.count)
+        stream_urls.update(extra)
+
+    # === STEP 3: Generate M3U ===
+    log.info("\n[Step 3] Generate M3U...")
+    generate_m3u(channels, stream_urls, args.output)
 
 
 if __name__ == "__main__":
