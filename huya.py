@@ -2,6 +2,7 @@
 """
 VIDIO M3U PLAYLIST GENERATOR v5
 Semua API call via Playwright (TLS fingerprint konsisten).
+luws di-baca dari document.cookie → dikirim sebagai header.
 
 Dependencies:
     pip install playwright
@@ -42,6 +43,7 @@ USER_AGENT = (
 
 # ═══════════════════════════════════════════════════════════════
 # COOKIES — UPDATE DI SINI SAJA
+# F12 → Application → Cookies → https://m.vidio.com
 # ═══════════════════════════════════════════════════════════════
 VIDIO_COOKIES = [
     {"name": "ahoy_visitor", "value": "3489c20a-d32e-468a-bd1b-8f7d150fa132", "domain": ".vidio.com", "path": "/"},
@@ -92,61 +94,6 @@ def _load_cookies():
     return None
 
 
-# ─── JS: fetch stream URL via browser (TLS matches) ─────────────
-JS_FETCH_STREAM = """
-async (chId) => {
-    const t = Date.now() / 1000;
-    const xClient = t.toString();
-
-    // Generate x-signature: HMAC-SHA256(key="V1d10D3v:{int_t}", msg=xClient)
-    const intT = Math.floor(t);
-    const key = `V1d10D3v:${intT}`;
-
-    let signature = '';
-    try {
-        const encoder = new TextEncoder();
-        const cryptoKey = await crypto.subtle.importKey(
-            'raw', encoder.encode(key),
-            {name: 'HMAC', hash: 'SHA-256'}, false, ['sign']
-        );
-        const sigBuf = await crypto.subtle.sign('HMAC', cryptoKey, encoder.encode(xClient));
-        signature = Array.from(new Uint8Array(sigBuf))
-            .map(b => b.toString(16).padStart(2, '0')).join('');
-    } catch(e) {
-        return {error: 'sig_fail', detail: e.message};
-    }
-
-    try {
-        const resp = await fetch(
-            `https://api.vidio.com/livestreamings/${chId}/stream?initialize=true`,
-            {
-                method: 'GET',
-                headers: {
-                    'x-api-key': 'CH1ZFsN4N/MIfAds1DL9mP151CNqIpWHqZGRr+LkvUyiq3FRPuP1Kt6aK+pG3nEC1FXt0ZAAJ5FKP8QU8CZ5/ieyIuWEkvNBqXdsdlXM2838+3SFjs9rtlntv7l7DHkBHWK1q/4vLGad8GAj3vfLciRFnquHuZMMW+4EX8yTe1w=',
-                    'x-api-platform': 'web-mobile',
-                    'x-secure-level': '2',
-                    'x-client': xClient,
-                    'x-signature': signature,
-                    'x-user-login': 'true',
-                    'x-user-id': '186957857',
-                    'x-user-email': 'bhianesee05@gmail.com',
-                    'Accept': '*/*',
-                },
-                credentials: 'include',
-            }
-        );
-        if (resp.status === 200) {
-            const data = await resp.json();
-            const hls = data?.data?.attributes?.hls || '';
-            return {hls: hls, status: 200};
-        }
-        return {hls: '', status: resp.status, body: await resp.text()};
-    } catch(e) {
-        return {error: e.message};
-    }
-}
-"""
-
 # ─── JS: fetch channels via browser ─────────────────────────────
 JS_FETCH_CHANNELS = """
 async () => {
@@ -167,12 +114,70 @@ async () => {
                 credentials: 'include',
             }
         );
-        if (resp.status === 200) {
-            return await resp.json();
-        }
+        if (resp.status === 200) return await resp.json();
         return {error: true, status: resp.status};
     } catch(e) {
         return {error: true, message: e.message};
+    }
+}
+"""
+
+# ─── JS: fetch stream URL via browser ───────────────────────────
+# luws di-baca dari document.cookie → dikirim sebagai HEADER
+JS_FETCH_STREAM = """
+async (chId) => {
+    const t = Date.now() / 1000;
+    const xClient = t.toString();
+    const intT = Math.floor(t);
+    const key = `V1d10D3v:${intT}`;
+
+    // Generate x-signature: HMAC-SHA256
+    let signature = '';
+    try {
+        const encoder = new TextEncoder();
+        const cryptoKey = await crypto.subtle.importKey(
+            'raw', encoder.encode(key),
+            {name: 'HMAC', hash: 'SHA-256'}, false, ['sign']
+        );
+        const sigBuf = await crypto.subtle.sign('HMAC', cryptoKey, encoder.encode(xClient));
+        signature = Array.from(new Uint8Array(sigBuf))
+            .map(b => b.toString(16).padStart(2, '0')).join('');
+    } catch(e) {
+        return {error: 'sig_fail', detail: e.message};
+    }
+
+    // Baca luws dari document.cookie → kirim sebagai HEADER
+    let luws = '';
+    const m = document.cookie.match(/(?:^|;\\s*)luws=([^;]+)/);
+    if (m) luws = m[1];
+
+    try {
+        const resp = await fetch(
+            `https://api.vidio.com/livestreamings/${chId}/stream?initialize=true`,
+            {
+                method: 'GET',
+                headers: {
+                    'x-api-key': 'CH1ZFsN4N/MIfAds1DL9mP151CNqIpWHqZGRr+LkvUyiq3FRPuP1Kt6aK+pG3nEC1FXt0ZAAJ5FKP8QU8CZ5/ieyIuWEkvNBqXdsdlXM2838+3SFjs9rtlntv7l7DHkBHWK1q/4vLGad8GAj3vfLciRFnquHuZMMW+4EX8yTe1w=',
+                    'x-api-platform': 'web-mobile',
+                    'x-secure-level': '2',
+                    'x-client': xClient,
+                    'x-signature': signature,
+                    'x-user-login': 'true',
+                    'x-user-id': '186957857',
+                    'x-user-email': 'bhianesee05@gmail.com',
+                    'luws': luws,
+                    'Accept': '*/*',
+                },
+                credentials: 'include',
+            }
+        );
+        if (resp.status === 200) {
+            const data = await resp.json();
+            return {hls: data?.data?.attributes?.hls || '', status: 200};
+        }
+        return {hls: '', status: resp.status, body: await resp.text()};
+    } catch(e) {
+        return {error: e.message};
     }
 }
 """
@@ -238,19 +243,21 @@ async def async_main(output_file, retries):
         await page.goto(CHANNEL_URL, timeout=60000, wait_until="domcontentloaded")
         await asyncio.sleep(5)
 
-        # Verify login
-        is_logged_in = await page.evaluate(
-            "() => document.cookie.includes('plenty_id')"
-        )
+        # Verify login + luws
+        is_logged_in = await page.evaluate("() => document.cookie.includes('plenty_id')")
+        has_luws = await page.evaluate("() => document.cookie.includes('luws')")
         if is_logged_in:
             log.info("  ✓ Login OK")
         else:
             log.warning("  ✗ Tidak login")
+        if has_luws:
+            log.info("  ✓ luws aktif")
+        else:
+            log.warning("  ✗ luws belum ada")
 
-        # [2/3] Fetch channels + streams (via browser fetch)
+        # [2/3] Fetch channels + streams
         print("\n[2/3] Fetching channels + streams ...")
 
-        # Fetch channels
         ch_data = await page.evaluate(JS_FETCH_CHANNELS)
         if ch_data.get("error"):
             log.error("  Gagal fetch channels: %s", ch_data)
@@ -270,7 +277,6 @@ async def async_main(output_file, retries):
             logo = square.get("url", "") or landscape
             channels.append({"id": ch_id, "title": title, "logo": logo})
 
-        # Add extras
         existing = {c["id"] for c in channels}
         for ch_id, title in EXTRA_CHANNELS.items():
             if ch_id not in existing:
@@ -288,7 +294,7 @@ async def async_main(output_file, retries):
             await context.close()
             return
 
-        # Fetch all streams
+        # Fetch all
         start = time.time()
         stream_urls = {}
         failed = []
