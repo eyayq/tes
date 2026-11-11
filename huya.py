@@ -2,7 +2,7 @@
 """
 Vidio Live TV → M3U Playlist Generator
 API Key: static (channels) + dynamic via POST /auth (streams)
-Signature: scraped from full HTML page (dengan slug dari web_url)
+Signature: scraped from HTML page (handle escaped quotes Next.js RSC)
 Mode: Playwright (default) | curl_cffi (--no-browser)
 """
 
@@ -27,7 +27,6 @@ DELAY = 0.3
 RETRY_WAIT = 5
 IMPERSONATE = "chrome"
 
-# API key statis — untuk endpoint /livestreamings (channels list)
 STATIC_API_KEY = (
     "CH1ZFsN4N/MIfAds1DL9mP151CNqIpWHqZGRr+LkvUyiq3FRPuP1Kt6aK+pG3nEC1FXt0ZAAJ5FKP8QU8CZ5"
     "/ieyIuWEkvNBqXdsdlXM2838+3SFjs9rtlntv7l7DHkBHWK1q/4vLGad8GAj3vfLciRFnquHuZMMW+4EX8yTe1w="
@@ -131,16 +130,20 @@ def parse_channels(data: dict) -> list:
 
 
 def extract_signature_from_html(html: str) -> tuple:
-    script_pattern = re.compile(
-        r'<script[^>]*>([^<]*streamSignature[^<]*)</script>',
-        re.DOTALL
-    )
-    for match in script_pattern.finditer(html):
-        script_content = match.group(1)
-        m = re.search(
-            r'"clientId"\s*:\s*"([^"]+)"\s*,\s*"signature"\s*:\s*"([^"]+)"',
-            script_content
-        )
+    """
+    Extract streamSignature dari HTML page.
+    Handle escaped quotes (Next.js RSC) dan unescaped.
+    """
+    patterns = [
+        # Escaped quotes: \"clientId\":\"...\",\"signature\":\"...\"
+        r'\\"clientId\\"\s*:\s*\\"([^"\\]+)\\"\s*,\s*\\"signature\\"\s*:\s*\\"([^"\\]+)\\"',
+        # Unescaped: "clientId":"...","signature":"..."
+        r'"clientId"\s*:\s*"([^"]+)"\s*,\s*"signature"\s*:\s*"([^"]+)"',
+        # Loose: clientId ... signature (flexible separators)
+        r'clientId.{0,10}[:=].{0,10}["\\]+([^"\\,\s]{10,})["\\]+.{0,80}signature.{0,10}[:=].{0,10}["\\]+([^"\\,\s]{10,})["\\]+',
+    ]
+    for pat in patterns:
+        m = re.search(pat, html)
         if m:
             return m.group(1), m.group(2)
     return "", ""
@@ -223,7 +226,6 @@ async () => {
 }
 """
 
-# CHANNELS — pakai STATIC_API_KEY (di-pass dari Python)
 JS_FETCH_CHANNELS = r"""
 async (apiKey) => {
     try {
@@ -251,47 +253,53 @@ async (apiKey) => {
 }
 """
 
-# SIGNATURE — fetch full HTML page dengan web_url (slug + params)
+# FIX: handle escaped quotes (Next.js RSC) + fallback m.vidio.com
 JS_GET_SIGNATURE = r"""
 async (webUrl) => {
     try {
-        const url = 'https://www.vidio.com' + webUrl;
-        const resp = await fetch(url, {
-            method: 'GET',
-            headers: { 'Accept': 'text/html' },
+        // Coba www.vidio.com dulu
+        let html = '';
+        let resp = await fetch('https://www.vidio.com' + webUrl, {
             credentials: 'include',
         });
-        if (!resp.ok) return {error: 'page_fail', status: resp.status, url: url};
+        if (resp.ok) html = await resp.text();
 
-        const html = await resp.text();
-
-        const scriptRegex = /<script[^>]*>([^<]*streamSignature[^<]*)<\/script>/g;
-        let match;
-        while ((match = scriptRegex.exec(html)) !== null) {
-            const scriptContent = match[1];
-            const sigMatch = scriptContent.match(
-                /"clientId"\s*:\s*"([^"]+)"\s*,\s*"signature"\s*:\s*"([^"]+)"/
-            );
-            if (sigMatch) {
-                return {clientId: sigMatch[1], signature: sigMatch[2]};
-            }
+        // Fallback: coba m.vidio.com
+        if (!html.includes('streamSignature')) {
+            resp = await fetch('https://m.vidio.com' + webUrl, {
+                credentials: 'include',
+            });
+            if (resp.ok) html = await resp.text();
         }
 
-        const directMatch = html.match(
-            /"streamSignature"\s*:\s*\{[^}]*"clientId"\s*:\s*"([^"]+)"[^}]*"signature"\s*:\s*"([^"]+)"/
-        );
-        if (directMatch) {
-            return {clientId: directMatch[1], signature: directMatch[2]};
+        if (!html.includes('streamSignature')) {
+            return {error: 'no_streamSignature_at_all', url: webUrl, htmlLen: html.length};
         }
 
-        return {error: 'no_signature_found', url: url, sample: html.substring(0, 500)};
+        // Patterns: escaped (Next.js RSC) + unescaped + loose
+        const patterns = [
+            // Escaped: \"clientId\":\"...\",\"signature\":\"...\"
+            /\\?"clientId\\?"\s*:\s*\\?"([^"\\]+)\\?"\s*,\s*\\?"signature\\?"\s*:\s*\\?"([^"\\]+)\\?"/,
+            // Unescaped: "clientId":"...","signature":"..."
+            /"clientId"\s*:\s*"([^"]+)"\s*,\s*"signature"\s*:\s*"([^"]+)"/,
+            // Loose: clientId ... signature (flexible)
+            /clientId.{0,10}[:=].{0,10}["\\]+([^"\\,\s]{10,})["\\]+.{0,80}signature.{0,10}[:=].{0,10}["\\]+([^"\\,\s]{10,})["\\]+/,
+        ];
+
+        for (const pat of patterns) {
+            const m = html.match(pat);
+            if (m) return {clientId: m[1], signature: m[2]};
+        }
+
+        // Debug: return context di sekitar streamSignature
+        const idx = html.indexOf('streamSignature');
+        return {error: 'pattern_no_match', context: html.substring(Math.max(0, idx - 50), idx + 300)};
     } catch(e) {
         return {error: e.message};
     }
 }
 """
 
-# STREAM — pakai DYNAMIC API KEY (dari POST /auth)
 JS_FETCH_STREAM = r"""
 async ({chId, apiKey, clientId, signature}) => {
     let luws = '';
@@ -394,6 +402,7 @@ async def run_playwright(output_file: str, retries: int, drm_fallback: bool):
     print("  Vidio Live TV → M3U Playlist Generator")
     print("  Mode: Playwright (headless)")
     print("  Channels: static key | Streams: dynamic key")
+    print("  Signature: from HTML (escaped quotes handled)")
     print("=" * 55)
 
     cookies = _load_cookies()
@@ -434,7 +443,6 @@ async def run_playwright(output_file: str, retries: int, drm_fallback: bool):
             log.info("  ✓ Dynamic API Key: %s...", dynamic_key[:20])
         else:
             log.warning("  ✗ Gagal get dynamic key: %s", api_key_result)
-            log.info("  → Fallback ke static key untuk streams juga")
             dynamic_key = STATIC_API_KEY
 
         # [2/4] Fetch channels — STATIC KEY
@@ -453,10 +461,15 @@ async def run_playwright(output_file: str, retries: int, drm_fallback: bool):
         # [3/4] Fetch streams — DYNAMIC KEY
         print("\n[3/4] Fetching stream URLs ...")
 
+        # Test 1 channel
         test_ch = channels[0]
         test_sig = await page.evaluate(JS_GET_SIGNATURE, test_ch["web_url"])
         if test_sig.get("error"):
-            log.error("  ✗ Gagal signature: %s", test_sig)
+            log.error("  ✗ Gagal signature: %s", test_sig.get("error"))
+            if "context" in test_sig:
+                log.info("  Context: %s", test_sig["context"])
+            if "htmlLen" in test_sig:
+                log.info("  HTML length: %d", test_sig["htmlLen"])
             await context.close()
             return
         log.info("  ✓ Signature: clientId=%s... sig=%s...",
@@ -652,13 +665,25 @@ def run_curl_cffi(output_file: str, retries: int, drm_fallback: bool):
     print("\n[3/4] Fetching stream URLs ...")
 
     def get_signature(web_url: str) -> tuple:
+        """Ambil clientId + signature dari HTML page (www → m fallback)."""
+        # Coba www dulu
         try:
-            url = f"{WWW_URL}{web_url}"
-            resp = session.get(url, headers={"Accept": "text/html", "User-Agent": USER_AGENT},
+            resp = session.get(f"{WWW_URL}{web_url}",
+                               headers={"Accept": "text/html", "User-Agent": USER_AGENT},
                                timeout=20)
-            if resp.status_code != 200:
-                return "", ""
-            return extract_signature_from_html(resp.text)
+            if resp.status_code == 200 and "streamSignature" in resp.text:
+                cid, sig = extract_signature_from_html(resp.text)
+                if cid:
+                    return cid, sig
+        except Exception:
+            pass
+        # Fallback: m.vidio.com
+        try:
+            resp = session.get(f"{SITE_URL}{web_url}",
+                               headers={"Accept": "text/html", "User-Agent": USER_AGENT},
+                               timeout=20)
+            if resp.status_code == 200 and "streamSignature" in resp.text:
+                return extract_signature_from_html(resp.text)
         except Exception:
             pass
         return "", ""
@@ -691,7 +716,20 @@ def run_curl_cffi(output_file: str, retries: int, drm_fallback: bool):
     test_ch = channels[0]
     test_cid, test_sig = get_signature(test_ch["web_url"])
     if not test_cid:
-        log.error("  ✗ Gagal signature: %s", test_ch["web_url"])
+        log.error("  ✗ Gagal signature untuk %s (%s)", test_ch["title"], test_ch["web_url"])
+        # Debug: dump HTML untuk lihat format
+        try:
+            resp = session.get(f"{WWW_URL}{test_ch['web_url']}",
+                               headers={"Accept": "text/html", "User-Agent": USER_AGENT},
+                               timeout=20)
+            html = resp.text
+            idx = html.find("streamSignature")
+            if idx >= 0:
+                log.info("  Context: %s", html[max(0, idx-50):idx+300])
+            else:
+                log.info("  'streamSignature' TIDAK ADA di HTML (len=%d)", len(html))
+        except Exception:
+            pass
         sys.exit(1)
     log.info("  ✓ Signature: clientId=%s... sig=%s...", test_cid[:20], test_sig[:20])
 
@@ -786,3 +824,4 @@ def main():
 
 if __name__ == "__main__":
     main()   
+
