@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
 Vidio Live TV → M3U Playlist Generator
-Signature: di-scrape dari page RSC (bukan HMAC client-side)
+API Key: dynamic via POST /auth
+Signature: scraped from full HTML page (script tags)
 Mode: Playwright (default) | curl_cffi (--no-browser)
 """
 
@@ -18,18 +19,13 @@ from pathlib import Path
 
 # ==================== KONFIGURASI ====================
 API_BASE = "https://api.vidio.com"
+API_AUTH = "https://api.vidio.com/auth"
 SITE_URL = "https://m.vidio.com"
 WWW_URL = "https://www.vidio.com"
-LIVE_URL = "https://m.vidio.com/live"
 OUTPUT_FILE = "playlist.m3u"
 DELAY = 0.3
 RETRY_WAIT = 5
 IMPERSONATE = "chrome"
-
-API_KEY = (
-    "CH1ZFsN4N/MIfAds1DL9mP151CNqIpWHqZGRr+LkvUyiq3FRPuP1Kt6aK+pG3nEC1FXt0ZAAJ5FKP8QU8CZ5"
-    "/ieyIuWEkvNBqXdsdlXM2838+3SFjs9rtlntv7l7DHkBHWK1q/4vLGad8GAj3vfLciRFnquHuZMMW+4EX8yTe1w="
-)
 
 USER_AGENT = (
     "Mozilla/5.0 (Linux; Android 10; K) "
@@ -126,6 +122,30 @@ def parse_channels(data: dict) -> list:
     return channels
 
 
+def extract_signature_from_html(html: str) -> tuple:
+    """
+    Extract streamSignature from full HTML page.
+    Cari <script> tag yang mengandung 'streamSignature',
+    lalu parse sebagai Next.js RSC payload.
+    """
+    # Cari semua script tag yang mengandung 'streamSignature'
+    script_pattern = re.compile(
+        r'<script[^>]*>([^<]*streamSignature[^<]*)</script>',
+        re.DOTALL
+    )
+    for match in script_pattern.finditer(html):
+        script_content = match.group(1)
+        # Cari clientId dan signature di dalam script content
+        # Format RSC: ...streamSignature":{"clientId":"...","signature":"..."}...
+        m = re.search(
+            r'"clientId"\s*:\s*"([^"]+)"\s*,\s*"signature"\s*:\s*"([^"]+)"',
+            script_content
+        )
+        if m:
+            return m.group(1), m.group(2)
+    return "", ""
+
+
 # ==================== M3U GENERATOR ====================
 def generate_m3u(channels: list, stream_urls: dict, output_file: str, drm_fallback: bool = True):
     lines = ["#EXTM3U"]
@@ -160,8 +180,28 @@ def generate_m3u(channels: list, stream_urls: dict, output_file: str, drm_fallba
 
 
 # ═══════════════════════════════════════════════════════════════
-# JS SNIPPETS — SEMUA RAW STRING
+# JS SNIPPETS — RAW STRING
 # ═══════════════════════════════════════════════════════════════
+
+# POST ke /auth untuk dapat API key yang valid
+JS_GET_API_KEY = r"""
+async () => {
+    try {
+        const resp = await fetch('https://api.vidio.com/auth', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+        });
+        if (resp.status === 200) {
+            const data = await resp.json();
+            return {api_key: data.api_key || ''};
+        }
+        return {error: true, status: resp.status};
+    } catch(e) {
+        return {error: e.message};
+    }
+}
+"""
 
 JS_REFRESH_SESSION = r"""
 async () => {
@@ -169,7 +209,6 @@ async () => {
         const resp = await fetch('https://m.vidio.com/interactions.json', {
             method: 'GET',
             headers: {
-                'x-api-key': 'CH1ZFsN4N/MIfAds1DL9mP151CNqIpWHqZGRr+LkvUyiq3FRPuP1Kt6aK+pG3nEC1FXt0ZAAJ5FKP8QU8CZ5/ieyIuWEkvNBqXdsdlXM2838+3SFjs9rtlntv7l7DHkBHWK1q/4vLGad8GAj3vfLciRFnquHuZMMW+4EX8yTe1w=',
                 'x-api-platform': 'web-mobile',
                 'x-secure-level': '2',
                 'x-auth-prefer': 'AccessToken',
@@ -185,21 +224,19 @@ async () => {
 }
 """
 
+# Fetch channels — API key di-pass sebagai arg
 JS_FETCH_CHANNELS = r"""
-async () => {
+async (apiKey) => {
     try {
         const resp = await fetch(
             'https://api.vidio.com/livestreamings?stream_type=tv_stream',
             {
                 method: 'GET',
                 headers: {
-                    'x-api-key': 'CH1ZFsN4N/MIfAds1DL9mP151CNqIpWHqZGRr+LkvUyiq3FRPuP1Kt6aK+pG3nEC1FXt0ZAAJ5FKP8QU8CZ5/ieyIuWEkvNBqXdsdlXM2838+3SFjs9rtlntv7l7DHkBHWK1q/4vLGad8GAj3vfLciRFnquHuZMMW+4EX8yTe1w=',
-                    'x-api-platform': 'web-mobile',
+                    'x-api-key': apiKey,
+                    'x-api-platform': 'web-desktop',
                     'x-secure-level': '2',
-                    'x-api-app-info': 'js/m.vidio.com',
-                    'x-user-login': 'true',
                     'Accept': 'application/json',
-                    'Content-Type': 'application/vnd.api+json',
                 },
                 credentials: 'include',
             }
@@ -212,41 +249,48 @@ async () => {
 }
 """
 
+# Ambil signature dari FULL HTML PAGE (bukan ?_rsc=)
+# Navigate ke page dulu, lalu parse content
 JS_GET_SIGNATURE = r"""
 async (chId) => {
     try {
-        const rscParam = Math.random().toString(36).slice(2, 12);
+        // Fetch full HTML page (bukan ?_rsc=)
         const resp = await fetch(
-            `https://m.vidio.com/live/${chId}?_rsc=${rscParam}`,
+            `https://www.vidio.com/live/${chId}`,
             {
                 method: 'GET',
-                headers: { 'rsc': '1', 'accept': '*/*' },
+                headers: { 'Accept': 'text/html' },
                 credentials: 'include',
             }
         );
-        if (!resp.ok) return {error: 'rsc_fail', status: resp.status};
+        if (!resp.ok) return {error: 'page_fail', status: resp.status};
 
-        const text = await resp.text();
+        const html = await resp.text();
 
-        const patterns = [
-            /"streamSignature"\s*:\s*\{\s*"clientId"\s*:\s*"([^"]+)"\s*,\s*"signature"\s*:\s*"([^"]+)"/,
-            /"clientId"\s*:\s*"([^"]+)"\s*,\s*"signature"\s*:\s*"([^"]+)"/,
-        ];
-
-        for (const pat of patterns) {
-            const m = text.match(pat);
-            if (m) return {clientId: m[1], signature: m[2]};
+        // Cari <script> tag yang mengandung 'streamSignature'
+        const scriptRegex = /<script[^>]*>([^<]*streamSignature[^<]*)<\/script>/g;
+        let match;
+        while ((match = scriptRegex.exec(html)) !== null) {
+            const scriptContent = match[1];
+            // Cari clientId + signature
+            const sigMatch = scriptContent.match(
+                /"clientId"\s*:\s*"([^"]+)"\s*,\s*"signature"\s*:\s*"([^"]+)"/
+            );
+            if (sigMatch) {
+                return {clientId: sigMatch[1], signature: sigMatch[2]};
+            }
         }
 
-        return {error: 'no_signature_found', sample: text.substring(0, 300)};
+        return {error: 'no_signature_found', sample: html.substring(0, 500)};
     } catch(e) {
         return {error: e.message};
     }
 }
 """
 
+# Fetch stream — API key + clientId + signature di-pass
 JS_FETCH_STREAM = r"""
-async ({chId, clientId, signature}) => {
+async ({chId, apiKey, clientId, signature}) => {
     let luws = '';
     const m = document.cookie.match(/(?:^|;\s*)luws=([^;]+)/);
     if (m) luws = m[1];
@@ -257,7 +301,7 @@ async ({chId, clientId, signature}) => {
             {
                 method: 'GET',
                 headers: {
-                    'x-api-key': 'CH1ZFsN4N/MIfAds1DL9mP151CNqIpWHqZGRr+LkvUyiq3FRPuP1Kt6aK+pG3nEC1FXt0ZAAJ5FKP8QU8CZ5/ieyIuWEkvNBqXdsdlXM2838+3SFjs9rtlntv7l7DHkBHWK1q/4vLGad8GAj3vfLciRFnquHuZMMW+4EX8yTe1w=',
+                    'x-api-key': apiKey,
                     'x-api-platform': 'web-desktop',
                     'x-secure-level': '2',
                     'x-client': clientId,
@@ -350,7 +394,8 @@ async def run_playwright(output_file: str, retries: int, drm_fallback: bool):
     print("=" * 55)
     print("  Vidio Live TV → M3U Playlist Generator")
     print("  Mode: Playwright (headless)")
-    print("  Signature: scraped from RSC page")
+    print("  API Key: dynamic via POST /auth")
+    print("  Signature: scraped from full HTML page")
     print("=" * 55)
 
     cookies = _load_cookies()
@@ -367,14 +412,15 @@ async def run_playwright(output_file: str, retries: int, drm_fallback: bool):
         )
         page = context.pages[0] if context.pages else await context.new_page()
 
-        # [1/4] Inject + refresh
-        print("\n[1/4] Inject cookies + refresh session ...")
+        # [1/4] Inject + refresh + get API key
+        print("\n[1/4] Init session ...")
         await context.add_cookies(cookies)
         log.info("  ✓ Inject %d cookies", len(cookies))
 
         await page.goto(SITE_URL, timeout=30000, wait_until="domcontentloaded")
         await asyncio.sleep(2)
 
+        # Verify login
         result = await page.evaluate(JS_REFRESH_SESSION)
         if result.get("current_user"):
             user = result["current_user"]
@@ -385,9 +431,19 @@ async def run_playwright(output_file: str, retries: int, drm_fallback: bool):
             await context.close()
             return
 
+        # Get API key via POST /auth
+        api_key_result = await page.evaluate(JS_GET_API_KEY)
+        if api_key_result.get("api_key"):
+            api_key = api_key_result["api_key"]
+            log.info("  ✓ API Key: %s...", api_key[:20])
+        else:
+            log.error("  ✗ Gagal get API key: %s", api_key_result)
+            await context.close()
+            return
+
         # [2/4] Fetch channels
         print("\n[2/4] Fetching channels ...")
-        ch_data = await page.evaluate(JS_FETCH_CHANNELS)
+        ch_data = await page.evaluate(JS_FETCH_CHANNELS, api_key)
         if ch_data.get("error"):
             log.error("  Gagal: %s", ch_data)
             await context.close()
@@ -405,10 +461,12 @@ async def run_playwright(output_file: str, retries: int, drm_fallback: bool):
             log.error("  ✗ Gagal ambil signature: %s", test_sig)
             await context.close()
             return
-        log.info("  ✓ Signature OK: clientId=%s...", test_sig["clientId"][:16])
+        log.info("  ✓ Signature: clientId=%s... sig=%s...",
+                 test_sig["clientId"][:20], test_sig["signature"][:20])
 
         test_stream = await page.evaluate(JS_FETCH_STREAM, {
             "chId": channels[0]["id"],
+            "apiKey": api_key,
             "clientId": test_sig["clientId"],
             "signature": test_sig["signature"],
         })
@@ -434,6 +492,7 @@ async def run_playwright(output_file: str, retries: int, drm_fallback: bool):
 
             result = await page.evaluate(JS_FETCH_STREAM, {
                 "chId": ch_id,
+                "apiKey": api_key,
                 "clientId": sig["clientId"],
                 "signature": sig["signature"],
             })
@@ -462,6 +521,7 @@ async def run_playwright(output_file: str, retries: int, drm_fallback: bool):
                     continue
                 result = await page.evaluate(JS_FETCH_STREAM, {
                     "chId": ch_id,
+                    "apiKey": api_key,
                     "clientId": sig["clientId"],
                     "signature": sig["signature"],
                 })
@@ -510,27 +570,26 @@ def run_curl_cffi(output_file: str, retries: int, drm_fallback: bool):
     print("=" * 55)
     print("  Vidio Live TV → M3U Playlist Generator")
     print("  Mode: curl_cffi (TLS impersonation)")
-    print("  Signature: scraped from RSC page")
+    print("  API Key: dynamic via POST /auth")
+    print("  Signature: scraped from full HTML page")
     print("=" * 55)
 
     session = cffi_requests.Session(impersonate=IMPERSONATE)
 
-    # [1/4] Refresh session
-    print("\n[1/4] Refresh session ...")
+    # [1/4] Refresh session + get API key
+    print("\n[1/4] Init session ...")
     try:
         session.get(SITE_URL, timeout=30)
     except Exception as e:
         log.warning("  Visit gagal: %s", e)
 
     luws = session.cookies.get("luws", "") or f"{str(uuid.uuid4()).upper()}_"
-    ahoy_visitor = session.cookies.get("ahoy_visitor", "")
-    log.info("  ✓ luws: %s...", luws[:16])
 
+    # Verify login
     try:
         resp = session.get(
             f"{SITE_URL}/interactions.json",
             headers={
-                "x-api-key": API_KEY,
                 "x-api-platform": "web-mobile",
                 "x-secure-level": "2",
                 "x-auth-prefer": "AccessToken",
@@ -549,24 +608,37 @@ def run_curl_cffi(output_file: str, retries: int, drm_fallback: bool):
     except Exception as e:
         log.warning("  Verify gagal: %s", e)
 
+    # Get API key via POST /auth
+    try:
+        resp = session.post(API_AUTH, timeout=15)
+        if resp.status_code == 200:
+            api_key = resp.json().get("api_key", "")
+            if api_key:
+                log.info("  ✓ API Key: %s...", api_key[:20])
+            else:
+                log.error("  ✗ API key kosong")
+                sys.exit(1)
+        else:
+            log.error("  ✗ POST /auth HTTP %d", resp.status_code)
+            sys.exit(1)
+    except Exception as e:
+        log.error("  ✗ POST /auth gagal: %s", e)
+        sys.exit(1)
+
     # [2/4] Fetch channels
     print("\n[2/4] Fetching channels ...")
     headers = {
-        "x-api-key": API_KEY,
-        "x-api-platform": "web-mobile",
+        "x-api-key": api_key,
+        "x-api-platform": "web-desktop",
         "x-secure-level": "2",
-        "x-visitor-id": ahoy_visitor,
-        "x-api-app-info": "js/m.vidio.com",
-        "x-user-login": "true",
-        "luws": luws,
         "Accept": "application/json",
-        "Content-Type": "application/vnd.api+json",
         "User-Agent": USER_AGENT,
         "Referer": REFERER,
         "Origin": ORIGIN,
     }
     try:
-        resp = session.get(f"{API_BASE}/livestreamings", params={"stream_type": "tv_stream"},
+        resp = session.get(f"{API_BASE}/livestreamings",
+                           params={"stream_type": "tv_stream"},
                            headers=headers, timeout=30)
         if resp.status_code != 200:
             log.error("  HTTP %d", resp.status_code)
@@ -582,27 +654,16 @@ def run_curl_cffi(output_file: str, retries: int, drm_fallback: bool):
     print("\n[3/4] Fetching stream URLs ...")
 
     def get_signature(ch_id: int) -> tuple:
+        """Ambil clientId + signature dari full HTML page."""
         try:
-            rsc_param = uuid.uuid4().hex[:10]
             resp = session.get(
-                f"{SITE_URL}/live/{ch_id}?_rsc={rsc_param}",
-                headers={"rsc": "1", "Accept": "*/*"},
-                timeout=15,
+                f"{WWW_URL}/live/{ch_id}",
+                headers={"Accept": "text/html", "User-Agent": USER_AGENT},
+                timeout=20,
             )
             if resp.status_code != 200:
                 return "", ""
-            text = resp.text
-            m = re.search(
-                r'"streamSignature"\s*:\s*\{\s*"clientId"\s*:\s*"([^"]+)"\s*,\s*"signature"\s*:\s*"([^"]+)"',
-                text
-            )
-            if not m:
-                m = re.search(
-                    r'"clientId"\s*:\s*"([^"]+)"\s*,\s*"signature"\s*:\s*"([^"]+)"',
-                    text
-                )
-            if m:
-                return m.group(1), m.group(2)
+            return extract_signature_from_html(resp.text)
         except Exception:
             pass
         return "", ""
@@ -612,7 +673,7 @@ def run_curl_cffi(output_file: str, retries: int, drm_fallback: bool):
             resp = session.get(
                 f"{API_BASE}/livestreamings/{ch_id}/stream?initialize=true",
                 headers={
-                    "x-api-key": API_KEY,
+                    "x-api-key": api_key,
                     "x-api-platform": "web-desktop",
                     "x-secure-level": "2",
                     "x-client": client_id,
@@ -636,6 +697,8 @@ def run_curl_cffi(output_file: str, retries: int, drm_fallback: bool):
     if not test_cid:
         log.error("  ✗ Gagal ambil signature untuk channel pertama")
         sys.exit(1)
+    log.info("  ✓ Signature: clientId=%s... sig=%s...", test_cid[:20], test_sig[:20])
+
     test_hls = fetch_stream(channels[0]["id"], test_cid, test_sig)
     if not test_hls:
         log.error("  ✗ Stream test gagal")
