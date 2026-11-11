@@ -2,9 +2,10 @@
 """
 Vidio Live TV → M3U Playlist Generator (Complete)
 ==================================================
-- Scrape semua channel dari /categories/live/sections (included[], type="content")
-- Non-DRM: fetch via API stream (valid 2 jam)
+- Scrape semua channel dari /categories/live/sections (included[])
+- Non-DRM: fetch via API stream (valid 2 jam) — 3 attempt (auth, anonymous, preview)
 - DRM: fallback ke URL DRM + license proxy (Cloudflare Worker)
+- EXT VLCOPT: user-agent, origin, referrer per channel
 - Auto-refresh loop (opsional)
 
 Dependencies:
@@ -56,6 +57,15 @@ API_KEY = (
     "CH1ZFsN4N/MIfAds1DL9mP151CNqIpWHqZGRr+LkvUyiq3FRPuP1Kt6aK+pG3nEC1FXt0ZAAJ5FKP8QU8CZ5"
     "/ieyIuWEkvNBqXdsdlXM2838+3SFjs9rtlntv7l7DHkBHWK1q/4vLGad8GAj3vfLciRFnquHuZMMW+4EX8yTe1w="
 )
+
+# Browser headers (untuk EXT VLCOPT)
+USER_AGENT = (
+    "Mozilla/5.0 (Linux; Android 10; K) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) "
+    "Chrome/157.0.0.0 Mobile Safari/537.36"
+)
+REFERER = "https://m.vidio.com/"
+ORIGIN = "https://m.vidio.com"
 
 # ==================== USER (UPDATE DI SINI) ====================
 USER_ID = "186957857"
@@ -120,8 +130,8 @@ def verify_login(session) -> bool:
         "x-api-platform": "web-mobile",
         "x-secure-level": "2",
         "x-auth-prefer": "AccessToken",
-        "origin": "https://m.vidio.com",
-        "referer": "https://m.vidio.com/",
+        "origin": ORIGIN,
+        "referer": REFERER,
         "accept": "*/*",
         "accept-language": "id",
     }
@@ -151,8 +161,8 @@ def fetch_all_channels(session, luws: str) -> list:
         "x-visitor-id": AHOY_VISITOR,
         "x-user-id": USER_ID,
         "luws": luws,
-        "origin": "https://m.vidio.com",
-        "referer": "https://m.vidio.com",
+        "origin": ORIGIN,
+        "referer": REFERER,
         "accept": "application/json",
         "accept-language": "id",
     }
@@ -201,11 +211,6 @@ def fetch_all_channels(session, luws: str) -> list:
                 t = item.get("type", "?")
                 types[t] = types.get(t, 0) + 1
             log.info("  [DEBUG] included types: %s", types)
-            # Sample
-            for item in included:
-                if item.get("type") == "content":
-                    log.info("  [DEBUG] sample: %s", json.dumps(item, ensure_ascii=False)[:400])
-                    break
 
         for item in included:
             if item.get("type") != "content":
@@ -218,10 +223,9 @@ def fetch_all_channels(session, luws: str) -> list:
             if content_type != "livestreaming":
                 continue
 
-            # Channel ID: dari attributes.content_id
+            # Channel ID
             ch_id = attrs.get("content_id")
             if not ch_id:
-                # Fallback: extract dari id "section-123-livestreaming-204"
                 id_str = str(item.get("id", ""))
                 parts = id_str.split("-")
                 try:
@@ -236,7 +240,7 @@ def fetch_all_channels(session, luws: str) -> list:
             if ch_id in channels:
                 continue
 
-            # Title: prefer alt_title (nama channel), fallback title
+            # Title: prefer alt_title (nama channel)
             title = attrs.get("alt_title") or attrs.get("title", "Unknown")
 
             # Logo
@@ -283,10 +287,15 @@ def fetch_all_channels(session, luws: str) -> list:
 
 # ==================== STEP 4: FETCH NON-DRM STREAM URL ====================
 def fetch_stream_url(session, luws: str, ch_id: int) -> str:
+    """
+    GET /livestreamings/{id}/stream?initialize=true
+    3 attempt: full auth → anonymous → x-user-login=false
+    """
     url = f"{API_BASE}/livestreamings/{ch_id}/stream?initialize=true"
-    x_client, x_signature = generate_x_signature()
 
-    h = {
+    # --- Attempt 1: Full auth ---
+    x_client, x_signature = generate_x_signature()
+    h1 = {
         "x-api-key": API_KEY,
         "x-api-platform": "web-mobile",
         "x-secure-level": "2",
@@ -295,33 +304,93 @@ def fetch_stream_url(session, luws: str, ch_id: int) -> str:
         "luws": luws,
         "x-client": x_client,
         "x-signature": x_signature,
-        "origin": "https://m.vidio.com",
-        "referer": "https://m.vidio.com",
+        "origin": ORIGIN,
+        "referer": REFERER,
         "sec-fetch-site": "same-site",
         "sec-fetch-mode": "cors",
         "sec-fetch-dest": "empty",
         "accept": "*/*",
         "accept-language": "id",
     }
+    result = _try_stream(session, url, h1, ch_id)
+    if result:
+        return result
 
+    # --- Attempt 2: Anonymous (tanpa user headers) ---
+    x_client2, x_signature2 = generate_x_signature()
+    h2 = {
+        "x-api-key": API_KEY,
+        "x-api-platform": "web-mobile",
+        "x-secure-level": "1",
+        "luws": luws,
+        "x-client": x_client2,
+        "x-signature": x_signature2,
+        "origin": ORIGIN,
+        "referer": REFERER,
+        "sec-fetch-site": "same-site",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-dest": "empty",
+        "accept": "*/*",
+        "accept-language": "id",
+    }
+    result = _try_stream(session, url, h2, ch_id)
+    if result:
+        log.debug("  ch %d: preview OK (anonymous)", ch_id)
+        return result
+
+    # --- Attempt 3: x-user-login=false ---
+    x_client3, x_signature3 = generate_x_signature()
+    h3 = {
+        "x-api-key": API_KEY,
+        "x-api-platform": "web-mobile",
+        "x-secure-level": "2",
+        "x-user-login": "false",
+        "luws": luws,
+        "x-client": x_client3,
+        "x-signature": x_signature3,
+        "origin": ORIGIN,
+        "referer": REFERER,
+        "sec-fetch-site": "same-site",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-dest": "empty",
+        "accept": "*/*",
+        "accept-language": "id",
+    }
+    result = _try_stream(session, url, h3, ch_id)
+    if result:
+        log.debug("  ch %d: preview OK (x-user-login=false)", ch_id)
+        return result
+
+    return ""
+
+
+def _try_stream(session, url: str, headers: dict, ch_id: int) -> str:
+    """Try one stream request, return hls url or ''."""
     try:
-        resp = session.get(url, headers=h, timeout=15)
+        resp = session.get(url, headers=headers, timeout=15)
         if resp.status_code == 200:
             data = resp.json()
             attrs = data.get("data", {}).get("attributes", {})
             hls = attrs.get("hls", "")
             if hls:
                 return hls
-            log.debug("  No hls for ch %d", ch_id)
-        else:
-            log.debug("  HTTP %d for ch %d: %s", resp.status_code, ch_id, resp.text[:100])
+        elif resp.status_code == 403:
+            try:
+                err = resp.json()
+                title = err.get("errors", [{}])[0].get("title", "")
+                log.debug("  ch %d: 403 %s", ch_id, title)
+            except Exception:
+                pass
     except Exception as e:
-        log.debug("  Exception ch %d: %s", ch_id, e)
+        log.debug("  ch %d: exception %s", ch_id, e)
     return ""
 
 
 # ==================== STEP 5: GENERATE M3U ====================
 def generate_m3u(channels: list, stream_urls: dict, output_file: str):
+    """
+    Generate M3U dengan #EXTVLCOPT (user-agent, origin, referrer) per channel.
+    """
     lines = ["#EXTM3U"]
     count = 0
     non_drm_count = 0
@@ -337,6 +406,7 @@ def generate_m3u(channels: list, stream_urls: dict, output_file: str):
         drm_url = ch.get("drm_stream", "") or STREAM_DRM_HLS.format(id=ch_id)
         license_url = f"{LICENSE_WORKER}?id={ch_id}"
 
+        # EXTINF
         lines.append(
             f'#EXTINF:-1 tvg-id="{ch_id}" '
             f'tvg-name="{title}" '
@@ -345,10 +415,16 @@ def generate_m3u(channels: list, stream_urls: dict, output_file: str):
             f'{title}'
         )
 
+        # EXT VLCOPT: browser headers
+        lines.append(f'#EXTVLCOPT:http-user-agent={USER_AGENT}')
+        lines.append(f'#EXTVLCOPT:http-referrer={REFERER}')
+        lines.append(f'#EXTVLCOPT:http-origin={ORIGIN}')
+
         if non_drm_url:
             lines.append(non_drm_url)
             non_drm_count += 1
         else:
+            # DRM: Kodi license
             lines.append("#KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha")
             lines.append(f"#KODIPROP:inputstream.adaptive.license_key={license_url}")
             lines.append(drm_url)
@@ -439,7 +515,7 @@ def main():
 
     print("=" * 55)
     print("  Vidio Live TV → M3U Playlist Generator")
-    print("  Non-DRM: direct | DRM: via license worker")
+    print("  Non-DRM: direct (3 attempt) | DRM: via license worker")
     print(f"  License: {LICENSE_WORKER}")
     print("=" * 55)
 
