@@ -1,16 +1,20 @@
 #!/usr/bin/env python3
 """
-Vidio Live TV → M3U Playlist Generator (Scrape All Channels)
-============================================================
-1. Bootstrap session via remember_user_token
-2. GET /categories/live/sections → semua channel (TV Nasional, Olahraga, Berita, dll.)
-3. Stream URL: ambil dari data section (DRM) atau fallback ke API stream (non-DRM)
+Vidio Live TV → M3U Playlist Generator (Complete)
+==================================================
+- Scrape semua channel dari /categories/live/sections
+- Non-DRM: fetch via API stream (valid 2 jam)
+- DRM: fallback ke URL DRM + license proxy (Cloudflare Worker)
+- Auto-refresh loop (opsional)
 
 Dependencies:
     pip install "curl-cffi<0.14"
 
 Run:
     python vidio_m3u.py
+    python vidio_m3u.py --loop          # auto-refresh tiap 115 menit
+    python vidio_m3u.py --drm-only      # skip non-DRM, langsung DRM
+    python vidio_m3u.py -o my.m3u       # custom output
 """
 
 import argparse
@@ -35,32 +39,35 @@ SITE_URL = "https://m.vidio.com"
 OUTPUT_FILE = "playlist.m3u"
 IMPERSONATE = "chrome"
 DELAY = 0.3
+REFRESH_MINUTES = 115  # buffer 5 menit sebelum expire (7200s)
 
-# Fallback DRM pattern (jika stream_url kosong di data section)
-STREAM_DRM_PATTERN = (
+# License proxy (Cloudflare Worker)
+LICENSE_WORKER = "https://b.bhns.workers.dev/license.mpd"
+
+# DRM stream pattern
+STREAM_DRM_HLS = (
     "https://etslive-v3-vidio-com-tokenized.akamaized.net"
     "/stream/{id}/file/drm/hls/master.m3u8"
 )
 
-USER_AGENT = (
-    "Mozilla/5.0 (Linux; Android 10; K) "
-    "AppleWebKit/537.36 (KHTML, like Gecko) "
-    "Chrome/157.0.0.0 Mobile Safari/537.36"
+# API Key (dari capture)
+API_KEY = (
+    "CH1ZFsN4N/MIfAds1DL9mP151CNqIpWHqZGRr+LkvUyiq3FRPuP1Kt6aK+pG3nEC1FXt0ZAAJ5FKP8QU8CZ5"
+    "/ieyIuWEkvNBqXdsdlXM2838+3SFjs9rtlv7l7DHkBHWK1q/4vLGad8GAj3vfLciRFnquHuZMMW+4EX8yTe1w="
 )
-REFERER = "https://m.vidio.com/"
-ORIGIN = "https://m.vidio.com"
 
-# ==================== USER ====================
+# ==================== USER (UPDATE DI SINI) ====================
 USER_ID = "186957857"
 USER_EMAIL = "bhianesee05@gmail.com"
 AHOY_VISITOR = "3489c20a-d32e-468a-bd1b-8f7d150fa132"
 REMEMBER_TOKEN = (
-    "eyJfcmFpbHMiOnsibWVzc2FnZSI6Ilcxc3hPRFk1TlRjNE5UZGRMQ0lrTW1Fa01UQWthRU0xVnpKbGNVSXlhakJTYmtaMmIwUmFjVlJ2VHlJc0lqRTNPVFF6T1RrMU5UY3VOREUyTXpRNElsMD0i"
-    "LCJleHAiOiIyMDI4LTExLTExVDEyOjE5OjE3LjQxNloiLCJwdXIiOiJjb29raWUucmVtZW1iZXJfdXNlcl90b2tlbiJ9fQ%3D%3D"
-    "--8d03ff9749c920966159108beb64bd0cccab8ac9"
+    "eyJfcmFpbHMiOnsibWVzc2FnZSI6Ilcxc3hPRFk1TlRjNE5UZGRMQ0lrTW1Fa01UQWthRU0xVnpKbGNVSXlhakJTYmtaMmIwUmFjVlJ2VHlJc0lqRTNPVFF6T1RreU5ERXVNekkyTkRFM05DSmQi"
+    "LCJleHAiOiIyMDI4LTExLTExVDExOjU3OjIxLjMyNloiLCJwdXIiOiJjb29raWUucmVtZW1iZXJfdXNlcl90b2tlbiJ9fQ%3D%3D"
+    "--2c508b1dd9d15adf9f96cfcbfdbcfd3ef41d76c5"
 )
-# ================================================================================
+# ==================================================================
 
+# ==================== LOGGING ====================
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s",
@@ -71,6 +78,10 @@ log = logging.getLogger("vidio-m3u")
 
 # ==================== X-SIGNATURE ====================
 def generate_x_signature() -> tuple:
+    """
+    x-client = float timestamp
+    x-signature = HMAC-SHA256(key="V1d10D3v:{t}", msg=str(t))
+    """
     t = str(time.time())
     secret_key = f"V1d10D3v:{t}"
     signature = hmac.new(
@@ -81,25 +92,9 @@ def generate_x_signature() -> tuple:
     return t, signature
 
 
-# ==================== API HEADERS ====================
-def api_headers(luws: str = "") -> dict:
-    """Hanya header API kustom. Biarkan impersonate handle browser headers."""
-    h = {
-        "x-api-platform": "web-mobile",
-        "x-secure-level": "2",
-        "x-visitor-id": AHOY_VISITOR,
-        "x-user-id": USER_ID,
-        "origin": ORIGIN,
-        "referer": REFERER,
-        "accept": "application/json",
-    }
-    if luws:
-        h["luws"] = luws
-    return h
-
-
 # ==================== STEP 1: BOOTSTRAP SESSION ====================
 def bootstrap_session(session) -> str:
+    """Set remember_user_token → visit m.vidio.com → server auto-set cookies."""
     log.info("Bootstrap session ...")
 
     session.cookies.set("ahoy_visitor", AHOY_VISITOR, domain=".vidio.com", path="/")
@@ -125,8 +120,16 @@ def bootstrap_session(session) -> str:
 
 # ==================== STEP 2: VERIFY LOGIN ====================
 def verify_login(session) -> bool:
-    h = api_headers()
-    h.update({"x-auth-prefer": "AccessToken"})
+    """GET /interactions.json → cek login aktif."""
+    h = {
+        "x-api-platform": "web-mobile",
+        "x-secure-level": "2",
+        "x-auth-prefer": "AccessToken",
+        "origin": "https://m.vidio.com",
+        "referer": "https://m.vidio.com/",
+        "accept": "*/*",
+        "accept-language": "id",
+    }
     try:
         resp = session.get(f"{SITE_URL}/interactions.json", headers=h, timeout=15)
         if resp.status_code == 200:
@@ -140,23 +143,31 @@ def verify_login(session) -> bool:
     return False
 
 
-# ==================== STEP 3: FETCH ALL CHANNELS (SCRAPE) ====================
+# ==================== STEP 3: FETCH ALL CHANNELS ====================
 def fetch_all_channels(session, luws: str) -> list:
     """
     GET /categories/live/sections → semua section & channel.
-    Extract semua item dengan content_type == "livestreaming".
-    Deduplicate by content_id.
+    Extract semua item content_type == "livestreaming". Dedup by content_id.
     """
     url = f"{API_BASE}/categories/live/sections"
-    params = {"page[number]": 1, "page[size]": 10, "included": "contents"}
-    h = api_headers(luws)
+    h = {
+        "x-api-platform": "web-mobile",
+        "x-secure-level": "2",
+        "x-visitor-id": AHOY_VISITOR,
+        "x-user-id": USER_ID,
+        "luws": luws,
+        "origin": "https://m.vidio.com",
+        "referer": "https://m.vidio.com/",
+        "accept": "application/json",
+        "accept-language": "id",
+    }
 
-    log.info("Fetching all channels via /categories/live/sections ...")
+    log.info("Fetching all channels ...")
     channels = {}  # dedup by content_id
     page = 1
 
     while True:
-        params["page[number]"] = page
+        params = {"page[number]": page, "page[size]": 10, "included": "contents"}
         try:
             resp = session.get(url, params=params, headers=h, timeout=30)
             if resp.status_code != 200:
@@ -177,28 +188,23 @@ def fetch_all_channels(session, luws: str) -> list:
             contents = attrs.get("contents", [])
 
             for item in contents:
-                content_type = item.get("content_type", "")
-                # Hanya ambil channel (bukan schedule/event/headline/banner)
-                if content_type != "livestreaming":
+                if item.get("content_type") != "livestreaming":
                     continue
 
                 ch_id = item.get("content_id")
                 if not ch_id or ch_id in channels:
                     continue
 
-                # Channel name: prefer alt_title (nama channel), fallback title
                 channel_name = item.get("alt_title") or item.get("title", "Unknown")
-                program_name = item.get("title", "")
                 logo = item.get("cover_url", "")
                 stream_url = item.get("stream_url", "")
 
                 channels[ch_id] = {
                     "id": int(ch_id),
                     "title": channel_name,
-                    "program": program_name,
                     "logo": logo,
                     "group": section_title,
-                    "stream_url": stream_url,  # DRM URL dari data section
+                    "drm_stream": stream_url,  # DRM URL dari section data
                 }
 
         # Pagination
@@ -216,33 +222,58 @@ def fetch_all_channels(session, luws: str) -> list:
 
 # ==================== STEP 4: FETCH NON-DRM STREAM URL ====================
 def fetch_stream_url(session, luws: str, ch_id: int) -> str:
-    """GET /livestreamings/{id}/stream?initialize=true → non-DRM HLS URL."""
+    """
+    GET /livestreamings/{id}/stream?initialize=true
+    Return: non-DRM HLS URL (valid 2 jam) atau "" jika gagal.
+    """
     url = f"{API_BASE}/livestreamings/{ch_id}/stream?initialize=true"
     x_client, x_signature = generate_x_signature()
 
-    h = api_headers(luws)
-    h.update({
+    h = {
+        "x-api-key": API_KEY,
+        "x-api-platform": "web-mobile",
+        "x-secure-level": "2",
+        "x-user-id": USER_ID,
         "x-user-email": USER_EMAIL,
+        "luws": luws,
         "x-client": x_client,
         "x-signature": x_signature,
-    })
+        "origin": "https://m.vidio.com",
+        "referer": "https://m.vidio.com/",
+        "sec-fetch-site": "same-site",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-dest": "empty",
+        "accept": "*/*",
+        "accept-language": "id",
+    }
 
     try:
         resp = session.get(url, headers=h, timeout=15)
         if resp.status_code == 200:
             data = resp.json()
-            hls = data.get("data", {}).get("attributes", {}).get("hls", "")
+            attrs = data.get("data", {}).get("attributes", {})
+            hls = attrs.get("hls", "")
             if hls:
                 return hls
+            log.debug("  No hls for ch %d", ch_id)
+        else:
+            log.debug("  HTTP %d for ch %d", resp.status_code, ch_id)
     except Exception as e:
-        log.debug("  Exception: %s", e)
+        log.debug("  Exception ch %d: %s", ch_id, e)
     return ""
 
 
-# ==================== M3U GENERATOR ====================
+# ==================== STEP 5: GENERATE M3U ====================
 def generate_m3u(channels: list, stream_urls: dict, output_file: str):
+    """
+    Generate M3U:
+    - Non-DRM: URL langsung (valid 2 jam)
+    - DRM: URL DRM + KODIPROP license (via worker)
+    """
     lines = ["#EXTM3U"]
     count = 0
+    non_drm_count = 0
+    drm_count = 0
 
     for ch in channels:
         ch_id = ch["id"]
@@ -250,45 +281,45 @@ def generate_m3u(channels: list, stream_urls: dict, output_file: str):
         logo = ch.get("logo", "")
         group = ch.get("group", "Lainnya")
 
-        # Prioritas: non-DRM (API) > DRM dari section data > DRM pattern
-        stream_url = (
-            stream_urls.get(ch_id)
-            or ch.get("stream_url", "")
-            or STREAM_DRM_PATTERN.format(id=ch_id)
-        )
+        # Prioritas: non-DRM > DRM (dari section data) > DRM pattern
+        non_drm_url = stream_urls.get(ch_id, "")
+        drm_url = ch.get("drm_stream", "") or STREAM_DRM_HLS.format(id=ch_id)
+        license_url = f"{LICENSE_WORKER}?id={ch_id}"
 
-        lines.append(
-            f'#EXTINF:-1 tvg-id="{ch_id}" '
-            f'tvg-name="{title}" '
-            f'tvg-logo="{logo}" '
-            f'group-title="{group}",'
-            f'{title}'
-        )
-        lines.append(stream_url)
+        if non_drm_url:
+            # Non-DRM: langsung playable
+            lines.append(
+                f'#EXTINF:-1 tvg-id="{ch_id}" '
+                f'tvg-name="{title}" '
+                f'tvg-logo="{logo}" '
+                f'group-title="{group}",'
+                f'{title}'
+            )
+            lines.append(non_drm_url)
+            non_drm_count += 1
+        else:
+            # DRM: butuh license via worker
+            lines.append(
+                f'#EXTINF:-1 tvg-id="{ch_id}" '
+                f'tvg-name="{title}" '
+                f'tvg-logo="{logo}" '
+                f'group-title="{group}",'
+                f'{title}'
+            )
+            lines.append("#KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha")
+            lines.append(f"#KODIPROP:inputstream.adaptive.license_key={license_url}")
+            lines.append(drm_url)
+            drm_count += 1
+
         count += 1
 
     Path(output_file).write_text("\n".join(lines) + "\n", encoding="utf-8")
-    log.info("[✓] %s (%d channels)", output_file, count)
+    log.info("[✓] %s (%d channels: %d non-DRM, %d DRM)", output_file, count, non_drm_count, drm_count)
 
 
 # ==================== MAIN ====================
-def main():
-    parser = argparse.ArgumentParser(description="Vidio Live TV M3U Generator (Scrape All)")
-    parser.add_argument("-o", "--output", type=str, default=OUTPUT_FILE)
-    parser.add_argument("--drm-only", action="store_true",
-                        help="Skip non-DRM, langsung pakai DRM URL dari section")
-    parser.add_argument("--retries", type=int, default=2)
-    parser.add_argument("--debug", action="store_true")
-    args = parser.parse_args()
-
-    if args.debug:
-        logging.getLogger().setLevel(logging.DEBUG)
-
-    print("=" * 55)
-    print("  Vidio Live TV → M3U (Scrape All Channels)")
-    print("  Source: /categories/live/sections")
-    print("=" * 55)
-
+def run_once(output_file: str, drm_only: bool, retries: int):
+    """Execute one full cycle: bootstrap → fetch → generate."""
     session = cffi_requests.Session(impersonate=IMPERSONATE)
 
     # Step 1: Bootstrap
@@ -296,63 +327,96 @@ def main():
 
     # Step 2: Verify login
     if not verify_login(session):
-        log.error("Login gagal! Check REMEMBER_TOKEN.")
-        sys.exit(1)
+        log.error("Login gagal! Update REMEMBER_TOKEN.")
+        return False
 
-    # Step 3: Fetch ALL channels (scrape sections)
+    # Step 3: Fetch all channels
     channels = fetch_all_channels(session, luws)
     if not channels:
         log.error("Tidak ada channel ditemukan.")
-        sys.exit(1)
+        return False
 
-    # Show summary by group
+    # Summary
     groups = {}
     for ch in channels:
         groups.setdefault(ch["group"], []).append(ch["title"])
-    log.info("\n  Groups:")
-    for g, names in groups.items():
-        log.info("    [%s] %d channels: %s", g, len(names), ", ".join(names[:5]) + ("..." if len(names) > 5 else ""))
+    log.info("\n  Groups (%d):", len(groups))
+    for g, names in sorted(groups.items()):
+        preview = ", ".join(names[:4]) + ("..." if len(names) > 4 else "")
+        log.info("    [%s] %d: %s", g, len(names), preview)
 
-    # Step 4: Fetch non-DRM stream URLs (optional)
+    # Step 4: Fetch non-DRM URLs
     stream_urls = {}
-    if not args.drm_only:
-        # Hanya fetch non-DRM untuk yang stream_url-nya kosong
-        need_fetch = [ch for ch in channels if not ch.get("stream_url")]
-        log.info("\nFetching non-DRM URLs for %d channels (no stream_url in data) ...", len(need_fetch))
-
+    if not drm_only:
+        log.info("\nFetching non-DRM URLs (%d channels) ...", len(channels))
         failed = []
-        for i, ch in enumerate(need_fetch, 1):
+        for i, ch in enumerate(channels, 1):
             hls = fetch_stream_url(session, luws, ch["id"])
             if hls:
                 stream_urls[ch["id"]] = hls
-                log.info("  [%d/%d] %s ✓", i, len(need_fetch), ch["title"])
             else:
                 failed.append(ch)
-                log.warning("  [%d/%d] %s ✗", i, len(need_fetch), ch["title"])
+            if i % 10 == 0 or i == len(channels):
+                log.info("  Progress: %d/%d (%d ok, %d fail)", i, len(channels), len(stream_urls), len(failed))
             time.sleep(DELAY)
 
         # Retry
-        for attempt in range(1, args.retries + 1):
+        for attempt in range(1, retries + 1):
             if not failed:
                 break
-            log.info("  Retry %d/%d (%d) ...", attempt, args.retries, len(failed))
+            log.info("  Retry %d/%d (%d failed) ...", attempt, retries, len(failed))
             time.sleep(5)
             still = []
             for ch in failed:
                 hls = fetch_stream_url(session, luws, ch["id"])
                 if hls:
                     stream_urls[ch["id"]] = hls
-                    log.info("  [R%d] %s ✓", attempt, ch["title"])
                 else:
                     still.append(ch)
                 time.sleep(DELAY)
             failed = still
 
-        log.info("\n  Non-DRM: %d/%d", len(stream_urls), len(need_fetch))
+        log.info("  Non-DRM: %d/%d", len(stream_urls), len(channels))
 
     # Step 5: Generate M3U
     log.info("\nGenerating M3U ...")
-    generate_m3u(channels, stream_urls, args.output)
+    generate_m3u(channels, stream_urls, output_file)
+    return True
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Vidio Live TV M3U Generator")
+    parser.add_argument("-o", "--output", type=str, default=OUTPUT_FILE)
+    parser.add_argument("--drm-only", action="store_true",
+                        help="Skip non-DRM, langsung pakai DRM + license worker")
+    parser.add_argument("--retries", type=int, default=2,
+                        help="Jumlah retry untuk non-DRM yang gagal (default: 2)")
+    parser.add_argument("--loop", action="store_true",
+                        help="Auto-refresh playlist tiap 115 menit")
+    parser.add_argument("--debug", action="store_true")
+    args = parser.parse_args()
+
+    if args.debug:
+        logging.getLogger().setLevel(logging.DEBUG)
+
+    print("=" * 55)
+    print("  Vidio Live TV → M3U Playlist Generator")
+    print("  Non-DRM: direct | DRM: via license worker")
+    print(f"  License: {LICENSE_WORKER}")
+    print("=" * 55)
+
+    if args.loop:
+        log.info("Loop mode: refresh every %d minutes", REFRESH_MINUTES)
+        while True:
+            try:
+                run_once(args.output, args.drm_only, args.retries)
+            except Exception as e:
+                log.error("Error: %s", e)
+            log.info("Sleeping %d minutes ...", REFRESH_MINUTES)
+            time.sleep(REFRESH_MINUTES * 60)
+    else:
+        if not run_once(args.output, args.drm_only, args.retries):
+            sys.exit(1)
 
 
 if __name__ == "__main__":
