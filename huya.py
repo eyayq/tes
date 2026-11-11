@@ -57,10 +57,13 @@ ORIGIN = "https://m.vidio.com"
 # ═══════════════════════════════════════════════════════════════
 VIDIO_COOKIES = [
     {"name": "ahoy_visitor", "value": "3489c20a-d32e-468a-bd1b-8f7d150fa132", "domain": ".vidio.com", "path": "/"},
-    {"name": "remember_user_token", "value": "eyJfcmFpbHMi...--4eeecff53f178ea4f8362b341a43b9bb53b51274", "domain": ".vidio.com", "path": "/"},
+    {"name": "plenty_id", "value": "186957857", "domain": ".vidio.com", "path": "/"},
     {"name": "access_token", "value": "eyJhbGciOiJIUzI1NiJ9.eyJkYXRhIjp7InR5cGUiOiJhY2Nlc3NfdG9rZW4iLCJ1aWQiOjE4Njk1Nzg1N30sImV4cCI6MTc5NDQ0MzM3MX0.vIjiSE4zy4-12PSqMrov5hxB6kwKdr26_EDVmeI6sfY", "domain": ".vidio.com", "path": "/"},
+    {"name": "ahoy_visit", "value": "8e0d4b18-a964-4bb8-9d3e-83adf56c6c82", "domain": ".vidio.com", "path": "/"},
+    {"name": "remember_user_token", "value": "eyJfcmFpbHMiOnsibWVzc2FnZSI6Ilcxc3hPRFk1TlRjNE5UZGRMQ0lrTW1Fa01UQWthRU0xVnpKbGNVSXlhakJTYmtaMmIwUmFjVlJ2VHlJc0lqRTNPVFF6T0RVME5EUXVOVGMwT1RRME5TSmQiLCJleHAiOiIyMDI4LTExLTExVDA4OjI0OjA0LjU3NFoiLCJwdXIiOiJjb29raWUucmVtZW1iZXJfdXNlcl90b2tlbiJ9fQ%3D%3D--b871f122936d7bcfb13b0c6d8f8663c3d97e0595", "domain": ".vidio.com", "path": "/"},
+    {"name": "_vidio_session", "value": "XcRDQ6s4yJ4D3m0v1nTGizcmWrdwjFul6N1X8k215TM%2FA9maSnrBYr3Yn3dI%2FTw6%2BZ2FQVaGnIDGjEvMMT%2Fauz9rE1tNyzLTILDSVjBgOtCHnspmOwYfzcUQA1JjfJarkwNbF5XSS1tejS5HkJhpg%2BCqTHunb4R3ehOUzmLqzrO6yfYShm2qHglIEW%2BC5FgYefFu%2BSzZLysGqVqp%2FQIelAZ71mgA9R0iliGMWb2x8jeBbtRvUKzk53dFStgb4mz%2F1APmp%2B0Ek4ACie44qYYhGehuDeHDHUQp08eo%2FUT98lvx3IWdSD%2FEiDVdGLS%2FyxgdwfumLIP0Sp5W6EhrHNknsmq60iJN0nO5mSA91pqwTq%2BGfQ8nRkEMgDycmRo7El%2FC9DAQ4xuaLjpWgtCNfyVcRziu--30px8M%2BKKTCuqRNZ--xPr0ywCQXF6Z1qFjCrYMTA%3D%3D", "domain": ".vidio.com", "path": "/"},
     {"name": "country_id", "value": "ID", "domain": ".vidio.com", "path": "/"},
-]
+]   
 # ═══════════════════════════════════════════════════════════════
 
 EXTRA_CHANNELS = {
