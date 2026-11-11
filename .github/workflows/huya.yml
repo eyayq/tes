@@ -24,6 +24,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
+          pip install --upgrade pip
           pip install "curl_cffi<0.14"
           sudo apt-get update && sudo apt-get install -y xvfb
           
