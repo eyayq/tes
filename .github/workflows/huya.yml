@@ -22,16 +22,9 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install Chrome
-        run: |
-          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-          sudo apt-get update
-          sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
-
       - name: Install Dependencies
         run: |
-          pip install requests curl_cffi beautifulsoup4 websockets pycryptodome brotli zstandard playwright
-          playwright install chromium --with-deps
+          pip install "curl_cffi<0.14"
           sudo apt-get update && sudo apt-get install -y xvfb
           
       - name: Run Scraper
