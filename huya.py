@@ -13,7 +13,6 @@ import json
 import re
 import sys
 import time
-import uuid
 import logging
 from pathlib import Path
 
@@ -76,7 +75,11 @@ def generate_x_signature() -> tuple:
 
 
 def fetch_rsc_channels(session) -> list:
-    """Fetch RSC /live page → parse SEMUA channel."""
+    """
+    Fetch RSC /live → parse SEMUA channel.
+    - content_type:"livestreaming" → channel langsung (title = nama channel)
+    - content_type:"livestreaming_schedule" → ambil livestreaming_id + livestreaming_title
+    """
     headers = {
         "RSC": "1",
         "Accept": "*/*",
@@ -100,64 +103,57 @@ def fetch_rsc_channels(session) -> list:
 
     channels = {}
 
-    # Pattern 1: "content_id":XXX,"content_type":"livestreaming"
-    for match in re.finditer(
-        r'"content_id"\s*:\s*(\d+),\s*"content_type"\s*:\s*"livestreaming"',
-        rsc_text
-    ):
-        ch_id = int(match.group(1))
+    # === Pattern 1: content_type:"livestreaming" (channel langsung) ===
+    # Format: "content_id":870,"content_type":"livestreaming","title":"MNCTV","cover_url":"..."
+    pat1 = re.compile(
+        r'"content_id"\s*:\s*(\d+),\s*"content_type"\s*:\s*"livestreaming"\s*,\s*"title"\s*:\s*"([^"]+)"'
+    )
+    for m in pat1.finditer(rsc_text):
+        ch_id = int(m.group(1))
+        title = m.group(2)
+        if ch_id in channels:
+            continue
+        # Ambil cover_url setelah title
+        after = rsc_text[m.end():m.end() + 500]
+        cover_m = re.search(r'"cover_url"\s*:\s*"([^"]+)"', after)
+        cover_url = cover_m.group(1) if cover_m else ""
+        channels[ch_id] = {"id": ch_id, "title": title, "cover_url": cover_url}
+
+    # === Pattern 2: content_type:"livestreaming_schedule" (schedule item) ===
+    # Format: "content_id":5430445,"content_type":"livestreaming_schedule","title":"Spotlite",
+    #         "livestreaming_title":"Trans7",...,"links":{"self":{"meta":{"livestreaming_id":734,...}}}
+    pat2 = re.compile(
+        r'"content_type"\s*:\s*"livestreaming_schedule"'
+    )
+    for m in pat2.finditer(rsc_text):
+        # Ambil context SEKITAR match (cukup lebar)
+        start = max(0, m.start() - 100)
+        end = min(len(rsc_text), m.end() + 1000)
+        context = rsc_text[start:end]
+
+        # Ambil livestreaming_id dari links.self.meta
+        ls_id_m = re.search(r'"livestreaming_id"\s*:\s*(\d+)', context)
+        if not ls_id_m:
+            continue
+        ch_id = int(ls_id_m.group(1))
         if ch_id in channels:
             continue
 
-        start = max(0, match.start() - 200)
-        end = min(len(rsc_text), match.end() + 500)
-        context = rsc_text[start:end]
+        # Ambil livestreaming_title (nama channel)
+        ls_title_m = re.search(r'"livestreaming_title"\s*:\s*"([^"]+)"', context)
+        title = ls_title_m.group(1) if ls_title_m else f"Channel {ch_id}"
 
-        title_m = re.search(r'"title"\s*:\s*"([^"]+)"', context)
-        title = title_m.group(1) if title_m else f"Channel {ch_id}"
-
+        # Ambil cover_url
         cover_m = re.search(r'"cover_url"\s*:\s*"([^"]+)"', context)
         cover_url = cover_m.group(1) if cover_m else ""
 
-        channels[ch_id] = {
-            "id": ch_id,
-            "title": title,
-            "cover_url": cover_url,
-        }
-
-    # Pattern 2: "id":"XXX","type":"livestreaming"
-    for match in re.finditer(
-        r'"id"\s*:\s*"(\d+)",\s*"type"\s*:\s*"livestreaming"',
-        rsc_text
-    ):
-        ch_id = int(match.group(1))
-        if ch_id in channels:
-            continue
-
-        start = max(0, match.start() - 100)
-        end = min(len(rsc_text), match.end() + 800)
-        context = rsc_text[start:end]
-
-        title_m = re.search(r'"title"\s*:\s*"([^"]+)"', context)
-        title = title_m.group(1) if title_m else f"Channel {ch_id}"
-
-        square_m = re.search(r'"square_image"\s*:\s*\{[^}]*"url"\s*:\s*"([^"]+)"', context)
-        landscape_m = re.search(r'"image_landscape_url"\s*:\s*"([^"]+)"', context)
-        cover_url = (square_m.group(1) if square_m else "") or \
-                    (landscape_m.group(1) if landscape_m else "")
-
-        channels[ch_id] = {
-            "id": ch_id,
-            "title": title,
-            "cover_url": cover_url,
-        }
+        channels[ch_id] = {"id": ch_id, "title": title, "cover_url": cover_url}
 
     log.info("  Found %d channels", len(channels))
     return list(channels.values())
 
 
 def fetch_stream_url(session, ch_id: int) -> str:
-    """GET /livestreamings/{id}/stream?initialize=true (with login)."""
     url = f"{API_BASE}/livestreamings/{ch_id}/stream?initialize=true"
     x_client, x_signature = generate_x_signature()
 
