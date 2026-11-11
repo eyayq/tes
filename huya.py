@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-VIDIO M3U PLAYLIST GENERATOR v3
+VIDIO M3U PLAYLIST GENERATOR v4
 Auto-login via Playwright persistent context + cookie injection.
-luws di-capture dari request headers (bukan cookie).
+luws di-capture dari channel page (JS trigger).
 
 Dependencies:
     pip install "curl-cffi<0.14" playwright
@@ -33,6 +33,7 @@ except ImportError:
 API_BASE = "https://api.vidio.com"
 SITE_URL = "https://m.vidio.com"
 LIVE_URL = "https://m.vidio.com/live"
+CHANNEL_URL = "https://m.vidio.com/live/205-indosiar"
 OUTPUT_FILE = "playlist.m3u"
 IMPERSONATE = "chrome"
 DELAY = 0.3
@@ -63,7 +64,7 @@ VIDIO_COOKIES = [
     {"name": "remember_user_token", "value": "eyJfcmFpbHMiOnsibWVzc2FnZSI6Ilcxc3hPRFk1TlRjNE5UZGRMQ0lrTW1Fa01UQWthRU0xVnpKbGNVSXlhakJTYmtaMmIwUmFjVlJ2VHlJc0lqRTNPVFF6T0RVME5EUXVOVGMwT1RRME5TSmQiLCJleHAiOiIyMDI4LTExLTExVDA4OjI0OjA0LjU3NFoiLCJwdXIiOiJjb29raWUucmVtZW1iZXJfdXNlcl90b2tlbiJ9fQ%3D%3D--b871f122936d7bcfb13b0c6d8f8663c3d97e0595", "domain": ".vidio.com", "path": "/"},
     {"name": "_vidio_session", "value": "XcRDQ6s4yJ4D3m0v1nTGizcmWrdwjFul6N1X8k215TM%2FA9maSnrBYr3Yn3dI%2FTw6%2BZ2FQVaGnIDGjEvMMT%2Fauz9rE1tNyzLTILDSVjBgOtCHnspmOwYfzcUQA1JjfJarkwNbF5XSS1tejS5HkJhpg%2BCqTHunb4R3ehOUzmLqzrO6yfYShm2qHglIEW%2BC5FgYefFu%2BSzZLysGqVqp%2FQIelAZ71mgA9R0iliGMWb2x8jeBbtRvUKzk53dFStgb4mz%2F1APmp%2B0Ek4ACie44qYYhGehuDeHDHUQp08eo%2FUT98lvx3IWdSD%2FEiDVdGLS%2FyxgdwfumLIP0Sp5W6EhrHNknsmq60iJN0nO5mSA91pqwTq%2BGfQ8nRkEMgDycmRo7El%2FC9DAQ4xuaLjpWgtCNfyVcRziu--30px8M%2BKKTCuqRNZ--xPr0ywCQXF6Z1qFjCrYMTA%3D%3D", "domain": ".vidio.com", "path": "/"},
     {"name": "country_id", "value": "ID", "domain": ".vidio.com", "path": "/"},
-]   
+]
 # ═══════════════════════════════════════════════════════════════
 
 EXTRA_CHANNELS = {
@@ -120,8 +121,8 @@ def generate_x_signature() -> tuple:
 # ─── AUTO LOGIN ──────────────────────────────────────────────────
 async def auto_login() -> dict:
     """
-    Playwright → inject cookies → visit m.vidio.com/live
-    → capture luws dari REQUEST HEADERS + user_id dari interactions.json.
+    Playwright → inject cookies → load /live → navigate ke channel page
+    → JS set luws → capture dari cookie/document.cookie/request header.
     """
     result = {"luws": "", "user_id": "", "user_email": "", "logged_in": False}
 
@@ -149,17 +150,15 @@ async def auto_login() -> dict:
             await context.add_cookies(cookies)
             log.info("  ✓ Inject %d cookies", len(cookies))
 
-            # Intercept REQUEST headers → capture luws
-            def on_request(request):
-                if "api.vidio.com" in request.url:
-                    luws_val = request.headers.get("luws", "")
-                    if luws_val and not result["luws"]:
-                        result["luws"] = luws_val
-
             # Intercept interactions.json → user data
             def on_response(response):
                 if "interactions.json" in response.url:
                     asyncio.ensure_future(_capture_user(response, result))
+                # Intercept stream request → luws dari request header
+                if "api.vidio.com" in response.url and "stream" in response.url:
+                    luws_val = response.request.headers.get("luws", "")
+                    if luws_val and not result["luws"]:
+                        result["luws"] = luws_val
 
             async def _capture_user(response, res):
                 try:
@@ -172,17 +171,25 @@ async def auto_login() -> dict:
                 except Exception:
                     pass
 
-            page.on("request", on_request)
             page.on("response", on_response)
 
-            # Navigate ke /live (trigger API call → luws di header)
+            # Step 1: Load /live (trigger interactions.json)
+            log.info("  Loading /live ...")
             await page.goto(LIVE_URL, timeout=60000, wait_until="domcontentloaded")
+            await asyncio.sleep(3)
 
-            # Wait: luws + user_id
+            # Step 2: Navigate ke channel page (trigger JS set luws)
+            log.info("  Loading channel page (trigger luws) ...")
+            await page.goto(CHANNEL_URL, timeout=60000, wait_until="domcontentloaded")
+
+            # Wait for luws
             for _ in range(30):
-                if result["luws"] and result["logged_in"]:
-                    break
-                # Fallback: document.cookie
+                # Check 1: context cookies
+                all_cookies = {c["name"]: c["value"] for c in await context.cookies()}
+                if all_cookies.get("luws") and not result["luws"]:
+                    result["luws"] = all_cookies["luws"]
+
+                # Check 2: document.cookie
                 if not result["luws"]:
                     try:
                         doc = await page.evaluate("() => document.cookie")
@@ -193,12 +200,10 @@ async def auto_login() -> dict:
                                 break
                     except Exception:
                         pass
-                await asyncio.sleep(1)
 
-            # Fallback terakhir: context.cookies()
-            if not result["luws"]:
-                all_cookies = {c["name"]: c["value"] for c in await context.cookies()}
-                result["luws"] = all_cookies.get("luws", "")
+                if result["luws"] and result["logged_in"]:
+                    break
+                await asyncio.sleep(1)
 
             # Fallback: plenty_id
             if not result["user_id"]:
