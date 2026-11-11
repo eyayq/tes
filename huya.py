@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse, hashlib, hmac, json, sys, time, uuid, logging
 from pathlib import Path
+from urllib.parse import quote
 
 try:
     from curl_cffi import requests as cffi_requests
@@ -11,7 +12,7 @@ API_BASE = "https://api.vidio.com"
 SITE_URL = "https://m.vidio.com"
 WORKER = "https://ch.bhns.workers.dev"
 API_KEY = "CH1ZFsN4N/MIfAds1DL9mP151CNqIpWHqZGRr+LkvUyiq3FRPuP1Kt6aK+pG3nEC1FXt0ZAAJ5FKP8QU8CZ5/ieyIuWEkvNBqXdsdlXM2838+3SFjs9rtlntv7l7DHkBHWK1q/4vLGad8GAj3vfLciRFnquHuZMMW+4EX8yTe1w="
-UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+UA = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36"
 REFERER = "https://m.vidio.com/"
 ORIGIN = "https://m.vidio.com"
 
@@ -25,31 +26,41 @@ REMEMBER_TOKEN = ("eyJfcmFpbHMiOnsibWVzc2FnZSI6Ilcxc3hPRFk1TlRjNE5UZGRMQ0lrTW1Fa
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s", datefmt="%H:%M:%S")
 log = logging.getLogger("vidio")
 
-def sig():
-    t = str(time.time())
-    return t, hmac.new(f"V1d10D3v:{t}".encode(), t.encode(), hashlib.sha256).hexdigest()
-
+# ==================== BOOTSTRAP → DAPAT COOKIES ====================
 def bootstrap(s):
     s.cookies.set("ahoy_visitor", AHOY_VISITOR, domain=".vidio.com", path="/")
     s.cookies.set("remember_user_token", REMEMBER_TOKEN, domain=".vidio.com", path="/")
     s.cookies.set("country_id", "ID", domain=".vidio.com", path="/")
     s.get(SITE_URL, timeout=30)
+
+    # Ambil cookies yang dibutuhkan
+    cookies = {
+        "at": s.cookies.get("access_token", ""),
+        "vs": s.cookies.get("_vidio_session", ""),
+        "av": s.cookies.get("ahoy_visit", ""),
+        "pid": s.cookies.get("plenty_id", USER_ID),
+    }
     luws = s.cookies.get("luws", "") or f"{str(uuid.uuid4()).upper()}_{USER_ID}"
-    log.info("luws: %s", luws)
-    return luws
 
-def verify(s):
-    try:
-        r = s.get(f"{SITE_URL}/interactions.json", headers={"x-api-platform":"web-mobile","x-secure-level":"2","x-auth-prefer":"AccessToken","origin":ORIGIN,"referer":REFERER}, timeout=15)
-        u = r.json().get("current_user",{})
-        if u:
-            log.info("Login: %s (%s)", u.get("display_name"), "Premium" if u.get("has_active_subscription") else "Free")
-            return True
-    except: pass
-    return False
+    log.info("Cookies: at=%s... vs=%s... av=%s", cookies["at"][:20], cookies["vs"][:20], cookies["av"][:20])
+    return luws, cookies
 
+# ==================== COOKIE PARAM STRING ====================
+def cookie_params(cookies):
+    """Build query string untuk worker: &at=...&vs=...&av=...&pid=..."""
+    parts = []
+    if cookies["at"]: parts.append(f"at={quote(cookies['at'], safe='')}")
+    if cookies["vs"]: parts.append(f"vs={quote(cookies['vs'], safe='')}")
+    if cookies["av"]: parts.append(f"av={quote(cookies['av'], safe='')}")
+    parts.append(f"pid={cookies['pid']}")
+    return "&".join(parts)
+
+# ==================== FETCH CHANNELS ====================
 def fetch_channels(s, luws):
-    h = {"x-api-key":API_KEY,"x-api-platform":"web-mobile","x-secure-level":"2","x-visitor-id":AHOY_VISITOR,"x-user-id":USER_ID,"luws":luws,"origin":ORIGIN,"referer":REFERER,"accept":"application/json","accept-language":"id"}
+    h = {"x-api-key":API_KEY,"x-api-platform":"web-mobile","x-secure-level":"2",
+         "x-visitor-id":AHOY_VISITOR,"x-user-id":USER_ID,"x-user-login":"true",
+         "x-api-app-info":"js/m.vidio.com","luws":luws,
+         "origin":ORIGIN,"referer":REFERER,"accept":"application/json","accept-language":"id"}
     ch = {}
     try:
         r = s.get(f"{API_BASE}/livestreamings", params={"stream_type":"tv_stream"}, headers=h, timeout=30)
@@ -69,12 +80,13 @@ def fetch_channels(s, luws):
             log.info("/livestreamings: %d", len(ch))
     except Exception as e: log.error("%s", e)
 
-    # Sections for grouping
+    # Sections
     secs = []
     page = 1
     while True:
         try:
-            r = s.get(f"{API_BASE}/categories/live/sections", params={"page[number]":page,"page[size]":10,"included":"contents"}, headers=h, timeout=30)
+            r = s.get(f"{API_BASE}/categories/live/sections",
+                      params={"page[number]":page,"page[size]":10,"included":"contents"}, headers=h, timeout=30)
             if r.status_code != 200: break
         except: break
         d = r.json()
@@ -87,7 +99,7 @@ def fetch_channels(s, luws):
             secs.append({"title":t,"url":self_u})
         for it in d.get("included",[]):
             if it.get("type")!="content": continue
-            _parse_item(it,"Lainnya",ch)
+            _parse(it,"Lainnya",ch)
         if d.get("links",{}).get("next"): page+=1; time.sleep(0.3)
         else: break
 
@@ -108,7 +120,7 @@ def fetch_channels(s, luws):
             elif isinstance(dd,dict): items.append(dd)
         n=0
         for it in items:
-            if _parse_item(it, sec["title"], ch): n+=1
+            if _parse(it, sec["title"], ch): n+=1
         log.info("[%s] +%d", sec["title"], n)
         time.sleep(0.3)
 
@@ -116,7 +128,7 @@ def fetch_channels(s, luws):
     log.info("Total: %d", len(result))
     return result
 
-def _parse_item(it, grp, ch):
+def _parse(it, grp, ch):
     a = it.get("attributes",{})
     if a.get("content_type","")!="livestreaming":
         if "livestreaming" not in it.get("type","").lower(): return False
@@ -141,11 +153,13 @@ def _parse_item(it, grp, ch):
     ch[cid]={"id":cid,"title":t,"logo":logo,"group":grp}
     return True
 
-def gen_m3u(channels, out):
-    lines=["#EXTM3U"]
+# ==================== GENERATE M3U ====================
+def gen_m3u(channels, cookies, out):
+    cp = cookie_params(cookies)  # "at=...&vs=...&av=...&pid=..."
+    lines = ["#EXTM3U"]
     for c in channels:
-        cid=c["id"]; t=c["title"]; logo=c.get("logo",""); grp=c.get("group","Lainnya")
-        stream = f"{WORKER}/ch.m3u8?id={cid}&type=hls"
+        cid = c["id"]; t = c["title"]; logo = c.get("logo",""); grp = c.get("group","Lainnya")
+        stream = f"{WORKER}/ch.m3u8?id={cid}&type=hls&{cp}"
         license_url = f"{WORKER}/dh.mpd?id={cid}"
         lines.append(f'#EXTINF:-1 tvg-id="{cid}" tvg-name="{t}" tvg-logo="{logo}" group-title="{grp}",{t}')
         lines.append(f'#EXTVLCOPT:http-user-agent={UA}')
@@ -157,33 +171,42 @@ def gen_m3u(channels, out):
     Path(out).write_text("\n".join(lines)+"\n", encoding="utf-8")
     log.info("[✓] %s (%d ch)", out, len(channels))
 
+# ==================== MAIN ====================
 def main():
-    p=argparse.ArgumentParser()
-    p.add_argument("-o",default="playlist.m3u")
-    p.add_argument("--debug",action="store_true")
-    a=p.parse_args()
+    p = argparse.ArgumentParser()
+    p.add_argument("-o", default="playlist.m3u")
+    p.add_argument("--debug", action="store_true")
+    a = p.parse_args()
     if a.debug: logging.getLogger().setLevel(logging.DEBUG)
 
     print("="*55)
-    print("  Vidio Live TV → M3U (Proxy Worker)")
-    print(f"  HLS:     {WORKER}/ch.m3u8?id=&type=hls")
-    print(f"  DASH:    {WORKER}/dh.mpd?id=&type=dash")
+    print("  Vidio Live TV → M3U (Proxy Worker + Cookies)")
+    print(f"  HLS:     {WORKER}/ch.m3u8?id=&type=hls&at=...")
+    print(f"  DASH:    {WORKER}/dh.mpd?id=&type=dash&at=...")
     print(f"  License: {WORKER}/dh.mpd?id= (POST)")
     print("="*55)
 
-    s=cffi_requests.Session(impersonate="chrome")
-    luws=bootstrap(s)
-    if not verify(s): log.error("Login gagal!"); sys.exit(1)
+    s = cffi_requests.Session(impersonate="chrome")
+    luws, cookies = bootstrap(s)
 
-    ch=fetch_channels(s,luws)
+    # Verify
+    try:
+        r = s.get(f"{SITE_URL}/interactions.json",
+                  headers={"x-api-platform":"web-mobile","x-secure-level":"2","x-auth-prefer":"AccessToken","origin":ORIGIN,"referer":REFERER}, timeout=15)
+        u = r.json().get("current_user",{})
+        if u: log.info("Login: %s", u.get("display_name"))
+        else: log.error("Login gagal!"); sys.exit(1)
+    except: log.error("Verify gagal"); sys.exit(1)
+
+    ch = fetch_channels(s, luws)
     if not ch: log.error("0 channel"); sys.exit(1)
 
-    groups={}
+    groups = {}
     for c in ch: groups.setdefault(c["group"],[]).append(c["title"])
     log.info("\nGroups (%d):", len(groups))
     for g,names in sorted(groups.items()):
         log.info("  [%s] %d: %s", g, len(names), ", ".join(names[:4])+("..." if len(names)>4 else ""))
 
-    gen_m3u(ch, a.o)
+    gen_m3u(ch, cookies, a.o)
 
-if __name__=="__main__": main()   
+if __name__ == "__main__": main()   
