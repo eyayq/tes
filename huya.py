@@ -1,7 +1,15 @@
 #!/usr/bin/env python3
 """
 VIDIO M3U PLAYLIST GENERATOR v3
-Auto-login via Playwright + fallback tanpa login.
+Auto-login via Playwright persistent context + cookie injection.
+luws di-capture dari request headers (bukan cookie).
+
+Dependencies:
+    pip install "curl-cffi<0.14" playwright
+    playwright install chromium --with-deps
+
+Run:
+    xvfb-run python vidio_m3u.py
 """
 
 import asyncio
@@ -24,6 +32,7 @@ except ImportError:
 # ─── Konfigurasi ─────────────────────────────────────────────────
 API_BASE = "https://api.vidio.com"
 SITE_URL = "https://m.vidio.com"
+LIVE_URL = "https://m.vidio.com/live"
 OUTPUT_FILE = "playlist.m3u"
 IMPERSONATE = "chrome"
 DELAY = 0.3
@@ -80,12 +89,15 @@ log = logging.getLogger("vidio-m3u")
 def _load_cookies():
     env = os.environ.get("VIDIO_COOKIES", "")
     if env:
-        try: return json.loads(env)
-        except: pass
+        try:
+            return json.loads(env)
+        except json.JSONDecodeError:
+            pass
     if VIDIO_COOKIES:
         return VIDIO_COOKIES
     if os.path.exists(_COOKIES_FILE):
-        with open(_COOKIES_FILE) as f: return json.load(f)
+        with open(_COOKIES_FILE) as f:
+            return json.load(f)
     return None
 
 
@@ -94,27 +106,31 @@ def generate_x_signature() -> tuple:
     t_int = int(t_float)
     x_client = f"{t_float}"
     secret_key = f"V1d10D3v:{t_int}"
-    signature = hmac.new(secret_key.encode(), x_client.encode(), hashlib.sha256).hexdigest()
+    signature = hmac.new(
+        secret_key.encode(),
+        x_client.encode(),
+        hashlib.sha256
+    ).hexdigest()
     return x_client, signature
 
 
 # ─── AUTO LOGIN ──────────────────────────────────────────────────
 async def auto_login() -> dict:
     """
-    Playwright → inject cookies → visit m.vidio.com → capture session.
-    Return: {"luws": str, "user_id": str, "user_email": str, "logged_in": bool}
+    Playwright → inject cookies → visit m.vidio.com/live
+    → capture luws dari REQUEST HEADERS + user_id dari interactions.json.
     """
     result = {"luws": "", "user_id": "", "user_email": "", "logged_in": False}
 
     try:
         from playwright.async_api import async_playwright
     except ImportError:
-        log.warning("  Playwright tidak tersedia, skip auto-login")
+        log.warning("  Playwright tidak tersedia")
         return result
 
     cookies = _load_cookies()
     if not cookies:
-        log.warning("  Tidak ada cookies untuk inject")
+        log.warning("  Tidak ada cookies")
         return result
 
     try:
@@ -130,7 +146,14 @@ async def auto_login() -> dict:
             await context.add_cookies(cookies)
             log.info("  ✓ Inject %d cookies", len(cookies))
 
-            # Intercept interactions.json
+            # Intercept REQUEST headers → capture luws
+            def on_request(request):
+                if "api.vidio.com" in request.url:
+                    luws_val = request.headers.get("luws", "")
+                    if luws_val and not result["luws"]:
+                        result["luws"] = luws_val
+
+            # Intercept interactions.json → user data
             def on_response(response):
                 if "interactions.json" in response.url:
                     asyncio.ensure_future(_capture_user(response, result))
@@ -146,26 +169,33 @@ async def auto_login() -> dict:
                 except Exception:
                     pass
 
+            page.on("request", on_request)
             page.on("response", on_response)
 
-            await page.goto(SITE_URL, timeout=60000, wait_until="domcontentloaded")
+            # Navigate ke /live (trigger API call → luws di header)
+            await page.goto(LIVE_URL, timeout=60000, wait_until="domcontentloaded")
 
-            # Wait for luws + user data
-            for _ in range(20):
-                all_cookies = {c["name"]: c["value"] for c in await context.cookies()}
-                result["luws"] = all_cookies.get("luws", "")
+            # Wait: luws + user_id
+            for _ in range(30):
                 if result["luws"] and result["logged_in"]:
                     break
+                # Fallback: document.cookie
+                if not result["luws"]:
+                    try:
+                        doc = await page.evaluate("() => document.cookie")
+                        for part in doc.split(";"):
+                            part = part.strip()
+                            if part.startswith("luws="):
+                                result["luws"] = part[5:]
+                                break
+                    except Exception:
+                        pass
                 await asyncio.sleep(1)
 
-            # Fallback: document.cookie
+            # Fallback terakhir: context.cookies()
             if not result["luws"]:
-                doc = await page.evaluate("() => document.cookie")
-                for part in doc.split(";"):
-                    part = part.strip()
-                    if part.startswith("luws="):
-                        result["luws"] = part[5:]
-                        break
+                all_cookies = {c["name"]: c["value"] for c in await context.cookies()}
+                result["luws"] = all_cookies.get("luws", "")
 
             # Fallback: plenty_id
             if not result["user_id"]:
@@ -225,7 +255,6 @@ def fetch_channels(session, luws: str, user_id: str) -> list:
         logo = square.get("url", "") or landscape
         channels.append({"id": ch_id, "title": title, "logo": logo})
 
-    # Extra channels
     existing = {c["id"] for c in channels}
     for ch_id, title in EXTRA_CHANNELS.items():
         if ch_id not in existing:
@@ -268,7 +297,7 @@ def fetch_stream(session, ch_id: int, luws: str, user_id: str, user_email: str) 
     return ""
 
 
-# ─── M3U ─────────────────────────────────────────────────────────
+# ─── M3U GENERATOR ───────────────────────────────────────────────
 def generate_m3u(channels, stream_urls, output_file):
     lines = ["#EXTM3U"]
     count = 0
@@ -299,6 +328,7 @@ def generate_m3u(channels, stream_urls, output_file):
 async def async_main(output_file, retries):
     print("=" * 55)
     print("  Vidio Live TV → M3U Playlist Generator")
+    print("  Auto-login: Playwright persistent context")
     print("=" * 55)
 
     # [1/3] Auto login
@@ -319,7 +349,7 @@ async def async_main(output_file, retries):
         log.error("  Update VIDIO_COOKIES di script.")
         return
 
-    log.info("  ✓ luws: %s", luws[:20] + "...")
+    log.info("  ✓ luws: %s", luws)
 
     # [2/3] Fetch
     print("\n[2/3] Fetching channels + streams ...")
@@ -342,7 +372,7 @@ async def async_main(output_file, retries):
     if test:
         log.info("  ✓ Stream access OK")
     else:
-        log.error("  ✗ Gagal akses stream (luws expired?)")
+        log.error("  ✗ Gagal akses stream")
         log.error("  Update VIDIO_COOKIES di script.")
         return
 
@@ -382,6 +412,10 @@ async def async_main(output_file, retries):
     log.info("\n  Total: %d | OK: %d | Fail: %d | Time: %.1fs",
              len(channels), len(stream_urls), len(failed), elapsed)
 
+    if failed:
+        for ch in failed:
+            log.info("    - [%s] %s", ch["id"], ch["title"])
+
     if not stream_urls:
         log.error("  SEMUA GAGAL. Update cookies.")
         return
@@ -394,8 +428,9 @@ async def async_main(output_file, retries):
     print(f"{'=' * 55}")
 
 
+# ─── Entry point ─────────────────────────────────────────────────
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description='Vidio M3U Generator')
     parser.add_argument('-o', '--output', type=str, default=OUTPUT_FILE)
     parser.add_argument('--retries', type=int, default=2)
     args = parser.parse_args()
