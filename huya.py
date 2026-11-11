@@ -27,6 +27,20 @@ CATEGORIES = {
     "13": "Free Streaming",
 }
 
+# Genre VOD (keyword_id, slug, name)
+VOD_GENRES = [
+    ("5", "drama", "Drama"),
+    ("7", "horror-thriller", "Horror & Thriller"),
+    ("8", "action", "Action"),
+    ("56", "comedy", "Comedy"),
+    ("4559", "others", "Others"),
+    ("1118", "sports-and-hobbies", "Sports and Hobbies"),
+    ("5754", "cooking-show", "Cooking Show"),
+    ("5756", "music", "Music"),
+    ("5764", "lifestyle-travels", "Lifestyle & Travels"),
+    ("5501", "cerita-indonesia", "Cerita Indonesia"),
+]
+
 # ============================================================
 # SESSION
 # ============================================================
@@ -35,13 +49,13 @@ session = requests.Session()
 session.cookies.update({
     'dtv_atl': '14325',
     'dtv_adt': '1794511834',
-    'dens_session': 'ke4evnpau4j2gic8i1vhueevqgmnug6e',
+    'dens_session': 'o393l30kndtbn6oirvfb2vqolpeoa2m1',
     'tvCategories': 'W3siaWQiOiIxIiwidGl0bGUiOiJMb2NhbCIsInNsdWciOiJsb2NhbCIsInR5cGUiOiJMaXZlIFRWIn0seyJpZCI6IjIiLCJ0aXRsZSI6IlByZW1pdW0iLCJzbHVnIjoicHJlbWl1bSIsInR5cGUiOiJMaXZlIFRWIn0seyJpZCI6IjMiLCJ0aXRsZSI6IkludGVybmF0aW9uYWwiLCJzbHVnIjoiaW50ZXJuYXRpb25hbCIsInR5cGUiOiJMaXZlIFRWIn0seyJpZCI6IjEzIiwidGl0bGUiOiJGcmVlIFN0cmVhbWluZyIsInNsdWciOiJmcmVlLXN0cmVhbWluZyIsInR5cGUiOiJMaXZlIFRWIn1d',
     'dtv_hrls': '713a42fe9b1e51d3f06039055cb60023',
     'dtv_rls': 'eyJyZXBlYXQiOnRydWUsImZyZWVfZGF5cyI6MywiZnJlZV9ob3VycyI6NCwiY2F0Y2h1cF9hY2Nlc3MiOnRydWV9',
     'dtv_msg': 'eyJzaWduX2luIjoiWW91ciBGcmVlIEV4cGVyaWVuY2UgRXhwaXJlZCAtIFBsZWFzZSBTaWduSW4iLCJzdWJzY3JpcHRpb24iOiJZb3VyIEZyZWUgRXhwZXJpZW5jZSBFeHBpcmVkIC0gUGxlYXNlIFN1YmNyaWJlIiwiZXhwaXJlZF9jYXRjaHVwIjoiQ2F0Y2h1cCBFeHBpcmVkIn0%3D',
-    'dtv_grf': 'guest_655132461d4c2bd4',
-    'dtv_axp': '2026-11-15T04%3A00%3A07%2B07%3A00',
+    'dtv_grf': 'guest_563d281270327285',
+    'dtv_axp': '2026-11-15T05%3A37%3A30%2B07%3A00',
     'dtv_alm': '14400',
     'last_visit': 'https%3A%2F%2Fwww.dens.tv%2F',
 })
@@ -81,9 +95,9 @@ def fetch_epg_by_date(channel_id, ep_date):
     return resp.json()
 
 
-def fetch_movie_section(page=1, limit=5):
-    """Fetch movie section (VOD by genre)"""
-    url = f"https://www.dens.tv/movie/section/get?page={page}&limit={limit}&json=true"
+def fetch_movie_related(keyword_id, slug, page=1, limit=50):
+    """Fetch movie related by genre (paginated)"""
+    url = f"https://www.dens.tv/movie/related/{keyword_id}/{slug}?page={page}&limit={limit}&json=true"
     resp = session.get(url)
     resp.raise_for_status()
     return resp.json()
@@ -133,7 +147,6 @@ def worker_fetch_channel_category(cat_id, cat_name):
 def worker_fetch_epg(ch_info):
     """Worker: fetch EPG per channel"""
     ch_id = ch_info["id"]
-    title = ch_info["title"]
     try:
         data = fetch_epg_by_date(ch_id, EPG_DATE)
         if data.get("success") and data.get("data"):
@@ -143,40 +156,49 @@ def worker_fetch_epg(ch_info):
     return ch_info, []
 
 
-def worker_fetch_movie_page(page):
-    """Worker: fetch movie section per page"""
+def worker_fetch_genre_first_page(genre):
+    """Worker: fetch page 1 untuk genre tertentu (untuk tahu total pages)"""
+    kid, slug, name = genre
     try:
-        data = fetch_movie_section(page=page, limit=5)
+        data = fetch_movie_related(kid, slug, page=1, limit=50)
         if data.get("success"):
-            return page, data["data"]
+            return genre, data["data"]
     except Exception as ex:
-        print(f"    [!] Movie page {page}: {ex}")
-    return page, None
+        print(f"    [!] Genre {name}: {ex}")
+    return genre, None
+
+
+def worker_fetch_genre_page(args):
+    """Worker: fetch halaman tertentu untuk genre"""
+    kid, slug, name, page = args
+    try:
+        data = fetch_movie_related(kid, slug, page=page, limit=50)
+        if data.get("success"):
+            return (kid, slug, name), data["data"]
+    except Exception as ex:
+        print(f"    [!] Genre {name} page {page}: {ex}")
+    return (kid, slug, name), None
 
 
 # ============================================================
 # PROCESS MOVIE DATA
 # ============================================================
-def _process_movie_data(data, entries, seen_ids):
-    """Proses data movie section, tambahkan ke entries (dedup by movie_id)"""
-    keywords = data.get("keywords", [])
-    for kw in keywords:
-        kw_name = kw.get("keyword_name", "")
-        items = kw.get("items", [])
-        for item in items:
-            movie_id = item.get("movie_id", "")
-            title = item.get("title", "")
-            play_url = item.get("extra", {}).get("stream", {}).get("play_url", "")
-            logo = item.get("url_handle", {}).get("img_land_large", "") or item.get("url_handle", {}).get("img_port_large", "")
+def _process_movie_list(movies, genre_name, entries, seen_ids):
+    """Proses list movie, tambahkan ke entries (dedup by movie_id)"""
+    for item in movies:
+        movie_id = item.get("movie_id", "")
+        title = item.get("title", "")
+        play_url = item.get("extra", {}).get("stream", {}).get("play_url", "")
+        logo = item.get("url_handle", {}).get("img_land_large", "") or item.get("url_handle", {}).get("img_port_large", "")
 
-            if play_url and movie_id not in seen_ids:
-                seen_ids.add(movie_id)
-                entries.append({
-                    "group_title": f"VOD - {kw_name}",
-                    "tvg_name": title,
-                    "tvg_logo": logo,
-                    "stream_url": play_url,
-                })
+        if play_url and movie_id not in seen_ids:
+            seen_ids.add(movie_id)
+            entries.append({
+                "group_title": f"VOD - {genre_name}",
+                "tvg_name": title,
+                "tvg_logo": logo,
+                "stream_url": play_url,
+            })
 
 
 # ============================================================
@@ -294,32 +316,57 @@ def scrape():
         print(f"    [!] HomeSections: {ex}")
 
     # ----------------------------------------------------------
-    # 4. MOVIE SECTIONS — dari movie/section/get (PARALLEL + PAGINATED)
+    # 4. VOD BY GENRE — dari movie/related (PARALLEL + PAGINATED)
     # ----------------------------------------------------------
-    print("[*] Fetching Movie Sections (parallel + paginated)...")
-    try:
-        first_data = fetch_movie_section(page=1, limit=5)
-        if first_data.get("success"):
-            total_pages = first_data["data"].get("recordstotal", 1)
-            print(f"    Total pages: {total_pages}")
+    print("[*] Fetching VOD by genre (movie/related, parallel + paginated)...")
+    vod_count = 0
 
-            _process_movie_data(first_data["data"], entries, seen_movie_ids)
+    # Phase 1: Fetch page 1 semua genre (parallel) untuk tahu total
+    genre_page1_data = {}
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+        futures = {
+            executor.submit(worker_fetch_genre_first_page, g): g
+            for g in VOD_GENRES
+        }
+        for future in as_completed(futures):
+            genre, data = future.result()
+            if data:
+                genre_page1_data[genre] = data
 
-            if total_pages > 1:
-                remaining_pages = list(range(2, total_pages + 1))
-                with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-                    futures = {
-                        executor.submit(worker_fetch_movie_page, p): p
-                        for p in remaining_pages
-                    }
-                    for future in as_completed(futures):
-                        page_num, data = future.result()
-                        if data:
-                            _process_movie_data(data, entries, seen_movie_ids)
+    # Process page 1 data
+    for genre, data in genre_page1_data.items():
+        kid, slug, name = genre
+        movies = data.get("movies", [])
+        total = data.get("totalrecord", 0)
+        _process_movie_list(movies, name, entries, seen_movie_ids)
+        print(f"    \u2713 {name}: {len(movies)}/{total} items")
 
-            print(f"    \u2713 Done ({total_pages} pages)")
-    except Exception as ex:
-        print(f"    [!] Movie Sections: {ex}")
+    # Phase 2: Fetch remaining pages (parallel)
+    remaining_tasks = []
+    for genre, data in genre_page1_data.items():
+        kid, slug, name = genre
+        total = data.get("totalrecord", 0)
+        if total > 50:
+            total_pages = (total + 49) // 50
+            for p in range(2, total_pages + 1):
+                remaining_tasks.append((kid, slug, name, p))
+
+    if remaining_tasks:
+        print(f"    Fetching {len(remaining_tasks)} additional pages...")
+        with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+            futures = {
+                executor.submit(worker_fetch_genre_page, task): task
+                for task in remaining_tasks
+            }
+            for future in as_completed(futures):
+                genre_key, data = future.result()
+                if data:
+                    kid, slug, name = genre_key
+                    movies = data.get("movies", [])
+                    _process_movie_list(movies, name, entries, seen_movie_ids)
+
+    vod_count = sum(1 for e in entries if "VOD -" in e.get("group_title", ""))
+    print(f"    \u2713 Total VOD: {vod_count} items")
 
     return entries
 
@@ -341,7 +388,7 @@ def write_output(entries):
     print(f"\n[\u2713] Selesai! Total: {len(entries)} entri \u2192 '{OUTPUT_FILE}'")
     print(f"    - Live TV: {live_count}")
     print(f"    - EPG/Catchup: {epg_total}")
-    print(f"    - VOD (Movie): {vod_count}")
+    print(f"    - VOD (by genre): {vod_count}")
     print(f"    - Other: {other_count}")
 
 
