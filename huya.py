@@ -2,13 +2,15 @@ import requests
 import time
 import json
 from datetime import date
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # ============================================================
 # CONFIG
 # ============================================================
 BASE_URL = "https://www.dens.tv/api/dens3/"
 OUTPUT_FILE = "playlist.m3u"
-DELAY = 0.5
+DELAY = 0.3
+MAX_WORKERS = 8
 
 # HTTP Headers untuk streaming
 STREAM_UA = 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36'
@@ -33,7 +35,7 @@ session = requests.Session()
 session.cookies.update({
     'dtv_atl': '14325',
     'dtv_adt': '1794511834',
-    'dens_session': 'kgpc3m8hhau8n5hifpvpb0o99ike1ra0',
+    'dens_session': 'ke4evnpau4j2gic8i1vhueevqgmnug6e',
     'tvCategories': 'W3siaWQiOiIxIiwidGl0bGUiOiJMb2NhbCIsInNsdWciOiJsb2NhbCIsInR5cGUiOiJMaXZlIFRWIn0seyJpZCI6IjIiLCJ0aXRsZSI6IlByZW1pdW0iLCJzbHVnIjoicHJlbWl1bSIsInR5cGUiOiJMaXZlIFRWIn0seyJpZCI6IjMiLCJ0aXRsZSI6IkludGVybmF0aW9uYWwiLCJzbHVnIjoiaW50ZXJuYXRpb25hbCIsInR5cGUiOiJMaXZlIFRWIn0seyJpZCI6IjEzIiwidGl0bGUiOiJGcmVlIFN0cmVhbWluZyIsInNsdWciOiJmcmVlLXN0cmVhbWluZyIsInR5cGUiOiJMaXZlIFRWIn1d',
     'dtv_hrls': '713a42fe9b1e51d3f06039055cb60023',
     'dtv_rls': 'eyJyZXBlYXQiOnRydWUsImZyZWVfZGF5cyI6MywiZnJlZV9ob3VycyI6NCwiY2F0Y2h1cF9hY2Nlc3MiOnRydWV9',
@@ -72,8 +74,16 @@ def fetch_home_sections(page=1, limit=10):
 
 
 def fetch_epg_by_date(channel_id, ep_date):
-    """Fetch EPG (program hari ini) untuk channel tertentu"""
+    """Fetch EPG untuk channel tertentu"""
     url = f"{BASE_URL}tv/TvChannels/listEpgByDate?date={ep_date}&id_channel={channel_id}&app_type=10"
+    resp = session.get(url)
+    resp.raise_for_status()
+    return resp.json()
+
+
+def fetch_movie_section(page=1, limit=5):
+    """Fetch movie section (VOD by genre)"""
+    url = f"https://www.dens.tv/movie/section/get?page={page}&limit={limit}&json=true"
     resp = session.get(url)
     resp.raise_for_status()
     return resp.json()
@@ -107,87 +117,119 @@ def build_m3u(entries):
 
 
 # ============================================================
+# WORKER FUNCTIONS (untuk ThreadPool)
+# ============================================================
+def worker_fetch_channel_category(cat_id, cat_name):
+    """Worker: fetch channel per kategori"""
+    try:
+        data = fetch_channels_by_category(cat_id)
+        if data.get("success"):
+            return cat_name, data["data"]["contents"]
+    except Exception as ex:
+        print(f"    [!] {cat_name}: {ex}")
+    return cat_name, []
+
+
+def worker_fetch_epg(ch_info):
+    """Worker: fetch EPG per channel"""
+    ch_id = ch_info["id"]
+    title = ch_info["title"]
+    try:
+        data = fetch_epg_by_date(ch_id, EPG_DATE)
+        if data.get("success") and data.get("data"):
+            return ch_info, data["data"]
+    except Exception:
+        pass
+    return ch_info, []
+
+
+def worker_fetch_movie_page(page):
+    """Worker: fetch movie section per page"""
+    try:
+        data = fetch_movie_section(page=page, limit=5)
+        if data.get("success"):
+            return page, data["data"]
+    except Exception as ex:
+        print(f"    [!] Movie page {page}: {ex}")
+    return page, None
+
+
+# ============================================================
 # MAIN
 # ============================================================
 def scrape():
     entries = []
-    all_channels = []  # Simpan semua channel untuk EPG
+    all_channels = []
 
     # ----------------------------------------------------------
-    # 1. LIVE TV — dari TvChannels/listByCategory
+    # 1. LIVE TV — dari TvChannels/listByCategory (PARALLEL)
     # ----------------------------------------------------------
-    print("[*] Fetching Live TV channels...")
-    for cat_id, cat_name in CATEGORIES.items():
-        try:
-            data = fetch_channels_by_category(cat_id)
-            if data.get("success"):
-                contents = data["data"]["contents"]
-                count = 0
-                for item in contents:
-                    meta = item.get("meta", {})
-                    rules = item.get("rules", {})
+    print("[*] Fetching Live TV channels (parallel)...")
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+        futures = {
+            executor.submit(worker_fetch_channel_category, cid, cname): (cid, cname)
+            for cid, cname in CATEGORIES.items()
+        }
+        for future in as_completed(futures):
+            cat_name, contents = future.result()
+            count = 0
+            for item in contents:
+                meta = item.get("meta", {})
+                rules = item.get("rules", {})
 
-                    title = meta.get("title", "")
-                    logo = meta.get("images", {}).get("default", "")
-                    stream_url = meta.get("videos", {}).get("live", "")
-                    ch_id = meta.get("id", "")
+                title = meta.get("title", "")
+                logo = meta.get("images", {}).get("default", "")
+                stream_url = meta.get("videos", {}).get("live", "")
+                ch_id = meta.get("id", "")
 
-                    if stream_url:
-                        entries.append({
-                            "group_title": cat_name,
-                            "tvg_name": title,
-                            "tvg_logo": logo,
-                            "stream_url": stream_url,
-                        })
-                        count += 1
-
-                    # Simpan channel info untuk EPG
-                    all_channels.append({
-                        "id": ch_id,
-                        "title": title,
-                        "logo": logo,
-                        "category": cat_name,
-                        "catchup_enable": rules.get("catchup", {}).get("enable", 0),
+                if stream_url:
+                    entries.append({
+                        "group_title": cat_name,
+                        "tvg_name": title,
+                        "tvg_logo": logo,
+                        "stream_url": stream_url,
                     })
+                    count += 1
 
-                print(f"    ✓ {cat_name}: {count} channels")
-            time.sleep(DELAY)
-        except Exception as ex:
-            print(f"    [!] {cat_name}: {ex}")
+                all_channels.append({
+                    "id": ch_id,
+                    "title": title,
+                    "logo": logo,
+                    "category": cat_name,
+                    "catchup_enable": rules.get("catchup", {}).get("enable", 0),
+                })
+
+            print(f"    ✓ {cat_name}: {count} channels")
 
     # ----------------------------------------------------------
-    # 2. EPG / CATCHUP — dari TvChannels/listEpgByDate
+    # 2. EPG — dari TvChannels/listEpgByDate (PARALLEL)
     # ----------------------------------------------------------
-    print(f"[*] Fetching EPG (date: {EPG_DATE})...")
+    print(f"[*] Fetching EPG date: {EPG_DATE} (parallel)...")
+    epg_channels = [ch for ch in all_channels if ch["catchup_enable"]]
     epg_count = 0
-    for ch in all_channels:
-        # Hanya fetch EPG untuk channel yang enable catchup
-        if not ch["catchup_enable"]:
-            continue
 
-        try:
-            data = fetch_epg_by_date(ch["id"], EPG_DATE)
-            if data.get("success") and data.get("data"):
-                programs = data["data"]
-                for prog in programs:
-                    title = prog.get("title", "")
-                    play_url = prog.get("play", "")
-                    start_end = prog.get("start_end", "")
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+        futures = {
+            executor.submit(worker_fetch_epg, ch): ch
+            for ch in epg_channels
+        }
+        for future in as_completed(futures):
+            ch_info, programs = future.result()
+            for prog in programs:
+                title = prog.get("title", "")
+                play_url = prog.get("play", "")
+                start_end = prog.get("start_end", "")
 
-                    if play_url:
-                        entries.append({
-                            "group_title": f"{ch['title']} - EPG",
-                            "tvg_name": f"{title} [{start_end}]",
-                            "tvg_logo": ch["logo"],
-                            "stream_url": play_url,
-                        })
-                        epg_count += 1
+                if play_url:
+                    entries.append({
+                        "group_title": f"{ch_info['title']} - EPG",
+                        "tvg_name": f"{title} [{start_end}]",
+                        "tvg_logo": ch_info["logo"],
+                        "stream_url": play_url,
+                    })
+                    epg_count += 1
 
-            time.sleep(DELAY)
-        except Exception as ex:
-            print(f"    [!] EPG {ch['title']}: {ex}")
-
-    print(f"    ✓ {epg_count} EPG programs")
+    print(f"    ✓ {epg_count} EPG programs from {len(epg_channels)} channels")
 
     # ----------------------------------------------------------
     # 3. CATCHUP & VOD — dari HomeSections
@@ -207,7 +249,6 @@ def scrape():
                     logo = item.get("image_landscape", "") or item.get("image_square", "")
 
                     stream_url = None
-
                     if item_type == "catchup_schedule":
                         stream_url = item.get("stream_url_web", "")
                     elif item_type == "vod":
@@ -222,14 +263,76 @@ def scrape():
                             "tvg_logo": logo,
                             "stream_url": stream_url,
                         })
-
             print(f"    ✓ Done")
     except Exception as ex:
         print(f"    [!] HomeSections: {ex}")
 
     # ----------------------------------------------------------
-    # 4. WRITE FILE
+    # 4. MOVIE SECTIONS — dari movie/section/get (PARALLEL + PAGINATED)
     # ----------------------------------------------------------
+    print("[*] Fetching Movie Sections (parallel + paginated)...")
+
+    # Fetch page 1 dulu untuk tahu total pages
+    try:
+        first_data = fetch_movie_section(page=1, limit=5)
+        if first_data.get("success"):
+            total_pages = first_data["data"].get("recordstotal", 1)
+            print(f"    Total pages: {total_pages}")
+
+            # Proses page 1
+            _process_movie_data(first_data["data"], entries)
+
+            # Fetch remaining pages secara parallel
+            if total_pages > 1:
+                remaining_pages = list(range(2, total_pages + 1))
+                with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+                    futures = {
+                        executor.submit(worker_fetch_movie_page, p): p
+                        for p in remaining_pages
+                    }
+                    for future in as_completed(futures):
+                        page_num, data = future.result()
+                        if data:
+                            _process_movie_data(data, entries)
+
+            print(f"    ✓ Done ({total_pages} pages)")
+    except Exception as ex:
+        print(f"    [!] Movie Sections: {ex}")
+
+
+def _process_movie_data(data, entries):
+    """Proses data movie section, tambahkan ke entries (dedup by movie_id)"""
+    keywords = data.get("keywords", [])
+    for kw in keywords:
+        kw_name = kw.get("keyword_name", "")
+        items = kw.get("items", [])
+        for item in items:
+            movie_id = item.get("movie_id", "")
+            title = item.get("title", "")
+            play_url = item.get("extra", {}).get("stream", {}).get("play_url", "")
+            logo = item.get("url_handle", {}).get("img_land_large", "") or item.get("url_handle", {}).get("img_port_large", "")
+
+            if play_url:
+                # Dedup: skip jika movie_id sudah ada
+                existing_ids = {e.get("_movie_id") for e in entries if e.get("_movie_id")}
+                if movie_id not in existing_ids:
+                    entries.append({
+                        "group_title": f"VOD - {kw_name}",
+                        "tvg_name": title,
+                        "tvg_logo": logo,
+                        "stream_url": play_url,
+                        "_movie_id": movie_id,
+                    })
+
+
+# ============================================================
+# CLEANUP & WRITE
+# ============================================================
+def write_output(entries):
+    # Hapus field _movie_id sebelum build
+    for e in entries:
+        e.pop("_movie_id", None)
+
     m3u = build_m3u(entries)
 
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
@@ -237,12 +340,19 @@ def scrape():
 
     live_count = sum(1 for e in entries if "op-flashcon-digdayahd" in e.get("stream_url", "") or "op-flashcon-digdayasd" in e.get("stream_url", ""))
     epg_total = sum(1 for e in entries if " - EPG" in e.get("group_title", ""))
-    other_count = len(entries) - live_count - epg_total
+    vod_count = sum(1 for e in entries if "VOD -" in e.get("group_title", ""))
+    other_count = len(entries) - live_count - epg_total - vod_count
+
     print(f"\n[✓] Selesai! Total: {len(entries)} entri → '{OUTPUT_FILE}'")
     print(f"    - Live TV: {live_count}")
     print(f"    - EPG/Catchup: {epg_total}")
-    print(f"    - VOD: {other_count}")
+    print(f"    - VOD (Movie): {vod_count}")
+    print(f"    - Other: {other_count}")
 
 
 if __name__ == "__main__":
-    scrape()   
+    start = time.time()
+    scrape()
+    write_output(entries)
+    elapsed = time.time() - start
+    print(f"    Time: {elapsed:.1f}s")   
