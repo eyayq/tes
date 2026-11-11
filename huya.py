@@ -2,7 +2,7 @@
 """
 Vidio Live TV → M3U Playlist Generator (Complete)
 ==================================================
-- Scrape semua channel dari /categories/live/sections
+- Scrape semua channel dari /categories/live/sections (included[])
 - Non-DRM: fetch via API stream (valid 2 jam)
 - DRM: fallback ke URL DRM + license proxy (Cloudflare Worker)
 - Auto-refresh loop (opsional)
@@ -141,10 +141,7 @@ def verify_login(session) -> bool:
 # ==================== STEP 3: FETCH ALL CHANNELS ====================
 def fetch_all_channels(session, luws: str) -> list:
     """
-    GET /categories/live/sections → semua section & channel.
-    Handle 2 format:
-      1. contents nested di attributes.contents
-      2. contents di included[] (JSON:API format)
+    GET /categories/live/sections → parse included[] untuk semua channel.
     """
     url = f"{API_BASE}/categories/live/sections"
     h = {
@@ -177,72 +174,82 @@ def fetch_all_channels(session, luws: str) -> list:
 
         data = resp.json()
 
-        # DEBUG: cetak struktur response (hapus jika tidak perlu)
-        if page == 1:
-            log.info("  [DEBUG] top keys: %s", list(data.keys()))
-            d = data.get("data", [])
-            if isinstance(d, list) and d:
-                log.info("  [DEBUG] data[0] keys: %s", list(d[0].keys()))
-                attrs = d[0].get("attributes", {})
-                log.info("  [DEBUG] attributes keys: %s", list(attrs.keys())[:10])
-                if "contents" in attrs:
-                    log.info("  [DEBUG] contents in attributes: %d items", len(attrs["contents"]))
-            if "included" in data:
-                log.info("  [DEBUG] included: %d items", len(data["included"]))
-
+        # Build section title mapping dari data[]
         sections = data.get("data", [])
         if isinstance(sections, dict):
             sections = [sections]
 
-        # Build section_id → title mapping
-        section_titles = {}
+        # Map: relationship id → section title
+        # relationships di section punya "contents" yang reference ke included
+        section_id_to_title = {}
+        section_contents_map = {}  # section_id → list of content ids
+
         for section in sections:
             sec_id = str(section.get("id", ""))
             attrs = section.get("attributes", {})
-            section_titles[sec_id] = attrs.get("title", "Lainnya")
+            section_id_to_title[sec_id] = attrs.get("title", "Lainnya")
 
-        # === METHOD 1: contents nested di attributes ===
-        for section in sections:
-            attrs = section.get("attributes", {})
-            contents = attrs.get("contents", [])
-            sec_title = attrs.get("title", "Lainnya")
-            for item in contents:
-                _extract_channel(item, sec_title, channels)
+            # relationships.contents → list of {id, type}
+            rels = section.get("relationships", {})
+            contents_rel = rels.get("contents", {})
+            content_list = contents_rel.get("data", [])
+            if isinstance(content_list, list):
+                section_contents_map[sec_id] = content_list
 
-        # === METHOD 2: contents di included[] (JSON:API) ===
+        # Parse included[] — semua channel ada di sini
         included = data.get("included", [])
-        if included:
+        if page == 1 and included:
+            # DEBUG: lihat type distribution
+            types = {}
             for item in included:
-                item_type = item.get("type", "")
-                if "livestreaming" not in item_type:
-                    continue
-                attrs = item.get("attributes", {})
-                ch_id_raw = item.get("id", "")
-                # ID bisa berupa "205" atau "livestreaming/205"
-                try:
-                    ch_id = int(str(ch_id_raw).split("/")[-1])
-                except (ValueError, AttributeError):
-                    continue
-                if ch_id in channels:
-                    continue
+                t = item.get("type", "?")
+                types[t] = types.get(t, 0) + 1
+            log.info("  [DEBUG] included types: %s", types)
 
-                # Logo
-                logo = ""
-                sq = attrs.get("square_image")
-                if isinstance(sq, dict):
-                    logo = sq.get("url", "")
-                elif isinstance(sq, str):
-                    logo = sq
-                if not logo:
-                    logo = attrs.get("image_landscape_url", "") or attrs.get("cover_url", "")
+        for item in included:
+            attrs = item.get("attributes", {})
+            title = attrs.get("title", "")
+            if not title:
+                continue
 
-                channels[ch_id] = {
-                    "id": ch_id,
-                    "title": attrs.get("title", "Unknown"),
-                    "logo": logo,
-                    "group": "Lainnya",
-                    "drm_stream": "",
-                }
+            # Extract numeric channel ID
+            ch_id_raw = item.get("id", "")
+            try:
+                ch_id = int(str(ch_id_raw).split("/")[-1])
+            except (ValueError, AttributeError):
+                continue
+
+            if ch_id in channels:
+                continue
+
+            # Logo
+            logo = ""
+            sq = attrs.get("square_image")
+            if isinstance(sq, dict):
+                logo = sq.get("url", "")
+            elif isinstance(sq, str):
+                logo = sq
+            if not logo:
+                logo = attrs.get("image_landscape_url", "") or attrs.get("cover_url", "")
+
+            # Group: cari di section_contents_map
+            group = "Lainnya"
+            item_id = str(ch_id)
+            for sec_id, content_list in section_contents_map.items():
+                for c in content_list:
+                    if str(c.get("id", "")) == item_id or item_id in str(c.get("id", "")):
+                        group = section_id_to_title.get(sec_id, "Lainnya")
+                        break
+                if group != "Lainnya":
+                    break
+
+            channels[ch_id] = {
+                "id": ch_id,
+                "title": title,
+                "logo": logo,
+                "group": group,
+                "drm_stream": attrs.get("stream_url", ""),
+            }
 
         # Pagination
         links = data.get("links", {})
@@ -255,36 +262,6 @@ def fetch_all_channels(session, luws: str) -> list:
     result = list(channels.values())
     log.info("  Found %d unique channels", len(result))
     return result
-
-
-def _extract_channel(item: dict, section_title: str, channels: dict):
-    """Extract channel dari item contents (format RSC/nested)."""
-    content_type = item.get("content_type", "")
-    if content_type != "livestreaming":
-        return
-
-    ch_id = item.get("content_id")
-    if not ch_id:
-        return
-    try:
-        ch_id = int(ch_id)
-    except (ValueError, TypeError):
-        return
-
-    if ch_id in channels:
-        return
-
-    channel_name = item.get("alt_title") or item.get("title", "Unknown")
-    logo = item.get("cover_url", "")
-    stream_url = item.get("stream_url", "")
-
-    channels[ch_id] = {
-        "id": ch_id,
-        "title": channel_name,
-        "logo": logo,
-        "group": section_title,
-        "drm_stream": stream_url,
-    }
 
 
 # ==================== STEP 4: FETCH NON-DRM STREAM URL ====================
