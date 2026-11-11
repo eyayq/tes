@@ -2,7 +2,7 @@
 """
 Vidio Live TV → M3U Playlist Generator (Complete)
 ==================================================
-- Scrape semua channel dari /categories/live/sections (included[])
+- Scrape semua channel dari /categories/live/sections (included[], type="content")
 - Non-DRM: fetch via API stream (valid 2 jam)
 - DRM: fallback ke URL DRM + license proxy (Cloudflare Worker)
 - Auto-refresh loop (opsional)
@@ -141,7 +141,7 @@ def verify_login(session) -> bool:
 # ==================== STEP 3: FETCH ALL CHANNELS ====================
 def fetch_all_channels(session, luws: str) -> list:
     """
-    GET /categories/live/sections → parse included[] untuk semua channel.
+    GET /categories/live/sections → parse included[] (type="content", content_type="livestreaming").
     """
     url = f"{API_BASE}/categories/live/sections"
     h = {
@@ -152,7 +152,7 @@ def fetch_all_channels(session, luws: str) -> list:
         "x-user-id": USER_ID,
         "luws": luws,
         "origin": "https://m.vidio.com",
-        "referer": "https://m.vidio.com/",
+        "referer": "https://m.vidio.com",
         "accept": "application/json",
         "accept-language": "id",
     }
@@ -174,70 +174,87 @@ def fetch_all_channels(session, luws: str) -> list:
 
         data = resp.json()
 
-        # Build section title mapping dari data[]
+        # Build section title mapping
         sections = data.get("data", [])
         if isinstance(sections, dict):
             sections = [sections]
 
-        # Map: relationship id → section title
-        # relationships di section punya "contents" yang reference ke included
         section_id_to_title = {}
-        section_contents_map = {}  # section_id → list of content ids
+        section_contents_map = {}
 
         for section in sections:
             sec_id = str(section.get("id", ""))
             attrs = section.get("attributes", {})
             section_id_to_title[sec_id] = attrs.get("title", "Lainnya")
 
-            # relationships.contents → list of {id, type}
             rels = section.get("relationships", {})
             contents_rel = rels.get("contents", {})
             content_list = contents_rel.get("data", [])
             if isinstance(content_list, list):
                 section_contents_map[sec_id] = content_list
 
-        # Parse included[] — semua channel ada di sini
+        # Parse included[]
         included = data.get("included", [])
         if page == 1 and included:
-            # DEBUG: lihat type distribution
             types = {}
             for item in included:
                 t = item.get("type", "?")
                 types[t] = types.get(t, 0) + 1
             log.info("  [DEBUG] included types: %s", types)
+            # Sample
+            for item in included:
+                if item.get("type") == "content":
+                    log.info("  [DEBUG] sample: %s", json.dumps(item, ensure_ascii=False)[:400])
+                    break
 
         for item in included:
-            attrs = item.get("attributes", {})
-            title = attrs.get("title", "")
-            if not title:
+            if item.get("type") != "content":
                 continue
 
-            # Extract numeric channel ID
-            ch_id_raw = item.get("id", "")
+            attrs = item.get("attributes", {})
+
+            # Filter: hanya livestreaming
+            content_type = attrs.get("content_type", "")
+            if content_type != "livestreaming":
+                continue
+
+            # Channel ID: dari attributes.content_id
+            ch_id = attrs.get("content_id")
+            if not ch_id:
+                # Fallback: extract dari id "section-123-livestreaming-204"
+                id_str = str(item.get("id", ""))
+                parts = id_str.split("-")
+                try:
+                    ch_id = int(parts[-1])
+                except (ValueError, IndexError):
+                    continue
             try:
-                ch_id = int(str(ch_id_raw).split("/")[-1])
-            except (ValueError, AttributeError):
+                ch_id = int(ch_id)
+            except (ValueError, TypeError):
                 continue
 
             if ch_id in channels:
                 continue
 
-            # Logo
-            logo = ""
-            sq = attrs.get("square_image")
-            if isinstance(sq, dict):
-                logo = sq.get("url", "")
-            elif isinstance(sq, str):
-                logo = sq
-            if not logo:
-                logo = attrs.get("image_landscape_url", "") or attrs.get("cover_url", "")
+            # Title: prefer alt_title (nama channel), fallback title
+            title = attrs.get("alt_title") or attrs.get("title", "Unknown")
 
-            # Group: cari di section_contents_map
+            # Logo
+            logo = attrs.get("cover_url", "")
+            if not logo:
+                sq = attrs.get("square_image")
+                if isinstance(sq, dict):
+                    logo = sq.get("url", "")
+                elif isinstance(sq, str):
+                    logo = sq
+
+            # Group: cari dari section relationships
             group = "Lainnya"
-            item_id = str(ch_id)
+            item_id_str = str(ch_id)
             for sec_id, content_list in section_contents_map.items():
                 for c in content_list:
-                    if str(c.get("id", "")) == item_id or item_id in str(c.get("id", "")):
+                    c_id = str(c.get("id", ""))
+                    if item_id_str in c_id:
                         group = section_id_to_title.get(sec_id, "Lainnya")
                         break
                 if group != "Lainnya":
@@ -279,7 +296,7 @@ def fetch_stream_url(session, luws: str, ch_id: int) -> str:
         "x-client": x_client,
         "x-signature": x_signature,
         "origin": "https://m.vidio.com",
-        "referer": "https://m.vidio.com/",
+        "referer": "https://m.vidio.com",
         "sec-fetch-site": "same-site",
         "sec-fetch-mode": "cors",
         "sec-fetch-dest": "empty",
