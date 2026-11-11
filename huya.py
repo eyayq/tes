@@ -2,8 +2,8 @@
 """
 Vidio Live TV → M3U Playlist Generator (Complete)
 ==================================================
-- Scrape SEMUA channel: /livestreamings + /categories/live/sections + per-section fetch
-- Non-DRM: fetch via API stream (valid 2 jam) — 3 attempt (auth, anonymous, preview)
+- Scrape semua channel: /livestreamings + /categories/live/sections + per-section
+- Non-DRM: fetch via API stream (valid 2 jam) — 3 attempt
 - DRM: fallback ke URL DRM + license proxy (Cloudflare Worker)
 - EXT VLCOPT: user-agent, origin, referrer per channel
 - Auto-refresh loop (opsional)
@@ -13,10 +13,10 @@ Dependencies:
 
 Run:
     python vidio_m3u.py
-    python vidio_m3u.py --loop          # auto-refresh tiap 115 menit
-    python vidio_m3u.py --drm-only      # skip non-DRM, langsung DRM
-    python vidio_m3u.py -o my.m3u       # custom output
-    python vidio_m3u.py --debug         # lihat response mentah
+    python vidio_m3u.py --loop
+    python vidio_m3u.py --drm-only
+    python vidio_m3u.py -o my.m3u
+    python vidio_m3u.py --debug
 """
 
 import argparse
@@ -43,22 +43,18 @@ IMPERSONATE = "chrome"
 DELAY = 0.3
 REFRESH_MINUTES = 115
 
-# License proxy (Cloudflare Worker)
 LICENSE_WORKER = "https://b.bhns.workers.dev/license.mpd"
 
-# DRM stream pattern
 STREAM_DRM_HLS = (
     "https://etslive-v3-vidio-com-tokenized.akamaized.net"
     "/stream/{id}/file/drm/hls/master.m3u8"
 )
 
-# API Key
 API_KEY = (
     "CH1ZFsN4N/MIfAds1DL9mP151CNqIpWHqZGRr+LkvUyiq3FRPuP1Kt6aK+pG3nEC1FXt0ZAAJ5FKP8QU8CZ5"
     "/ieyIuWEkvNBqXdsdlXM2838+3SFjs9rtlntv7l7DHkBHWK1q/4vLGad8GAj3vfLciRFnquHuZMMW+4EX8yTe1w="
 )
 
-# Browser headers (untuk EXT VLCOPT)
 USER_AGENT = (
     "Mozilla/5.0 (Linux; Android 10; K) "
     "AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -150,12 +146,6 @@ def verify_login(session) -> bool:
 
 # ==================== STEP 3: FETCH ALL CHANNELS ====================
 def fetch_all_channels(session, luws: str) -> list:
-    """
-    3 sumber:
-    1. /livestreamings?stream_type=tv_stream → base list
-    2. /categories/live/sections → section list + grouping
-    3. /sections/{id}-{slug}?content_size=50 → SEMUA contents per section
-    """
     h = {
         "x-api-key": API_KEY,
         "x-api-platform": "web-mobile",
@@ -171,7 +161,7 @@ def fetch_all_channels(session, luws: str) -> list:
 
     channels = {}
 
-    # === SOURCE 1: /livestreamings (base) ===
+    # === SOURCE 1: /livestreamings ===
     log.info("Fetching base channels via /livestreamings ...")
     try:
         resp = session.get(
@@ -212,7 +202,7 @@ def fetch_all_channels(session, luws: str) -> list:
     except Exception as e:
         log.error("  /livestreamings error: %s", e)
 
-    # === SOURCE 2: /categories/live/sections → get section list ===
+    # === SOURCE 2: /categories/live/sections ===
     log.info("Fetching sections ...")
     section_list = []
     page = 1
@@ -250,7 +240,6 @@ def fetch_all_channels(session, luws: str) -> list:
                 "self_url": self_url,
             })
 
-        # Parse included[] dari sections response
         _parse_included(data.get("included", []), channels)
 
         links_data = data.get("links", {})
@@ -262,7 +251,7 @@ def fetch_all_channels(session, luws: str) -> list:
 
     log.info("  Found %d sections", len(section_list))
 
-    # === SOURCE 3: Fetch each section individually (SEMUA contents) ===
+    # === SOURCE 3: Per-section fetch ===
     log.info("Fetching contents per section ...")
     for sec in section_list:
         sec_url = sec["self_url"]
@@ -280,24 +269,15 @@ def fetch_all_channels(session, luws: str) -> list:
             continue
 
         data = resp.json()
-
-        # Kumpulkan semua content items dari berbagai format
         items = []
 
-        # Format 1: attributes.contents (RSC-like)
         if isinstance(data, dict):
             attrs = data.get("attributes", {})
             if isinstance(attrs, dict) and attrs.get("contents"):
                 items.extend(attrs["contents"])
-
-        # Format 2: included[]
-        if isinstance(data, dict):
             included = data.get("included", [])
             if included:
                 items.extend(included)
-
-        # Format 3: data[] (JSON:API)
-        if isinstance(data, dict):
             d = data.get("data", [])
             if isinstance(d, list):
                 items.extend(d)
@@ -318,7 +298,6 @@ def fetch_all_channels(session, luws: str) -> list:
 
 
 def _parse_included(included: list, channels: dict):
-    """Parse included[] dari sections response."""
     for item in included:
         if item.get("type") != "content":
             continue
@@ -326,25 +305,17 @@ def _parse_included(included: list, channels: dict):
 
 
 def _parse_content_item(item: dict, group: str, channels: dict) -> bool:
-    """
-    Parse 1 content item → add/update in channels dict.
-    Return True jika channel baru ditambahkan, False jika skip.
-    """
     attrs = item.get("attributes", {})
 
-    # Filter: hanya livestreaming
     content_type = attrs.get("content_type", "")
     if content_type != "livestreaming":
-        # JSON:API format: cek type field
         item_type = item.get("type", "")
         if "livestreaming" not in item_type.lower():
             return False
 
-    # Get channel ID
     ch_id = attrs.get("content_id")
     if not ch_id:
         id_str = str(item.get("id", ""))
-        # "section-123-livestreaming-204" → 204
         parts = id_str.split("-")
         try:
             ch_id = int(parts[-1])
@@ -360,15 +331,12 @@ def _parse_content_item(item: dict, group: str, channels: dict) -> bool:
         return False
 
     if ch_id in channels:
-        # Update group jika lebih spesifik
         if group != "Lainnya":
             channels[ch_id]["group"] = group
-        # Update drm_stream jika ada
         if attrs.get("stream_url"):
             channels[ch_id]["drm_stream"] = attrs["stream_url"]
         return False
 
-    # New channel
     title = attrs.get("alt_title") or attrs.get("title", "Unknown")
     logo = attrs.get("cover_url", "")
     if not logo:
@@ -392,13 +360,9 @@ def _parse_content_item(item: dict, group: str, channels: dict) -> bool:
 
 # ==================== STEP 4: FETCH NON-DRM STREAM URL ====================
 def fetch_stream_url(session, luws: str, ch_id: int) -> str:
-    """
-    GET /livestreamings/{id}/stream?initialize=true
-    3 attempt: full auth → anonymous → x-user-login=false
-    """
     url = f"{API_BASE}/livestreamings/{ch_id}/stream?initialize=true"
 
-    # --- Attempt 1: Full auth ---
+    # Attempt 1: Full auth
     x_client, x_signature = generate_x_signature()
     h1 = {
         "x-api-key": API_KEY,
@@ -421,7 +385,7 @@ def fetch_stream_url(session, luws: str, ch_id: int) -> str:
     if result:
         return result
 
-    # --- Attempt 2: Anonymous ---
+    # Attempt 2: Anonymous
     x_client2, x_signature2 = generate_x_signature()
     h2 = {
         "x-api-key": API_KEY,
@@ -443,7 +407,7 @@ def fetch_stream_url(session, luws: str, ch_id: int) -> str:
         log.debug("  ch %d: preview OK (anonymous)", ch_id)
         return result
 
-    # --- Attempt 3: x-user-login=false ---
+    # Attempt 3: x-user-login=false
     x_client3, x_signature3 = generate_x_signature()
     h3 = {
         "x-api-key": API_KEY,
@@ -515,7 +479,6 @@ def generate_m3u(channels: list, stream_urls: dict, output_file: str):
             f'{title}'
         )
 
-        # EXT VLCOPT
         lines.append(f'#EXTVLCOPT:http-user-agent={USER_AGENT}')
         lines.append(f'#EXTVLCOPT:http-referrer={REFERER}')
         lines.append(f'#EXTVLCOPT:http-origin={ORIGIN}')
@@ -550,7 +513,6 @@ def run_once(output_file: str, drm_only: bool, retries: int) -> bool:
         log.error("Tidak ada channel ditemukan.")
         return False
 
-    # Summary
     groups = {}
     for ch in channels:
         groups.setdefault(ch["group"], []).append(ch["title"])
@@ -559,7 +521,6 @@ def run_once(output_file: str, drm_only: bool, retries: int) -> bool:
         preview = ", ".join(names[:4]) + ("..." if len(names) > 4 else "")
         log.info("    [%s] %d: %s", g, len(names), preview)
 
-    # Fetch non-DRM URLs
     stream_urls = {}
     if not drm_only:
         log.info("\nFetching non-DRM URLs (%d channels) ...", len(channels))
@@ -574,7 +535,6 @@ def run_once(output_file: str, drm_only: bool, retries: int) -> bool:
                 log.info("  Progress: %d/%d (%d ok, %d fail)", i, len(channels), len(stream_urls), len(failed))
             time.sleep(DELAY)
 
-        # Retry
         for attempt in range(1, retries + 1):
             if not failed:
                 break
@@ -592,7 +552,6 @@ def run_once(output_file: str, drm_only: bool, retries: int) -> bool:
 
         log.info("  Non-DRM: %d/%d", len(stream_urls), len(channels))
 
-    # Generate M3U
     log.info("\nGenerating M3U ...")
     generate_m3u(channels, stream_urls, output_file)
     return True
