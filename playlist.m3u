@@ -1,139 +1,277 @@
 #EXTM3U
 #EXTINF:-1 group-title="Local" tvg-name="Live Streaming 1" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1745228970_tvchannels_v1.jpg",Live Streaming 1
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h123/live.m3u8?app_type=web&userid=lite&chname=Live_Streaming_1
 #EXTINF:-1 group-title="Local" tvg-name="DensPlay" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1687501248_tvchannels_v1.jpg",DensPlay
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h246/index.m3u8?app_type=web&userid=lite&chname=DensPlay
 #EXTINF:-1 group-title="Local" tvg-name="DensLife&Style" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1687501284_tvchannels_v1.jpg",DensLife&Style
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h222/index.m3u8?app_type=web&userid=lite&chname=DensLifenStyle
 #EXTINF:-1 group-title="Local" tvg-name="DensFood Channel" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1687501416_tvchannels_v1.jpg",DensFood Channel
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h221/index.m3u8?app_type=web&userid=lite&chname=DensFood_Channel
 #EXTINF:-1 group-title="Local" tvg-name="DensShowBiz" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1687501370_tvchannels_v1.jpg",DensShowBiz
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h244/index.m3u8?app_type=web&userid=lite&chname=DensShowBiz
 #EXTINF:-1 group-title="Local" tvg-name="DensKnowledge" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1701335417_tvchannels_v1.jpg",DensKnowledge
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h218/index.m3u8?app_type=web&userid=lite&chname=DensKnowledge
 #EXTINF:-1 group-title="Local" tvg-name="Channel Jowo" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1725851535_tvchannels_v1.jpg",Channel Jowo
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayasd-1.dens.tv/h/h215/stream.m3u8?app_type=web&userid=lite&chname=Channel_Jowo
 #EXTINF:-1 group-title="Local" tvg-name="Metro TV" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1687501451_tvchannels_v1.jpg",Metro TV
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h12/index.m3u8?app_type=web&userid=lite&chname=Metro_TV
 #EXTINF:-1 group-title="Local" tvg-name="BTV" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1735687940_tvchannels_v1.jpeg",BTV
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h313/stream.m3u8?app_type=web&userid=lite&chname=BTV
 #EXTINF:-1 group-title="Local" tvg-name="Berita Satu" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1735687939_tvchannels_v1.jpeg",Berita Satu
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h314/stream.m3u8?app_type=web&userid=lite&chname=Berita_Satu
 #EXTINF:-1 group-title="Local" tvg-name="MDTV" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1740682833_tvchannels_v1.jpg",MDTV
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h223/index.m3u8?app_type=web&userid=lite&chname=MDTV
 #EXTINF:-1 group-title="Local" tvg-name="RTV" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1687501653_tvchannels_v1.jpg",RTV
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h10/index.m3u8?app_type=web&userid=lite&chname=RTV
 #EXTINF:-1 group-title="Local" tvg-name="Elshinta TV" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1687501688_tvchannels_v1.jpg",Elshinta TV
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayasd-1.dens.tv/h/h216/stream.m3u8?app_type=web&userid=lite&chname=Elshinta_TV
 #EXTINF:-1 group-title="Local" tvg-name="Magna Channel" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1687501720_tvchannels_v1.jpg",Magna Channel
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h24/index.m3u8?app_type=web&userid=lite&chname=Magna_Channel
 #EXTINF:-1 group-title="Local" tvg-name="TVRI" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1687501756_tvchannels_v1.jpg",TVRI
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h17/index.m3u8?app_type=web&userid=lite&chname=TVRI
 #EXTINF:-1 group-title="Local" tvg-name="TVRI World" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1790063445_tvchannels_v1.jpg",TVRI World
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h249/index.m3u8?app_type=web&userid=lite&chname=TVRI_World
 #EXTINF:-1 group-title="Local" tvg-name="Jak tv" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1687501805_tvchannels_v1.jpg",Jak tv
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayasd-1.dens.tv/h/h209/stream.m3u8?app_type=web&userid=lite&chname=Jak_tv
 #EXTINF:-1 group-title="Local" tvg-name="RodjaTV" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1687501810_tvchannels_v1.jpg",RodjaTV
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h233/index.m3u8?app_type=web&userid=lite&chname=RodjaTV
 #EXTINF:-1 group-title="Local" tvg-name="DAAI TV" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1687501817_tvchannels_v1.jpg",DAAI TV
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h16/index.m3u8?app_type=web&userid=lite&chname=DAAI_TV
 #EXTINF:-1 group-title="Local" tvg-name="Nusantara TV (NTV)" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1728448171_tvchannels_v1.jpg",Nusantara TV (NTV)
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h37/index.m3u8?app_type=web&userid=lite&chname=Nusantara_TV_NTV-
 #EXTINF:-1 group-title="Premium" tvg-name="My Cinema Europe HD" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1687502977_tvchannels_v1.jpg",My Cinema Europe HD
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h18/index.m3u8?app_type=web&userid=lite&chname=My_Cinema_Europe_HD
 #EXTINF:-1 group-title="Premium" tvg-name="Crema TV" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1701422037_tvchannels_v1.jpg",Crema TV
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h202/index.m3u8?app_type=web&userid=lite&chname=Crema_TV
 #EXTINF:-1 group-title="Premium" tvg-name="Qwest TV" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1763699104_tvchannels_v1.jpg",Qwest TV
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h306/stream.m3u8?app_type=web&userid=lite&chname=Qwest_TV
 #EXTINF:-1 group-title="Premium" tvg-name="Stingray Classica" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1701423611_tvchannels_v1.jpg",Stingray Classica
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h304/stream.m3u8?app_type=web&userid=lite&chname=Stingray_Classica
 #EXTINF:-1 group-title="Premium" tvg-name="Dance TV" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1701423538_tvchannels_v1.jpg",Dance TV
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h308/stream.m3u8?app_type=web&userid=lite&chname=Dance_TV
 #EXTINF:-1 group-title="Premium" tvg-name="Motorvision+" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/motorvision+@3x.jpg",Motorvision+
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h09/index.m3u8?app_type=web&userid=lite&chname=Motorvision%2B
 #EXTINF:-1 group-title="International" tvg-name="CNA" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1687503403_tvchannels_v1.jpg",CNA
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h29/index.m3u8?app_type=web&userid=lite&chname=CNA
 #EXTINF:-1 group-title="International" tvg-name="NHK WORLD-JAPAN" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1687503409_tvchannels_v1.jpg",NHK WORLD-JAPAN
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h23/index.m3u8?app_type=web&userid=lite&chname=NHK_WORLD-JAPAN
 #EXTINF:-1 group-title="International" tvg-name="Al Jazeera English" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1755135969_tvchannels_v1.jpg",Al Jazeera English
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h43/index.m3u8?app_type=web&userid=lite&chname=Al_Jazeera_English
 #EXTINF:-1 group-title="International" tvg-name="TRT World" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1687503423_tvchannels_v1.jpg",TRT World
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h20/index.m3u8?app_type=web&userid=lite&chname=TRT_World
 #EXTINF:-1 group-title="International" tvg-name="Russia Today (RT)" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1745830848_tvchannels_v1.jpg",Russia Today (RT)
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h226/index.m3u8?app_type=web&userid=lite&chname=Russia_Today_RT-
 #EXTINF:-1 group-title="International" tvg-name="WION" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1687503432_tvchannels_v1.jpg",WION
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h307/stream.m3u8?app_type=web&userid=lite&chname=WION
 #EXTINF:-1 group-title="International" tvg-name="France 24 English" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1790063442_tvchannels_v1.jpg",France 24 English
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h238/index.m3u8?app_type=web&userid=lite&chname=France_24_English
 #EXTINF:-1 group-title="International" tvg-name="FREEDOM" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1687503445_tvchannels_v1.jpg",FREEDOM
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h101/index.m3u8?app_type=web&userid=lite&chname=FREEDOM
 #EXTINF:-1 group-title="International" tvg-name="Al Jazeera Arabic" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1755135968_tvchannels_v1.jpg",Al Jazeera Arabic
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/s/s16/index.m3u8?app_type=web&userid=lite&chname=Al_Jazeera_Arabic
 #EXTINF:-1 group-title="International" tvg-name="CCTV-4" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1687503457_tvchannels_v1.jpg",CCTV-4
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h22/index.m3u8?app_type=web&userid=lite&chname=CCTV-4
 #EXTINF:-1 group-title="International" tvg-name="France 24" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1687503463_tvchannels_v1.jpg",France 24
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h14/index.m3u8?app_type=web&userid=lite&chname=France_24
 #EXTINF:-1 group-title="International" tvg-name="TV5MONDE ASIE" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1762855009_tvchannels_v1.jpg",TV5MONDE ASIE
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h312/index.m3u8?app_type=web&userid=lite&chname=TV5MONDE_ASIE
 #EXTINF:-1 group-title="International" tvg-name="DW-TV" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1687504940_tvchannels_v1.jpg",DW-TV
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h213/index.m3u8?app_type=web&userid=lite&chname=DW-TV
 #EXTINF:-1 group-title="International" tvg-name="DIM TV" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1712205651_tvchannels_v1.jpg",DIM TV
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h305/stream.m3u8?app_type=web&userid=lite&chname=DIM_TV
 #EXTINF:-1 group-title="International" tvg-name="TBN" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1687504946_tvchannels_v1.jpg",TBN
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/s/s39/index.m3u8?app_type=web&userid=lite&chname=TBN
 #EXTINF:-1 group-title="International" tvg-name="CGTN Documentary" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1687504951_tvchannels_v1.jpg",CGTN Documentary
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h04/index.m3u8?app_type=web&userid=lite&chname=CGTN_Documentary
 #EXTINF:-1 group-title="International" tvg-name="Quran TV" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1687504956_tvchannels_v1.jpg",Quran TV
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h15/index.m3u8?app_type=web&userid=lite&chname=Quran_TV
 #EXTINF:-1 group-title="International" tvg-name="Sunna TV" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1687504962_tvchannels_v1.jpg",Sunna TV
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h38/index.m3u8?app_type=web&userid=lite&chname=Sunna_TV
 #EXTINF:-1 group-title="Free Streaming" tvg-name="wedotvMovies" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/wedo-tv-movies340x160@3x@3x.jpg",wedotvMovies
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h70/wedotv_movie.m3u8?app_type=web&userid=lite&chname=wedotvMovies
 #EXTINF:-1 group-title="Free Streaming" tvg-name="wedotvAmor" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/wedo-tv-amor340x160@3x.jpg",wedotvAmor
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h68/wedotv_amor.m3u8?app_type=web&userid=lite&chname=wedotvAmor
 #EXTINF:-1 group-title="Free Streaming" tvg-name="wedotvBig Stories" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/wedo-tv-big-stories340x160@3x@3x.jpg",wedotvBig Stories
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h69/wedotv_big_stories.m3u8?app_type=web&userid=lite&chname=wedotvBig_Stories
 #EXTINF:-1 group-title="Free Streaming" tvg-name="wedoSports" tvg-logo="https://picture.dens.tv/wp/img/tvchannels_v1/340x160/wedo-tv-sports340x160@3x@3x.jpg",wedoSports
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayahd-1.dens.tv/h/h71/wedo_sport.m3u8?app_type=web&userid=lite&chname=wedoSports
 #EXTINF:-1 group-title="Ketinggalan? Nonton di Sini" tvg-name="Dewan Perwakilan Mobile Legends Eps.55" tvg-logo="https://picture.dens.tv/wp/img/top_tvshowbanner_v1/1280x720/1794300573_top_tvshowbanner_v1.jpg",Dewan Perwakilan Mobile Legends Eps.55
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayacatchup-2.dens.tv/tvod/tvod8p.m3u8?code=s101p&starttime=1793961000&endtime=1793964600
 #EXTINF:-1 group-title="Ketinggalan? Nonton di Sini" tvg-name="Kosan MBG Eps.5" tvg-logo="https://picture.dens.tv/wp/img/top_tvshowbanner_v1/1280x720/1794294974_top_tvshowbanner_v1.jpg",Kosan MBG Eps.5
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayacatchup-2.dens.tv/tvod/tvod8p.m3u8?code=s113&starttime=1794018600&endtime=1794020400
 #EXTINF:-1 group-title="Ketinggalan? Nonton di Sini" tvg-name="Specialty Coffee Eps.1" tvg-logo="https://picture.dens.tv/wp/img/top_tvshowbanner_v1/1280x720/1794294976_top_tvshowbanner_v1.jpg",Specialty Coffee Eps.1
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayacatchup-2.dens.tv/tvod/tvod8p.m3u8?code=h221&starttime=1794141000&endtime=1794142800
 #EXTINF:-1 group-title="Ketinggalan? Nonton di Sini" tvg-name="Styx" tvg-logo="https://picture.dens.tv/wp/img/top_tvshowbanner_v1/1280x720/1794294978_top_tvshowbanner_v1.jpg",Styx
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayacatchup-2.dens.tv/tvod/tvod8p.m3u8?code=h18&starttime=1794056400&endtime=1794062100
 #EXTINF:-1 group-title="Ketinggalan? Nonton di Sini" tvg-name="Belcar Endurance Championship 2026" tvg-logo="https://picture.dens.tv/wp/img/top_tvshowbanner_v1/1280x720/1794294967_top_tvshowbanner_v1.jpg",Belcar Endurance Championship 2026
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-flashcon-digdayacatchup-2.dens.tv/tvod/tvod2p.m3u8?code=h09&starttime=1794129300&endtime=1794130800
 #EXTINF:-1 group-title="Rilis Terbaru & Produksi Original" tvg-name="Dewan Perwakilan Mobile Legends : Naik Turunnya CEO Bubu.COM Di Dunia Fashion Gaming" tvg-logo="https://picture.dens.tv/poster/files/lands/1794208843_land.jpg",Dewan Perwakilan Mobile Legends : Naik Turunnya CEO Bubu.COM Di Dunia Fashion Gaming
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-svod.dens.tv/04/MVDPM00056/index5.m3u8
 #EXTINF:-1 group-title="Rilis Terbaru & Produksi Original" tvg-name="Sinema Hits : Ikuti Jejak Sang Ayah Menjadi Aktor, Joe Taslim Engga Mau Ikut Campur Dunia Akting Hyori Mika!" tvg-logo="https://picture.dens.tv/poster/files/lands/1793954458_land.jpg",Sinema Hits : Ikuti Jejak Sang Ayah Menjadi Aktor, Joe Taslim Engga Mau Ikut Campur Dunia Akting Hyori Mika!
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-svod.dens.tv/04/MVSNH00017/index5.m3u8
 #EXTINF:-1 group-title="Rilis Terbaru & Produksi Original" tvg-name="Point Of View : Dari Kisah Nyata, 'Stop The Wedding' Karya Ashe Berhasil Merajai World Chart!" tvg-logo="https://picture.dens.tv/poster/files/lands/1793935902_land.jpg",Point Of View : Dari Kisah Nyata, 'Stop The Wedding' Karya Ashe Berhasil Merajai World Chart!
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-svod.dens.tv/04/MVPOV00025/index5.m3u8
 #EXTINF:-1 group-title="Rilis Terbaru & Produksi Original" tvg-name="Peluit Akhir Podcast : Alasan Bertahan di Cosmo Bukan Karena Uang? Dewa Pernah Selebrasi di Depan Ricardinho!" tvg-logo="https://picture.dens.tv/poster/files/lands/1793863118_land.jpg",Peluit Akhir Podcast : Alasan Bertahan di Cosmo Bukan Karena Uang? Dewa Pernah Selebrasi di Depan Ricardinho!
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-svod.dens.tv/04/MVPPA00128/index5.m3u8
 #EXTINF:-1 group-title="Rilis Terbaru & Produksi Original" tvg-name="Sinema Hits : Atiqah Hasiholan Pimpin RIBUAN Wanita Bertarung Di Atas KAPAL?!" tvg-logo="https://picture.dens.tv/poster/files/lands/1793760743_land.jpg",Sinema Hits : Atiqah Hasiholan Pimpin RIBUAN Wanita Bertarung Di Atas KAPAL?!
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-svod.dens.tv/04/MVSNH00016/index5.m3u8
 #EXTINF:-1 group-title="Rilis Terbaru & Produksi Original" tvg-name="Dewan Perwakilan Mobile Legends : Prediksi Om Wawa Di Playoff Bikin Caster Seneng" tvg-logo="https://picture.dens.tv/poster/files/lands/1793675316_land.jpg",Dewan Perwakilan Mobile Legends : Prediksi Om Wawa Di Playoff Bikin Caster Seneng
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-svod.dens.tv/04/MVDPM00055/index5.m3u8
 #EXTINF:-1 group-title="Rilis Terbaru & Produksi Original" tvg-name="Dibalik Lapas Horror Bekas Tahanan Politik Disiksa! - PETAKA #48" tvg-logo="https://picture.dens.tv/poster/files/lands/1793336601_land.jpg",Dibalik Lapas Horror Bekas Tahanan Politik Disiksa! - PETAKA #48
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-svod.dens.tv/04/MVPTK00056/index5.m3u8
 #EXTINF:-1 group-title="Rilis Terbaru & Produksi Original" tvg-name="Peluit Akkhir Podcast : Ulah Oknum Bikin Rugi Klub? Bung Ferry Sorot Sanksi & Medsos" tvg-logo="https://picture.dens.tv/poster/files/lands/1793352745_land.jpg",Peluit Akkhir Podcast : Ulah Oknum Bikin Rugi Klub? Bung Ferry Sorot Sanksi & Medsos
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-svod.dens.tv/04/MVPPA00127/index5.m3u8
 #EXTINF:-1 group-title="Rilis Terbaru & Produksi Original" tvg-name="Sinema Hits : Kalo Bukan Karena Chicco, Beni Mungkin Udah Engga Ada Harapan HIDUP!" tvg-logo="https://picture.dens.tv/poster/files/lands/1793344347_land.jpg",Sinema Hits : Kalo Bukan Karena Chicco, Beni Mungkin Udah Engga Ada Harapan HIDUP!
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-svod.dens.tv/04/MVSNH00015/index5.m3u8
 #EXTINF:-1 group-title="Rilis Terbaru & Produksi Original" tvg-name="Point Of View : Muda Tapi Berprestasi! Billie Eilish Borong 'BIG FOUR' Penghargaan Utama Grammy Di Usia 18 Tahun!" tvg-logo="https://picture.dens.tv/poster/files/lands/1793348725_land.jpg",Point Of View : Muda Tapi Berprestasi! Billie Eilish Borong 'BIG FOUR' Penghargaan Utama Grammy Di Usia 18 Tahun!
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-svod.dens.tv/04/MVPOV00024/index5.m3u8
 #EXTINF:-1 group-title="Video Paling Banyak Ditonton" tvg-name="Motorcycles - Harley-Davidson Sport Glide" tvg-logo="https://picture.dens.tv/poster/files/lands/1779697257_land.jpg",Motorcycles - Harley-Davidson Sport Glide
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-svod.dens.tv/04/MVMVT00083/index5.m3u8
 #EXTINF:-1 group-title="Video Paling Banyak Ditonton" tvg-name="Dewan Perwakilan Mobile Legends : Menang Coach Yang Di Puja, Kalah Reza Pahlevi Yang Di Uji" tvg-logo="https://picture.dens.tv/poster/files/lands/1782708549_land.jpg",Dewan Perwakilan Mobile Legends : Menang Coach Yang Di Puja, Kalah Reza Pahlevi Yang Di Uji
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-svod.dens.tv/04/MVDPM00028/index5.m3u8
 #EXTINF:-1 group-title="Video Paling Banyak Ditonton" tvg-name="Heribert | Rated : PG-13" tvg-logo="https://picture.dens.tv/poster/files/lands/5@3x (18).jpg",Heribert | Rated : PG-13
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-svod.dens.tv/04/MVMCE00104a/index5.m3u8
 #EXTINF:-1 group-title="Video Paling Banyak Ditonton" tvg-name="Penghuni Ruang Sholat Kakek - PETAKA #32" tvg-logo="https://picture.dens.tv/poster/files/lands/1782462310_land.jpg",Penghuni Ruang Sholat Kakek - PETAKA #32
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-svod.dens.tv/04/MVPTK00039/index5.m3u8
 #EXTINF:-1 group-title="Video Paling Banyak Ditonton" tvg-name="Peluit Akhir Podcast : Uang kurang buat nonton persija, Ustad Jojo rela jual Hp-nya!" tvg-logo="https://picture.dens.tv/poster/files/lands/1775031407_land.jpg",Peluit Akhir Podcast : Uang kurang buat nonton persija, Ustad Jojo rela jual Hp-nya!
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-svod.dens.tv/04/MVPPA00069/index5.m3u8
 #EXTINF:-1 group-title="Video Paling Banyak Ditonton" tvg-name="Kosan MBG Eps.1 : INI GAJI ATAU WANGSIT?" tvg-logo="https://picture.dens.tv/poster/files/lands/1781916164_land.jpg",Kosan MBG Eps.1 : INI GAJI ATAU WANGSIT?
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
 https://op-svod.dens.tv/04/MVMBG00001/index5.m3u8
