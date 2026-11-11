@@ -2,7 +2,7 @@
 """
 Vidio Live TV → M3U Playlist Generator
 API Key: dynamic via POST /auth
-Signature: scraped from full HTML page (script tags)
+Signature: scraped from full HTML page (dengan slug dari web_url)
 Mode: Playwright (default) | curl_cffi (--no-browser)
 """
 
@@ -104,39 +104,57 @@ def extract_logo(attrs: dict) -> str:
 
 
 def parse_channels(data: dict) -> list:
+    """
+    Parse response API → list channel dict.
+    PENTING: simpan web_url (slug) untuk fetch signature.
+    Contoh web_url: "/live/778-gtv" atau "/live/733?schedule_id=5430304"
+    """
     channels = []
     for item in data.get("data", []):
         attrs = item.get("attributes", {})
         ch_id = item.get("id")
         if not ch_id:
             continue
+
+        # web_url dari API (format: "/live/778-gtv" atau "/live/733?schedule_id=...")
+        web_url = attrs.get("web_url", "")
+        if not web_url:
+            # Fallback: construct dari id
+            web_url = f"/live/{ch_id}"
+
         channels.append({
             "id": int(ch_id),
             "title": attrs.get("title", "Unknown"),
             "logo": extract_logo(attrs),
+            "web_url": web_url,  # ← PENTING: slug + params
         })
+
     existing = {c["id"] for c in channels}
     for ch_id, title in EXTRA_CHANNELS.items():
         if ch_id not in existing:
-            channels.append({"id": ch_id, "title": title, "logo": ""})
+            channels.append({
+                "id": ch_id,
+                "title": title,
+                "logo": "",
+                "web_url": f"/live/{ch_id}",
+            })
     return channels
 
 
 def extract_signature_from_html(html: str) -> tuple:
     """
-    Extract streamSignature from full HTML page.
-    Cari <script> tag yang mengandung 'streamSignature',
-    lalu parse sebagai Next.js RSC payload.
+    Extract streamSignature dari full HTML page.
+    Sama seperti Streamlink: cari <script> yang mengandung 'streamSignature',
+    lalu parse clientId + signature dari content-nya.
     """
-    # Cari semua script tag yang mengandung 'streamSignature'
+    # Cari <script> tag yang mengandung 'streamSignature'
     script_pattern = re.compile(
         r'<script[^>]*>([^<]*streamSignature[^<]*)</script>',
         re.DOTALL
     )
     for match in script_pattern.finditer(html):
         script_content = match.group(1)
-        # Cari clientId dan signature di dalam script content
-        # Format RSC: ...streamSignature":{"clientId":"...","signature":"..."}...
+        # Parse: "streamSignature":{"clientId":"...","signature":"..."}
         m = re.search(
             r'"clientId"\s*:\s*"([^"]+)"\s*,\s*"signature"\s*:\s*"([^"]+)"',
             script_content
@@ -183,7 +201,6 @@ def generate_m3u(channels: list, stream_urls: dict, output_file: str, drm_fallba
 # JS SNIPPETS — RAW STRING
 # ═══════════════════════════════════════════════════════════════
 
-# POST ke /auth untuk dapat API key yang valid
 JS_GET_API_KEY = r"""
 async () => {
     try {
@@ -224,7 +241,6 @@ async () => {
 }
 """
 
-# Fetch channels — API key di-pass sebagai arg
 JS_FETCH_CHANNELS = r"""
 async (apiKey) => {
     try {
@@ -249,30 +265,28 @@ async (apiKey) => {
 }
 """
 
-# Ambil signature dari FULL HTML PAGE (bukan ?_rsc=)
-# Navigate ke page dulu, lalu parse content
+# FIX: pakai web_url (dengan slug) — bukan /live/{id}
+# Contoh: web_url = "/live/778-gtv" atau "/live/733?schedule_id=5430304"
 JS_GET_SIGNATURE = r"""
-async (chId) => {
+async (webUrl) => {
     try {
-        // Fetch full HTML page (bukan ?_rsc=)
-        const resp = await fetch(
-            `https://www.vidio.com/live/${chId}`,
-            {
-                method: 'GET',
-                headers: { 'Accept': 'text/html' },
-                credentials: 'include',
-            }
-        );
-        if (!resp.ok) return {error: 'page_fail', status: resp.status};
+        // Fetch full HTML page dengan slug yang benar
+        const url = 'https://www.vidio.com' + webUrl;
+        const resp = await fetch(url, {
+            method: 'GET',
+            headers: { 'Accept': 'text/html' },
+            credentials: 'include',
+        });
+        if (!resp.ok) return {error: 'page_fail', status: resp.status, url: url};
 
         const html = await resp.text();
 
         // Cari <script> tag yang mengandung 'streamSignature'
+        // (sama seperti Streamlink: xpath .//script[contains(text(),'streamSignature')])
         const scriptRegex = /<script[^>]*>([^<]*streamSignature[^<]*)<\/script>/g;
         let match;
         while ((match = scriptRegex.exec(html)) !== null) {
             const scriptContent = match[1];
-            // Cari clientId + signature
             const sigMatch = scriptContent.match(
                 /"clientId"\s*:\s*"([^"]+)"\s*,\s*"signature"\s*:\s*"([^"]+)"/
             );
@@ -281,14 +295,21 @@ async (chId) => {
             }
         }
 
-        return {error: 'no_signature_found', sample: html.substring(0, 500)};
+        // Fallback: cari langsung di HTML (tanpa script tag boundary)
+        const directMatch = html.match(
+            /"streamSignature"\s*:\s*\{[^}]*"clientId"\s*:\s*"([^"]+)"[^}]*"signature"\s*:\s*"([^"]+)"/
+        );
+        if (directMatch) {
+            return {clientId: directMatch[1], signature: directMatch[2]};
+        }
+
+        return {error: 'no_signature_found', url: url, sample: html.substring(0, 500)};
     } catch(e) {
         return {error: e.message};
     }
 }
 """
 
-# Fetch stream — API key + clientId + signature di-pass
 JS_FETCH_STREAM = r"""
 async ({chId, apiKey, clientId, signature}) => {
     let luws = '';
@@ -335,7 +356,6 @@ async def auto_login_and_save():
     print("=" * 55)
     print("  Vidio Auto Cookie")
     print("  Browser terbuka — login manual di sana.")
-    print("  Script otomatis deteksi & simpan cookies.")
     print("=" * 55)
 
     async with async_playwright() as p:
@@ -348,8 +368,7 @@ async def auto_login_and_save():
         page = await context.new_page()
 
         await page.goto("https://m.vidio.com", timeout=60000)
-        print("\n  → Login di browser yang terbuka...")
-        print("  → Script lanjut otomatis setelah login terdeteksi.\n")
+        print("\n  → Login di browser yang terbuka...\n")
 
         logged_in = False
         for i in range(60):
@@ -362,7 +381,7 @@ async def auto_login_and_save():
                 print(f"  ... menunggu login ({i * 2}s)")
 
         if not logged_in:
-            log.error("  Timeout! Login tidak terdeteksi dalam 120 detik.")
+            log.error("  Timeout!")
             await browser.close()
             return
 
@@ -382,7 +401,7 @@ async def auto_login_and_save():
         log.info("  ✓ Storage state → %s", _STATE_FILE)
 
         await browser.close()
-        print(f"\n  ✓ Selesai! Run berikutnya otomatis pakai cookies ini.\n")
+        print(f"\n  ✓ Selesai!\n")
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -394,8 +413,7 @@ async def run_playwright(output_file: str, retries: int, drm_fallback: bool):
     print("=" * 55)
     print("  Vidio Live TV → M3U Playlist Generator")
     print("  Mode: Playwright (headless)")
-    print("  API Key: dynamic via POST /auth")
-    print("  Signature: scraped from full HTML page")
+    print("  API Key: dynamic | Signature: from HTML page (slug)")
     print("=" * 55)
 
     cookies = _load_cookies()
@@ -412,7 +430,7 @@ async def run_playwright(output_file: str, retries: int, drm_fallback: bool):
         )
         page = context.pages[0] if context.pages else await context.new_page()
 
-        # [1/4] Inject + refresh + get API key
+        # [1/4] Init
         print("\n[1/4] Init session ...")
         await context.add_cookies(cookies)
         log.info("  ✓ Inject %d cookies", len(cookies))
@@ -420,7 +438,6 @@ async def run_playwright(output_file: str, retries: int, drm_fallback: bool):
         await page.goto(SITE_URL, timeout=30000, wait_until="domcontentloaded")
         await asyncio.sleep(2)
 
-        # Verify login
         result = await page.evaluate(JS_REFRESH_SESSION)
         if result.get("current_user"):
             user = result["current_user"]
@@ -431,7 +448,6 @@ async def run_playwright(output_file: str, retries: int, drm_fallback: bool):
             await context.close()
             return
 
-        # Get API key via POST /auth
         api_key_result = await page.evaluate(JS_GET_API_KEY)
         if api_key_result.get("api_key"):
             api_key = api_key_result["api_key"]
@@ -451,21 +467,25 @@ async def run_playwright(output_file: str, retries: int, drm_fallback: bool):
 
         channels = parse_channels(ch_data)
         log.info("  ✓ %d channels", len(channels))
+        # Debug: tampilkan web_url beberapa channel
+        for ch in channels[:3]:
+            log.info("    [%s] %s → %s", ch["id"], ch["title"], ch["web_url"])
 
         # [3/4] Fetch streams
         print("\n[3/4] Fetching stream URLs ...")
 
         # Test 1 channel
-        test_sig = await page.evaluate(JS_GET_SIGNATURE, channels[0]["id"])
+        test_ch = channels[0]
+        test_sig = await page.evaluate(JS_GET_SIGNATURE, test_ch["web_url"])
         if test_sig.get("error"):
-            log.error("  ✗ Gagal ambil signature: %s", test_sig)
+            log.error("  ✗ Gagal signature: %s", test_sig)
             await context.close()
             return
         log.info("  ✓ Signature: clientId=%s... sig=%s...",
                  test_sig["clientId"][:20], test_sig["signature"][:20])
 
         test_stream = await page.evaluate(JS_FETCH_STREAM, {
-            "chId": channels[0]["id"],
+            "chId": test_ch["id"],
             "apiKey": api_key,
             "clientId": test_sig["clientId"],
             "signature": test_sig["signature"],
@@ -474,7 +494,7 @@ async def run_playwright(output_file: str, retries: int, drm_fallback: bool):
             log.error("  ✗ Stream test gagal: %s", test_stream)
             await context.close()
             return
-        log.info("  ✓ Stream test OK: %s", channels[0]["title"])
+        log.info("  ✓ Stream test OK: %s", test_ch["title"])
 
         start = time.time()
         stream_urls = {}
@@ -482,8 +502,9 @@ async def run_playwright(output_file: str, retries: int, drm_fallback: bool):
 
         for i, ch in enumerate(channels, 1):
             ch_id = ch["id"]
+            web_url = ch["web_url"]
 
-            sig = await page.evaluate(JS_GET_SIGNATURE, ch_id)
+            sig = await page.evaluate(JS_GET_SIGNATURE, web_url)
             if sig.get("error"):
                 failed.append(ch)
                 log.warning("  [%d/%d] %s ✗ sig: %s", i, len(channels), ch["title"], sig["error"])
@@ -514,20 +535,19 @@ async def run_playwright(output_file: str, retries: int, drm_fallback: bool):
             await asyncio.sleep(RETRY_WAIT)
             still = []
             for ch in failed:
-                ch_id = ch["id"]
-                sig = await page.evaluate(JS_GET_SIGNATURE, ch_id)
+                sig = await page.evaluate(JS_GET_SIGNATURE, ch["web_url"])
                 if sig.get("error"):
                     still.append(ch)
                     continue
                 result = await page.evaluate(JS_FETCH_STREAM, {
-                    "chId": ch_id,
+                    "chId": ch["id"],
                     "apiKey": api_key,
                     "clientId": sig["clientId"],
                     "signature": sig["signature"],
                 })
                 hls = result.get("hls", "")
                 if hls:
-                    stream_urls[ch_id] = hls
+                    stream_urls[ch["id"]] = hls
                     log.info("  [R%d] %s ✓", attempt, ch["title"])
                 else:
                     still.append(ch)
@@ -540,7 +560,7 @@ async def run_playwright(output_file: str, retries: int, drm_fallback: bool):
 
         if failed:
             for ch in failed:
-                log.info("    - [%s] %s", ch["id"], ch["title"])
+                log.info("    - [%s] %s (%s)", ch["id"], ch["title"], ch["web_url"])
 
         if not stream_urls and not drm_fallback:
             log.error("  SEMUA GAGAL.")
@@ -570,13 +590,12 @@ def run_curl_cffi(output_file: str, retries: int, drm_fallback: bool):
     print("=" * 55)
     print("  Vidio Live TV → M3U Playlist Generator")
     print("  Mode: curl_cffi (TLS impersonation)")
-    print("  API Key: dynamic via POST /auth")
-    print("  Signature: scraped from full HTML page")
+    print("  API Key: dynamic | Signature: from HTML page (slug)")
     print("=" * 55)
 
     session = cffi_requests.Session(impersonate=IMPERSONATE)
 
-    # [1/4] Refresh session + get API key
+    # [1/4] Init
     print("\n[1/4] Init session ...")
     try:
         session.get(SITE_URL, timeout=30)
@@ -585,7 +604,6 @@ def run_curl_cffi(output_file: str, retries: int, drm_fallback: bool):
 
     luws = session.cookies.get("luws", "") or f"{str(uuid.uuid4()).upper()}_"
 
-    # Verify login
     try:
         resp = session.get(
             f"{SITE_URL}/interactions.json",
@@ -608,7 +626,7 @@ def run_curl_cffi(output_file: str, retries: int, drm_fallback: bool):
     except Exception as e:
         log.warning("  Verify gagal: %s", e)
 
-    # Get API key via POST /auth
+    # Get API key
     try:
         resp = session.post(API_AUTH, timeout=15)
         if resp.status_code == 200:
@@ -649,18 +667,18 @@ def run_curl_cffi(output_file: str, retries: int, drm_fallback: bool):
 
     channels = parse_channels(resp.json())
     log.info("  ✓ %d channels", len(channels))
+    for ch in channels[:3]:
+        log.info("    [%s] %s → %s", ch["id"], ch["title"], ch["web_url"])
 
     # [3/4] Fetch streams
     print("\n[3/4] Fetching stream URLs ...")
 
-    def get_signature(ch_id: int) -> tuple:
-        """Ambil clientId + signature dari full HTML page."""
+    def get_signature(web_url: str) -> tuple:
+        """Ambil clientId + signature dari full HTML page (dengan slug)."""
         try:
-            resp = session.get(
-                f"{WWW_URL}/live/{ch_id}",
-                headers={"Accept": "text/html", "User-Agent": USER_AGENT},
-                timeout=20,
-            )
+            url = f"{WWW_URL}{web_url}"
+            resp = session.get(url, headers={"Accept": "text/html", "User-Agent": USER_AGENT},
+                               timeout=20)
             if resp.status_code != 200:
                 return "", ""
             return extract_signature_from_html(resp.text)
@@ -693,34 +711,34 @@ def run_curl_cffi(output_file: str, retries: int, drm_fallback: bool):
         return ""
 
     # Test 1 channel
-    test_cid, test_sig = get_signature(channels[0]["id"])
+    test_ch = channels[0]
+    test_cid, test_sig = get_signature(test_ch["web_url"])
     if not test_cid:
-        log.error("  ✗ Gagal ambil signature untuk channel pertama")
+        log.error("  ✗ Gagal signature untuk %s (%s)", test_ch["title"], test_ch["web_url"])
         sys.exit(1)
     log.info("  ✓ Signature: clientId=%s... sig=%s...", test_cid[:20], test_sig[:20])
 
-    test_hls = fetch_stream(channels[0]["id"], test_cid, test_sig)
+    test_hls = fetch_stream(test_ch["id"], test_cid, test_sig)
     if not test_hls:
         log.error("  ✗ Stream test gagal")
         sys.exit(1)
-    log.info("  ✓ Stream test OK: %s", channels[0]["title"])
+    log.info("  ✓ Stream test OK: %s", test_ch["title"])
 
     start = time.time()
     stream_urls = {}
     failed = []
 
     for i, ch in enumerate(channels, 1):
-        ch_id = ch["id"]
-        client_id, signature = get_signature(ch_id)
+        client_id, signature = get_signature(ch["web_url"])
         if not client_id:
             failed.append(ch)
-            log.warning("  [%d/%d] %s ✗ (no signature)", i, len(channels), ch["title"])
+            log.warning("  [%d/%d] %s ✗ (no sig: %s)", i, len(channels), ch["title"], ch["web_url"])
             time.sleep(DELAY)
             continue
 
-        hls = fetch_stream(ch_id, client_id, signature)
+        hls = fetch_stream(ch["id"], client_id, signature)
         if hls:
-            stream_urls[ch_id] = hls
+            stream_urls[ch["id"]] = hls
             log.info("  [%d/%d] %s ✓", i, len(channels), ch["title"])
         else:
             failed.append(ch)
@@ -735,14 +753,13 @@ def run_curl_cffi(output_file: str, retries: int, drm_fallback: bool):
         time.sleep(RETRY_WAIT)
         still = []
         for ch in failed:
-            ch_id = ch["id"]
-            client_id, signature = get_signature(ch_id)
+            client_id, signature = get_signature(ch["web_url"])
             if not client_id:
                 still.append(ch)
                 continue
-            hls = fetch_stream(ch_id, client_id, signature)
+            hls = fetch_stream(ch["id"], client_id, signature)
             if hls:
-                stream_urls[ch_id] = hls
+                stream_urls[ch["id"]] = hls
                 log.info("  [R%d] %s ✓", attempt, ch["title"])
             else:
                 still.append(ch)
