@@ -1,211 +1,211 @@
 #EXTM3U
 #EXTINF:-1 tvg-id="204" tvg-name="SCTV" tvg-logo="https://thumbor.prod.vidiocdn.com/Ued7cpbsAhZhZM9mHZMVb1R2OF4=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/204/4e9f5c.png" group-title="National TV",SCTV
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
 #KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.m3u8?id=204
-https://ch.bhns.workers.dev/ch.m3u8?id=204
+#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.mpd?id=204
+https://ch.bhns.workers.dev/ch.m3u8?id=204&type=hls
 #EXTINF:-1 tvg-id="205" tvg-name="Indosiar" tvg-logo="https://thumbor.prod.vidiocdn.com/XK2gTvwCd4ePgcSM4hQzau0L7lY=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/205/54ab19.png" group-title="National TV",Indosiar
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
 #KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.m3u8?id=205
-https://ch.bhns.workers.dev/ch.m3u8?id=205
+#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.mpd?id=205
+https://ch.bhns.workers.dev/ch.m3u8?id=205&type=hls
 #EXTINF:-1 tvg-id="733" tvg-name="TRANS TV" tvg-logo="https://thumbor.prod.vidiocdn.com/8uyGN8ro7p1SWsCgQOFidd-cz1Y=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/733/ecaa60.png" group-title="National TV",TRANS TV
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
 #KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.m3u8?id=733
-https://ch.bhns.workers.dev/ch.m3u8?id=733
+#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.mpd?id=733
+https://ch.bhns.workers.dev/ch.m3u8?id=733&type=hls
 #EXTINF:-1 tvg-id="734" tvg-name="Trans7" tvg-logo="https://thumbor.prod.vidiocdn.com/l5TjD581Gd52Na027XzvztBlA1c=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/734/131514.png" group-title="National TV",Trans7
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
 #KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.m3u8?id=734
-https://ch.bhns.workers.dev/ch.m3u8?id=734
+#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.mpd?id=734
+https://ch.bhns.workers.dev/ch.m3u8?id=734&type=hls
 #EXTINF:-1 tvg-id="206" tvg-name="Moji" tvg-logo="https://thumbor.prod.vidiocdn.com/WqWHsGyTe9RzS8tgHmemQT2QTT4=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/206/1823dc.png" group-title="National TV",Moji
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
 #KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.m3u8?id=206
-https://ch.bhns.workers.dev/ch.m3u8?id=206
+#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.mpd?id=206
+https://ch.bhns.workers.dev/ch.m3u8?id=206&type=hls
 #EXTINF:-1 tvg-id="777" tvg-name="Metro TV" tvg-logo="https://thumbor.prod.vidiocdn.com/60DNnaTD09N05GWdzrWQeEzgJyc=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/777/ea8483.png" group-title="News",Metro TV
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
 #KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.m3u8?id=777
-https://ch.bhns.workers.dev/ch.m3u8?id=777
+#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.mpd?id=777
+https://ch.bhns.workers.dev/ch.m3u8?id=777&type=hls
 #EXTINF:-1 tvg-id="874" tvg-name="Kompas TV" tvg-logo="https://thumbor.prod.vidiocdn.com/Kzz1dWgw9kR9FkGkhBCBYyP0u5w=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/874/042ca3.png" group-title="News",Kompas TV
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
 #KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.m3u8?id=874
-https://ch.bhns.workers.dev/ch.m3u8?id=874
+#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.mpd?id=874
+https://ch.bhns.workers.dev/ch.m3u8?id=874&type=hls
 #EXTINF:-1 tvg-id="6441" tvg-name="TVRI" tvg-logo="https://thumbor.prod.vidiocdn.com/ot6wuFB7eQyb6RNLO6syHQKcAfU=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/6441/528cc9.png" group-title="National TV",TVRI
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
 #KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.m3u8?id=6441
-https://ch.bhns.workers.dev/ch.m3u8?id=6441
+#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.mpd?id=6441
+https://ch.bhns.workers.dev/ch.m3u8?id=6441&type=hls
 #EXTINF:-1 tvg-id="6165" tvg-name="BTV" tvg-logo="https://thumbor.prod.vidiocdn.com/1nK2F8U-XNp877ekgiDhddhD4Fs=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/6165/7cd920.png" group-title="National TV",BTV
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
 #KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.m3u8?id=6165
-https://ch.bhns.workers.dev/ch.m3u8?id=6165
+#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.mpd?id=6165
+https://ch.bhns.workers.dev/ch.m3u8?id=6165&type=hls
 #EXTINF:-1 tvg-id="18280" tvg-name="Berita Satu" tvg-logo="https://thumbor.prod.vidiocdn.com/-JKk3iTPeveKEwzEcluCSm4lMts=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/18280/c7fc8f.png" group-title="News",Berita Satu
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
 #KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.m3u8?id=18280
-https://ch.bhns.workers.dev/ch.m3u8?id=18280
+#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.mpd?id=18280
+https://ch.bhns.workers.dev/ch.m3u8?id=18280&type=hls
 #EXTINF:-1 tvg-id="18162" tvg-name="Garuda TV" tvg-logo="https://thumbor.prod.vidiocdn.com/aRhv_g5XUCMcGb0tIvirsdYhzZE=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/18162/b4bea2.png" group-title="News",Garuda TV
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
 #KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.m3u8?id=18162
-https://ch.bhns.workers.dev/ch.m3u8?id=18162
+#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.mpd?id=18162
+https://ch.bhns.workers.dev/ch.m3u8?id=18162&type=hls
 #EXTINF:-1 tvg-id="5415" tvg-name="Jaktv" tvg-logo="https://thumbor.prod.vidiocdn.com/10BeR50GodPzL51K7estpRcJqgA=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/5415/802b76.png" group-title="National TV",Jaktv
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
 #KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.m3u8?id=5415
-https://ch.bhns.workers.dev/ch.m3u8?id=5415
+#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.mpd?id=5415
+https://ch.bhns.workers.dev/ch.m3u8?id=5415&type=hls
 #EXTINF:-1 tvg-id="9713" tvg-name="JTV" tvg-logo="https://thumbor.prod.vidiocdn.com/9S2KUd6y_4PzLp6ywlFSraQyx88=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/9713/1119f8.png" group-title="National TV",JTV
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
 #KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.m3u8?id=9713
-https://ch.bhns.workers.dev/ch.m3u8?id=9713
+#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.mpd?id=9713
+https://ch.bhns.workers.dev/ch.m3u8?id=9713&type=hls
 #EXTINF:-1 tvg-id="7432" tvg-name="Nusantara TV" tvg-logo="https://thumbor.prod.vidiocdn.com/lrUKNI0nbOJBhg6OKkH4YqNymLQ=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/7432/bfecbc.png" group-title="News",Nusantara TV
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
 #KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.m3u8?id=7432
-https://ch.bhns.workers.dev/ch.m3u8?id=7432
+#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.mpd?id=7432
+https://ch.bhns.workers.dev/ch.m3u8?id=7432&type=hls
 #EXTINF:-1 tvg-id="9714" tvg-name="jawaposTV" tvg-logo="https://thumbor.prod.vidiocdn.com/eLJ_xPxl6WM1zgoyNjhTdsNlcXc=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/9714/5a2fad.jpg" group-title="National TV",jawaposTV
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
 #KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.m3u8?id=9714
-https://ch.bhns.workers.dev/ch.m3u8?id=9714
+#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.mpd?id=9714
+https://ch.bhns.workers.dev/ch.m3u8?id=9714&type=hls
 #EXTINF:-1 tvg-id="19046" tvg-name="Sin Po TV" tvg-logo="https://thumbor.prod.vidiocdn.com/HwIfmxOGLIKB03toopIzIgFbzAo=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/19046/aaa3fa.png" group-title="News",Sin Po TV
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
 #KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.m3u8?id=19046
-https://ch.bhns.workers.dev/ch.m3u8?id=19046
+#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.mpd?id=19046
+https://ch.bhns.workers.dev/ch.m3u8?id=19046&type=hls
 #EXTINF:-1 tvg-id="6482" tvg-name="DAAI TV" tvg-logo="https://thumbor.prod.vidiocdn.com/lEx6FCKyVU-Hy4b_dWa-0IXZVyA=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/6482/e83fcf.png" group-title="National TV",DAAI TV
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
 #KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.m3u8?id=6482
-https://ch.bhns.workers.dev/ch.m3u8?id=6482
+#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.mpd?id=6482
+https://ch.bhns.workers.dev/ch.m3u8?id=6482&type=hls
 #EXTINF:-1 tvg-id="7464" tvg-name="AJWA TV" tvg-logo="https://thumbor.prod.vidiocdn.com/Iwam8TZg1IczhRO5BI2xp9QESTs=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/7464/e69965.png" group-title="Religion",AJWA TV
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
 #KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.m3u8?id=7464
-https://ch.bhns.workers.dev/ch.m3u8?id=7464
+#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.mpd?id=7464
+https://ch.bhns.workers.dev/ch.m3u8?id=7464&type=hls
 #EXTINF:-1 tvg-id="6784" tvg-name="Arirang" tvg-logo="https://thumbor.prod.vidiocdn.com/V98kFWE8kSX24xbgPmdAn7IWqRQ=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/6784/b9cb20.png" group-title="Entertainment",Arirang
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
 #KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.m3u8?id=6784
-https://ch.bhns.workers.dev/ch.m3u8?id=6784
+#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.mpd?id=6784
+https://ch.bhns.workers.dev/ch.m3u8?id=6784&type=hls
 #EXTINF:-1 tvg-id="7150" tvg-name="ABC Australia" tvg-logo="https://thumbor.prod.vidiocdn.com/MPzFu1qaq-Eb4TFUuK0ZSRCn4hU=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/7150/2de77e.png" group-title="News",ABC Australia
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
 #KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.m3u8?id=7150
-https://ch.bhns.workers.dev/ch.m3u8?id=7150
+#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.mpd?id=7150
+https://ch.bhns.workers.dev/ch.m3u8?id=7150&type=hls
 #EXTINF:-1 tvg-id="6412" tvg-name="Euronews" tvg-logo="https://thumbor.prod.vidiocdn.com/3eOT2unns1b3eMS7uMPzJSIlYsI=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/6412/c0e105.png" group-title="News",Euronews
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
 #KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.m3u8?id=6412
-https://ch.bhns.workers.dev/ch.m3u8?id=6412
+#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.mpd?id=6412
+https://ch.bhns.workers.dev/ch.m3u8?id=6412&type=hls
 #EXTINF:-1 tvg-id="6411" tvg-name="CNA" tvg-logo="https://thumbor.prod.vidiocdn.com/qFWkiN1wkTeqvgffDi7A2VPgu-8=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/6411/49242c.png" group-title="News",CNA
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
 #KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.m3u8?id=6411
-https://ch.bhns.workers.dev/ch.m3u8?id=6411
+#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.mpd?id=6411
+https://ch.bhns.workers.dev/ch.m3u8?id=6411&type=hls
 #EXTINF:-1 tvg-id="6852" tvg-name="Makkah TV" tvg-logo="https://thumbor.prod.vidiocdn.com/0k6GGofQ3N1ywnKENFTE80uI5b0=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/6852/1047bc.png" group-title="Religion",Makkah TV
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
 #KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.m3u8?id=6852
-https://ch.bhns.workers.dev/ch.m3u8?id=6852
+#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.mpd?id=6852
+https://ch.bhns.workers.dev/ch.m3u8?id=6852&type=hls
 #EXTINF:-1 tvg-id="7619" tvg-name="MUSICA" tvg-logo="https://thumbor.prod.vidiocdn.com/9p5kOs_udy6akoXFdYxoVwz4Itk=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/7619/379f71.png" group-title="Entertainment",MUSICA
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
 #KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.m3u8?id=7619
-https://ch.bhns.workers.dev/ch.m3u8?id=7619
+#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.mpd?id=7619
+https://ch.bhns.workers.dev/ch.m3u8?id=7619&type=hls
 #EXTINF:-1 tvg-id="6898" tvg-name="U-Channel TV" tvg-logo="https://thumbor.prod.vidiocdn.com/x7dVSHyViTR5dTvPEMYJ_BlmJM4=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/6898/7e119a.png" group-title="Religion",U-Channel TV
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
 #KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.m3u8?id=6898
-https://ch.bhns.workers.dev/ch.m3u8?id=6898
+#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.mpd?id=6898
+https://ch.bhns.workers.dev/ch.m3u8?id=6898&type=hls
 #EXTINF:-1 tvg-id="12607" tvg-name="DMI TV" tvg-logo="https://thumbor.prod.vidiocdn.com/GR_VdLCahNEVwbTh0W8JIbJaBAI=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/12607/de1855.png" group-title="Religion",DMI TV
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
 #KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.m3u8?id=12607
-https://ch.bhns.workers.dev/ch.m3u8?id=12607
+#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.mpd?id=12607
+https://ch.bhns.workers.dev/ch.m3u8?id=12607&type=hls
 #EXTINF:-1 tvg-id="7230" tvg-name="Magna TV" tvg-logo="https://thumbor.prod.vidiocdn.com/hr3l92ltHJXHWqoFDKQZucGOArc=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/7230/7d6bf5.jpg" group-title="Entertainment",Magna TV
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
 #KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.m3u8?id=7230
-https://ch.bhns.workers.dev/ch.m3u8?id=7230
+#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.mpd?id=7230
+https://ch.bhns.workers.dev/ch.m3u8?id=7230&type=hls
 #EXTINF:-1 tvg-id="10975" tvg-name="Elshinta TV" tvg-logo="https://thumbor.prod.vidiocdn.com/a5BFyVvQ44YvngwwFpzBL5f6ARQ=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/10975/0dc2d8.png" group-title="Lainnya",Elshinta TV
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
 #KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.m3u8?id=10975
-https://ch.bhns.workers.dev/ch.m3u8?id=10975
+#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.mpd?id=10975
+https://ch.bhns.workers.dev/ch.m3u8?id=10975&type=hls
 #EXTINF:-1 tvg-id="22337" tvg-name="France24" tvg-logo="https://thumbor.prod.vidiocdn.com/bxosofpuHhR0zlmVbnl0ft5Pn7c=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/22337/14b350.png" group-title="News",France24
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
 #KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.m3u8?id=22337
-https://ch.bhns.workers.dev/ch.m3u8?id=22337
+#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.mpd?id=22337
+https://ch.bhns.workers.dev/ch.m3u8?id=22337&type=hls
 #EXTINF:-1 tvg-id="22684" tvg-name="HSS Series 8: The Revelation · 28 Nov 2026 - 17:00" tvg-logo="https://thumbor.prod.vidiocdn.com/cLBzvYJSQo__oVpV8Rup2R2_6Ro=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/22684/hss-series-8-the-revelation-f72209.jpg" group-title="Matches Today",HSS Series 8: The Revelation · 28 Nov 2026 - 17:00
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
 #EXTVLCOPT:http-referrer=https://m.vidio.com/
 #EXTVLCOPT:http-origin=https://m.vidio.com
 #KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.m3u8?id=22684
-https://ch.bhns.workers.dev/ch.m3u8?id=22684
+#KODIPROP:inputstream.adaptive.license_key=https://ch.bhns.workers.dev/dh.mpd?id=22684
+https://ch.bhns.workers.dev/ch.m3u8?id=22684&type=hls
