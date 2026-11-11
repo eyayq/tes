@@ -155,11 +155,37 @@ def worker_fetch_movie_page(page):
 
 
 # ============================================================
+# PROCESS MOVIE DATA
+# ============================================================
+def _process_movie_data(data, entries, seen_ids):
+    """Proses data movie section, tambahkan ke entries (dedup by movie_id)"""
+    keywords = data.get("keywords", [])
+    for kw in keywords:
+        kw_name = kw.get("keyword_name", "")
+        items = kw.get("items", [])
+        for item in items:
+            movie_id = item.get("movie_id", "")
+            title = item.get("title", "")
+            play_url = item.get("extra", {}).get("stream", {}).get("play_url", "")
+            logo = item.get("url_handle", {}).get("img_land_large", "") or item.get("url_handle", {}).get("img_port_large", "")
+
+            if play_url and movie_id not in seen_ids:
+                seen_ids.add(movie_id)
+                entries.append({
+                    "group_title": f"VOD - {kw_name}",
+                    "tvg_name": title,
+                    "tvg_logo": logo,
+                    "stream_url": play_url,
+                })
+
+
+# ============================================================
 # MAIN
 # ============================================================
 def scrape():
     entries = []
     all_channels = []
+    seen_movie_ids = set()
 
     # ----------------------------------------------------------
     # 1. LIVE TV — dari TvChannels/listByCategory (PARALLEL)
@@ -199,7 +225,7 @@ def scrape():
                     "catchup_enable": rules.get("catchup", {}).get("enable", 0),
                 })
 
-            print(f"    ✓ {cat_name}: {count} channels")
+            print(f"    \u2713 {cat_name}: {count} channels")
 
     # ----------------------------------------------------------
     # 2. EPG — dari TvChannels/listEpgByDate (PARALLEL)
@@ -229,7 +255,7 @@ def scrape():
                     })
                     epg_count += 1
 
-    print(f"    ✓ {epg_count} EPG programs from {len(epg_channels)} channels")
+    print(f"    \u2713 {epg_count} EPG programs from {len(epg_channels)} channels")
 
     # ----------------------------------------------------------
     # 3. CATCHUP & VOD — dari HomeSections
@@ -263,7 +289,7 @@ def scrape():
                             "tvg_logo": logo,
                             "stream_url": stream_url,
                         })
-            print(f"    ✓ Done")
+            print(f"    \u2713 Done")
     except Exception as ex:
         print(f"    [!] HomeSections: {ex}")
 
@@ -271,18 +297,14 @@ def scrape():
     # 4. MOVIE SECTIONS — dari movie/section/get (PARALLEL + PAGINATED)
     # ----------------------------------------------------------
     print("[*] Fetching Movie Sections (parallel + paginated)...")
-
-    # Fetch page 1 dulu untuk tahu total pages
     try:
         first_data = fetch_movie_section(page=1, limit=5)
         if first_data.get("success"):
             total_pages = first_data["data"].get("recordstotal", 1)
             print(f"    Total pages: {total_pages}")
 
-            # Proses page 1
-            _process_movie_data(first_data["data"], entries)
+            _process_movie_data(first_data["data"], entries, seen_movie_ids)
 
-            # Fetch remaining pages secara parallel
             if total_pages > 1:
                 remaining_pages = list(range(2, total_pages + 1))
                 with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
@@ -293,46 +315,19 @@ def scrape():
                     for future in as_completed(futures):
                         page_num, data = future.result()
                         if data:
-                            _process_movie_data(data, entries)
+                            _process_movie_data(data, entries, seen_movie_ids)
 
-            print(f"    ✓ Done ({total_pages} pages)")
+            print(f"    \u2713 Done ({total_pages} pages)")
     except Exception as ex:
         print(f"    [!] Movie Sections: {ex}")
 
-
-def _process_movie_data(data, entries):
-    """Proses data movie section, tambahkan ke entries (dedup by movie_id)"""
-    keywords = data.get("keywords", [])
-    for kw in keywords:
-        kw_name = kw.get("keyword_name", "")
-        items = kw.get("items", [])
-        for item in items:
-            movie_id = item.get("movie_id", "")
-            title = item.get("title", "")
-            play_url = item.get("extra", {}).get("stream", {}).get("play_url", "")
-            logo = item.get("url_handle", {}).get("img_land_large", "") or item.get("url_handle", {}).get("img_port_large", "")
-
-            if play_url:
-                # Dedup: skip jika movie_id sudah ada
-                existing_ids = {e.get("_movie_id") for e in entries if e.get("_movie_id")}
-                if movie_id not in existing_ids:
-                    entries.append({
-                        "group_title": f"VOD - {kw_name}",
-                        "tvg_name": title,
-                        "tvg_logo": logo,
-                        "stream_url": play_url,
-                        "_movie_id": movie_id,
-                    })
+    return entries
 
 
 # ============================================================
-# CLEANUP & WRITE
+# WRITE OUTPUT
 # ============================================================
 def write_output(entries):
-    # Hapus field _movie_id sebelum build
-    for e in entries:
-        e.pop("_movie_id", None)
-
     m3u = build_m3u(entries)
 
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
@@ -343,16 +338,19 @@ def write_output(entries):
     vod_count = sum(1 for e in entries if "VOD -" in e.get("group_title", ""))
     other_count = len(entries) - live_count - epg_total - vod_count
 
-    print(f"\n[✓] Selesai! Total: {len(entries)} entri → '{OUTPUT_FILE}'")
+    print(f"\n[\u2713] Selesai! Total: {len(entries)} entri \u2192 '{OUTPUT_FILE}'")
     print(f"    - Live TV: {live_count}")
     print(f"    - EPG/Catchup: {epg_total}")
     print(f"    - VOD (Movie): {vod_count}")
     print(f"    - Other: {other_count}")
 
 
+# ============================================================
+# ENTRY POINT
+# ============================================================
 if __name__ == "__main__":
     start = time.time()
-    scrape()
+    entries = scrape()
     write_output(entries)
     elapsed = time.time() - start
     print(f"    Time: {elapsed:.1f}s")   
