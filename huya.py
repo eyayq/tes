@@ -9,6 +9,7 @@ import argparse
 import asyncio
 import json
 import os
+import re
 import sys
 import time
 import uuid
@@ -96,7 +97,6 @@ def get_group(title: str) -> str:
 
 
 def extract_logo(attrs: dict) -> str:
-    """Prioritas: square_image.url → image_landscape_url → cover_url"""
     square = attrs.get("square_image", {})
     if isinstance(square, dict) and square.get("url"):
         return square["url"]
@@ -160,10 +160,10 @@ def generate_m3u(channels: list, stream_urls: dict, output_file: str, drm_fallba
 
 
 # ═══════════════════════════════════════════════════════════════
-# JS SNIPPETS
+# JS SNIPPETS — SEMUA RAW STRING
 # ═══════════════════════════════════════════════════════════════
 
-JS_REFRESH_SESSION = """
+JS_REFRESH_SESSION = r"""
 async () => {
     try {
         const resp = await fetch('https://m.vidio.com/interactions.json', {
@@ -185,7 +185,7 @@ async () => {
 }
 """
 
-JS_FETCH_CHANNELS = """
+JS_FETCH_CHANNELS = r"""
 async () => {
     try {
         const resp = await fetch(
@@ -212,8 +212,7 @@ async () => {
 }
 """
 
-# Signature di-scrape dari RSC page — BUKAN di-compute client-side
-JS_GET_SIGNATURE = """
+JS_GET_SIGNATURE = r"""
 async (chId) => {
     try {
         const rscParam = Math.random().toString(36).slice(2, 12);
@@ -221,10 +220,7 @@ async (chId) => {
             `https://m.vidio.com/live/${chId}?_rsc=${rscParam}`,
             {
                 method: 'GET',
-                headers: {
-                    'rsc': '1',
-                    'accept': '*/*',
-                },
+                headers: { 'rsc': '1', 'accept': '*/*' },
                 credentials: 'include',
             }
         );
@@ -232,8 +228,6 @@ async (chId) => {
 
         const text = await resp.text();
 
-        // Cari streamSignature di RSC payload
-        // Pattern: "streamSignature":{"clientId":"...","signature":"..."}
         const patterns = [
             /"streamSignature"\s*:\s*\{\s*"clientId"\s*:\s*"([^"]+)"\s*,\s*"signature"\s*:\s*"([^"]+)"/,
             /"clientId"\s*:\s*"([^"]+)"\s*,\s*"signature"\s*:\s*"([^"]+)"/,
@@ -241,9 +235,7 @@ async (chId) => {
 
         for (const pat of patterns) {
             const m = text.match(pat);
-            if (m) {
-                return {clientId: m[1], signature: m[2]};
-            }
+            if (m) return {clientId: m[1], signature: m[2]};
         }
 
         return {error: 'no_signature_found', sample: text.substring(0, 300)};
@@ -253,10 +245,10 @@ async (chId) => {
 }
 """
 
-JS_FETCH_STREAM = """
-async (chId, clientId, signature) => {
+JS_FETCH_STREAM = r"""
+async ({chId, clientId, signature}) => {
     let luws = '';
-    const m = document.cookie.match(/(?:^|;\\s*)luws=([^;]+)/);
+    const m = document.cookie.match(/(?:^|;\s*)luws=([^;]+)/);
     if (m) luws = m[1];
 
     try {
@@ -404,7 +396,7 @@ async def run_playwright(output_file: str, retries: int, drm_fallback: bool):
         channels = parse_channels(ch_data)
         log.info("  ✓ %d channels", len(channels))
 
-        # [3/4] Fetch streams (signature dari page)
+        # [3/4] Fetch streams
         print("\n[3/4] Fetching stream URLs ...")
 
         # Test 1 channel
@@ -415,9 +407,11 @@ async def run_playwright(output_file: str, retries: int, drm_fallback: bool):
             return
         log.info("  ✓ Signature OK: clientId=%s...", test_sig["clientId"][:16])
 
-        test_stream = await page.evaluate(
-            JS_FETCH_STREAM, channels[0]["id"], test_sig["clientId"], test_sig["signature"]
-        )
+        test_stream = await page.evaluate(JS_FETCH_STREAM, {
+            "chId": channels[0]["id"],
+            "clientId": test_sig["clientId"],
+            "signature": test_sig["signature"],
+        })
         if not test_stream.get("hls"):
             log.error("  ✗ Stream test gagal: %s", test_stream)
             await context.close()
@@ -431,7 +425,6 @@ async def run_playwright(output_file: str, retries: int, drm_fallback: bool):
         for i, ch in enumerate(channels, 1):
             ch_id = ch["id"]
 
-            # Ambil signature dari page
             sig = await page.evaluate(JS_GET_SIGNATURE, ch_id)
             if sig.get("error"):
                 failed.append(ch)
@@ -439,8 +432,11 @@ async def run_playwright(output_file: str, retries: int, drm_fallback: bool):
                 await asyncio.sleep(DELAY)
                 continue
 
-            # Fetch stream
-            result = await page.evaluate(JS_FETCH_STREAM, ch_id, sig["clientId"], sig["signature"])
+            result = await page.evaluate(JS_FETCH_STREAM, {
+                "chId": ch_id,
+                "clientId": sig["clientId"],
+                "signature": sig["signature"],
+            })
             hls = result.get("hls", "")
             if hls:
                 stream_urls[ch_id] = hls
@@ -464,7 +460,11 @@ async def run_playwright(output_file: str, retries: int, drm_fallback: bool):
                 if sig.get("error"):
                     still.append(ch)
                     continue
-                result = await page.evaluate(JS_FETCH_STREAM, ch_id, sig["clientId"], sig["signature"])
+                result = await page.evaluate(JS_FETCH_STREAM, {
+                    "chId": ch_id,
+                    "clientId": sig["clientId"],
+                    "signature": sig["signature"],
+                })
                 hls = result.get("hls", "")
                 if hls:
                     stream_urls[ch_id] = hls
@@ -506,8 +506,6 @@ def run_curl_cffi(output_file: str, retries: int, drm_fallback: bool):
     except ImportError:
         print("Error: pip install 'curl-cffi<0.14'")
         sys.exit(1)
-
-    import re
 
     print("=" * 55)
     print("  Vidio Live TV → M3U Playlist Generator")
@@ -584,7 +582,6 @@ def run_curl_cffi(output_file: str, retries: int, drm_fallback: bool):
     print("\n[3/4] Fetching stream URLs ...")
 
     def get_signature(ch_id: int) -> tuple:
-        """Ambil clientId + signature dari RSC page."""
         try:
             rsc_param = uuid.uuid4().hex[:10]
             resp = session.get(
@@ -595,7 +592,6 @@ def run_curl_cffi(output_file: str, retries: int, drm_fallback: bool):
             if resp.status_code != 200:
                 return "", ""
             text = resp.text
-            # Pattern 1: "streamSignature":{"clientId":"...","signature":"..."}
             m = re.search(
                 r'"streamSignature"\s*:\s*\{\s*"clientId"\s*:\s*"([^"]+)"\s*,\s*"signature"\s*:\s*"([^"]+)"',
                 text
@@ -612,7 +608,6 @@ def run_curl_cffi(output_file: str, retries: int, drm_fallback: bool):
         return "", ""
 
     def fetch_stream(ch_id: int, client_id: str, signature: str) -> str:
-        """Fetch stream URL dengan signature dari page."""
         try:
             resp = session.get(
                 f"{API_BASE}/livestreamings/{ch_id}/stream?initialize=true",
