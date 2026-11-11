@@ -1,6 +1,7 @@
 import requests
 import time
 import json
+from datetime import date
 
 # ============================================================
 # CONFIG
@@ -12,6 +13,9 @@ DELAY = 0.5
 # HTTP Headers untuk streaming
 STREAM_UA = 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36'
 STREAM_REFERER = 'https://www.dens.tv/'
+
+# Tanggal untuk EPG (default: hari ini)
+EPG_DATE = date.today().strftime("%Y-%m-%d")
 
 # Kategori channel
 CATEGORIES = {
@@ -27,9 +31,9 @@ CATEGORIES = {
 session = requests.Session()
 
 session.cookies.update({
-    'dtv_atl': '14400',
+    'dtv_atl': '14325',
     'dtv_adt': '1794511834',
-    'dens_session': 'akknvh81aimpc671rhl656i7uj8c0al0',
+    'dens_session': 'kgpc3m8hhau8n5hifpvpb0o99ike1ra0',
     'tvCategories': 'W3siaWQiOiIxIiwidGl0bGUiOiJMb2NhbCIsInNsdWciOiJsb2NhbCIsInR5cGUiOiJMaXZlIFRWIn0seyJpZCI6IjIiLCJ0aXRsZSI6IlByZW1pdW0iLCJzbHVnIjoicHJlbWl1bSIsInR5cGUiOiJMaXZlIFRWIn0seyJpZCI6IjMiLCJ0aXRsZSI6IkludGVybmF0aW9uYWwiLCJzbHVnIjoiaW50ZXJuYXRpb25hbCIsInR5cGUiOiJMaXZlIFRWIn0seyJpZCI6IjEzIiwidGl0bGUiOiJGcmVlIFN0cmVhbWluZyIsInNsdWciOiJmcmVlLXN0cmVhbWluZyIsInR5cGUiOiJMaXZlIFRWIn1d',
     'dtv_hrls': '713a42fe9b1e51d3f06039055cb60023',
     'dtv_rls': 'eyJyZXBlYXQiOnRydWUsImZyZWVfZGF5cyI6MywiZnJlZV9ob3VycyI6NCwiY2F0Y2h1cF9hY2Nlc3MiOnRydWV9',
@@ -67,6 +71,14 @@ def fetch_home_sections(page=1, limit=10):
     return resp.json()
 
 
+def fetch_epg_by_date(channel_id, ep_date):
+    """Fetch EPG (program hari ini) untuk channel tertentu"""
+    url = f"{BASE_URL}tv/TvChannels/listEpgByDate?date={ep_date}&id_channel={channel_id}&app_type=10"
+    resp = session.get(url)
+    resp.raise_for_status()
+    return resp.json()
+
+
 # ============================================================
 # M3U BUILDER
 # ============================================================
@@ -99,6 +111,7 @@ def build_m3u(entries):
 # ============================================================
 def scrape():
     entries = []
+    all_channels = []  # Simpan semua channel untuk EPG
 
     # ----------------------------------------------------------
     # 1. LIVE TV — dari TvChannels/listByCategory
@@ -117,6 +130,7 @@ def scrape():
                     title = meta.get("title", "")
                     logo = meta.get("images", {}).get("default", "")
                     stream_url = meta.get("videos", {}).get("live", "")
+                    ch_id = meta.get("id", "")
 
                     if stream_url:
                         entries.append({
@@ -127,15 +141,58 @@ def scrape():
                         })
                         count += 1
 
+                    # Simpan channel info untuk EPG
+                    all_channels.append({
+                        "id": ch_id,
+                        "title": title,
+                        "logo": logo,
+                        "category": cat_name,
+                        "catchup_enable": rules.get("catchup", {}).get("enable", 0),
+                    })
+
                 print(f"    ✓ {cat_name}: {count} channels")
             time.sleep(DELAY)
         except Exception as ex:
             print(f"    [!] {cat_name}: {ex}")
 
     # ----------------------------------------------------------
-    # 2. CATCHUP & VOD — dari HomeSections
+    # 2. EPG / CATCHUP — dari TvChannels/listEpgByDate
     # ----------------------------------------------------------
-    print("[*] Fetching Catchup & VOD...")
+    print(f"[*] Fetching EPG (date: {EPG_DATE})...")
+    epg_count = 0
+    for ch in all_channels:
+        # Hanya fetch EPG untuk channel yang enable catchup
+        if not ch["catchup_enable"]:
+            continue
+
+        try:
+            data = fetch_epg_by_date(ch["id"], EPG_DATE)
+            if data.get("success") and data.get("data"):
+                programs = data["data"]
+                for prog in programs:
+                    title = prog.get("title", "")
+                    play_url = prog.get("play", "")
+                    start_end = prog.get("start_end", "")
+
+                    if play_url:
+                        entries.append({
+                            "group_title": f"{ch['title']} - EPG",
+                            "tvg_name": f"{title} [{start_end}]",
+                            "tvg_logo": ch["logo"],
+                            "stream_url": play_url,
+                        })
+                        epg_count += 1
+
+            time.sleep(DELAY)
+        except Exception as ex:
+            print(f"    [!] EPG {ch['title']}: {ex}")
+
+    print(f"    ✓ {epg_count} EPG programs")
+
+    # ----------------------------------------------------------
+    # 3. CATCHUP & VOD — dari HomeSections
+    # ----------------------------------------------------------
+    print("[*] Fetching Catchup & VOD (HomeSections)...")
     try:
         data = fetch_home_sections()
         if data.get("success"):
@@ -171,7 +228,7 @@ def scrape():
         print(f"    [!] HomeSections: {ex}")
 
     # ----------------------------------------------------------
-    # 3. WRITE FILE
+    # 4. WRITE FILE
     # ----------------------------------------------------------
     m3u = build_m3u(entries)
 
@@ -179,10 +236,12 @@ def scrape():
         f.write(m3u)
 
     live_count = sum(1 for e in entries if "op-flashcon-digdayahd" in e.get("stream_url", "") or "op-flashcon-digdayasd" in e.get("stream_url", ""))
-    other_count = len(entries) - live_count
+    epg_total = sum(1 for e in entries if " - EPG" in e.get("group_title", ""))
+    other_count = len(entries) - live_count - epg_total
     print(f"\n[✓] Selesai! Total: {len(entries)} entri → '{OUTPUT_FILE}'")
     print(f"    - Live TV: {live_count}")
-    print(f"    - Catchup/VOD: {other_count}")
+    print(f"    - EPG/Catchup: {epg_total}")
+    print(f"    - VOD: {other_count}")
 
 
 if __name__ == "__main__":
