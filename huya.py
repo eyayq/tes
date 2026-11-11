@@ -1,4 +1,10 @@
-
+#!/usr/bin/env python3
+"""
+Vidio Live TV → M3U Playlist Generator (LOGIN)
+================================================
+Run:
+    python vidio_m3u.py
+"""
 
 import argparse
 import hashlib
@@ -40,8 +46,6 @@ USER_AGENT = (
 REFERER = "https://m.vidio.com/"
 ORIGIN = "https://m.vidio.com"
 
-# Channel tambahan yang TIDAK ada di /livestreamings?stream_type=tv_stream
-# (diperoleh dari RSC /live page)
 EXTRA_CHANNELS = {
     870: "MNCTV",
     782: "ANTV",
@@ -82,7 +86,6 @@ def generate_x_signature() -> tuple:
 
 
 def fetch_tv_stream_channels(session) -> list:
-    """GET /livestreamings?stream_type=tv_stream → 29 channel (title benar)."""
     url = f"{API_BASE}/livestreamings"
     params = {"stream_type": "tv_stream"}
     headers = {
@@ -100,7 +103,7 @@ def fetch_tv_stream_channels(session) -> list:
         "Origin": ORIGIN,
     }
 
-    log.info("Fetching /livestreamings?stream_type=tv_stream ...")
+    log.info("Fetching channels ...")
     try:
         resp = session.get(url, params=params, headers=headers, timeout=30)
         if resp.status_code != 200:
@@ -112,49 +115,33 @@ def fetch_tv_stream_channels(session) -> list:
 
     data = resp.json()
     channels = []
-
     for item in data.get("data", []):
         attrs = item.get("attributes", {})
         ch_id = item.get("id")
         if not ch_id:
             continue
-
         ch_id = int(ch_id)
         title = attrs.get("title", "Unknown")
-
         square = attrs.get("square_image", {})
         landscape = attrs.get("image_landscape_url", "")
         logo = square.get("url", "") or landscape
-
-        channels.append({
-            "id": ch_id,
-            "title": title,
-            "logo": logo,
-        })
+        channels.append({"id": ch_id, "title": title, "logo": logo})
 
     log.info("  Found %d channels", len(channels))
     return channels
 
 
 def fetch_all_channels(session) -> list:
-    """Gabung tv_stream + extra channels."""
     channels = fetch_tv_stream_channels(session)
     existing_ids = {c["id"] for c in channels}
-
-    # Tambah channel ekstra
     for ch_id, title in EXTRA_CHANNELS.items():
         if ch_id not in existing_ids:
-            channels.append({
-                "id": ch_id,
-                "title": title,
-                "logo": "",
-            })
-
-    log.info("  Total (with extras): %d channels", len(channels))
+            channels.append({"id": ch_id, "title": title, "logo": ""})
+    log.info("  Total: %d channels", len(channels))
     return channels
 
 
-def fetch_stream_url(session, ch_id: int) -> str:
+def fetch_stream_url(session, ch_id: int, use_login: bool = True) -> str:
     url = f"{API_BASE}/livestreamings/{ch_id}/stream?initialize=true"
     x_client, x_signature = generate_x_signature()
 
@@ -162,9 +149,6 @@ def fetch_stream_url(session, ch_id: int) -> str:
         "x-api-key": API_KEY,
         "x-api-platform": "web-mobile",
         "x-secure-level": "2",
-        "x-user-id": USER_ID,
-        "x-user-email": USER_EMAIL,
-        "x-user-login": "true",
         "luws": LUWS,
         "x-client": x_client,
         "x-signature": x_signature,
@@ -173,6 +157,13 @@ def fetch_stream_url(session, ch_id: int) -> str:
         "Origin": ORIGIN,
         "Accept": "*/*",
     }
+
+    if use_login:
+        headers["x-user-id"] = USER_ID
+        headers["x-user-email"] = USER_EMAIL
+        headers["x-user-login"] = "true"
+    else:
+        headers["x-user-login"] = "false"
 
     try:
         resp = session.get(url, headers=headers, timeout=15)
@@ -188,19 +179,14 @@ def fetch_stream_url(session, ch_id: int) -> str:
 def generate_m3u(channels: list, stream_urls: dict, output_file: str):
     lines = ["#EXTM3U"]
     count = 0
-
     for ch in channels:
         ch_id = ch["id"]
         title = ch["title"]
         logo = ch["logo"]
         stream_url = stream_urls.get(ch_id, "")
-
         if not stream_url:
-            log.warning("  [SKIP] No stream: %s", title)
             continue
-
         group = "TV Internasional" if title in INTERNATIONAL else "TV Nasional"
-
         lines.append(
             f'#EXTINF:-1 tvg-id="{ch_id}" '
             f'tvg-name="{title}" '
@@ -230,25 +216,45 @@ def main():
     print("=" * 55)
 
     session = cffi_requests.Session(impersonate=IMPERSONATE)
-
-    # Step 1: Fetch channels (API + extras)
     channels = fetch_all_channels(session)
     if not channels:
-        log.error("Tidak ada channel ditemukan.")
+        log.error("Tidak ada channel.")
         sys.exit(1)
 
     log.info("\n  Channels (%d):", len(channels))
     for ch in channels:
         log.info("    [%s] %s", ch["id"], ch["title"])
 
-    # Step 2: Fetch stream URLs
-    log.info("\nFetching stream URLs ...")
+    # === TEST: coba 1 channel dengan login, jika gagal coba tanpa login ===
+    log.info("\nTesting stream access ...")
+    test_ch = channels[0]
+    hls_login = fetch_stream_url(session, test_ch["id"], use_login=True)
+    use_login = True
+
+    if not hls_login:
+        log.info("  Login gagal, coba tanpa login ...")
+        hls_nologin = fetch_stream_url(session, test_ch["id"], use_login=False)
+        if hls_nologin:
+            use_login = False
+            log.info("  ✓ Berhasil tanpa login (luws login expired)")
+        else:
+            log.error("  ✗ Gagal dengan dan tanpa login")
+            log.error("  LUWS SUDAH EXPIRED! Update di script:")
+            log.error("  1. Buka m.vidio.com di browser (login)")
+            log.error("  2. F12 → Application → Cookies → copy 'luws'")
+            log.error("  3. Paste di baris LUWS = \"...\" di atas")
+            sys.exit(1)
+    else:
+        log.info("  ✓ Login OK")
+
+    # === Fetch semua stream ===
+    log.info("\nFetching stream URLs (login=%s) ...", use_login)
     start = time.time()
     stream_urls = {}
     failed = []
 
     for i, ch in enumerate(channels, 1):
-        hls = fetch_stream_url(session, ch["id"])
+        hls = fetch_stream_url(session, ch["id"], use_login=use_login)
         if hls:
             stream_urls[ch["id"]] = hls
             log.info("  [%d/%d] %s ✓", i, len(channels), ch["title"])
@@ -257,7 +263,7 @@ def main():
             log.warning("  [%d/%d] %s ✗", i, len(channels), ch["title"])
         time.sleep(DELAY)
 
-    # Step 3: Retry
+    # Retry
     for attempt in range(1, args.retries + 1):
         if not failed:
             break
@@ -265,7 +271,7 @@ def main():
         time.sleep(RETRY_WAIT)
         still_failed = []
         for ch in failed:
-            hls = fetch_stream_url(session, ch["id"])
+            hls = fetch_stream_url(session, ch["id"], use_login=use_login)
             if hls:
                 stream_urls[ch["id"]] = hls
                 log.info("  [RETRY] %s ✓", ch["title"])
@@ -274,7 +280,6 @@ def main():
             time.sleep(DELAY)
         failed = still_failed
 
-    # Summary
     elapsed = time.time() - start
     log.info("\n  ─────────────────────────────────")
     log.info("  Total : %d", len(channels))
@@ -287,8 +292,11 @@ def main():
         for ch in failed:
             log.info("    - [%s] %s", ch["id"], ch["title"])
 
-    # Step 4: Generate M3U
-    log.info("\nGenerating M3U ...")
+    if not stream_urls:
+        log.error("\n  SEMUA GAGAL. Luws kemungkinan expired.")
+        log.error("  Update LUWS di script (baris atas).")
+        sys.exit(1)
+
     generate_m3u(channels, stream_urls, args.output)
 
 
