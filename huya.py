@@ -1,4 +1,8 @@
-
+#!/usr/bin/env python3
+"""
+VIDIO M3U PLAYLIST GENERATOR v3
+Auto-login via Playwright + fallback tanpa login.
+"""
 
 import asyncio
 import hashlib
@@ -20,7 +24,6 @@ except ImportError:
 # ─── Konfigurasi ─────────────────────────────────────────────────
 API_BASE = "https://api.vidio.com"
 SITE_URL = "https://m.vidio.com"
-LIVE_URL = "https://m.vidio.com/live"
 OUTPUT_FILE = "playlist.m3u"
 IMPERSONATE = "chrome"
 DELAY = 0.3
@@ -40,13 +43,11 @@ REFERER = "https://m.vidio.com/"
 ORIGIN = "https://m.vidio.com"
 
 # ═══════════════════════════════════════════════════════════════
-# COOKIES — UPDATE DI SINI SAJA (dari browser DevTools)
+# COOKIES — UPDATE DI SINI SAJA
 # F12 → Application → Cookies → https://m.vidio.com
 # ═══════════════════════════════════════════════════════════════
 VIDIO_COOKIES = [
     {"name": "ahoy_visitor", "value": "3489c20a-d32e-468a-bd1b-8f7d150fa132", "domain": ".vidio.com", "path": "/"},
-    {"name": "ahoy_visit", "value": "a3846ac7-aa8d-4da6-a541-0c143ba6e352", "domain": ".vidio.com", "path": "/"},
-    {"name": "luws", "value": "9980CC03-6E54-454A-4E3A-8C84D2BCEFDC_186957857", "domain": ".vidio.com", "path": "/"},
     {"name": "remember_user_token", "value": "eyJfcmFpbHMi...--4eeecff53f178ea4f8362b341a43b9bb53b51274", "domain": ".vidio.com", "path": "/"},
     {"name": "access_token", "value": "eyJhbGciOiJIUzI1NiJ9.eyJkYXRhIjp7InR5cGUiOiJhY2Nlc3NfdG9rZW4iLCJ1aWQiOjE4Njk1Nzg1N30sImV4cCI6MTc5NDQ0MzM3MX0.vIjiSE4zy4-12PSqMrov5hxB6kwKdr26_EDVmeI6sfY", "domain": ".vidio.com", "path": "/"},
     {"name": "country_id", "value": "ID", "domain": ".vidio.com", "path": "/"},
@@ -54,16 +55,9 @@ VIDIO_COOKIES = [
 # ═══════════════════════════════════════════════════════════════
 
 EXTRA_CHANNELS = {
-    870: "MNCTV",
-    782: "ANTV",
-    665: "RCTI",
-    666: "GTV",
-    667: "MDTV",
-    668: "iNews",
-    669: "Net",
-    670: "tvOne",
-    671: "One",
-    672: "O Channel",
+    870: "MNCTV", 782: "ANTV", 665: "RCTI", 666: "GTV",
+    667: "MDTV", 668: "iNews", 669: "Net", 670: "tvOne",
+    671: "One", 672: "O Channel",
 }
 
 INTERNATIONAL = {
@@ -84,114 +78,112 @@ log = logging.getLogger("vidio-m3u")
 
 
 def _load_cookies():
-    """Load cookies: env var → script → file."""
-    env_cookies = os.environ.get("VIDIO_COOKIES", "")
-    if env_cookies:
-        try:
-            return json.loads(env_cookies)
-        except json.JSONDecodeError:
-            pass
+    env = os.environ.get("VIDIO_COOKIES", "")
+    if env:
+        try: return json.loads(env)
+        except: pass
     if VIDIO_COOKIES:
         return VIDIO_COOKIES
     if os.path.exists(_COOKIES_FILE):
-        with open(_COOKIES_FILE) as f:
-            return json.load(f)
+        with open(_COOKIES_FILE) as f: return json.load(f)
     return None
 
 
-# ─── X-Signature ─────────────────────────────────────────────────
 def generate_x_signature() -> tuple:
     t_float = time.time()
     t_int = int(t_float)
     x_client = f"{t_float}"
     secret_key = f"V1d10D3v:{t_int}"
-    signature = hmac.new(
-        secret_key.encode(),
-        x_client.encode(),
-        hashlib.sha256
-    ).hexdigest()
+    signature = hmac.new(secret_key.encode(), x_client.encode(), hashlib.sha256).hexdigest()
     return x_client, signature
 
 
-# ─── Auto Login via Playwright ───────────────────────────────────
-async def auto_login():
+# ─── AUTO LOGIN ──────────────────────────────────────────────────
+async def auto_login() -> dict:
     """
-    Playwright persistent context → inject cookies → visit m.vidio.com
-    → capture luws + user_id + user_email dari session.
-    Return: (luws, user_id, user_email)
+    Playwright → inject cookies → visit m.vidio.com → capture session.
+    Return: {"luws": str, "user_id": str, "user_email": str, "logged_in": bool}
     """
-    from playwright.async_api import async_playwright
+    result = {"luws": "", "user_id": "", "user_email": "", "logged_in": False}
+
+    try:
+        from playwright.async_api import async_playwright
+    except ImportError:
+        log.warning("  Playwright tidak tersedia, skip auto-login")
+        return result
 
     cookies = _load_cookies()
     if not cookies:
-        log.error("Tidak ada cookies! Update VIDIO_COOKIES di script.")
-        return "", "", ""
+        log.warning("  Tidak ada cookies untuk inject")
+        return result
 
-    captured = {"luws": "", "user_id": "", "user_email": ""}
+    try:
+        async with async_playwright() as p:
+            context = await p.chromium.launch_persistent_context(
+                _BROWSER_PROFILE,
+                headless=True,
+                channel="chrome",
+                args=["--disable-blink-features=AutomationControlled", "--no-sandbox"],
+            )
+            page = context.pages[0] if context.pages else await context.new_page()
 
-    async with async_playwright() as p:
-        context = await p.chromium.launch_persistent_context(
-            _BROWSER_PROFILE,
-            headless=True,
-            channel="chrome",
-            args=["--disable-blink-features=AutomationControlled", "--no-sandbox"],
-        )
-        page = context.pages[0] if context.pages else await context.new_page()
+            await context.add_cookies(cookies)
+            log.info("  ✓ Inject %d cookies", len(cookies))
 
-        # Inject cookies
-        await context.add_cookies(cookies)
-        log.info("  ✓ Inject %d cookies", len(cookies))
+            # Intercept interactions.json
+            def on_response(response):
+                if "interactions.json" in response.url:
+                    asyncio.ensure_future(_capture_user(response, result))
 
-        # Intercept interactions.json untuk ambil user_id + email
-        def on_response(response):
-            if "interactions.json" in response.url:
-                asyncio.ensure_future(_capture_user(response))
+            async def _capture_user(response, res):
+                try:
+                    body = await response.json()
+                    user = body.get("current_user", {})
+                    if user and user.get("user_id"):
+                        res["user_id"] = str(user["user_id"])
+                        res["user_email"] = user.get("email", "")
+                        res["logged_in"] = True
+                except Exception:
+                    pass
 
-        async def _capture_user(response):
-            try:
-                body = await response.json()
-                user = body.get("current_user", {})
-                if user:
-                    captured["user_id"] = str(user.get("user_id", ""))
-                    captured["user_email"] = user.get("email", "")
-            except Exception:
-                pass
+            page.on("response", on_response)
 
-        page.on("response", on_response)
+            await page.goto(SITE_URL, timeout=60000, wait_until="domcontentloaded")
 
-        # Navigate to m.vidio.com
-        await page.goto(SITE_URL, timeout=60000, wait_until="domcontentloaded")
-        await page.wait_for_load_state("domcontentloaded", timeout=30000)
-
-        # Wait for luws cookie + user data
-        for _ in range(30):
-            all_cookies = {c["name"]: c["value"] for c in await context.cookies()}
-            captured["luws"] = all_cookies.get("luws", "")
-            if captured["luws"] and captured["user_id"]:
-                break
-            await asyncio.sleep(1)
-
-        # Fallback: ambil luws dari document.cookie
-        if not captured["luws"]:
-            doc_cookie = await page.evaluate("() => document.cookie")
-            for part in doc_cookie.split(";"):
-                part = part.strip()
-                if part.startswith("luws="):
-                    captured["luws"] = part[5:]
+            # Wait for luws + user data
+            for _ in range(20):
+                all_cookies = {c["name"]: c["value"] for c in await context.cookies()}
+                result["luws"] = all_cookies.get("luws", "")
+                if result["luws"] and result["logged_in"]:
                     break
+                await asyncio.sleep(1)
 
-        # Fallback: ambil user_id dari cookies (plenty_id)
-        if not captured["user_id"]:
-            all_cookies = {c["name"]: c["value"] for c in await context.cookies()}
-            captured["user_id"] = all_cookies.get("plenty_id", "")
+            # Fallback: document.cookie
+            if not result["luws"]:
+                doc = await page.evaluate("() => document.cookie")
+                for part in doc.split(";"):
+                    part = part.strip()
+                    if part.startswith("luws="):
+                        result["luws"] = part[5:]
+                        break
 
-        await context.close()
+            # Fallback: plenty_id
+            if not result["user_id"]:
+                all_cookies = {c["name"]: c["value"] for c in await context.cookies()}
+                result["user_id"] = all_cookies.get("plenty_id", "")
+                if result["user_id"]:
+                    result["logged_in"] = True
 
-    return captured["luws"], captured["user_id"], captured["user_email"]
+            await context.close()
+
+    except Exception as e:
+        log.error("  Playwright error: %s", e)
+
+    return result
 
 
-# ─── Fetch Channels ──────────────────────────────────────────────
-def fetch_tv_stream_channels(session, luws: str, user_id: str) -> list:
+# ─── FETCH CHANNELS ──────────────────────────────────────────────
+def fetch_channels(session, luws: str, user_id: str) -> list:
     url = f"{API_BASE}/livestreamings"
     params = {"stream_type": "tv_stream"}
     headers = {
@@ -200,7 +192,6 @@ def fetch_tv_stream_channels(session, luws: str, user_id: str) -> list:
         "x-secure-level": "2",
         "x-api-app-info": "js/m.vidio.com",
         "x-user-login": "true" if user_id else "false",
-        "x-user-id": user_id,
         "luws": luws,
         "Accept": "application/json",
         "Content-Type": "application/vnd.api+json",
@@ -208,12 +199,13 @@ def fetch_tv_stream_channels(session, luws: str, user_id: str) -> list:
         "Referer": REFERER,
         "Origin": ORIGIN,
     }
+    if user_id:
+        headers["x-user-id"] = user_id
 
-    log.info("Fetching channels ...")
     try:
         resp = session.get(url, params=params, headers=headers, timeout=30)
         if resp.status_code != 200:
-            log.warning("  HTTP %d", resp.status_code)
+            log.warning("  Channels HTTP %d", resp.status_code)
             return []
     except Exception as e:
         log.error("  Error: %s", e)
@@ -233,24 +225,19 @@ def fetch_tv_stream_channels(session, luws: str, user_id: str) -> list:
         logo = square.get("url", "") or landscape
         channels.append({"id": ch_id, "title": title, "logo": logo})
 
-    log.info("  Found %d channels", len(channels))
-    return channels
-
-
-def fetch_all_channels(session, luws: str, user_id: str) -> list:
-    channels = fetch_tv_stream_channels(session, luws, user_id)
-    existing_ids = {c["id"] for c in channels}
+    # Extra channels
+    existing = {c["id"] for c in channels}
     for ch_id, title in EXTRA_CHANNELS.items():
-        if ch_id not in existing_ids:
+        if ch_id not in existing:
             channels.append({"id": ch_id, "title": title, "logo": ""})
-    log.info("  Total: %d channels", len(channels))
+
     return channels
 
 
-# ─── Fetch Stream URL ────────────────────────────────────────────
-def fetch_stream_url(session, ch_id: int, luws: str, user_id: str, user_email: str) -> str:
+# ─── FETCH STREAM ────────────────────────────────────────────────
+def fetch_stream(session, ch_id: int, luws: str, user_id: str, user_email: str) -> str:
     url = f"{API_BASE}/livestreamings/{ch_id}/stream?initialize=true"
-    x_client, x_signature = generate_x_signature()
+    x_client, x_sig = generate_x_signature()
 
     headers = {
         "x-api-key": API_KEY,
@@ -258,13 +245,12 @@ def fetch_stream_url(session, ch_id: int, luws: str, user_id: str, user_email: s
         "x-secure-level": "2",
         "luws": luws,
         "x-client": x_client,
-        "x-signature": x_signature,
+        "x-signature": x_sig,
         "User-Agent": USER_AGENT,
         "Referer": REFERER,
         "Origin": ORIGIN,
         "Accept": "*/*",
     }
-
     if user_id:
         headers["x-user-id"] = user_id
         headers["x-user-login"] = "true"
@@ -276,28 +262,25 @@ def fetch_stream_url(session, ch_id: int, luws: str, user_id: str, user_email: s
     try:
         resp = session.get(url, headers=headers, timeout=15)
         if resp.status_code == 200:
-            data = resp.json()
-            return data.get("data", {}).get("attributes", {}).get("hls", "")
+            return resp.json().get("data", {}).get("attributes", {}).get("hls", "")
     except Exception:
         pass
-
     return ""
 
 
-# ─── M3U Generator ───────────────────────────────────────────────
-def generate_m3u(channels: list, stream_urls: dict, output_file: str):
+# ─── M3U ─────────────────────────────────────────────────────────
+def generate_m3u(channels, stream_urls, output_file):
     lines = ["#EXTM3U"]
     count = 0
     for ch in channels:
-        ch_id = ch["id"]
-        title = ch["title"]
-        logo = ch["logo"]
-        stream_url = stream_urls.get(ch_id, "")
+        stream_url = stream_urls.get(ch["id"], "")
         if not stream_url:
             continue
+        title = ch["title"]
+        logo = ch["logo"]
         group = "TV Internasional" if title in INTERNATIONAL else "TV Nasional"
         lines.append(
-            f'#EXTINF:-1 tvg-id="{ch_id}" '
+            f'#EXTINF:-1 tvg-id="{ch["id"]}" '
             f'tvg-name="{title}" '
             f'tvg-logo="{logo}" '
             f'group-title="{group}",'
@@ -308,50 +291,68 @@ def generate_m3u(channels: list, stream_urls: dict, output_file: str):
         lines.append(f'#EXTVLCOPT:http-origin={ORIGIN}')
         lines.append(stream_url)
         count += 1
-
     Path(output_file).write_text("\n".join(lines) + "\n", encoding="utf-8")
     log.info("[✓] %s (%d channels)", output_file, count)
 
 
-# ─── Main ────────────────────────────────────────────────────────
+# ─── MAIN ────────────────────────────────────────────────────────
 async def async_main(output_file, retries):
     print("=" * 55)
     print("  Vidio Live TV → M3U Playlist Generator")
-    print("  Auto-login: Playwright persistent context")
     print("=" * 55)
 
     # [1/3] Auto login
     print("\n[1/3] Auto login ...")
-    luws, user_id, user_email = await auto_login()
+    info = await auto_login()
+    luws = info["luws"]
+    user_id = info["user_id"]
+    user_email = info["user_email"]
+    logged_in = info["logged_in"]
+
+    if logged_in:
+        log.info("  ✓ Login: %s (ID: %s)", user_email or "unknown", user_id)
+    else:
+        log.warning("  ✗ Tidak login (cookies expired?)")
 
     if not luws:
         log.error("  ✗ Gagal ambil luws!")
         log.error("  Update VIDIO_COOKIES di script.")
         return
 
-    log.info("  ✓ luws: %s", luws)
-    log.info("  ✓ user_id: %s", user_id or "(anonymous)")
-    log.info("  ✓ email: %s", user_email or "(none)")
+    log.info("  ✓ luws: %s", luws[:20] + "...")
 
-    # [2/3] Fetch channels + streams
+    # [2/3] Fetch
     print("\n[2/3] Fetching channels + streams ...")
     session = cffi_requests.Session(impersonate=IMPERSONATE)
-    channels = fetch_all_channels(session, luws, user_id)
+    channels = fetch_channels(session, luws, user_id)
 
     if not channels:
         log.error("Tidak ada channel.")
         return
 
-    log.info("\n  Channels (%d):", len(channels))
-    for ch in channels:
-        log.info("    [%s] %s", ch["id"], ch["title"])
+    log.info("  Channels: %d", len(channels))
 
+    # Test 1 channel dulu
+    test = fetch_stream(session, channels[0]["id"], luws, user_id, user_email)
+    if not test and user_id:
+        log.info("  Login gagal, coba tanpa login ...")
+        user_id = ""
+        user_email = ""
+        test = fetch_stream(session, channels[0]["id"], luws, "", "")
+    if test:
+        log.info("  ✓ Stream access OK")
+    else:
+        log.error("  ✗ Gagal akses stream (luws expired?)")
+        log.error("  Update VIDIO_COOKIES di script.")
+        return
+
+    # Fetch semua
     start = time.time()
     stream_urls = {}
     failed = []
 
     for i, ch in enumerate(channels, 1):
-        hls = fetch_stream_url(session, ch["id"], luws, user_id, user_email)
+        hls = fetch_stream(session, ch["id"], luws, user_id, user_email)
         if hls:
             stream_urls[ch["id"]] = hls
             log.info("  [%d/%d] %s ✓", i, len(channels), ch["title"])
@@ -364,51 +365,38 @@ async def async_main(output_file, retries):
     for attempt in range(1, retries + 1):
         if not failed:
             break
-        log.info("\n  Retry %d/%d (%d) ...", attempt, retries, len(failed))
+        log.info("  Retry %d/%d (%d) ...", attempt, retries, len(failed))
         time.sleep(RETRY_WAIT)
-        still_failed = []
+        still = []
         for ch in failed:
-            hls = fetch_stream_url(session, ch["id"], luws, user_id, user_email)
+            hls = fetch_stream(session, ch["id"], luws, user_id, user_email)
             if hls:
                 stream_urls[ch["id"]] = hls
-                log.info("  [RETRY] %s ✓", ch["title"])
+                log.info("  [R%d] %s ✓", attempt, ch["title"])
             else:
-                still_failed.append(ch)
+                still.append(ch)
             time.sleep(DELAY)
-        failed = still_failed
+        failed = still
 
     elapsed = time.time() - start
-    log.info("\n  ─────────────────────────────────")
-    log.info("  Total : %d", len(channels))
-    log.info("  OK    : %d", len(stream_urls))
-    log.info("  Fail  : %d", len(failed))
-    log.info("  Time  : %.1fs", elapsed)
-    log.info("  ─────────────────────────────────")
-
-    if failed:
-        for ch in failed:
-            log.info("    - [%s] %s", ch["id"], ch["title"])
+    log.info("\n  Total: %d | OK: %d | Fail: %d | Time: %.1fs",
+             len(channels), len(stream_urls), len(failed), elapsed)
 
     if not stream_urls:
-        log.error("\n  SEMUA GAGAL. Cookies kemungkinan expired.")
-        log.error("  Update VIDIO_COOKIES di script.")
+        log.error("  SEMUA GAGAL. Update cookies.")
         return
 
-    # [3/3] Generate M3U
+    # [3/3] Generate
     print(f"\n[3/3] Generating M3U ...")
     generate_m3u(channels, stream_urls, output_file)
-
     print(f"\n{'=' * 55}")
-    print(f"  ✓: {len(stream_urls)} channels")
-    print(f"  ✓: {output_file}")
+    print(f"  ✓ {len(stream_urls)} channels → {output_file}")
     print(f"{'=' * 55}")
 
 
-# ─── Entry point ─────────────────────────────────────────────────
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Vidio M3U Generator')
+    parser = argparse.ArgumentParser()
     parser.add_argument('-o', '--output', type=str, default=OUTPUT_FILE)
     parser.add_argument('--retries', type=int, default=2)
     args = parser.parse_args()
-
     asyncio.run(async_main(args.output, args.retries))   
