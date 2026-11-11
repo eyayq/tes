@@ -1,17 +1,4 @@
-#!/usr/bin/env python3
-"""
-Vidio Live TV → M3U Playlist Generator (Hybrid)
-================================================
-Playwright (ambil luws) → curl_cffi (semua API calls)
 
-Dependencies:
-    pip install "curl-cffi<0.14" playwright
-    playwright install chromium --with-deps
-
-Run:
-    python vidio_m3u.py
-    python vidio_m3u.py --luws "1EA8FFB6-2EA1-317B-91DF-F3625D79BB13_"
-"""
 
 import argparse
 import hashlib
@@ -22,6 +9,7 @@ import time
 import uuid
 import logging
 from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 try:
     from curl_cffi import requests as cffi_requests
@@ -40,7 +28,7 @@ API_BASE = "https://api.vidio.com"
 SITE_URL = "https://m.vidio.com"
 OUTPUT_FILE = "playlist.m3u"
 IMPERSONATE = "chrome"
-DELAY = 0.5
+MAX_WORKERS = 5  # thread pool
 RETRY_DELAY = 3.0
 RETRY_WAIT = 5
 
@@ -57,6 +45,12 @@ USER_AGENT = (
 REFERER = "https://m.vidio.com/"
 ORIGIN = "https://m.vidio.com"
 
+# Channel internasional (untuk group-title)
+INTERNATIONAL = {
+    "Arirang", "ABC Australia", "Euronews", "CNA",
+    "France24", "MUSICA", "U-Channel TV",
+}
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s",
@@ -67,10 +61,6 @@ log = logging.getLogger("vidio-m3u")
 
 # ==================== X-SIGNATURE ====================
 def generate_x_signature() -> tuple:
-    """
-    x-client = float timestamp (seperti browser)
-    x-signature = HMAC-SHA256(key="V1d10D3v:{int_t}", msg=x_client)
-    """
     t_float = time.time()
     t_int = int(t_float)
     x_client = f"{t_float}"
@@ -83,17 +73,20 @@ def generate_x_signature() -> tuple:
     return x_client, signature
 
 
-# ==================== STEP 1: GET LUWS ====================
-def get_luws_playwright() -> str:
+# ==================== STEP 1: AUTO LUWS + VISITOR ====================
+def get_luws_and_visitor() -> tuple:
     """
-    Load m.vidio.com di Playwright → JS set document.cookie luws → ambil.
-    Hanya butuh 1 page load (~3-5 detik).
+    Auto ambil luws + ahoy_visitor via Playwright.
+    JS di m.vidio.com set luws via document.cookie.
     """
     if not HAS_PLAYWRIGHT:
-        log.warning("Playwright tidak tersedia")
-        return ""
+        log.warning("Playwright tidak tersedia, pakai random")
+        return (
+            f"{str(uuid.uuid4()).upper()}_",
+            str(uuid.uuid4()),
+        )
 
-    log.info("Mengambil luws via Playwright ...")
+    log.info("Mengambil luws + visitor-id via Playwright ...")
     with sync_playwright() as p:
         browser = p.chromium.launch(
             headless=True,
@@ -108,53 +101,38 @@ def get_luws_playwright() -> str:
         page.goto(SITE_URL, wait_until="domcontentloaded", timeout=30000)
 
         # Tunggu JS set cookie luws
-        for _ in range(10):
-            cookies = context.cookies()
-            for c in cookies:
-                if c["name"] == "luws":
-                    browser.close()
-                    return c["value"]
+        luws = ""
+        visitor_id = ""
+        for _ in range(15):
+            cookies = {c["name"]: c["value"] for c in context.cookies()}
+            luws = cookies.get("luws", "")
+            visitor_id = cookies.get("ahoy_visitor", "")
+            if luws and visitor_id:
+                break
             time.sleep(1)
 
         browser.close()
 
-    return ""
+    if luws and visitor_id:
+        log.info("  luws: %s", luws)
+        log.info("  visitor-id: %s", visitor_id)
+    else:
+        log.warning("  Gagal ambil dari browser, pakai random")
+        luws = luws or f"{str(uuid.uuid4()).upper()}_"
+        visitor_id = visitor_id or str(uuid.uuid4())
 
-
-def get_luws(manual: str = "") -> str:
-    """
-    Urutan:
-    1. Manual (--luws)
-    2. Playwright (otomatis)
-    3. Random UUID (fallback, 6 channel besar gagal)
-    """
-    if manual:
-        log.info("  luws (manual): %s", manual)
-        return manual
-
-    # Coba Playwright
-    luws = get_luws_playwright()
-    if luws:
-        log.info("  luws (playwright): %s", luws)
-        return luws
-
-    # Fallback
-    luws = f"{str(uuid.uuid4()).upper()}_"
-    log.warning("  luws (random): %s", luws)
-    log.warning("  ⚠ 6 channel besar mungkin gagal")
-    return luws
+    return luws, visitor_id
 
 
 # ==================== STEP 2: FETCH ALL CHANNELS ====================
-def fetch_all_channels(session, luws: str) -> list:
-    """GET /livestreamings?stream_type=tv_stream"""
+def fetch_all_channels(session, luws: str, visitor_id: str) -> list:
     url = f"{API_BASE}/livestreamings"
     params = {"stream_type": "tv_stream"}
     headers = {
         "x-api-key": API_KEY,
         "x-api-platform": "web-mobile",
         "x-secure-level": "2",
-        "x-visitor-id": session.cookies.get("ahoy_visitor", ""),
+        "x-visitor-id": visitor_id,
         "x-api-app-info": "js/m.vidio.com",
         "x-user-login": "false",
         "luws": luws,
@@ -184,16 +162,21 @@ def fetch_all_channels(session, luws: str) -> list:
         if not ch_id:
             continue
 
-        # Ambil logo: square_image atau image_landscape
+        title = attrs.get("title", "Unknown")
+
+        # Logo: square_image (120x120) → fallback landscape
         square = attrs.get("square_image", {})
         landscape = attrs.get("image_landscape_url", "")
         logo = square.get("url", "") or landscape
 
+        # Group-title: TV Nasional / TV Internasional
+        group = "TV Internasional" if title in INTERNATIONAL else "TV Nasional"
+
         channels.append({
             "id": int(ch_id),
-            "title": attrs.get("title", "Unknown"),
-            "cover_url": logo,
-            "web_url": attrs.get("links", {}).get("watchpage", ""),
+            "title": title,
+            "logo": logo,
+            "group": group,
             "is_live": "ongoing_schedule" in item.get("relationships", {}),
         })
 
@@ -202,8 +185,7 @@ def fetch_all_channels(session, luws: str) -> list:
 
 
 # ==================== STEP 3: FETCH STREAM URL ====================
-def fetch_stream_url(session, luws: str, ch_id: int) -> str:
-    """GET /livestreamings/{id}/stream?initialize=true"""
+def fetch_stream_url(session, luws: str, visitor_id: str, ch_id: int) -> str:
     url = f"{API_BASE}/livestreamings/{ch_id}/stream?initialize=true"
     x_client, x_signature = generate_x_signature()
 
@@ -211,6 +193,7 @@ def fetch_stream_url(session, luws: str, ch_id: int) -> str:
         "x-api-key": API_KEY,
         "x-api-platform": "web-mobile",
         "x-secure-level": "2",
+        "x-visitor-id": visitor_id,
         "luws": luws,
         "x-client": x_client,
         "x-signature": x_signature,
@@ -224,13 +207,41 @@ def fetch_stream_url(session, luws: str, ch_id: int) -> str:
         resp = session.get(url, headers=headers, timeout=15)
         if resp.status_code == 200:
             data = resp.json()
-            hls = data.get("data", {}).get("attributes", {}).get("hls", "")
-            if hls:
-                return hls
+            return data.get("data", {}).get("attributes", {}).get("hls", "")
     except Exception:
         pass
 
     return ""
+
+
+# ==================== THREAD POOL ====================
+def fetch_all_streams(channels: list, luws: str, visitor_id: str, max_workers: int) -> tuple:
+    """Fetch semua stream URL secara parallel."""
+    stream_urls = {}
+    failed = []
+
+    def _fetch(ch):
+        ch_id = ch["id"]
+        hls = fetch_stream_url(
+            cffi_requests.Session(impersonate=IMPERSONATE),
+            luws, visitor_id, ch_id
+        )
+        return ch, hls
+
+    with ThreadPoolExecutor(max_workers=max_workers) as pool:
+        futures = {pool.submit(_fetch, ch): ch for ch in channels}
+        done = 0
+        for future in as_completed(futures):
+            ch, hls = future.result()
+            done += 1
+            if hls:
+                stream_urls[ch["id"]] = hls
+                log.info("  [%d/%d] %s ✓", done, len(channels), ch["title"])
+            else:
+                failed.append(ch)
+                log.warning("  [%d/%d] %s ✗", done, len(channels), ch["title"])
+
+    return stream_urls, failed
 
 
 # ==================== M3U GENERATOR ====================
@@ -240,20 +251,21 @@ def generate_m3u(channels: list, stream_urls: dict, output_file: str):
 
     for ch in channels:
         ch_id = ch["id"]
-        group = ch["title"]
-        logo = ch["cover_url"]
+        group = ch["group"]
+        logo = ch["logo"]
+        title = ch["title"]
         stream_url = stream_urls.get(ch_id, "")
 
         if not stream_url:
-            log.warning("  [SKIP] No stream: %s", group)
+            log.warning("  [SKIP] No stream: %s", title)
             continue
 
         lines.append(
             f'#EXTINF:-1 tvg-id="{ch_id}" '
-            f'tvg-name="{group}" '
+            f'tvg-name="{title}" '
             f'tvg-logo="{logo}" '
             f'group-title="{group}",'
-            f'{group}'
+            f'{title}'
         )
         lines.append(f'#EXTVLCOPT:http-user-agent={USER_AGENT}')
         lines.append(f'#EXTVLCOPT:http-referrer={REFERER}')
@@ -269,23 +281,22 @@ def generate_m3u(channels: list, stream_urls: dict, output_file: str):
 def main():
     parser = argparse.ArgumentParser(description="Vidio Live TV M3U Generator")
     parser.add_argument("-o", "--output", type=str, default=OUTPUT_FILE)
+    parser.add_argument("--workers", type=int, default=MAX_WORKERS,
+                        help="Thread pool workers (default: 5)")
     parser.add_argument("--retries", type=int, default=2)
-    parser.add_argument("--luws", type=str, default="",
-                        help="luws cookie (manual, dari browser DevTools)")
     args = parser.parse_args()
 
     print("=" * 55)
     print("  Vidio Live TV → M3U Playlist Generator")
-    print("  Hybrid: Playwright (luws) + curl_cffi (API)")
+    print("  Auto luws + ThreadPool")
     print("=" * 55)
 
+    # Step 1: Auto ambil luws + visitor-id
+    luws, visitor_id = get_luws_and_visitor()
+
+    # Step 2: Fetch channels
     session = cffi_requests.Session(impersonate=IMPERSONATE)
-
-    # Step 1: Get luws
-    luws = get_luws(args.luws)
-
-    # Step 2: Fetch ALL channels
-    channels = fetch_all_channels(session, luws)
+    channels = fetch_all_channels(session, luws, visitor_id)
     if not channels:
         log.error("Tidak ada channel ditemukan.")
         sys.exit(1)
@@ -295,40 +306,36 @@ def main():
              len(channels), live_count, len(channels) - live_count)
 
     for ch in channels:
-        status = "● LIVE" if ch.get("is_live") else "○ OFF"
-        log.info("    [%s] %s  %s", ch["id"], ch["title"], status)
+        status = "●" if ch.get("is_live") else "○"
+        log.info("    [%s] %s  %s", status, ch["id"], ch["title"])
 
-    # Step 3: Fetch stream URLs
-    log.info("\nFetching stream URLs ...")
-    stream_urls = {}
-    failed = []
+    # Step 3: Fetch stream URLs (parallel)
+    log.info("\nFetching stream URLs (%d workers) ...", args.workers)
+    start = time.time()
+    stream_urls, failed = fetch_all_streams(channels, luws, visitor_id, args.workers)
+    elapsed = time.time() - start
+    log.info("  Done in %.1fs", elapsed)
 
-    for i, ch in enumerate(channels, 1):
-        ch_id = ch["id"]
-        hls = fetch_stream_url(session, luws, ch_id)
-        if hls:
-            stream_urls[ch_id] = hls
-            log.info("  [%d/%d] %s ✓", i, len(channels), ch["title"])
-        else:
-            failed.append(ch)
-            log.warning("  [%d/%d] %s ✗", i, len(channels), ch["title"])
-        time.sleep(DELAY)
-
-    # Step 4: Retry
+    # Step 4: Retry failed
     for attempt in range(1, args.retries + 1):
         if not failed:
             break
         log.info("\nRetry %d/%d (%d channels) ...", attempt, args.retries, len(failed))
         time.sleep(RETRY_WAIT)
+        _, failed = fetch_all_streams(failed, luws, visitor_id, args.workers)
+        # Merge results
+        for ch in failed:
+            pass  # failed list sudah di-update
+
+        # Re-fetch yang masih gagal
         still_failed = []
         for ch in failed:
-            hls = fetch_stream_url(session, luws, ch["id"])
+            hls = fetch_stream_url(session, luws, visitor_id, ch["id"])
             if hls:
                 stream_urls[ch["id"]] = hls
                 log.info("  [RETRY %d] %s ✓", attempt, ch["title"])
             else:
                 still_failed.append(ch)
-            time.sleep(RETRY_DELAY)
         failed = still_failed
 
     # Summary
@@ -336,6 +343,7 @@ def main():
     log.info("  Total : %d", len(channels))
     log.info("  OK    : %d", len(stream_urls))
     log.info("  Fail  : %d", len(failed))
+    log.info("  Time  : %.1fs", time.time() - start)
     log.info("  ─────────────────────────────────")
 
     if failed:
