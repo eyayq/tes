@@ -15,6 +15,7 @@ Run:
     python vidio_m3u.py --loop          # auto-refresh tiap 115 menit
     python vidio_m3u.py --drm-only      # skip non-DRM, langsung DRM
     python vidio_m3u.py -o my.m3u       # custom output
+    python vidio_m3u.py --debug         # lihat response mentah
 """
 
 import argparse
@@ -139,6 +140,12 @@ def verify_login(session) -> bool:
 
 # ==================== STEP 3: FETCH ALL CHANNELS ====================
 def fetch_all_channels(session, luws: str) -> list:
+    """
+    GET /categories/live/sections → semua section & channel.
+    Handle 2 format:
+      1. contents nested di attributes.contents
+      2. contents di included[] (JSON:API format)
+    """
     url = f"{API_BASE}/categories/live/sections"
     h = {
         "x-api-key": API_KEY,
@@ -162,42 +169,82 @@ def fetch_all_channels(session, luws: str) -> list:
         try:
             resp = session.get(url, params=params, headers=h, timeout=30)
             if resp.status_code != 200:
-                log.warning("  Page %d: HTTP %d %s", page, resp.status_code, resp.text[:100])
+                log.warning("  Page %d: HTTP %d %s", page, resp.status_code, resp.text[:200])
                 break
         except Exception as e:
             log.error("  Page %d error: %s", page, e)
             break
 
         data = resp.json()
+
+        # DEBUG: cetak struktur response (hapus jika tidak perlu)
+        if page == 1:
+            log.info("  [DEBUG] top keys: %s", list(data.keys()))
+            d = data.get("data", [])
+            if isinstance(d, list) and d:
+                log.info("  [DEBUG] data[0] keys: %s", list(d[0].keys()))
+                attrs = d[0].get("attributes", {})
+                log.info("  [DEBUG] attributes keys: %s", list(attrs.keys())[:10])
+                if "contents" in attrs:
+                    log.info("  [DEBUG] contents in attributes: %d items", len(attrs["contents"]))
+            if "included" in data:
+                log.info("  [DEBUG] included: %d items", len(data["included"]))
+
         sections = data.get("data", [])
         if isinstance(sections, dict):
             sections = [sections]
 
+        # Build section_id → title mapping
+        section_titles = {}
+        for section in sections:
+            sec_id = str(section.get("id", ""))
+            attrs = section.get("attributes", {})
+            section_titles[sec_id] = attrs.get("title", "Lainnya")
+
+        # === METHOD 1: contents nested di attributes ===
         for section in sections:
             attrs = section.get("attributes", {})
-            section_title = attrs.get("title", "Lainnya")
             contents = attrs.get("contents", [])
-
+            sec_title = attrs.get("title", "Lainnya")
             for item in contents:
-                if item.get("content_type") != "livestreaming":
+                _extract_channel(item, sec_title, channels)
+
+        # === METHOD 2: contents di included[] (JSON:API) ===
+        included = data.get("included", [])
+        if included:
+            for item in included:
+                item_type = item.get("type", "")
+                if "livestreaming" not in item_type:
+                    continue
+                attrs = item.get("attributes", {})
+                ch_id_raw = item.get("id", "")
+                # ID bisa berupa "205" atau "livestreaming/205"
+                try:
+                    ch_id = int(str(ch_id_raw).split("/")[-1])
+                except (ValueError, AttributeError):
+                    continue
+                if ch_id in channels:
                     continue
 
-                ch_id = item.get("content_id")
-                if not ch_id or ch_id in channels:
-                    continue
-
-                channel_name = item.get("alt_title") or item.get("title", "Unknown")
-                logo = item.get("cover_url", "")
-                stream_url = item.get("stream_url", "")
+                # Logo
+                logo = ""
+                sq = attrs.get("square_image")
+                if isinstance(sq, dict):
+                    logo = sq.get("url", "")
+                elif isinstance(sq, str):
+                    logo = sq
+                if not logo:
+                    logo = attrs.get("image_landscape_url", "") or attrs.get("cover_url", "")
 
                 channels[ch_id] = {
-                    "id": int(ch_id),
-                    "title": channel_name,
+                    "id": ch_id,
+                    "title": attrs.get("title", "Unknown"),
                     "logo": logo,
-                    "group": section_title,
-                    "drm_stream": stream_url,
+                    "group": "Lainnya",
+                    "drm_stream": "",
                 }
 
+        # Pagination
         links = data.get("links", {})
         if links.get("next"):
             page += 1
@@ -208,6 +255,36 @@ def fetch_all_channels(session, luws: str) -> list:
     result = list(channels.values())
     log.info("  Found %d unique channels", len(result))
     return result
+
+
+def _extract_channel(item: dict, section_title: str, channels: dict):
+    """Extract channel dari item contents (format RSC/nested)."""
+    content_type = item.get("content_type", "")
+    if content_type != "livestreaming":
+        return
+
+    ch_id = item.get("content_id")
+    if not ch_id:
+        return
+    try:
+        ch_id = int(ch_id)
+    except (ValueError, TypeError):
+        return
+
+    if ch_id in channels:
+        return
+
+    channel_name = item.get("alt_title") or item.get("title", "Unknown")
+    logo = item.get("cover_url", "")
+    stream_url = item.get("stream_url", "")
+
+    channels[ch_id] = {
+        "id": ch_id,
+        "title": channel_name,
+        "logo": logo,
+        "group": section_title,
+        "drm_stream": stream_url,
+    }
 
 
 # ==================== STEP 4: FETCH NON-DRM STREAM URL ====================
@@ -304,6 +381,7 @@ def run_once(output_file: str, drm_only: bool, retries: int) -> bool:
         log.error("Tidak ada channel ditemukan.")
         return False
 
+    # Summary
     groups = {}
     for ch in channels:
         groups.setdefault(ch["group"], []).append(ch["title"])
@@ -312,6 +390,7 @@ def run_once(output_file: str, drm_only: bool, retries: int) -> bool:
         preview = ", ".join(names[:4]) + ("..." if len(names) > 4 else "")
         log.info("    [%s] %d: %s", g, len(names), preview)
 
+    # Fetch non-DRM URLs
     stream_urls = {}
     if not drm_only:
         log.info("\nFetching non-DRM URLs (%d channels) ...", len(channels))
@@ -326,6 +405,7 @@ def run_once(output_file: str, drm_only: bool, retries: int) -> bool:
                 log.info("  Progress: %d/%d (%d ok, %d fail)", i, len(channels), len(stream_urls), len(failed))
             time.sleep(DELAY)
 
+        # Retry
         for attempt in range(1, retries + 1):
             if not failed:
                 break
@@ -343,6 +423,7 @@ def run_once(output_file: str, drm_only: bool, retries: int) -> bool:
 
         log.info("  Non-DRM: %d/%d", len(stream_urls), len(channels))
 
+    # Generate M3U
     log.info("\nGenerating M3U ...")
     generate_m3u(channels, stream_urls, output_file)
     return True
