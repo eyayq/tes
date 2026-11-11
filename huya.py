@@ -9,7 +9,11 @@ BASE_URL = "https://www.dens.tv/api/dens3/"
 OUTPUT_FILE = "playlist.m3u"
 DELAY = 0.5
 
-# Kategori channel (dari cookie tvCategories)
+# HTTP Headers untuk streaming
+STREAM_UA = 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36'
+STREAM_REFERER = 'https://www.dens.tv/'
+
+# Kategori channel
 CATEGORIES = {
     "1": "Local",
     "2": "Premium",
@@ -37,7 +41,7 @@ session.cookies.update({
 })
 
 session.headers.update({
-    'User-Agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36',
+    'User-Agent': STREAM_UA,
     'Accept': '*/*',
     'Referer': 'https://www.dens.tv/',
     'Accept-Language': 'id-ID,id;q=0.7',
@@ -81,8 +85,12 @@ def build_m3u(entries):
         group = esc(e.get("group_title", ""))
         name = esc(e.get("tvg_name", ""))
         logo = esc(e.get("tvg_logo", ""))
+        stream_url = e["stream_url"]
+
         lines.append(f'#EXTINF:-1 group-title="{group}" tvg-name="{name}" tvg-logo="{logo}",{name}')
-        lines.append(e["stream_url"])
+        lines.append(f'#EXTVLCOPT:http-user-agent={STREAM_UA}')
+        lines.append(f'#EXTVLCOPT:http-referrer={STREAM_REFERER}')
+        lines.append(stream_url)
     return "\n".join(lines) + "\n"
 
 
@@ -110,11 +118,6 @@ def scrape():
                     logo = meta.get("images", {}).get("default", "")
                     stream_url = meta.get("videos", {}).get("live", "")
 
-                    # Opsi: filter hanya channel yang gratis (rights=1)
-                    # rights = rules.get("rights", 0)
-                    # if rights != 1:
-                    #     continue
-
                     if stream_url:
                         entries.append({
                             "group_title": cat_name,
@@ -139,7 +142,6 @@ def scrape():
             sections = data["data"]["contents"]
             for section in sections:
                 section_title = section.get("title", "")
-                section_type = section.get("name_type", "")
                 contents = section.get("content", [])
 
                 for item in contents:
@@ -164,7 +166,7 @@ def scrape():
                             "stream_url": stream_url,
                         })
 
-            print(f"    ✓ {sum(1 for e in entries if 'dens.tv/tvod' in e['stream_url'] or 'svod' in e['stream_url'])} items (catchup+VOD)")
+            print(f"    ✓ Done")
     except Exception as ex:
         print(f"    [!] HomeSections: {ex}")
 
@@ -176,7 +178,7 @@ def scrape():
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write(m3u)
 
-    live_count = sum(1 for e in entries if "op-flashcon" in e.get("stream_url", ""))
+    live_count = sum(1 for e in entries if "op-flashcon-digdayahd" in e.get("stream_url", "") or "op-flashcon-digdayasd" in e.get("stream_url", ""))
     other_count = len(entries) - live_count
     print(f"\n[✓] Selesai! Total: {len(entries)} entri → '{OUTPUT_FILE}'")
     print(f"    - Live TV: {live_count}")
