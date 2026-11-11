@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
 Vidio Live TV → M3U Playlist Generator
-Signature: extracted from page HTML after navigation (Origin auto-matched)
+API Key: dynamic via POST /auth (web-desktop)
+Signature: extracted from www.vidio.com page HTML
 Mode: Playwright (default) | curl_cffi (--no-browser)
 """
 
@@ -129,14 +130,11 @@ def parse_channels(data: dict) -> list:
 def extract_signature_from_html(html: str) -> tuple:
     """
     Extract clientId + signature dari HTML.
-    Format di HTML: \\"clientId\\":\\"1794396425.334\\",\\"signature\\":\\"096151...\\"
+    Handle escaped quotes (Next.js RSC): \\"clientId\\":\\"...\\",\\"signature\\":\\"...\\"
     """
     patterns = [
-        # Escaped quotes (Next.js RSC di raw HTML): \"clientId\":\"...\"
         r'\\"clientId\\":\s*\\"([^"\\]+)\\"\s*,\s*\\"signature\\":\s*\\"([^"\\]+)\\"',
-        # Unescaped: "clientId":"..."
         r'"clientId"\s*:\s*"([^"]+)"\s*,\s*"signature"\s*:\s*"([^"]+)"',
-        # Loose fallback
         r'clientId.{0,10}[:=].{0,10}["\\]+([^"\\,\s]{10,})["\\]+.{0,80}signature.{0,10}[:=].{0,10}["\\]+([^"\\,\s]{10,})["\\]+',
     ]
     for pat in patterns:
@@ -170,8 +168,8 @@ def generate_m3u(channels: list, stream_urls: dict, output_file: str, drm_fallba
             f'{title}'
         )
         lines.append(f'#EXTVLCOPT:http-user-agent={USER_AGENT}')
-        lines.append(f'#EXTVLCOPT:http-referrer=https://m.vidio.com/')
-        lines.append(f'#EXTVLCOPT:http-origin=https://m.vidio.com')
+        lines.append(f'#EXTVLCOPT:http-referrer=https://www.vidio.com/')
+        lines.append(f'#EXTVLCOPT:http-origin=https://www.vidio.com')
         lines.append(stream_url)
         count += 1
 
@@ -193,7 +191,9 @@ async () => {
         });
         if (resp.status === 200) {
             const data = await resp.json();
-            return {api_key: data.api_key || ''};
+            // Handle both flat and nested response
+            const key = data.api_key || (data.data && data.data.attributes && data.data.attributes.api_key) || '';
+            return {api_key: key};
         }
         return {error: true, status: resp.status};
     } catch(e) {
@@ -250,14 +250,10 @@ async (apiKey) => {
 }
 """
 
-# Fetch stream — TANPA Origin/Referer manual (forbidden header di browser)
-# Browser auto-set berdasarkan page saat ini (m.vidio.com)
+# STREAM: web-desktop + dynamic key + signature from page
+# TANPA luws, TANPA x-user-login (sama seperti Streamlink)
 JS_FETCH_STREAM = r"""
 async ({chId, apiKey, clientId, signature}) => {
-    let luws = '';
-    const m = document.cookie.match(/(?:^|;\s*)luws=([^;]+)/);
-    if (m) luws = m[1];
-
     try {
         const resp = await fetch(
             `https://api.vidio.com/livestreamings/${chId}/stream?initialize=true`,
@@ -265,12 +261,10 @@ async ({chId, apiKey, clientId, signature}) => {
                 method: 'GET',
                 headers: {
                     'x-api-key': apiKey,
-                    'x-api-platform': 'web-mobile',
+                    'x-api-platform': 'web-desktop',
                     'x-secure-level': '2',
                     'x-client': clientId,
                     'x-signature': signature,
-                    'x-user-login': 'true',
-                    'luws': luws,
                     'Accept': '*/*',
                 },
                 credentials: 'include',
@@ -348,7 +342,7 @@ async def run_playwright(output_file: str, retries: int, drm_fallback: bool):
     print("=" * 55)
     print("  Vidio Live TV → M3U Playlist Generator")
     print("  Mode: Playwright (headless)")
-    print("  Signature: from page HTML | Origin: auto (navigate)")
+    print("  Stream: web-desktop + dynamic key + page signature")
     print("=" * 55)
 
     cookies = _load_cookies()
@@ -391,7 +385,7 @@ async def run_playwright(output_file: str, retries: int, drm_fallback: bool):
             log.warning("  ✗ Gagal dynamic key, fallback static")
             dynamic_key = STATIC_API_KEY
 
-        # [2/4] Fetch channels
+        # [2/4] Fetch channels (static key, web-mobile)
         print("\n[2/4] Fetching channels ...")
         ch_data = await page.evaluate(JS_FETCH_CHANNELS, STATIC_API_KEY)
         if ch_data.get("error"):
@@ -402,9 +396,7 @@ async def run_playwright(output_file: str, retries: int, drm_fallback: bool):
         channels = parse_channels(ch_data)
         log.info("  ✓ %d channels", len(channels))
 
-        # [3/4] Fetch streams
-        # KUNCI: navigate ke channel page → extract signature → fetch stream
-        # Origin/Referer otomatis di-set browser berdasarkan page saat ini
+        # [3/4] Fetch streams (dynamic key, web-desktop, www.vidio.com)
         print("\n[3/4] Fetching stream URLs ...")
 
         start = time.time()
@@ -415,29 +407,38 @@ async def run_playwright(output_file: str, retries: int, drm_fallback: bool):
             ch_id = ch["id"]
             web_url = ch["web_url"]
 
-            # Navigate ke channel page (m.vidio.com)
+            # Navigate ke www.vidio.com (desktop) untuk signature
             try:
                 await page.goto(
-                    f"{SITE_URL}{web_url}",
+                    f"{WWW_URL}{web_url}",
                     timeout=30000,
                     wait_until="domcontentloaded",
                 )
                 await asyncio.sleep(1)
             except Exception as e:
                 failed.append(ch)
-                log.warning("  [%d/%d] %s ✗ nav: %s", i, len(channels), ch["title"], e)
+                log.warning("  [%d/%d] %s ✗ nav: %s", i, len(channels), ch["title"], str(e)[:50])
                 continue
 
-            # Extract signature dari page content
-            html = await page.content()
-            client_id, signature = extract_signature_from_html(html)
+            # Extract signature
+            try:
+                html = await page.content()
+            except Exception:
+                await asyncio.sleep(2)
+                try:
+                    html = await page.content()
+                except Exception:
+                    failed.append(ch)
+                    log.warning("  [%d/%d] %s ✗ content", i, len(channels), ch["title"])
+                    continue
 
+            client_id, signature = extract_signature_from_html(html)
             if not client_id:
                 failed.append(ch)
                 log.warning("  [%d/%d] %s ✗ (no sig)", i, len(channels), ch["title"])
                 continue
 
-            # Fetch stream (Origin auto = m.vidio.com)
+            # Fetch stream (web-desktop + dynamic key)
             result = await page.evaluate(JS_FETCH_STREAM, {
                 "chId": ch_id,
                 "apiKey": dynamic_key,
@@ -465,7 +466,7 @@ async def run_playwright(output_file: str, retries: int, drm_fallback: bool):
                 ch_id = ch["id"]
                 try:
                     await page.goto(
-                        f"{SITE_URL}{ch['web_url']}",
+                        f"{WWW_URL}{ch['web_url']}",
                         timeout=30000,
                         wait_until="domcontentloaded",
                     )
@@ -474,7 +475,16 @@ async def run_playwright(output_file: str, retries: int, drm_fallback: bool):
                     still.append(ch)
                     continue
 
-                html = await page.content()
+                try:
+                    html = await page.content()
+                except Exception:
+                    await asyncio.sleep(2)
+                    try:
+                        html = await page.content()
+                    except Exception:
+                        still.append(ch)
+                        continue
+
                 client_id, signature = extract_signature_from_html(html)
                 if not client_id:
                     still.append(ch)
@@ -530,7 +540,7 @@ def run_curl_cffi(output_file: str, retries: int, drm_fallback: bool):
 
     print("=" * 55)
     print("  Vidio Live TV → M3U Playlist Generator")
-    print("  Mode: curl_cffi (TLS impersonation)")
+    print("  Mode: curl_cffi | Stream: web-desktop + dynamic key")
     print("=" * 55)
 
     session = cffi_requests.Session(impersonate=IMPERSONATE)
@@ -541,8 +551,6 @@ def run_curl_cffi(output_file: str, retries: int, drm_fallback: bool):
         session.get(SITE_URL, timeout=30)
     except Exception as e:
         log.warning("  Visit gagal: %s", e)
-
-    luws = session.cookies.get("luws", "") or f"{str(uuid.uuid4()).upper()}_"
 
     try:
         resp = session.get(
@@ -567,13 +575,16 @@ def run_curl_cffi(output_file: str, retries: int, drm_fallback: bool):
     try:
         resp = session.post(API_AUTH, timeout=15)
         if resp.status_code == 200:
-            dynamic_key = resp.json().get("api_key", "")
+            data = resp.json()
+            dynamic_key = data.get("api_key") or (data.get("data", {}).get("attributes", {}).get("api_key", ""))
             if dynamic_key:
                 log.info("  ✓ Dynamic API Key: %s...", dynamic_key[:20])
             else:
                 dynamic_key = STATIC_API_KEY
+                log.warning("  ✗ Key kosong, fallback static")
         else:
             dynamic_key = STATIC_API_KEY
+            log.warning("  ✗ POST /auth HTTP %d", resp.status_code)
     except Exception:
         dynamic_key = STATIC_API_KEY
 
@@ -588,8 +599,6 @@ def run_curl_cffi(output_file: str, retries: int, drm_fallback: bool):
         "Accept": "application/json",
         "Content-Type": "application/vnd.api+json",
         "User-Agent": USER_AGENT,
-        "Referer": "https://m.vidio.com/",
-        "Origin": "https://m.vidio.com",
     }
     try:
         resp = session.get(f"{API_BASE}/livestreamings",
@@ -609,10 +618,9 @@ def run_curl_cffi(output_file: str, retries: int, drm_fallback: bool):
     print("\n[3/4] Fetching stream URLs ...")
 
     def get_signature(web_url: str) -> tuple:
-        """Fetch page → extract signature. Origin/Referer = m.vidio.com."""
         try:
             resp = session.get(
-                f"{SITE_URL}{web_url}",
+                f"{WWW_URL}{web_url}",
                 headers={"Accept": "text/html", "User-Agent": USER_AGENT},
                 timeout=20,
             )
@@ -628,15 +636,13 @@ def run_curl_cffi(output_file: str, retries: int, drm_fallback: bool):
                 f"{API_BASE}/livestreamings/{ch_id}/stream?initialize=true",
                 headers={
                     "x-api-key": dynamic_key,
-                    "x-api-platform": "web-mobile",
+                    "x-api-platform": "web-desktop",
                     "x-secure-level": "2",
                     "x-client": client_id,
                     "x-signature": signature,
-                    "x-user-login": "true",
-                    "luws": luws,
-                    "Origin": "https://m.vidio.com",
-                    "Referer": "https://m.vidio.com/",
                     "User-Agent": USER_AGENT,
+                    "Origin": "https://www.vidio.com",
+                    "Referer": "https://www.vidio.com/",
                     "Accept": "*/*",
                 },
                 timeout=15,
