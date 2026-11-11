@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Vidio Live TV → M3U Playlist Generator
-All headers match browser sniff exactly.
+Cukup set remember_user_token → semua cookies & headers otomatis.
 Requires: pip install curl-cffi
 """
 
@@ -36,27 +36,22 @@ USER_AGENT = (
 ORIGIN = "https://m.vidio.com"
 REFERER = "https://m.vidio.com/"
 
+# ===== HANYA INI YANG PERLU DI-UPDATE (valid s/d 2028) =====
 USER_ID = "186957857"
 USER_EMAIL = "bhianesee05@gmail.com"
+AHoy_VISITOR = "3489c20a-d32e-468a-bd1b-8f7d150fa132"
+REMEMBER_TOKEN = (
+    "eyJfcmFpbHMiOnsibWVzc2FnZSI6Ilcxc3hPRFk1TlRjNE5UZGRMQ0lrTW1Fa01UQWthRU0xVnpKbGNVSXlhakJTYmtaMmIwUmFjVlJ2VHlJc0lqRTNPVFF6T1RrMU5UY3VOREUyTXpRNElsMD0i"
+    "LCJleHAiOiIyMDI4LTExLTExVDEyOjE5OjE3LjQxNloiLCJwdXIiOiJjb29raWUucmVtZW1iZXJfdXNlcl90b2tlbiJ9fQ%3D%3D"
+    "--8d03ff9749c920966159108beb64bd0cccab8ac9"
+)
+# =============================================================
 
 STREAM_DRM_PATTERN = (
     "https://etslive-v3-vidio-com-tokenized.akamaized.net"
     "/stream/{id}/file/drm/hls/master.m3u8"
 )
 
-# ==================== COOKIES ====================
-VIDIO_COOKIES = {
-    "ahoy_visitor": "3489c20a-d32e-468a-bd1b-8f7d150fa132",
-    "plenty_id": USER_ID,
-    "access_token": "eyJhbGciOiJIUzI1NiJ9.eyJkYXRhIjp7InR5cGUiOiJhY2Nlc3NfdG9rZW4iLCJ1aWQiOjE4Njk1Nzg1N30sImV4cCI6MTc5NDQ0MzM3MX0.vIjiSE4zy4-12PSqMrov5hxB6kwKdr26_EDVmeI6sfY",
-    "ahoy_visit": "6acc3493-f9b5-42fd-a80a-e12a2671319b",
-    "country_id": "ID",
-    "shva": "1",
-    "remember_user_token": "eyJfcmFpbHMiOnsibWVzc2FnZSI6Ilcxc3hPRFk1TlRjNE5UZGRMQ0lrTW1Fa01UQWthRU0xVnpKbGNVSXlhakJTYmtaMmIwUmFjVlJ2VHlJc0lqRTNPVFF6T1RrMU5UY3VOREUyTXpRNElsMD0iLCJleHAiOiIyMDI4LTExLTExVDEyOjE5OjE3LjQxNloiLCJwdXIiOiJjb29raWUucmVtZW1iZXJfdXNlcl90b2tlbiJ9fQ%3D%3D--8d03ff9749c920966159108beb64bd0cccab8ac9",
-    "_vidio_session": "n8ysEHsLvPzBrPgpvd4gmj6Hp5I8o%2FukVvu9SAK5CQ0K3cUTerR8q2ZcWOdiMpKLr4oCEL%2BAUj0cztRpaxbeHfePR0J%2FIxMhz7%2B7vDbtYZrHNi%2FX9JvzLpvQTWEJulkzyd1I9NNnz91qKqPRQlsUptl%2FV01MH9HEk86YlSujERvG2j3CwaRiowbGgiUw203EttNm%2FlR93IcRFc0Cmq%2BKnlc0312sdmHUpRuk3S1cBX08Nh7jVvVWV%2FKB%2BCZ3BVNKVV70Rzes9Ve2id%2BE%2F3RuNjDG62Ro8Q%3D%3D--3dUc5P2v9pqxcCLG--FEZr6E%2BttRxxgitjGThw9w%3D%3D",
-}
-
-# ==================== CLASSIFIKASI ====================
 INTERNATIONAL = {
     "Arirang", "ABC Australia", "Euronews", "CNA",
     "France24", "MUSICA", "U-Channel TV", "Makkah TV",
@@ -80,22 +75,11 @@ log = logging.getLogger("vidio-m3u")
 
 
 # ==================== UTILS ====================
-def _load_cookies() -> dict:
-    if os.path.exists(_COOKIES_FILE):
-        with open(_COOKIES_FILE) as f:
-            data = json.load(f)
-            if isinstance(data, list):
-                return {c["name"]: c["value"] for c in data}
-            return data
-    return VIDIO_COOKIES.copy()
-
-
 def generate_signature() -> tuple:
-    """x-client = float timestamp, x-signature = HMAC-SHA256"""
+    """x-client (float ts) + x-signature (HMAC-SHA256)"""
     t = str(time.time())
-    key = f"V1d10D3v:{t}"
-    signature = hmac.new(key.encode(), t.encode(), hashlib.sha256).hexdigest()
-    return t, signature
+    sig = hmac.new(f"V1d10D3v:{t}".encode(), t.encode(), hashlib.sha256).hexdigest()
+    return t, sig
 
 
 def get_luws() -> str:
@@ -107,14 +91,10 @@ def get_group(title: str) -> str:
 
 
 def extract_logo(attrs: dict) -> str:
-    square = attrs.get("square_image", {})
-    if isinstance(square, dict) and square.get("url"):
-        return square["url"]
-    if attrs.get("image_landscape_url"):
-        return attrs["image_landscape_url"]
-    if attrs.get("cover_url"):
-        return attrs["cover_url"]
-    return ""
+    sq = attrs.get("square_image", {})
+    if isinstance(sq, dict) and sq.get("url"):
+        return sq["url"]
+    return attrs.get("image_landscape_url") or attrs.get("cover_url") or ""
 
 
 def parse_channels(data: dict) -> list:
@@ -136,37 +116,49 @@ def parse_channels(data: dict) -> list:
     return channels
 
 
-# ==================== M3U GENERATOR ====================
 def generate_m3u(channels, stream_urls, output_file, drm_fallback=True):
     lines = ["#EXTM3U"]
     count = 0
     for ch in channels:
-        ch_id = ch["id"]
-        title = ch["title"]
-        logo = ch.get("logo", "")
-        group = get_group(title)
-
-        stream_url = stream_urls.get(ch_id, "")
+        stream_url = stream_urls.get(ch["id"], "")
         if not stream_url and drm_fallback:
-            stream_url = STREAM_DRM_PATTERN.format(id=ch_id)
+            stream_url = STREAM_DRM_PATTERN.format(id=ch["id"])
         if not stream_url:
             continue
-
+        group = get_group(ch["title"])
         lines.append(
-            f'#EXTINF:-1 tvg-id="{ch_id}" '
-            f'tvg-name="{title}" '
-            f'tvg-logo="{logo}" '
+            f'#EXTINF:-1 tvg-id="{ch["id"]}" '
+            f'tvg-name="{ch["title"]}" '
+            f'tvg-logo="{ch.get("logo", "")}" '
             f'group-title="{group}",'
-            f'{title}'
+            f'{ch["title"]}'
         )
         lines.append(f'#EXTVLCOPT:http-user-agent={USER_AGENT}')
         lines.append(f'#EXTVLCOPT:http-referrer={REFERER}')
         lines.append(f'#EXTVLCOPT:http-origin={ORIGIN}')
         lines.append(stream_url)
         count += 1
-
     Path(output_file).write_text("\n".join(lines) + "\n", encoding="utf-8")
     log.info("[✓] %s (%d channels)", output_file, count)
+
+
+# ==================== BASE HEADERS (otomatis, match browser) ====================
+def base_headers() -> dict:
+    """Headers yang sama persis dengan browser (sec-ch-ua, sec-fetch, dll.)"""
+    return {
+        "sec-ch-ua-platform": '"Android"',
+        "sec-ch-ua": '"Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"',
+        "sec-ch-ua-mobile": "?1",
+        "user-agent": USER_AGENT,
+        "sec-gpc": "1",
+        "origin": ORIGIN,
+        "sec-fetch-site": "same-site",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-dest": "empty",
+        "referer": REFERER,
+        "accept-language": "id",
+        "priority": "u=1, i",
+    }
 
 
 # ==================== MAIN ====================
@@ -179,75 +171,86 @@ def run(output_file: str, retries: int, drm_fallback: bool):
 
     print("=" * 55)
     print("  Vidio Live TV → M3U Playlist Generator")
-    print("  TLS: Chrome impersonation (curl_cffi)")
+    print("  Auto: cookies, headers, signature (semua dari server)")
     print("=" * 55)
 
     session = requests.Session(impersonate="chrome")
-    cookies = _load_cookies()
 
-    # [1/4] Refresh session
-    print("\n[1/4] Refresh session ...")
+    # [1/4] BOOTSTRAP: set minimal cookies → server regenerate sisanya
+    print("\n[1/4] Bootstrap session ...")
+    session.cookies.set("ahoy_visitor", AHoy_VISITOR, domain=".vidio.com", path="/")
+    session.cookies.set("remember_user_token", REMEMBER_TOKEN, domain=".vidio.com", path="/")
+    session.cookies.set("country_id", "ID", domain=".vidio.com", path="/")
+
+    # Visit m.vidio.com → server SET-COOKIE: _vidio_session, access_token, plenty_id, dll.
     try:
-        session.get(SITE_URL, timeout=30)
+        resp = session.get(SITE_URL, timeout=30)
+        log.info("  ✓ GET m.vidio.com → %d", resp.status_code)
     except Exception as e:
-        log.warning("  Visit gagal: %s", e)
+        log.error("  Visit gagal: %s", e)
+        sys.exit(1)
 
-    # Verify
+    # Verify: cookies fresh sudah di-set?
+    vs = session.cookies.get("_vidio_session")
+    at = session.cookies.get("access_token")
+    pid = session.cookies.get("plenty_id")
+    if vs:
+        log.info("  ✓ _vidio_session: %s...", vs[:30])
+    else:
+        log.warning("  ⚠ _vidio_session tidak di-set")
+    if at:
+        log.info("  ✓ access_token: %s...", at[:30])
+    else:
+        log.warning("  ⚠ access_token tidak di-set")
+    if pid:
+        log.info("  ✓ plenty_id: %s", pid)
+    else:
+        log.warning("  ⚠ plenty_id tidak di-set")
+
+    # Verify login via interactions.json
     try:
-        resp = session.get(
-            f"{SITE_URL}/interactions.json",
-            headers={
-                "x-api-platform": "web-mobile",
-                "x-secure-level": "2",
-                "x-auth-prefer": "AccessToken",
-                "Accept": "*/*",
-            },
-            cookies=cookies,
-            timeout=15,
-        )
+        h = base_headers()
+        h.update({
+            "x-api-platform": "web-mobile",
+            "x-secure-level": "2",
+            "x-auth-prefer": "AccessToken",
+            "accept": "*/*",
+        })
+        resp = session.get(f"{SITE_URL}/interactions.json", headers=h, timeout=15)
         if resp.status_code == 200:
             user = resp.json().get("current_user", {})
             if user:
                 log.info("  ✓ Login: %s (id=%s)", user.get("display_name"), user.get("user_id"))
                 log.info("  ✓ Sub: %s", "Premium" if user.get("has_active_subscription") else "Free")
             else:
-                log.warning("  ✗ Tidak login")
+                log.error("  ✗ Tidak login! remember_user_token mungkin expired.")
+                sys.exit(1)
         else:
-            log.warning("  interactions.json HTTP %d", resp.status_code)
+            log.error("  ✗ interactions.json HTTP %d", resp.status_code)
+            sys.exit(1)
     except Exception as e:
-        log.warning("  Verify gagal: %s", e)
+        log.error("  Verify gagal: %s", e)
+        sys.exit(1)
 
     # [2/4] Fetch channels
     print("\n[2/4] Fetching channels ...")
-    ch_headers = {
-        "sec-ch-ua-platform": '"Android"',
-        "x-user-id": USER_ID,
-        "sec-ch-ua": '"Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"',
+    h = base_headers()
+    h.update({
         "x-api-key": STATIC_API_KEY,
-        "sec-ch-ua-mobile": "?1",
-        "x-visitor-id": cookies.get("ahoy_visitor", ""),
+        "x-visitor-id": AHoy_VISITOR,
         "x-api-app-info": "js/m.vidio.com",
-        "user-agent": USER_AGENT,
+        "x-user-login": "true",
+        "x-user-id": USER_ID,
         "accept": "application/json",
         "content-type": "application/vnd.api+json",
         "x-secure-level": "2",
         "x-api-platform": "web-mobile",
-        "x-user-login": "true",
-        "sec-gpc": "1",
-        "origin": ORIGIN,
-        "sec-fetch-site": "same-site",
-        "sec-fetch-mode": "cors",
-        "sec-fetch-dest": "empty",
-        "referer": REFERER,
-        "accept-language": "id",
-        "priority": "u=1, i",
-    }
+    })
     try:
         resp = session.get(
             f"{API_BASE}/livestreamings",
             params={"stream_type": "tv_stream"},
-            headers=ch_headers,
-            cookies=cookies,
+            headers=h,
             timeout=30,
         )
         if resp.status_code != 200:
@@ -267,35 +270,22 @@ def run(output_file: str, retries: int, drm_fallback: bool):
         x_client, x_signature = generate_signature()
         luws = get_luws()
 
-        # ALL headers dari sniff 200 OK
-        headers = {
-            "sec-ch-ua-platform": '"Android"',
-            "x-user-id": USER_ID,
-            "sec-ch-ua": '"Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"',
+        h = base_headers()
+        h.update({
             "x-api-key": STATIC_API_KEY,
-            "sec-ch-ua-mobile": "?1",
+            "x-user-id": USER_ID,
+            "x-user-email": USER_EMAIL,
             "luws": luws,
             "x-signature": x_signature,
-            "user-agent": USER_AGENT,
-            "x-user-email": USER_EMAIL,
             "x-secure-level": "2",
             "x-api-platform": "web-mobile",
             "x-client": x_client,
             "accept": "*/*",
-            "sec-gpc": "1",
-            "origin": ORIGIN,
-            "sec-fetch-site": "same-site",
-            "sec-fetch-mode": "cors",
-            "sec-fetch-dest": "empty",
-            "referer": REFERER,
-            "accept-language": "id",
-            "priority": "u=1, i",
-        }
+        })
         try:
             resp = session.get(
                 f"{API_BASE}/livestreamings/{ch_id}/stream?initialize=true",
-                headers=headers,
-                cookies=cookies,
+                headers=h,
                 timeout=15,
             )
             if resp.status_code == 200:
@@ -306,11 +296,11 @@ def run(output_file: str, retries: int, drm_fallback: bool):
             pass
         return ""
 
-    # Test
+    # Test 1 channel
     test_hls = fetch_stream(channels[0]["id"])
     if not test_hls:
         log.error("  ✗ Stream test gagal: %s", channels[0]["title"])
-        log.error("  → Cookies expired? Update .vidio_cookies.json")
+        log.error("  → remember_user_token mungkin expired atau IP diblock.")
         sys.exit(1)
     log.info("  ✓ Stream test OK: %s", channels[0]["title"])
 
