@@ -1,10 +1,13 @@
-import requests, time, hmac, hashlib, uuid
+from curl_cffi import requests
+import time, hmac, hashlib, uuid
 
 t = str(time.time())
 sig = hmac.new(f"V1d10D3v:{t}".encode(), t.encode(), hashlib.sha256).hexdigest()
 luws = f"{str(uuid.uuid4()).upper()}_186957857"
 
-resp = requests.get(
+session = requests.Session(impersonate="chrome")
+
+resp = session.get(
     "https://api.vidio.com/livestreamings/204/stream?initialize=true",
     headers={
         "x-api-key": "CH1ZFsN4N/MIfAds1DL9mP151CNqIpWHqZGRr+LkvUyiq3FRPuP1Kt6aK+pG3nEC1FXt0ZAAJ5FKP8QU8CZ5/ieyIuWEkvNBqXdsdlXM2838+3SFjs9rtlntv7l7DHkBHWK1q/4vLGad8GAj3vfLciRFnquHuZMMW+4EX8yTe1w=",
@@ -15,7 +18,6 @@ resp = requests.get(
         "x-user-id": "186957857",
         "x-user-email": "bhianesee05@gmail.com",
         "luws": luws,
-        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36",
         "Origin": "https://m.vidio.com",
         "Referer": "https://m.vidio.com/",
     },
@@ -27,4 +29,5 @@ resp = requests.get(
     },
 )
 print(resp.status_code)
-print(resp.json().get("data", {}).get("attributes", {}).get("hls", "")[:80])   
+if resp.status_code == 200:
+    print(resp.json()["data"]["attributes"]["hls"][:80])   
