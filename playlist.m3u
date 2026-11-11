@@ -1,146 +1,73 @@
 #EXTM3U
-#EXTINF:-1 tvg-id="204" tvg-name="SCTV" tvg-logo="https://thumbor.prod.vidiocdn.com/Ued7cpbsAhZhZM9mHZMVb1R2OF4=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/204/4e9f5c.png" group-title="TV Nasional",SCTV
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://m.vidio.com/
-#EXTVLCOPT:http-origin=https://m.vidio.com
+#EXTINF:-1 tvg-id="22684" tvg-name="HSS Series 8: The Revelation · 28 Nov 2026 - 17:00" tvg-logo="https://thumbor.prod.vidiocdn.com/cLBzvYJSQo__oVpV8Rup2R2_6Ro=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/22684/hss-series-8-the-revelation-f72209.jpg" group-title="Matches Today",HSS Series 8: The Revelation · 28 Nov 2026 - 17:00
+#KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
+#KODIPROP:inputstream.adaptive.license_key=https://b.bhns.workers.dev/license.mpd?id=22684
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/22684/file/drm/hls/master.m3u8
+#EXTINF:-1 tvg-id="204" tvg-name="SCTV" tvg-logo="https://thumbor.prod.vidiocdn.com/Xr8AAOVjClvDNr9P3fkGaB9Zn20=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/204/sctv-5ef966.jpg" group-title="National TV",SCTV
+#KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
+#KODIPROP:inputstream.adaptive.license_key=https://b.bhns.workers.dev/license.mpd?id=204
 https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/204/file/drm/hls/master.m3u8
-#EXTINF:-1 tvg-id="205" tvg-name="Indosiar" tvg-logo="https://thumbor.prod.vidiocdn.com/XK2gTvwCd4ePgcSM4hQzau0L7lY=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/205/54ab19.png" group-title="TV Nasional",Indosiar
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://m.vidio.com/
-#EXTVLCOPT:http-origin=https://m.vidio.com
+#EXTINF:-1 tvg-id="205" tvg-name="Indosiar" tvg-logo="https://thumbor.prod.vidiocdn.com/yreMFN6sJvCuBljGK53PnGecozU=/640x360/filters:strip_icc():quality(70)/vidio-media-production/uploads/tv_program/thumbnail/408946/b479f0.jpg" group-title="National TV",Indosiar
+#KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
+#KODIPROP:inputstream.adaptive.license_key=https://b.bhns.workers.dev/license.mpd?id=205
 https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/205/file/drm/hls/master.m3u8
-#EXTINF:-1 tvg-id="733" tvg-name="TRANS TV" tvg-logo="https://thumbor.prod.vidiocdn.com/8uyGN8ro7p1SWsCgQOFidd-cz1Y=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/733/ecaa60.png" group-title="TV Nasional",TRANS TV
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://m.vidio.com/
-#EXTVLCOPT:http-origin=https://m.vidio.com
+#EXTINF:-1 tvg-id="733" tvg-name="TRANS TV" tvg-logo="https://thumbor.prod.vidiocdn.com/LLhLGQZlFfcxrRlgjmu4tjzMDFY=/640x360/filters:strip_icc():quality(70)/vidio-media-production/uploads/tv_program/thumbnail/543/94c2f3.png" group-title="National TV",TRANS TV
+#KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
+#KODIPROP:inputstream.adaptive.license_key=https://b.bhns.workers.dev/license.mpd?id=733
 https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/733/file/drm/hls/master.m3u8
-#EXTINF:-1 tvg-id="734" tvg-name="Trans7" tvg-logo="https://thumbor.prod.vidiocdn.com/l5TjD581Gd52Na027XzvztBlA1c=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/734/131514.png" group-title="TV Nasional",Trans7
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://m.vidio.com/
-#EXTVLCOPT:http-origin=https://m.vidio.com
+#EXTINF:-1 tvg-id="734" tvg-name="Trans7" tvg-logo="https://thumbor.prod.vidiocdn.com/XSpSRDs94R38OpBmssaBVngAr2Q=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/734/trans7-9dade4.jpg" group-title="National TV",Trans7
+#KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
+#KODIPROP:inputstream.adaptive.license_key=https://b.bhns.workers.dev/license.mpd?id=734
 https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/734/file/drm/hls/master.m3u8
-#EXTINF:-1 tvg-id="206" tvg-name="Moji" tvg-logo="https://thumbor.prod.vidiocdn.com/WqWHsGyTe9RzS8tgHmemQT2QTT4=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/206/1823dc.png" group-title="TV Nasional",Moji
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://m.vidio.com/
-#EXTVLCOPT:http-origin=https://m.vidio.com
+#EXTINF:-1 tvg-id="206" tvg-name="Moji" tvg-logo="https://thumbor.prod.vidiocdn.com/k-sY_yuIcw_2WlMiaRGVZf_ctXI=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/206/moji-a5bd3e.jpg" group-title="National TV",Moji
+#KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
+#KODIPROP:inputstream.adaptive.license_key=https://b.bhns.workers.dev/license.mpd?id=206
 https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/206/file/drm/hls/master.m3u8
-#EXTINF:-1 tvg-id="777" tvg-name="Metro TV" tvg-logo="https://thumbor.prod.vidiocdn.com/60DNnaTD09N05GWdzrWQeEzgJyc=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/777/ea8483.png" group-title="TV Nasional",Metro TV
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://m.vidio.com/
-#EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/777/res=1080p/file/master.m3u8?hdnts=exp=1794403894~acl=/stream/777/res=1080p/file/master.m3u8!/stream/777/file/*/aac/*!/stream/777/file/*/*-1080p/*!/stream/777/file/*/*-720p/*!/stream/777/file/*/*-480p/*!/stream/777/file/*/*-360p/*~id=186957857~hmac=d90dd78cfe4c79513ece04830792e6628a11876afeef8e4110bd7f9e4f851bdc
-#EXTINF:-1 tvg-id="874" tvg-name="Kompas TV" tvg-logo="https://thumbor.prod.vidiocdn.com/Kzz1dWgw9kR9FkGkhBCBYyP0u5w=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/874/042ca3.png" group-title="TV Nasional",Kompas TV
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://m.vidio.com/
-#EXTVLCOPT:http-origin=https://m.vidio.com
+#EXTINF:-1 tvg-id="6441" tvg-name="TVRI" tvg-logo="https://thumbor.prod.vidiocdn.com/q2tpT2-AjDqonv5M-q5SxihUuDw=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/6441/tvri-tv-stream-f6cbb3.jpg" group-title="National TV",TVRI
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/6441/res=1080p/file/master.m3u8?hdnts=exp=1794414515~acl=/stream/6441/res=1080p/file/master.m3u8!/stream/6441/file/*/aac/*!/stream/6441/file/*/*-1080p/*!/stream/6441/file/*/*-720p/*!/stream/6441/file/*/*-480p/*!/stream/6441/file/*/*-360p/*~id=186957857~hmac=4f74bb447b05d307de5e565b910f19a9526c281cdf10ff164f674c311008bf42
+#EXTINF:-1 tvg-id="5415" tvg-name="Jaktv" tvg-logo="https://thumbor.prod.vidiocdn.com/3L_QHkQKeNS3CiLUj1Ya4s08I3Q=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/5415/jaktv-72a5da.jpg" group-title="National TV",Jaktv
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/5415/res=1080p/file/master.m3u8?hdnts=exp=1794414516~acl=/stream/5415/res=1080p/file/master.m3u8!/stream/5415/file/*/aac/*!/stream/5415/file/*/*-1080p/*!/stream/5415/file/*/*-720p/*!/stream/5415/file/*/*-480p/*!/stream/5415/file/*/*-360p/*~id=186957857~hmac=7abc511ba452b3d38f89c662c56431147db4e6ca2d966e0c0c1470f4ba8229ea
+#EXTINF:-1 tvg-id="874" tvg-name="Kompas TV" tvg-logo="https://thumbor.prod.vidiocdn.com/hEIoJ7adV7Pjb8EgAO5Kkrvni8s=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/874/kompas-tv-98863c.jpg" group-title="National TV",Kompas TV
+#KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
+#KODIPROP:inputstream.adaptive.license_key=https://b.bhns.workers.dev/license.mpd?id=874
 https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/874/file/drm/hls/master.m3u8
-#EXTINF:-1 tvg-id="6441" tvg-name="TVRI" tvg-logo="https://thumbor.prod.vidiocdn.com/ot6wuFB7eQyb6RNLO6syHQKcAfU=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/6441/528cc9.png" group-title="TV Nasional",TVRI
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://m.vidio.com/
-#EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/6441/res=1080p/file/master.m3u8?hdnts=exp=1794403896~acl=/stream/6441/res=1080p/file/master.m3u8!/stream/6441/file/*/aac/*!/stream/6441/file/*/*-1080p/*!/stream/6441/file/*/*-720p/*!/stream/6441/file/*/*-480p/*!/stream/6441/file/*/*-360p/*~id=186957857~hmac=943a518fdcca5c9fdf9a71faf56ea0c11113d86bf2df74c9970abef65ce1e51a
-#EXTINF:-1 tvg-id="6165" tvg-name="BTV" tvg-logo="https://thumbor.prod.vidiocdn.com/1nK2F8U-XNp877ekgiDhddhD4Fs=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/6165/7cd920.png" group-title="TV Nasional",BTV
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://m.vidio.com/
-#EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/6165/res=1080p/file/master.m3u8?hdnts=exp=1794403898~acl=/stream/6165/res=1080p/file/master.m3u8!/stream/6165/file/*/aac/*!/stream/6165/file/*/*-1080p/*!/stream/6165/file/*/*-720p/*!/stream/6165/file/*/*-480p/*!/stream/6165/file/*/*-360p/*~id=186957857~hmac=8f25c07bfa1ef82e0afe045021a084763bc561944879e6387d8c4d5280948196
-#EXTINF:-1 tvg-id="18280" tvg-name="Berita Satu" tvg-logo="https://thumbor.prod.vidiocdn.com/-JKk3iTPeveKEwzEcluCSm4lMts=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/18280/c7fc8f.png" group-title="TV Nasional",Berita Satu
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://m.vidio.com/
-#EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/18280/res=1080p/file/master.m3u8?hdnts=exp=1794403899~acl=/stream/18280/res=1080p/file/master.m3u8!/stream/18280/file/*/aac/*!/stream/18280/file/*/*-1080p/*!/stream/18280/file/*/*-720p/*!/stream/18280/file/*/*-480p/*!/stream/18280/file/*/*-360p/*~id=186957857~hmac=da15f22d071e23d7aff53c6f222834ff6deb7fccd7ca557eaffabe827e0b09fc
-#EXTINF:-1 tvg-id="18162" tvg-name="Garuda TV" tvg-logo="https://thumbor.prod.vidiocdn.com/aRhv_g5XUCMcGb0tIvirsdYhzZE=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/18162/b4bea2.png" group-title="TV Nasional",Garuda TV
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://m.vidio.com/
-#EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/18162/res=1080p/file/master.m3u8?hdnts=exp=1794403900~acl=/stream/18162/res=1080p/file/master.m3u8!/stream/18162/file/*/aac/*!/stream/18162/file/*/*-1080p/*!/stream/18162/file/*/*-720p/*!/stream/18162/file/*/*-480p/*!/stream/18162/file/*/*-360p/*~id=186957857~hmac=d3a173638d7fb3aebd7007f749ac77e6f32918b67450a51b87ca934456cd1759
-#EXTINF:-1 tvg-id="5415" tvg-name="Jaktv" tvg-logo="https://thumbor.prod.vidiocdn.com/10BeR50GodPzL51K7estpRcJqgA=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/5415/802b76.png" group-title="TV Nasional",Jaktv
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://m.vidio.com/
-#EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/5415/res=1080p/file/master.m3u8?hdnts=exp=1794403901~acl=/stream/5415/res=1080p/file/master.m3u8!/stream/5415/file/*/aac/*!/stream/5415/file/*/*-1080p/*!/stream/5415/file/*/*-720p/*!/stream/5415/file/*/*-480p/*!/stream/5415/file/*/*-360p/*~id=186957857~hmac=fae9652459d33b799d823631902ae0e8380e21cad36525ef35b639508b8b2286
-#EXTINF:-1 tvg-id="9713" tvg-name="JTV" tvg-logo="https://thumbor.prod.vidiocdn.com/9S2KUd6y_4PzLp6ywlFSraQyx88=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/9713/1119f8.png" group-title="TV Nasional",JTV
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://m.vidio.com/
-#EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/9713/res=1080p/file/master.m3u8?hdnts=exp=1794403902~acl=/stream/9713/res=1080p/file/master.m3u8!/stream/9713/file/*/aac/*!/stream/9713/file/*/*-1080p/*!/stream/9713/file/*/*-720p/*!/stream/9713/file/*/*-480p/*!/stream/9713/file/*/*-360p/*~id=186957857~hmac=55df502bf920dd3c942e24a3abd9acf4b7ca3060a31df8c9903e7d5309693d32
-#EXTINF:-1 tvg-id="7432" tvg-name="Nusantara TV" tvg-logo="https://thumbor.prod.vidiocdn.com/lrUKNI0nbOJBhg6OKkH4YqNymLQ=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/7432/bfecbc.png" group-title="TV Nasional",Nusantara TV
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://m.vidio.com/
-#EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/7432/res=1080p/file/master.m3u8?hdnts=exp=1794403903~acl=/stream/7432/res=1080p/file/master.m3u8!/stream/7432/file/*/aac/*!/stream/7432/file/*/*-1080p/*!/stream/7432/file/*/*-720p/*!/stream/7432/file/*/*-480p/*!/stream/7432/file/*/*-360p/*~id=186957857~hmac=b34b372d926cbf9fb92a00ae4141b26b7ddd7d14423469d111315fe04136a182
-#EXTINF:-1 tvg-id="9714" tvg-name="jawaposTV" tvg-logo="https://thumbor.prod.vidiocdn.com/eLJ_xPxl6WM1zgoyNjhTdsNlcXc=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/9714/5a2fad.jpg" group-title="TV Nasional",jawaposTV
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://m.vidio.com/
-#EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/9714/res=1080p/file/master.m3u8?hdnts=exp=1794403905~acl=/stream/9714/res=1080p/file/master.m3u8!/stream/9714/file/*/aac/*!/stream/9714/file/*/*-1080p/*!/stream/9714/file/*/*-720p/*!/stream/9714/file/*/*-480p/*!/stream/9714/file/*/*-360p/*~id=186957857~hmac=114bffdd19958f671570f543ae6d04198dba50ea89ae9e46f4d1c495b47d72b2
-#EXTINF:-1 tvg-id="19046" tvg-name="Sin Po TV" tvg-logo="https://thumbor.prod.vidiocdn.com/HwIfmxOGLIKB03toopIzIgFbzAo=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/19046/aaa3fa.png" group-title="TV Nasional",Sin Po TV
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://m.vidio.com/
-#EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/19046/res=1080p/file/master.m3u8?hdnts=exp=1794403906~acl=/stream/19046/res=1080p/file/master.m3u8!/stream/19046/file/*/aac/*!/stream/19046/file/*/*-1080p/*!/stream/19046/file/*/*-720p/*!/stream/19046/file/*/*-480p/*!/stream/19046/file/*/*-360p/*~id=186957857~hmac=a987693b1f363f8c0120a0e8096fe0dc271d6e2d30e56b4cce2eb38e53adfac6
-#EXTINF:-1 tvg-id="6482" tvg-name="DAAI TV" tvg-logo="https://thumbor.prod.vidiocdn.com/lEx6FCKyVU-Hy4b_dWa-0IXZVyA=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/6482/e83fcf.png" group-title="TV Nasional",DAAI TV
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://m.vidio.com/
-#EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/6482/res=1080p/file/master.m3u8?hdnts=exp=1794403907~acl=/stream/6482/res=1080p/file/master.m3u8!/stream/6482/file/*/aac/*!/stream/6482/file/*/*-1080p/*!/stream/6482/file/*/*-720p/*!/stream/6482/file/*/*-480p/*!/stream/6482/file/*/*-360p/*~id=186957857~hmac=56bfaaa55f8955bee13035cd137ddc9077f70f75ac572de85668415bb8665b86
-#EXTINF:-1 tvg-id="7464" tvg-name="AJWA TV" tvg-logo="https://thumbor.prod.vidiocdn.com/Iwam8TZg1IczhRO5BI2xp9QESTs=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/7464/e69965.png" group-title="TV Nasional",AJWA TV
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://m.vidio.com/
-#EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/7464/res=1080p/file/master.m3u8?hdnts=exp=1794403908~acl=/stream/7464/res=1080p/file/master.m3u8!/stream/7464/file/*/aac/*!/stream/7464/file/*/*-1080p/*!/stream/7464/file/*/*-720p/*!/stream/7464/file/*/*-480p/*!/stream/7464/file/*/*-360p/*~id=186957857~hmac=75197745936288c53edc742f2abff0b14e58d0fe88bd01019241763cccb442c6
-#EXTINF:-1 tvg-id="6784" tvg-name="Arirang" tvg-logo="https://thumbor.prod.vidiocdn.com/V98kFWE8kSX24xbgPmdAn7IWqRQ=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/6784/b9cb20.png" group-title="TV Internasional",Arirang
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://m.vidio.com/
-#EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/6784/res=1080p/start=1794403200/file/dvr-master.m3u8?hdnts=exp=1794403909~acl=/stream/6784/res=1080p/start=1794403200/file/dvr-master.m3u8!/stream/6784/file/*/aac/*!/stream/6784/file/*/*-1080p/*!/stream/6784/file/*/*-720p/*!/stream/6784/file/*/*-480p/*!/stream/6784/file/*/*-360p/*~id=186957857~hmac=996d3af0c0c9898ee0769c7a7abd55402d86079a41f08e1d884f559b4d5c722d
-#EXTINF:-1 tvg-id="7150" tvg-name="ABC Australia" tvg-logo="https://thumbor.prod.vidiocdn.com/MPzFu1qaq-Eb4TFUuK0ZSRCn4hU=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/7150/2de77e.png" group-title="TV Internasional",ABC Australia
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://m.vidio.com/
-#EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/7150/res=1080p/file/master.m3u8?hdnts=exp=1794403910~acl=/stream/7150/res=1080p/file/master.m3u8!/stream/7150/file/*/aac/*!/stream/7150/file/*/*-1080p/*!/stream/7150/file/*/*-720p/*!/stream/7150/file/*/*-480p/*!/stream/7150/file/*/*-360p/*~id=186957857~hmac=01807a88d01314f07e52f78d2a7b8ea1a979cf57b29a5abcfaeeeb96ecb5a755
-#EXTINF:-1 tvg-id="6412" tvg-name="Euronews" tvg-logo="https://thumbor.prod.vidiocdn.com/3eOT2unns1b3eMS7uMPzJSIlYsI=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/6412/c0e105.png" group-title="TV Internasional",Euronews
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://m.vidio.com/
-#EXTVLCOPT:http-origin=https://m.vidio.com
-https://geo-ban-ca-etslive-v3-vidio-com-tokenized.akamaized.net/stream/6412/res=1080p/start=1794402720/file/dvr-master.m3u8?hdnts=exp=1794403912~acl=/stream/6412/res=1080p/start=1794402720/file/dvr-master.m3u8!/stream/6412/file/*/aac/*!/stream/6412/file/*/*-1080p/*!/stream/6412/file/*/*-720p/*!/stream/6412/file/*/*-480p/*!/stream/6412/file/*/*-360p/*~id=186957857~hmac=065aaa41cc6b78ddf18edb4499d73212b8184c50ff551546feb397520951f0dc
-#EXTINF:-1 tvg-id="6411" tvg-name="CNA" tvg-logo="https://thumbor.prod.vidiocdn.com/qFWkiN1wkTeqvgffDi7A2VPgu-8=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/6411/49242c.png" group-title="TV Internasional",CNA
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://m.vidio.com/
-#EXTVLCOPT:http-origin=https://m.vidio.com
-https://d2e1asnsl7br7b.cloudfront.net/7782e205e72f43aeb4a48ec97f66ebbe/index.m3u8
-#EXTINF:-1 tvg-id="6852" tvg-name="Makkah TV" tvg-logo="https://thumbor.prod.vidiocdn.com/0k6GGofQ3N1ywnKENFTE80uI5b0=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/6852/1047bc.png" group-title="TV Internasional",Makkah TV
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://m.vidio.com/
-#EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/6852/res=1080p/file/master.m3u8?hdnts=exp=1794403914~acl=/stream/6852/res=1080p/file/master.m3u8!/stream/6852/file/*/aac/*!/stream/6852/file/*/*-1080p/*!/stream/6852/file/*/*-720p/*!/stream/6852/file/*/*-480p/*!/stream/6852/file/*/*-360p/*~id=186957857~hmac=959dd75803d6d136cf9240fb82050326839c351527bddc2e90d20913200b3766
-#EXTINF:-1 tvg-id="7619" tvg-name="MUSICA" tvg-logo="https://thumbor.prod.vidiocdn.com/9p5kOs_udy6akoXFdYxoVwz4Itk=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/7619/379f71.png" group-title="TV Internasional",MUSICA
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://m.vidio.com/
-#EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/7619/res=1080p/file/master.m3u8?hdnts=exp=1794403915~acl=/stream/7619/res=1080p/file/master.m3u8!/stream/7619/file/*/aac/*!/stream/7619/file/*/*-1080p/*!/stream/7619/file/*/*-720p/*!/stream/7619/file/*/*-480p/*!/stream/7619/file/*/*-360p/*~id=186957857~hmac=a34723a17818f0f1086ecd0d21dc31fca843d3c8cf269ae8e9a7867541bd8bd1
-#EXTINF:-1 tvg-id="6898" tvg-name="U-Channel TV" tvg-logo="https://thumbor.prod.vidiocdn.com/x7dVSHyViTR5dTvPEMYJ_BlmJM4=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/6898/7e119a.png" group-title="TV Internasional",U-Channel TV
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://m.vidio.com/
-#EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/6898/res=1080p/file/master.m3u8?hdnts=exp=1794403916~acl=/stream/6898/res=1080p/file/master.m3u8!/stream/6898/file/*/aac/*!/stream/6898/file/*/*-1080p/*!/stream/6898/file/*/*-720p/*!/stream/6898/file/*/*-480p/*!/stream/6898/file/*/*-360p/*~id=186957857~hmac=ea60f4f8c4757d7eb914309c562a93958f0e9eb040cc57725dbaef34d4f51b00
-#EXTINF:-1 tvg-id="12607" tvg-name="DMI TV" tvg-logo="https://thumbor.prod.vidiocdn.com/GR_VdLCahNEVwbTh0W8JIbJaBAI=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/12607/de1855.png" group-title="TV Nasional",DMI TV
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://m.vidio.com/
-#EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/12607/res=1080p/file/master.m3u8?hdnts=exp=1794403917~acl=/stream/12607/res=1080p/file/master.m3u8!/stream/12607/file/*/aac/*!/stream/12607/file/*/*-1080p/*!/stream/12607/file/*/*-720p/*!/stream/12607/file/*/*-480p/*!/stream/12607/file/*/*-360p/*~id=186957857~hmac=0c61898b06a03bf72dffea7dd84e483e276aec8a50f6fe25ba4bfed22b562f72
-#EXTINF:-1 tvg-id="7230" tvg-name="Magna TV" tvg-logo="https://thumbor.prod.vidiocdn.com/hr3l92ltHJXHWqoFDKQZucGOArc=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/7230/7d6bf5.jpg" group-title="TV Nasional",Magna TV
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://m.vidio.com/
-#EXTVLCOPT:http-origin=https://m.vidio.com
+#EXTINF:-1 tvg-id="777" tvg-name="Metro TV" tvg-logo="https://thumbor.prod.vidiocdn.com/d52Xki8E17WZGLPAtw2v5hEjYK0=/640x360/filters:strip_icc():quality(70)/vidio-media-production/uploads/tv_program/thumbnail/390346/ed6f7a.jpg" group-title="National TV",Metro TV
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/777/res=1080p/file/master.m3u8?hdnts=exp=1794414518~acl=/stream/777/res=1080p/file/master.m3u8!/stream/777/file/*/aac/*!/stream/777/file/*/*-1080p/*!/stream/777/file/*/*-720p/*!/stream/777/file/*/*-480p/*!/stream/777/file/*/*-360p/*~id=186957857~hmac=70085e64e8583eedd945783466c5b7053b00cd7a3bb7ca7caf5be1deed831a76
+#EXTINF:-1 tvg-id="18280" tvg-name="Berita Satu" tvg-logo="https://thumbor.prod.vidiocdn.com/BaOhOMeyQ6fF-jCy0ej0sS_we5c=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/18280/berita-satu-f3779f.jpg" group-title="National TV",Berita Satu
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/18280/res=1080p/file/master.m3u8?hdnts=exp=1794414519~acl=/stream/18280/res=1080p/file/master.m3u8!/stream/18280/file/*/aac/*!/stream/18280/file/*/*-1080p/*!/stream/18280/file/*/*-720p/*!/stream/18280/file/*/*-480p/*!/stream/18280/file/*/*-360p/*~id=186957857~hmac=adf5776c0df308475d9260a33a6b1d7243b0e5d859e667a4a212b3fa62eb4dd6
+#EXTINF:-1 tvg-id="6165" tvg-name="BTV" tvg-logo="https://thumbor.prod.vidiocdn.com/_BxJeS85VII-ISq9BAZ9MWlAw30=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/6165/btv-bd893c.jpg" group-title="National TV",BTV
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/6165/res=1080p/file/master.m3u8?hdnts=exp=1794414520~acl=/stream/6165/res=1080p/file/master.m3u8!/stream/6165/file/*/aac/*!/stream/6165/file/*/*-1080p/*!/stream/6165/file/*/*-720p/*!/stream/6165/file/*/*-480p/*!/stream/6165/file/*/*-360p/*~id=186957857~hmac=8508b96de22ad62048a0a1e1895bbda49f7c860f0ec2b777326b79769271e6f5
+#EXTINF:-1 tvg-id="18162" tvg-name="Garuda TV" tvg-logo="https://thumbor.prod.vidiocdn.com/5HMNjpeS6Q0Y2Ao9oSDAaW3IHaY=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/18162/garuda-tv-b27da3.jpg" group-title="National TV",Garuda TV
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/18162/res=1080p/file/master.m3u8?hdnts=exp=1794414521~acl=/stream/18162/res=1080p/file/master.m3u8!/stream/18162/file/*/aac/*!/stream/18162/file/*/*-1080p/*!/stream/18162/file/*/*-720p/*!/stream/18162/file/*/*-480p/*!/stream/18162/file/*/*-360p/*~id=186957857~hmac=492387aa269d4e2043f5b737f3e921855a6b192fde49ecce7993c6adc0c65ec7
+#EXTINF:-1 tvg-id="9713" tvg-name="JTV" tvg-logo="https://thumbor.prod.vidiocdn.com/gQsLCQtTmBo5d8ntn--ztw6BqNY=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/9713/jawa-pos-tv-779e10.jpg" group-title="National TV",JTV
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/9713/res=1080p/file/master.m3u8?hdnts=exp=1794414521~acl=/stream/9713/res=1080p/file/master.m3u8!/stream/9713/file/*/aac/*!/stream/9713/file/*/*-1080p/*!/stream/9713/file/*/*-720p/*!/stream/9713/file/*/*-480p/*!/stream/9713/file/*/*-360p/*~id=186957857~hmac=f72b5126a2039331e2d56109f84477a04e6e44ca5f36e1e0ee3c85dc6ab05153
+#EXTINF:-1 tvg-id="7464" tvg-name="AJWA TV" tvg-logo="https://thumbor.prod.vidiocdn.com/kb9YJxwGUw22IXVI8dGwpDltMl0=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/7464/ajwa-tv-dad8c3.jpg" group-title="National TV",AJWA TV
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/7464/res=1080p/file/master.m3u8?hdnts=exp=1794414522~acl=/stream/7464/res=1080p/file/master.m3u8!/stream/7464/file/*/aac/*!/stream/7464/file/*/*-1080p/*!/stream/7464/file/*/*-720p/*!/stream/7464/file/*/*-480p/*!/stream/7464/file/*/*-360p/*~id=186957857~hmac=1c57ead235b0f3f702a282b7db2c498755684a7865f84384c6dee3b58a5f0aea
+#EXTINF:-1 tvg-id="7432" tvg-name="Nusantara TV" tvg-logo="https://thumbor.prod.vidiocdn.com/I0RnDq0LuQmzX-3UNATgRJ4ftxQ=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/7432/nusantara-tv-b373d0.jpg" group-title="National TV",Nusantara TV
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/7432/res=1080p/file/master.m3u8?hdnts=exp=1794414524~acl=/stream/7432/res=1080p/file/master.m3u8!/stream/7432/file/*/aac/*!/stream/7432/file/*/*-1080p/*!/stream/7432/file/*/*-720p/*!/stream/7432/file/*/*-480p/*!/stream/7432/file/*/*-360p/*~id=186957857~hmac=4599f69b1cc36be5d3288bc5ef5eb11ddc8ee4fdeb04922482f84d72286b28d7
+#EXTINF:-1 tvg-id="6482" tvg-name="DAAI TV" tvg-logo="https://thumbor.prod.vidiocdn.com/QZT3Rz43nCZH_USTXiwmuK3rcZw=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/6482/daai-tv-83240c.jpg" group-title="National TV",DAAI TV
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/6482/res=1080p/file/master.m3u8?hdnts=exp=1794414525~acl=/stream/6482/res=1080p/file/master.m3u8!/stream/6482/file/*/aac/*!/stream/6482/file/*/*-1080p/*!/stream/6482/file/*/*-720p/*!/stream/6482/file/*/*-480p/*!/stream/6482/file/*/*-360p/*~id=186957857~hmac=756cebf7f4d12fde063494d44e396e9a7b4fa92a93f339f2277c476138eb3513
+#EXTINF:-1 tvg-id="9714" tvg-name="jawaposTV" tvg-logo="https://thumbor.prod.vidiocdn.com/OjwFYSw1LBL0_wdt6Q5fkrNjnio=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/9714/jawa-pos-tv-da3bbf.jpg" group-title="National TV",jawaposTV
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/9714/res=1080p/file/master.m3u8?hdnts=exp=1794414526~acl=/stream/9714/res=1080p/file/master.m3u8!/stream/9714/file/*/aac/*!/stream/9714/file/*/*-1080p/*!/stream/9714/file/*/*-720p/*!/stream/9714/file/*/*-480p/*!/stream/9714/file/*/*-360p/*~id=186957857~hmac=6b3bc9bb583bc32c8dd6e2d13f1d5807276ba69bb839203b4e047a78cd6c907f
+#EXTINF:-1 tvg-id="6784" tvg-name="Arirang" tvg-logo="https://thumbor.prod.vidiocdn.com/nkgtwd5f9lgiHwuLSBTFfZ2Usj4=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/6784/arirang-12980d.jpg" group-title="Entertainment",Arirang
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/6784/res=1080p/start=1794412800/file/dvr-master.m3u8?hdnts=exp=1794414527~acl=/stream/6784/res=1080p/start=1794412800/file/dvr-master.m3u8!/stream/6784/file/*/aac/*!/stream/6784/file/*/*-1080p/*!/stream/6784/file/*/*-720p/*!/stream/6784/file/*/*-480p/*!/stream/6784/file/*/*-360p/*~id=186957857~hmac=b7dd58af2dfa97709d2c0de326f269b86d3d4d8d46ec953f6d21257c27c4dac2
+#EXTINF:-1 tvg-id="7619" tvg-name="musica" tvg-logo="https://thumbor.prod.vidiocdn.com/WPWZbvGP8QAtCzAxNhvRp9E-J18=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/7619/musica-e98c30.jpg" group-title="Entertainment",musica
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/7619/res=1080p/file/master.m3u8?hdnts=exp=1794414528~acl=/stream/7619/res=1080p/file/master.m3u8!/stream/7619/file/*/aac/*!/stream/7619/file/*/*-1080p/*!/stream/7619/file/*/*-720p/*!/stream/7619/file/*/*-480p/*!/stream/7619/file/*/*-360p/*~id=186957857~hmac=418f50401ecec1668e2bec5d18885c8fbc1fe49a2a01821440c890295b4e6d74
+#EXTINF:-1 tvg-id="7230" tvg-name="magnachannel" tvg-logo="https://thumbor.prod.vidiocdn.com/js-wGeyru_2IwlapPABOq8fi2sA=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/7230/magna-tv-8f461a.jpg" group-title="Entertainment",magnachannel
 https://edge.medcom.id/live-edge/smil:magna.smil/playlist.m3u8
-#EXTINF:-1 tvg-id="10975" tvg-name="Elshinta TV" tvg-logo="https://thumbor.prod.vidiocdn.com/a5BFyVvQ44YvngwwFpzBL5f6ARQ=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/10975/0dc2d8.png" group-title="TV Nasional",Elshinta TV
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://m.vidio.com/
-#EXTVLCOPT:http-origin=https://m.vidio.com
-https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/10975/res=1080p/file/master.m3u8?hdnts=exp=1794403920~acl=/stream/10975/res=1080p/file/master.m3u8!/stream/10975/file/*/aac/*!/stream/10975/file/*/*-1080p/*!/stream/10975/file/*/*-720p/*!/stream/10975/file/*/*-480p/*!/stream/10975/file/*/*-360p/*~id=186957857~hmac=e8c8cbe802b823f7ec1cbb861b70840159ce0adfa78d7af222e4c1f498fd583b
-#EXTINF:-1 tvg-id="22337" tvg-name="France24" tvg-logo="https://thumbor.prod.vidiocdn.com/bxosofpuHhR0zlmVbnl0ft5Pn7c=/120x120/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/22337/14b350.png" group-title="TV Internasional",France24
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://m.vidio.com/
-#EXTVLCOPT:http-origin=https://m.vidio.com
+#EXTINF:-1 tvg-id="19046" tvg-name="Sin Po TV" tvg-logo="https://thumbor.prod.vidiocdn.com/-fJcdGieHvetPDosR_ZwDD-YE5M=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/19046/sin-po-tv-c5cad0.jpg" group-title="News",Sin Po TV
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/19046/res=1080p/file/master.m3u8?hdnts=exp=1794414530~acl=/stream/19046/res=1080p/file/master.m3u8!/stream/19046/file/*/aac/*!/stream/19046/file/*/*-1080p/*!/stream/19046/file/*/*-720p/*!/stream/19046/file/*/*-480p/*!/stream/19046/file/*/*-360p/*~id=186957857~hmac=9aff5c51f5a08e6b2fac8c5ceaba7afc11f1871ff7e22991529bec28cdd166fb
+#EXTINF:-1 tvg-id="22337" tvg-name="France24" tvg-logo="https://thumbor.prod.vidiocdn.com/9mqFHoUEkSdD613Ixe0EB9Et7QY=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/22337/france24-d4665d.jpg" group-title="News",France24
 https://production-france24-vidio-com.akamaized.net/live/F24_EN_HI_HLS/playlist.m3u8?hdnts=exp=1821164820~acl=/live/F24_EN_HI_HLS/*~hmac=b004f12cd9463be69a87341bcd3faeba9ebaa73028287cda0ac719086d4c5409&partner=vidio
+#EXTINF:-1 tvg-id="6411" tvg-name="CNA" tvg-logo="https://thumbor.prod.vidiocdn.com/nBRneLipjed0tzgVoHIft83fOYk=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/6411/news-asia-31d4e8.jpg" group-title="News",CNA
+https://d2e1asnsl7br7b.cloudfront.net/7782e205e72f43aeb4a48ec97f66ebbe/index.m3u8
+#EXTINF:-1 tvg-id="6412" tvg-name="Euronews" tvg-logo="https://thumbor.prod.vidiocdn.com/W08g9zS7QaGtPMErcsZ81Va_dKc=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/6412/euronews-795a60.jpg" group-title="News",Euronews
+https://geo-ban-ca-etslive-v3-vidio-com-tokenized.akamaized.net/stream/6412/res=1080p/start=1794413520/file/dvr-master.m3u8?hdnts=exp=1794414533~acl=/stream/6412/res=1080p/start=1794413520/file/dvr-master.m3u8!/stream/6412/file/*/aac/*!/stream/6412/file/*/*-1080p/*!/stream/6412/file/*/*-720p/*!/stream/6412/file/*/*-480p/*!/stream/6412/file/*/*-360p/*~id=186957857~hmac=14db3a2d1bd8fd1c5fbec68bcf766abb5da35f0b93355e67bb8352c6fc5014e7
+#EXTINF:-1 tvg-id="7150" tvg-name="ABC Australia" tvg-logo="https://thumbor.prod.vidiocdn.com/ylbaeruDsVWau2s0PNo5jyEL9XE=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/7150/abc-australia-694ecd.jpg" group-title="News",ABC Australia
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/7150/res=1080p/file/master.m3u8?hdnts=exp=1794414534~acl=/stream/7150/res=1080p/file/master.m3u8!/stream/7150/file/*/aac/*!/stream/7150/file/*/*-1080p/*!/stream/7150/file/*/*-720p/*!/stream/7150/file/*/*-480p/*!/stream/7150/file/*/*-360p/*~id=186957857~hmac=88826d1c11572ca2c9ae3a1ae1544df4de324649721fd627cb527e8171e95c0d
+#EXTINF:-1 tvg-id="6852" tvg-name="makkah_tv" tvg-logo="https://thumbor.prod.vidiocdn.com/uyQ4DSnHtTWmJQD9OTs5liQDeBs=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/6852/al-quran-al-kareem-tv-62095c.jpg" group-title="Religion",makkah_tv
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/6852/res=1080p/file/master.m3u8?hdnts=exp=1794414535~acl=/stream/6852/res=1080p/file/master.m3u8!/stream/6852/file/*/aac/*!/stream/6852/file/*/*-1080p/*!/stream/6852/file/*/*-720p/*!/stream/6852/file/*/*-480p/*!/stream/6852/file/*/*-360p/*~id=186957857~hmac=cfa4a54e85aa1abad41add8fd4b0621ec7cd93750143d132d4eaa61fbf69ffd7
+#EXTINF:-1 tvg-id="6898" tvg-name="u-channel" tvg-logo="https://thumbor.prod.vidiocdn.com/cqM8vf1xK3YG5E3XF4DiuQ6LxR0=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/6898/u-channel-tv-cd4f34.jpg" group-title="Religion",u-channel
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/6898/res=1080p/file/master.m3u8?hdnts=exp=1794414536~acl=/stream/6898/res=1080p/file/master.m3u8!/stream/6898/file/*/aac/*!/stream/6898/file/*/*-1080p/*!/stream/6898/file/*/*-720p/*!/stream/6898/file/*/*-480p/*!/stream/6898/file/*/*-360p/*~id=186957857~hmac=d7eac627ce400423adfba8c4a6a7e6340713efcc4e4a165124cc50b29fbfe61b
+#EXTINF:-1 tvg-id="12607" tvg-name="dmitv" tvg-logo="https://thumbor.prod.vidiocdn.com/c_718cCh2RH2UIUd4C3juKKZ9Wc=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/12607/dmi-tv-8f4cb7.jpg" group-title="Religion",dmitv
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/12607/res=1080p/file/master.m3u8?hdnts=exp=1794414536~acl=/stream/12607/res=1080p/file/master.m3u8!/stream/12607/file/*/aac/*!/stream/12607/file/*/*-1080p/*!/stream/12607/file/*/*-720p/*!/stream/12607/file/*/*-480p/*!/stream/12607/file/*/*-360p/*~id=186957857~hmac=1cd4090ada0b30ddbabbdac23e09c5b722b5ed5810854c1b2936577584c94617
