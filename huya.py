@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 """
-VIDIO M3U PLAYLIST GENERATOR v4
-Auto-login via Playwright persistent context + cookie injection.
-luws di-capture dari channel page (JS trigger).
+VIDIO M3U PLAYLIST GENERATOR v5
+Semua API call via Playwright (TLS fingerprint konsisten).
 
 Dependencies:
-    pip install "curl-cffi<0.14" playwright
+    pip install playwright
     playwright install chromium --with-deps
 
 Run:
@@ -13,8 +12,6 @@ Run:
 """
 
 import asyncio
-import hashlib
-import hmac
 import json
 import os
 import sys
@@ -23,19 +20,12 @@ import argparse
 import logging
 from pathlib import Path
 
-try:
-    from curl_cffi import requests as cffi_requests
-except ImportError:
-    print("Error: pip install 'curl-cffi<0.14'")
-    sys.exit(1)
-
 # ─── Konfigurasi ─────────────────────────────────────────────────
 API_BASE = "https://api.vidio.com"
 SITE_URL = "https://m.vidio.com"
 LIVE_URL = "https://m.vidio.com/live"
 CHANNEL_URL = "https://m.vidio.com/live/205-indosiar"
 OUTPUT_FILE = "playlist.m3u"
-IMPERSONATE = "chrome"
 DELAY = 0.3
 RETRY_WAIT = 5
 
@@ -49,12 +39,9 @@ USER_AGENT = (
     "AppleWebKit/537.36 (KHTML, like Gecko) "
     "Chrome/157.0.0.0 Mobile Safari/537.36"
 )
-REFERER = "https://m.vidio.com/"
-ORIGIN = "https://m.vidio.com"
 
 # ═══════════════════════════════════════════════════════════════
 # COOKIES — UPDATE DI SINI SAJA
-# F12 → Application → Cookies → https://m.vidio.com
 # ═══════════════════════════════════════════════════════════════
 VIDIO_COOKIES = [
     {"name": "ahoy_visitor", "value": "3489c20a-d32e-468a-bd1b-8f7d150fa132", "domain": ".vidio.com", "path": "/"},
@@ -105,204 +92,90 @@ def _load_cookies():
     return None
 
 
-def generate_x_signature() -> tuple:
-    t_float = time.time()
-    t_int = int(t_float)
-    x_client = f"{t_float}"
-    secret_key = f"V1d10D3v:{t_int}"
-    signature = hmac.new(
-        secret_key.encode(),
-        x_client.encode(),
-        hashlib.sha256
-    ).hexdigest()
-    return x_client, signature
+# ─── JS: fetch stream URL via browser (TLS matches) ─────────────
+JS_FETCH_STREAM = """
+async (chId) => {
+    const t = Date.now() / 1000;
+    const xClient = t.toString();
 
+    // Generate x-signature: HMAC-SHA256(key="V1d10D3v:{int_t}", msg=xClient)
+    const intT = Math.floor(t);
+    const key = `V1d10D3v:${intT}`;
 
-# ─── AUTO LOGIN ──────────────────────────────────────────────────
-async def auto_login() -> dict:
-    """
-    Playwright → inject cookies → load /live → navigate ke channel page
-    → JS set luws → capture dari cookie/document.cookie/request header.
-    """
-    result = {"luws": "", "user_id": "", "user_email": "", "logged_in": False}
-
-    try:
-        from playwright.async_api import async_playwright
-    except ImportError:
-        log.warning("  Playwright tidak tersedia")
-        return result
-
-    cookies = _load_cookies()
-    if not cookies:
-        log.warning("  Tidak ada cookies")
-        return result
-
-    try:
-        async with async_playwright() as p:
-            context = await p.chromium.launch_persistent_context(
-                _BROWSER_PROFILE,
-                headless=True,
-                channel="chrome",
-                args=["--disable-blink-features=AutomationControlled", "--no-sandbox"],
-            )
-            page = context.pages[0] if context.pages else await context.new_page()
-
-            await context.add_cookies(cookies)
-            log.info("  ✓ Inject %d cookies", len(cookies))
-
-            # Intercept interactions.json → user data
-            def on_response(response):
-                if "interactions.json" in response.url:
-                    asyncio.ensure_future(_capture_user(response, result))
-                # Intercept stream request → luws dari request header
-                if "api.vidio.com" in response.url and "stream" in response.url:
-                    luws_val = response.request.headers.get("luws", "")
-                    if luws_val and not result["luws"]:
-                        result["luws"] = luws_val
-
-            async def _capture_user(response, res):
-                try:
-                    body = await response.json()
-                    user = body.get("current_user", {})
-                    if user and user.get("user_id"):
-                        res["user_id"] = str(user["user_id"])
-                        res["user_email"] = user.get("email", "")
-                        res["logged_in"] = True
-                except Exception:
-                    pass
-
-            page.on("response", on_response)
-
-            # Step 1: Load /live (trigger interactions.json)
-            log.info("  Loading /live ...")
-            await page.goto(LIVE_URL, timeout=60000, wait_until="domcontentloaded")
-            await asyncio.sleep(3)
-
-            # Step 2: Navigate ke channel page (trigger JS set luws)
-            log.info("  Loading channel page (trigger luws) ...")
-            await page.goto(CHANNEL_URL, timeout=60000, wait_until="domcontentloaded")
-
-            # Wait for luws
-            for _ in range(30):
-                # Check 1: context cookies
-                all_cookies = {c["name"]: c["value"] for c in await context.cookies()}
-                if all_cookies.get("luws") and not result["luws"]:
-                    result["luws"] = all_cookies["luws"]
-
-                # Check 2: document.cookie
-                if not result["luws"]:
-                    try:
-                        doc = await page.evaluate("() => document.cookie")
-                        for part in doc.split(";"):
-                            part = part.strip()
-                            if part.startswith("luws="):
-                                result["luws"] = part[5:]
-                                break
-                    except Exception:
-                        pass
-
-                if result["luws"] and result["logged_in"]:
-                    break
-                await asyncio.sleep(1)
-
-            # Fallback: plenty_id
-            if not result["user_id"]:
-                all_cookies = {c["name"]: c["value"] for c in await context.cookies()}
-                result["user_id"] = all_cookies.get("plenty_id", "")
-                if result["user_id"]:
-                    result["logged_in"] = True
-
-            await context.close()
-
-    except Exception as e:
-        log.error("  Playwright error: %s", e)
-
-    return result
-
-
-# ─── FETCH CHANNELS ──────────────────────────────────────────────
-def fetch_channels(session, luws: str, user_id: str) -> list:
-    url = f"{API_BASE}/livestreamings"
-    params = {"stream_type": "tv_stream"}
-    headers = {
-        "x-api-key": API_KEY,
-        "x-api-platform": "web-mobile",
-        "x-secure-level": "2",
-        "x-api-app-info": "js/m.vidio.com",
-        "x-user-login": "true" if user_id else "false",
-        "luws": luws,
-        "Accept": "application/json",
-        "Content-Type": "application/vnd.api+json",
-        "User-Agent": USER_AGENT,
-        "Referer": REFERER,
-        "Origin": ORIGIN,
+    let signature = '';
+    try {
+        const encoder = new TextEncoder();
+        const cryptoKey = await crypto.subtle.importKey(
+            'raw', encoder.encode(key),
+            {name: 'HMAC', hash: 'SHA-256'}, false, ['sign']
+        );
+        const sigBuf = await crypto.subtle.sign('HMAC', cryptoKey, encoder.encode(xClient));
+        signature = Array.from(new Uint8Array(sigBuf))
+            .map(b => b.toString(16).padStart(2, '0')).join('');
+    } catch(e) {
+        return {error: 'sig_fail', detail: e.message};
     }
-    if user_id:
-        headers["x-user-id"] = user_id
 
-    try:
-        resp = session.get(url, params=params, headers=headers, timeout=30)
-        if resp.status_code != 200:
-            log.warning("  Channels HTTP %d", resp.status_code)
-            return []
-    except Exception as e:
-        log.error("  Error: %s", e)
-        return []
-
-    data = resp.json()
-    channels = []
-    for item in data.get("data", []):
-        attrs = item.get("attributes", {})
-        ch_id = item.get("id")
-        if not ch_id:
-            continue
-        ch_id = int(ch_id)
-        title = attrs.get("title", "Unknown")
-        square = attrs.get("square_image", {})
-        landscape = attrs.get("image_landscape_url", "")
-        logo = square.get("url", "") or landscape
-        channels.append({"id": ch_id, "title": title, "logo": logo})
-
-    existing = {c["id"] for c in channels}
-    for ch_id, title in EXTRA_CHANNELS.items():
-        if ch_id not in existing:
-            channels.append({"id": ch_id, "title": title, "logo": ""})
-
-    return channels
-
-
-# ─── FETCH STREAM ────────────────────────────────────────────────
-def fetch_stream(session, ch_id: int, luws: str, user_id: str, user_email: str) -> str:
-    url = f"{API_BASE}/livestreamings/{ch_id}/stream?initialize=true"
-    x_client, x_sig = generate_x_signature()
-
-    headers = {
-        "x-api-key": API_KEY,
-        "x-api-platform": "web-mobile",
-        "x-secure-level": "2",
-        "luws": luws,
-        "x-client": x_client,
-        "x-signature": x_sig,
-        "User-Agent": USER_AGENT,
-        "Referer": REFERER,
-        "Origin": ORIGIN,
-        "Accept": "*/*",
+    try {
+        const resp = await fetch(
+            `https://api.vidio.com/livestreamings/${chId}/stream?initialize=true`,
+            {
+                method: 'GET',
+                headers: {
+                    'x-api-key': 'CH1ZFsN4N/MIfAds1DL9mP151CNqIpWHqZGRr+LkvUyiq3FRPuP1Kt6aK+pG3nEC1FXt0ZAAJ5FKP8QU8CZ5/ieyIuWEkvNBqXdsdlXM2838+3SFjs9rtlntv7l7DHkBHWK1q/4vLGad8GAj3vfLciRFnquHuZMMW+4EX8yTe1w=',
+                    'x-api-platform': 'web-mobile',
+                    'x-secure-level': '2',
+                    'x-client': xClient,
+                    'x-signature': signature,
+                    'x-user-login': 'true',
+                    'x-user-id': '186957857',
+                    'x-user-email': 'bhianesee05@gmail.com',
+                    'Accept': '*/*',
+                },
+                credentials: 'include',
+            }
+        );
+        if (resp.status === 200) {
+            const data = await resp.json();
+            const hls = data?.data?.attributes?.hls || '';
+            return {hls: hls, status: 200};
+        }
+        return {hls: '', status: resp.status, body: await resp.text()};
+    } catch(e) {
+        return {error: e.message};
     }
-    if user_id:
-        headers["x-user-id"] = user_id
-        headers["x-user-login"] = "true"
-        if user_email:
-            headers["x-user-email"] = user_email
-    else:
-        headers["x-user-login"] = "false"
+}
+"""
 
-    try:
-        resp = session.get(url, headers=headers, timeout=15)
-        if resp.status_code == 200:
-            return resp.json().get("data", {}).get("attributes", {}).get("hls", "")
-    except Exception:
-        pass
-    return ""
+# ─── JS: fetch channels via browser ─────────────────────────────
+JS_FETCH_CHANNELS = """
+async () => {
+    try {
+        const resp = await fetch(
+            'https://api.vidio.com/livestreamings?stream_type=tv_stream',
+            {
+                method: 'GET',
+                headers: {
+                    'x-api-key': 'CH1ZFsN4N/MIfAds1DL9mP151CNqIpWHqZGRr+LkvUyiq3FRPuP1Kt6aK+pG3nEC1FXt0ZAAJ5FKP8QU8CZ5/ieyIuWEkvNBqXdsdlXM2838+3SFjs9rtlntv7l7DHkBHWK1q/4vLGad8GAj3vfLciRFnquHuZMMW+4EX8yTe1w=',
+                    'x-api-platform': 'web-mobile',
+                    'x-secure-level': '2',
+                    'x-api-app-info': 'js/m.vidio.com',
+                    'x-user-login': 'true',
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/vnd.api+json',
+                },
+                credentials: 'include',
+            }
+        );
+        if (resp.status === 200) {
+            return await resp.json();
+        }
+        return {error: true, status: resp.status};
+    } catch(e) {
+        return {error: true, message: e.message};
+    }
+}
+"""
 
 
 # ─── M3U GENERATOR ───────────────────────────────────────────────
@@ -324,8 +197,8 @@ def generate_m3u(channels, stream_urls, output_file):
             f'{title}'
         )
         lines.append(f'#EXTVLCOPT:http-user-agent={USER_AGENT}')
-        lines.append(f'#EXTVLCOPT:http-referrer={REFERER}')
-        lines.append(f'#EXTVLCOPT:http-origin={ORIGIN}')
+        lines.append(f'#EXTVLCOPT:http-referrer=https://m.vidio.com/')
+        lines.append(f'#EXTVLCOPT:http-origin=https://m.vidio.com')
         lines.append(stream_url)
         count += 1
     Path(output_file).write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -334,99 +207,136 @@ def generate_m3u(channels, stream_urls, output_file):
 
 # ─── MAIN ────────────────────────────────────────────────────────
 async def async_main(output_file, retries):
+    from playwright.async_api import async_playwright
+
     print("=" * 55)
     print("  Vidio Live TV → M3U Playlist Generator")
-    print("  Auto-login: Playwright persistent context")
+    print("  Semua API via Playwright (TLS match)")
     print("=" * 55)
 
-    # [1/3] Auto login
-    print("\n[1/3] Auto login ...")
-    info = await auto_login()
-    luws = info["luws"]
-    user_id = info["user_id"]
-    user_email = info["user_email"]
-    logged_in = info["logged_in"]
-
-    if logged_in:
-        log.info("  ✓ Login: %s (ID: %s)", user_email or "unknown", user_id)
-    else:
-        log.warning("  ✗ Tidak login (cookies expired?)")
-
-    if not luws:
-        log.error("  ✗ Gagal ambil luws!")
-        log.error("  Update VIDIO_COOKIES di script.")
+    cookies = _load_cookies()
+    if not cookies:
+        log.error("Tidak ada cookies!")
         return
 
-    log.info("  ✓ luws: %s", luws)
+    async with async_playwright() as p:
+        context = await p.chromium.launch_persistent_context(
+            _BROWSER_PROFILE,
+            headless=True,
+            channel="chrome",
+            args=["--disable-blink-features=AutomationControlled", "--no-sandbox"],
+        )
+        page = context.pages[0] if context.pages else await context.new_page()
 
-    # [2/3] Fetch
-    print("\n[2/3] Fetching channels + streams ...")
-    session = cffi_requests.Session(impersonate=IMPERSONATE)
-    channels = fetch_channels(session, luws, user_id)
+        # [1/3] Inject + login
+        print("\n[1/3] Auto login ...")
+        await context.add_cookies(cookies)
+        log.info("  ✓ Inject %d cookies", len(cookies))
 
-    if not channels:
-        log.error("Tidak ada channel.")
-        return
+        await page.goto(LIVE_URL, timeout=60000, wait_until="domcontentloaded")
+        await asyncio.sleep(3)
+        await page.goto(CHANNEL_URL, timeout=60000, wait_until="domcontentloaded")
+        await asyncio.sleep(5)
 
-    log.info("  Channels: %d", len(channels))
-
-    # Test 1 channel dulu
-    test = fetch_stream(session, channels[0]["id"], luws, user_id, user_email)
-    if not test and user_id:
-        log.info("  Login gagal, coba tanpa login ...")
-        user_id = ""
-        user_email = ""
-        test = fetch_stream(session, channels[0]["id"], luws, "", "")
-    if test:
-        log.info("  ✓ Stream access OK")
-    else:
-        log.error("  ✗ Gagal akses stream")
-        log.error("  Update VIDIO_COOKIES di script.")
-        return
-
-    # Fetch semua
-    start = time.time()
-    stream_urls = {}
-    failed = []
-
-    for i, ch in enumerate(channels, 1):
-        hls = fetch_stream(session, ch["id"], luws, user_id, user_email)
-        if hls:
-            stream_urls[ch["id"]] = hls
-            log.info("  [%d/%d] %s ✓", i, len(channels), ch["title"])
+        # Verify login
+        is_logged_in = await page.evaluate(
+            "() => document.cookie.includes('plenty_id')"
+        )
+        if is_logged_in:
+            log.info("  ✓ Login OK")
         else:
-            failed.append(ch)
-            log.warning("  [%d/%d] %s ✗", i, len(channels), ch["title"])
-        time.sleep(DELAY)
+            log.warning("  ✗ Tidak login")
 
-    # Retry
-    for attempt in range(1, retries + 1):
-        if not failed:
-            break
-        log.info("  Retry %d/%d (%d) ...", attempt, retries, len(failed))
-        time.sleep(RETRY_WAIT)
-        still = []
-        for ch in failed:
-            hls = fetch_stream(session, ch["id"], luws, user_id, user_email)
+        # [2/3] Fetch channels + streams (via browser fetch)
+        print("\n[2/3] Fetching channels + streams ...")
+
+        # Fetch channels
+        ch_data = await page.evaluate(JS_FETCH_CHANNELS)
+        if ch_data.get("error"):
+            log.error("  Gagal fetch channels: %s", ch_data)
+            await context.close()
+            return
+
+        channels = []
+        for item in ch_data.get("data", []):
+            attrs = item.get("attributes", {})
+            ch_id = item.get("id")
+            if not ch_id:
+                continue
+            ch_id = int(ch_id)
+            title = attrs.get("title", "Unknown")
+            square = attrs.get("square_image", {})
+            landscape = attrs.get("image_landscape_url", "")
+            logo = square.get("url", "") or landscape
+            channels.append({"id": ch_id, "title": title, "logo": logo})
+
+        # Add extras
+        existing = {c["id"] for c in channels}
+        for ch_id, title in EXTRA_CHANNELS.items():
+            if ch_id not in existing:
+                channels.append({"id": ch_id, "title": title, "logo": ""})
+
+        log.info("  Channels: %d", len(channels))
+
+        # Test 1 channel
+        test_result = await page.evaluate(JS_FETCH_STREAM, channels[0]["id"])
+        if test_result.get("hls"):
+            log.info("  ✓ Stream access OK")
+        else:
+            log.error("  ✗ Test stream gagal: %s", test_result)
+            log.error("  Update VIDIO_COOKIES di script.")
+            await context.close()
+            return
+
+        # Fetch all streams
+        start = time.time()
+        stream_urls = {}
+        failed = []
+
+        for i, ch in enumerate(channels, 1):
+            result = await page.evaluate(JS_FETCH_STREAM, ch["id"])
+            hls = result.get("hls", "")
             if hls:
                 stream_urls[ch["id"]] = hls
-                log.info("  [R%d] %s ✓", attempt, ch["title"])
+                log.info("  [%d/%d] %s ✓", i, len(channels), ch["title"])
             else:
-                still.append(ch)
-            time.sleep(DELAY)
-        failed = still
+                failed.append(ch)
+                log.warning("  [%d/%d] %s ✗ (%s)", i, len(channels), ch["title"],
+                          result.get("status", result.get("error", "?")))
+            await asyncio.sleep(DELAY)
 
-    elapsed = time.time() - start
-    log.info("\n  Total: %d | OK: %d | Fail: %d | Time: %.1fs",
-             len(channels), len(stream_urls), len(failed), elapsed)
+        # Retry
+        for attempt in range(1, retries + 1):
+            if not failed:
+                break
+            log.info("  Retry %d/%d (%d) ...", attempt, retries, len(failed))
+            await asyncio.sleep(RETRY_WAIT)
+            still = []
+            for ch in failed:
+                result = await page.evaluate(JS_FETCH_STREAM, ch["id"])
+                hls = result.get("hls", "")
+                if hls:
+                    stream_urls[ch["id"]] = hls
+                    log.info("  [R%d] %s ✓", attempt, ch["title"])
+                else:
+                    still.append(ch)
+                await asyncio.sleep(DELAY)
+            failed = still
 
-    if failed:
-        for ch in failed:
-            log.info("    - [%s] %s", ch["id"], ch["title"])
+        elapsed = time.time() - start
+        log.info("\n  Total: %d | OK: %d | Fail: %d | Time: %.1fs",
+                 len(channels), len(stream_urls), len(failed), elapsed)
 
-    if not stream_urls:
-        log.error("  SEMUA GAGAL. Update cookies.")
-        return
+        if failed:
+            for ch in failed:
+                log.info("    - [%s] %s", ch["id"], ch["title"])
+
+        if not stream_urls:
+            log.error("  SEMUA GAGAL.")
+            await context.close()
+            return
+
+        await context.close()
 
     # [3/3] Generate
     print(f"\n[3/3] Generating M3U ...")
