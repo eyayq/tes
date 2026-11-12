@@ -33,7 +33,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: ✓
-        run: xvfb-run python huya.py
+        run: xvfb-run python huya.py --debug
 
       - name: ✓
         run: |
