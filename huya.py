@@ -9,7 +9,8 @@ API_URL = "https://servicebuss.transvision.co.id/global/v4/channel-list?page=1&p
 TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXZpY2VfaWQiOiJ3ZWJfYnJvd3NlciIsImVtYWlsIjoibWFzdGVyX2FjY291bnRAdHJhbnN2aXNpb24uY28uaWQiLCJleHAiOjE3OTQ1NjY2MDAsImhvdGVsX2lkIjpudWxsLCJob3RlbF9uYW1lIjpudWxsLCJpc19iMmIiOmZhbHNlLCJpc19kZXZpY2VfdW5wYWlyZWQiOmZhbHNlLCJpc190diI6ZmFsc2UsImlzcF9pZCI6IjYiLCJpc3BfbmFtZSI6IlRyYW5zdmlzaW9uIiwicGFja2FnZV9saXN0IjpudWxsLCJwaG9uZSI6IjA4MTIwMDAxOTIwMSIsInJvbGVfaWQiOiI5IiwidXNlcl9pZCI6OTl9.aWxlZzjfPxBqWgkgiACFn80ffyVR42at7Fdh1fQcGxU"
 OUTPUT = "playlist.m3u"
 
-UA = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36"
+# User-Agent Transvision bawaan (XStream)
+UA = "Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5"
 ORIGIN = "https://www.cubmu.com"
 REFERER = "https://www.cubmu.com/"
 
@@ -42,7 +43,6 @@ def b64_to_hex(b64_str: str) -> str:
     return base64.b64decode(b64_str).hex()
 
 def b64_decode_safe(b64_str: str) -> str:
-    """Decode base64 dengan auto-padding. Fallback ke string asli kalau gagal."""
     try:
         padding = 4 - len(b64_str) % 4
         if padding != 0:
@@ -62,7 +62,6 @@ def decode_manifest_url(manifest_url: str) -> dict:
         "signature_decoded": "",
         "time": "",
         "device_id": "",
-        "full_decoded_url": manifest_url,
     }
 
     path_parts = parsed.path.strip("/").split("/")
@@ -77,14 +76,6 @@ def decode_manifest_url(manifest_url: str) -> dict:
     result["time"] = params.get("time", "")
     result["device_id"] = params.get("device_id", "")
     result["signature_decoded"] = b64_decode_safe(result["signature_raw"])
-
-    # Build URL dengan path decoded (URL-encoded)
-    if result["channel_path_decoded"] != result["channel_path_raw"]:
-        decoded_path = parsed.path.replace(
-            result["channel_path_raw"],
-            quote(result["channel_path_decoded"], safe="")
-        )
-        result["full_decoded_url"] = f"{parsed.scheme}://{parsed.netloc}{decoded_path}?{query}"
 
     return result
 
@@ -217,7 +208,7 @@ with open(OUTPUT, "w", encoding="utf-8") as f:
             f.write(f'#EXTVLCOPT:http-referer={REFERER}\n')
 
             write_drm_props(f, drm_info)
-            f.write(f'{decoded["full_decoded_url"]}\n')  # ← URL DECODED
+            f.write(f'{manifest_url}\n')
             total_channels += 1
 
             print(f"  {icon} {name} (ch {ch_num}) [{drm_info['type'].upper()}]")
