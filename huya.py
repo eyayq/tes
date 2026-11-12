@@ -11,7 +11,7 @@ USERS = [
 ]
 
 OUTPUT = "playlist.m3u"
-MAX_WORKERS = 10
+MAX_WORKERS = 7
 
 def fetch_video(url):
     result = subprocess.run(
