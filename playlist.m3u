@@ -294,13 +294,16 @@ http://202.80.222.20/cdn/iptv/Tvod/001/channel2000149/1024.m3u8
 #EXTINF:-1 tvg-id="Channel150.id" group-title="Olahraga",Channel 150
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000150/1024.m3u8
 
-#EXTINF:-1 tvg-id="Channel163.id" tvg-logo="https://raw.githubusercontent.com/IPTV-Digital/Channel/main/Logo%20IPTV/FightSports.jpg" group-title="Olahraga",FIGHT SPORTS
+#EXTINF:-1 tvg-id="Channel163.id" group-title="Olahraga",FIGHT SPORTS
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000163/1024.m3u8
 
-#EXTINF:-1 tvg-id="Channel23.id" tvg-logo="https://raw.githubusercontent.com/IPTV-Digital/Channel/main/Logo%20IPTV/ANTV.jpg" group-title="TV Lokal",ANTV
+#EXTINF:-1 tvg-id="Channel23.id" group-title="TV Lokal",ANTV
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000023/1024.m3u8
 
-#EXTINF:-1 tvg-id="Channel28.id" tvg-logo="https://raw.githubusercontent.com/IPTV-Digital/Channel/main/Logo%20IPTV/CNNIndonesia.jpg" group-title="TV Lokal",CNN INDONESIA
+#EXTINF:-1 tvg-id="Channel34.id" group-title="TV Lokal",CHANNEL 34
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000034/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel28.id" group-title="TV Lokal",CNN INDONESIA
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000028/1024.m3u8
 
 #EXTINF:-1 tvg-id="Channel11.id" group-title="TV Lokal",Channel 11
@@ -341,9 +344,6 @@ http://202.80.222.20/cdn/iptv/Tvod/001/channel2000021/1024.m3u8
 
 #EXTINF:-1 tvg-id="Channel3.id" group-title="TV Lokal",Channel 3
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000003/1024.m3u8
-
-#EXTINF:-1 tvg-id="Channel34.id" group-title="TV Lokal",Channel 34
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000034/1024.m3u8
 
 #EXTINF:-1 tvg-id="Channel35.id" group-title="TV Lokal",Channel 35
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000035/1024.m3u8
@@ -408,44 +408,44 @@ http://202.80.222.20/cdn/iptv/Tvod/001/channel2000007/1024.m3u8
 #EXTINF:-1 tvg-id="Channel8.id" group-title="TV Lokal",Channel 8
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000008/1024.m3u8
 
-#EXTINF:-1 tvg-id="Channel26.id" tvg-logo="https://raw.githubusercontent.com/IPTV-Digital/Channel/main/Logo%20IPTV/GTV.jpg" group-title="TV Lokal",GTV
+#EXTINF:-1 tvg-id="Channel26.id" group-title="TV Lokal",GTV
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000026/1024.m3u8
 
-#EXTINF:-1 tvg-id="Channel113.id" tvg-logo="https://raw.githubusercontent.com/IPTV-Digital/Channel/main/Logo%20IPTV/GTV.jpg" group-title="TV Lokal",GTV
+#EXTINF:-1 tvg-id="Channel113.id" group-title="TV Lokal",GTV
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000113/1024.m3u8
 
-#EXTINF:-1 tvg-id="Channel24.id" tvg-logo="https://raw.githubusercontent.com/IPTV-Digital/Channel/main/Logo%20IPTV/Indosiar.jpg" group-title="TV Lokal",INDOSIAR
+#EXTINF:-1 tvg-id="Channel24.id" group-title="TV Lokal",INDOSIAR
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000024/1024.m3u8
 
-#EXTINF:-1 tvg-id="Channel30.id" tvg-logo="https://raw.githubusercontent.com/IPTV-Digital/Channel/main/Logo%20IPTV/KompasTV.jpg" group-title="TV Lokal",KOMPAS TV
+#EXTINF:-1 tvg-id="Channel30.id" group-title="TV Lokal",KOMPAS TV
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000030/1024.m3u8
 
-#EXTINF:-1 tvg-id="Channel27.id" tvg-logo="https://raw.githubusercontent.com/IPTV-Digital/Channel/main/Logo%20IPTV/MetroTV.jpg" group-title="TV Lokal",METRO TV
+#EXTINF:-1 tvg-id="Channel27.id" group-title="TV Lokal",METRO TV
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000027/1024.m3u8
 
-#EXTINF:-1 tvg-id="Channel25.id" tvg-logo="https://raw.githubusercontent.com/IPTV-Digital/Channel/main/Logo%20IPTV/MNCTV.jpg" group-title="TV Lokal",MNC TV
+#EXTINF:-1 tvg-id="Channel25.id" group-title="TV Lokal",MNCTV
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000025/1024.m3u8
 
-#EXTINF:-1 tvg-id="Channel106.id" tvg-logo="https://raw.githubusercontent.com/IPTV-Digital/Channel/main/Logo%20IPTV/MNCTV.jpg" group-title="TV Lokal",MNCTV
+#EXTINF:-1 tvg-id="Channel106.id" group-title="TV Lokal",MNCTV
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000106/1024.m3u8
 
-#EXTINF:-1 tvg-id="Channel32.id" tvg-logo="https://raw.githubusercontent.com/IPTV-Digital/Channel/main/Logo%20IPTV/NetTV.jpg" group-title="TV Lokal",NET.
+#EXTINF:-1 tvg-id="Channel32.id" group-title="TV Lokal",NET.
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000032/1024.m3u8
 
-#EXTINF:-1 tvg-id="Channel22.id" tvg-logo="https://raw.githubusercontent.com/IPTV-Digital/Channel/main/Logo%20IPTV/SCTV.jpg" group-title="TV Lokal",SCTV
+#EXTINF:-1 tvg-id="Channel22.id" group-title="TV Lokal",SCTV
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000022/1024.m3u8
 
-#EXTINF:-1 tvg-id="Channel10.id" tvg-logo="https://raw.githubusercontent.com/IPTV-Digital/Channel/main/Logo%20IPTV/Trans7.jpg" group-title="TV Lokal",TRANS 7
+#EXTINF:-1 tvg-id="Channel10.id" group-title="TV Lokal",TRANS 7
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000010/1024.m3u8
 
-#EXTINF:-1 tvg-id="Channel9.id" tvg-logo="https://raw.githubusercontent.com/IPTV-Digital/Channel/main/Logo%20IPTV/TransTV.jpg" group-title="TV Lokal",TRANS TV
+#EXTINF:-1 tvg-id="Channel9.id" group-title="TV Lokal",TRANS TV
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000009/1024.m3u8
 
-#EXTINF:-1 tvg-id="Channel29.id" tvg-logo="https://raw.githubusercontent.com/IPTV-Digital/Channel/main/Logo%20IPTV/TVOne.jpg" group-title="TV Lokal",TV ONE
+#EXTINF:-1 tvg-id="Channel29.id" group-title="TV Lokal",TV ONE
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000029/1024.m3u8
 
-#EXTINF:-1 tvg-id="Channel1.id" tvg-logo="https://raw.githubusercontent.com/IPTV-Digital/Channel/main/Logo%20IPTV/TVRI.jpg" group-title="TV Lokal",TVRI
+#EXTINF:-1 tvg-id="Channel1.id" group-title="TV Lokal",TVRI
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000001/1024.m3u8
 
-#EXTINF:-1 tvg-id="Channel31.id" tvg-logo="https://raw.githubusercontent.com/IPTV-Digital/Channel/main/Logo%20IPTV/INews.jpg" group-title="TV Lokal",iNEWS
+#EXTINF:-1 tvg-id="Channel31.id" group-title="TV Lokal",iNEWS
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000031/1024.m3u8
