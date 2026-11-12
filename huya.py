@@ -3,52 +3,63 @@ import json
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-USER_URL = "https://www.dailymotion.com/user/Film_Horor_Indonesia"
+USERS = [
+    {"url": "https://www.dailymotion.com/user/Film_Horor_Indonesia", "group": "Film Horor Indonesia"},
+    {"url": "https://www.dailymotion.com/user/sugondofilm.55", "group": "Film Horor Indonesia 2"},
+]
+
 OUTPUT = "playlist.m3u"
-GROUP = "Film Horor Indonesia"
 MAX_WORKERS = 5
 
-# Step 1: Get video URLs (fast, flat)
-result = subprocess.run(
-    ["yt-dlp", "--flat-playlist", "-J", USER_URL],
-    capture_output=True, text=True
-)
-if result.returncode != 0:
-    print(f"Error: {result.stderr}")
-    sys.exit(1)
-
-data = json.loads(result.stdout)
-entries = data.get("entries", [])
-video_urls = []
-for e in entries:
-    url = e.get("url") or f"https://www.dailymotion.com/video/{e.get('id', '')}"
-    if url and url.startswith("http"):
-        video_urls.append(url)
-
-print(f"Total: {len(video_urls)} video\n")
-
-# Step 2: Get full metadata + m3u8 (paralel)
 def fetch_video(url):
     result = subprocess.run(
         ["yt-dlp", "-J", "-f", "bv*", url],
         capture_output=True, text=True
     )
     if result.returncode != 0:
-        return {"url": url, "title": None, "thumbnail": None, "m3u8": None}
+        return {"title": None, "thumbnail": None, "m3u8": None}
     try:
         d = json.loads(result.stdout)
         return {
-            "url": url,
             "title": d.get("title", "Unknown"),
             "thumbnail": d.get("thumbnail", ""),
             "m3u8": d.get("url", "")
         }
     except json.JSONDecodeError:
-        return {"url": url, "title": None, "thumbnail": None, "m3u8": None}
+        return {"title": None, "thumbnail": None, "m3u8": None}
 
-results = [None] * len(video_urls)
+# Collect all entries with their group
+all_entries = []
+for user in USERS:
+    result = subprocess.run(
+        ["yt-dlp", "--flat-playlist", "-J", user["url"]],
+        capture_output=True, text=True
+    )
+    if result.returncode != 0:
+        print(f"⚠️  Error: {user['url']}")
+        continue
+
+    data = json.loads(result.stdout)
+    entries = data.get("entries", [])
+    count = 0
+    for e in entries:
+        url = e.get("url") or f"https://www.dailymotion.com/video/{e.get('id', '')}"
+        if url and url.startswith("http"):
+            all_entries.append({"url": url, "group": user["group"]})
+            count += 1
+    print(f"✅ {user['group']}: {count} video")
+
+print(f"\nTotal: {len(all_entries)} video\n")
+
+# Fetch all (paralel)
+def fetch_with_group(entry):
+    r = fetch_video(entry["url"])
+    r["group"] = entry["group"]
+    return r
+
+results = [None] * len(all_entries)
 with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
-    futures = {pool.submit(fetch_video, url): i for i, url in enumerate(video_urls)}
+    futures = {pool.submit(fetch_with_group, e): i for i, e in enumerate(all_entries)}
     done = 0
     for future in as_completed(futures):
         i = futures[future]
@@ -56,16 +67,16 @@ with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
         done += 1
         r = results[i]
         status = "✅" if r["m3u8"] else "⚠️"
-        print(f"[{done}/{len(video_urls)}] {status} {r['title']}")
+        print(f"[{done}/{len(all_entries)}] {status} {r['title']}")
 
-# Step 3: Write M3U
+# Write M3U
 with open(OUTPUT, "w") as f:
     f.write("#EXTM3U\n")
     for r in results:
         if r and r["m3u8"]:
             title = r["title"] or "Unknown"
             vlogo = r["thumbnail"] or ""
-            f.write(f'#EXTINF:-1 tvg-name="{title}" tvg-logo="{vlogo}" group-title="{GROUP}",{title}\n')
+            f.write(f'#EXTINF:-1 tvg-name="{title}" tvg-logo="{vlogo}" group-title="{r["group"]}",{title}\n')
             f.write(f'{r["m3u8"]}\n')
 
 print(f"\n✅ Selesai! File: {OUTPUT}")   
