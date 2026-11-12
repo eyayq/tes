@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+"""
+
+"""
 
 import requests
 import re
@@ -14,7 +17,7 @@ BASE_URL = "http://202.80.222.20"
 CDN_PATH = "/cdn/iptv/Tvod/001"
 CHANNEL_PATTERN = "channel2000{:03d}"
 ID_START = 1
-ID_END = 250
+ID_END = 500
 THREADS = 20
 TIMEOUT = 5
 OUTPUT_FILE = "playlist.m3u"
@@ -44,7 +47,7 @@ KNOWN_CHANNELS = {
     30:  {"name": "KOMPAS TV", "group": "TV Lokal"},
     31:  {"name": "iNEWS", "group": "TV Lokal"},
     32:  {"name": "NET.", "group": "TV Lokal"},
-    34:  {"name": "CHANNEL 34", "group": "TV Lokal"},  # <-- TAMBAHAN
+    34:  {"name": "CHANNEL 34", "group": "TV Lokal"},
     106: {"name": "MNCTV", "group": "TV Lokal"},
     113: {"name": "GTV", "group": "TV Lokal"},
     163: {"name": "FIGHT SPORTS", "group": "Olahraga"},
@@ -270,7 +273,6 @@ def generate_m3u(enriched_channels):
     enriched_channels.sort(key=lambda x: (x["group"], x["name"]))
 
     for ch in enriched_channels:
-        # TANPA tvg-logo, hanya tvg-id dan group-title
         attrs = f'tvg-id="{ch["tvg_id"]}"'
         attrs += f' group-title="{ch["group"]}"'
 
@@ -315,7 +317,8 @@ def fetch_community_metadata():
 
                         name_m = re.search(r',(.+)$', extinf)
                         group_m = re.search(r'group-title="([^"]+)"', extinf)
-                        id_m = re.search(r'channel(\d+)', line)
+                        # FIX: ekstrak 3 digit suffix, bukan seluruh angka
+                        id_m = re.search(r'channel2000(\d{3})', line)
 
                         if id_m:
                             cid = int(id_m.group(1))
