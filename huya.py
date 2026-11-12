@@ -1,6 +1,7 @@
 import subprocess
 import json
 import sys
+import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 USERS = [
@@ -12,25 +13,31 @@ USERS = [
 
 OUTPUT = "playlist.m3u"
 MAX_WORKERS = 7
+RETRIES = 2
 
 def fetch_video(url):
-    result = subprocess.run(
-        ["yt-dlp", "-J", "-f", "b", url],
-        capture_output=True, text=True
-    )
-    if result.returncode != 0:
-        return {"title": None, "thumbnail": None, "m3u8": None}
-    try:
-        d = json.loads(result.stdout)
-        return {
-            "title": d.get("title", "Unknown"),
-            "thumbnail": d.get("thumbnail", ""),
-            "m3u8": d.get("url", "")
-        }
-    except json.JSONDecodeError:
-        return {"title": None, "thumbnail": None, "m3u8": None}
+    for attempt in range(RETRIES):
+        result = subprocess.run(
+            ["yt-dlp", "-J", "-f", "b", url],
+            capture_output=True, text=True
+        )
+        if result.returncode == 0:
+            try:
+                d = json.loads(result.stdout)
+                return {
+                    "title": d.get("title", "Unknown"),
+                    "thumbnail": d.get("thumbnail", ""),
+                    "m3u8": d.get("url", "")
+                }
+            except json.JSONDecodeError:
+                pass
+        if attempt < RETRIES - 1:
+            wait = (attempt + 1) * 5
+            print(f"  Retry {attempt+1} ({wait}s): {url}")
+            time.sleep(wait)
+    return {"title": None, "thumbnail": None, "m3u8": None}
 
-# Collect all entries with their group
+# Collect all entries
 all_entries = []
 for user in USERS:
     result = subprocess.run(
@@ -40,7 +47,6 @@ for user in USERS:
     if result.returncode != 0:
         print(f"⚠️  Error: {user['url']}")
         continue
-
     data = json.loads(result.stdout)
     entries = data.get("entries", [])
     count = 0
@@ -81,4 +87,6 @@ with open(OUTPUT, "w") as f:
             f.write(f'#EXTINF:-1 tvg-name="{title}" tvg-logo="{vlogo}" group-title="{r["group"]}",{title}\n')
             f.write(f'{r["m3u8"]}\n')
 
-print(f"\n✅ Selesai! File: {OUTPUT}")   
+ok = sum(1 for r in results if r and r["m3u8"])
+fail = len(results) - ok
+print(f"\n✅ Selesai! {ok} sukses, {fail} gagal. File: {OUTPUT}")   
