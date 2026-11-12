@@ -1,115 +1,225 @@
-import requests
+#!/usr/bin/env python3
+
+import argparse
+import base64
+import datetime
 import json
 import re
-import time
-import base64
+import sys
+import urllib.request
 
-API_URL = "https://servicebuss.transvision.co.id/global/v4/channel-list?page=1&per_page=200&platform_id=1"
-TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXZpY2VfaWQiOiJ3ZWJfYnJvd3NlciIsImVtYWlsIjoibWFzdGVyX2FjY291bnRAdHJhbnN2aXNpb24uY28uaWQiLCJleHAiOjE3OTQ1NjY2MDAsImhvdGVsX2lkIjpudWxsLCJob3RlbF9uYW1lIjpudWxsLCJpc19iMmIiOmZhbHNlLCJpc19kZXZpY2VfdW5wYWlyZWQiOmZhbHNlLCJpc190diI6ZmFsc2UsImlzcF9pZCI6IjYiLCJpc3BfbmFtZSI6IlRyYW5zdmlzaW9uIiwicGFja2FnZV9saXN0IjpudWxsLCJwaG9uZSI6IjA4MTIwMDAxOTIwMSIsInJvbGVfaWQiOiI5IiwidXNlcl9pZCI6OTl9.aWxlZzjfPxBqWgkgiACFn80ffyVR42at7Fdh1fQcGxU"
-OUTPUT = "playlist.m3u"
-
-UA = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36"
-ORIGIN = "https://www.cubmu.com"
-REFERER = "https://www.cubmu.com/"
-
-cookies = {
-    'device_fp': 'U2FsdGVkX1+zdgtg0njhkkToFtWQAolfZL67uwGwUr0C1txwf6/imhUvjDuwLSVMu3vB6Ozru0fL/TdQZHjtNKMGQlJlsFC8iTJKWND8Pp/eX32QLev6okQFDAYBodWVh0u/7cJj+3MFkiisSI+MhRk2FUNJxSE76fta6TX9v0slsGidZrLcp4qzPznkqzHEn+FS0Z8xmthQk7Ku/kF2bvwr0lkAH8NJuzo35YwKntIKYd50aHK2aL08re1ZqcAHbIUynKn5QTt4NTBLRrcqOje2uO3qvSTwnzvCt9c05PbJiwcMGk6r2dMb5OibvaNOkEd+iKafNNCQFV9+ux7j1g==',
-    'access_token': TOKEN,
-    'refresh_token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXZpY2VfaWQiOiJ3ZWJfYnJvd3NlciIsImVtYWlsIjoibWFzdGVyX2FjY291bnRAdHJhbnN2aXNpb24uY28uaWQiLCJleHAiOjE3OTcwNzIyMDAsImhvdGVsX2lkIjpudWxsLCJob3RlbF9uYW1lIjpudWxsLCJpc19iMmIiOmZhbHNlLCJpc19kZXZpY2VfdW5wYWlyZWQiOmZhbHNlLCJpc190diI6ZmFsc2UsImlzcF9pZCI6IjYiLCJpc3BfbmFtZSI6IlRyYW5zdmlzaW9uIiwianRpIjoiOTNjMTA4ODEtYjRlZS00ZDE1LTkyMTQtZDljZGVlMDUzNmRkIiwicGFja2FnZV9saXN0IjpudWxsLCJwaG9uZSI6IjA4MTIwMDAxOTIwMSIsInJvbGVfaWQiOiI5IiwidXNlcl9pZCI6OTl9.n_czjsLezTMxsqEaOyhvdQwGyjrxvOU3JOsucUqSwAM',
-    'bitmovin_analytics_uuid': '4de777be-9165-444c-8913-330c299a03ae',
-}
-
-headers_api = {
-    "Authorization": f"Bearer {TOKEN}",
-    "Accept": "application/json, text/plain, */*",
-    "Origin": ORIGIN,
-    "Referer": REFERER,
-    "User-Agent": UA,
-}
-
-headers_page = {
-    "User-Agent": UA,
+DEFAULT_HEADERS = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-    "Accept-Language": "id-ID,id;q=0.5",
-    "Referer": "https://www.cubmu.com/live-tv",
+    "Accept-Language": "en-US,en;q=0.9",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0",
+    "sec-ch-ua": '"Microsoft Edge";v="149", "Chromium";v="149", "Not)A;Brand";v="24"',
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": '"Windows"',
 }
 
-# ─── Fetch channel list ───
-r = requests.get(API_URL, headers=headers_api)
-data = r.json()
 
-if data.get("status") != "success":
-    print(f"Error: {data.get('message')}")
-    exit(1)
+def load_cookies(path):
+    """Load cookies from a file, auto-detecting JSON, Netscape, or header string format."""
+    with open(path, 'r', encoding='utf-8') as f:
+        text = f.read().strip()
 
-items = data["data"]["items"]
-total_channels = 0
-failed = 0
+    # Try JSON first
+    if text.startswith('['):
+        try:
+            cookies = json.loads(text)
+            parts = []
+            for c in cookies:
+                parts.append("%s=%s" % (c['name'], c['value']))
+            return '; '.join(parts)
+        except (json.JSONDecodeError, KeyError):
+            pass
 
-def b64_to_hex(b64_str: str) -> str:
-    """Convert base64 → hex (lowercase, no padding)."""
-    return base64.b64decode(b64_str).hex()
-
-def get_next_data(html: str) -> dict:
-    m = re.search(r'<script id="__NEXT_DATA__" type="application/json">(.*?)</script>', html, re.DOTALL)
-    if not m:
-        return {}
-    return json.loads(m.group(1))
-
-def get_stream_info(slug: str) -> dict:
-    url = f"https://www.cubmu.com/watch/live-tv/{slug}"
-    try:
-        resp = requests.get(url, headers=headers_page, cookies=cookies, timeout=15)
-        nd = get_next_data(resp.text)
-        props = nd.get("props", {}).get("pageProps", {})
-        return {
-            "manifest": props.get("manifest", ""),
-            "clearkey": props.get("sourceDrmClearKey", {}),
-            "drm_detail": props.get("drmDetail", {}),
-            "device_id": props.get("deviceId", ""),
-        }
-    except Exception as e:
-        print(f"  ⚠️  {e}")
-        return {}
-
-with open(OUTPUT, "w", encoding="utf-8") as f:
-    f.write("#EXTM3U\n")
-    for genre in items:
-        genre_name = genre["genre_name"]
-        print(f"\n📺 {genre_name}: {len(genre['channels'])} channel")
-        for ch in genre["channels"]:
-            name = ch["channel_name"]
-            logo = ch["channel_image"]
-            ch_num = ch["channel_number"]
-            slug = ch.get("slug_url", f"{ch['channel_id']}-{name.lower().replace(' ', '-')}")
-
-            info = get_stream_info(slug)
-            manifest_url = info.get("manifest", "")
-            clearkey = info.get("clearkey", {})
-
-            if not manifest_url:
-                print(f"  ❌ {name} (ch {ch_num}) — manifest kosong")
-                failed += 1
+    # Try Netscape format
+    lines = text.splitlines()
+    if lines and lines[0].startswith('# Netscape'):
+        parts = []
+        for line in lines:
+            if line.startswith('#') or not line.strip():
                 continue
+            fields = line.split('\t')
+            if len(fields) >= 7:
+                parts.append("%s=%s" % (fields[5], fields[6]))
+        return '; '.join(parts)
 
-            f.write(f'#EXTINF:0 tvg-name="{name}" tvg-id="{ch_num}" tvg-logo="{logo}" group-title="{genre_name}",{name}\n')
+    # Assume raw header string
+    return text
 
-            # VLC headers
-            f.write(f'#EXTVLCOPT:http-user-agent={UA}\n')
-            f.write(f'#EXTVLCOPT:http-origin={ORIGIN}\n')
-            f.write(f'#EXTVLCOPT:http-referer={REFERER}\n')
 
-            # CLEARKEY — decode base64 → hex
-            if clearkey and clearkey.get("valid"):
-                kid_hex = b64_to_hex(clearkey["kid"])
-                key_hex = b64_to_hex(clearkey["k"])
-                f.write('#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey\n')
-                f.write(f'#KODIPROP:inputstream.adaptive.license_key={kid_hex}:{key_hex}\n')
+def fetch(url, cookies=None, extra_headers=None):
+    """Fetch a URL and return the response body as a string."""
+    headers = dict(DEFAULT_HEADERS)
+    if cookies:
+        headers["Cookie"] = cookies
+    if extra_headers:
+        headers.update(extra_headers)
+    req = urllib.request.Request(url, headers=headers)
+    with urllib.request.urlopen(req) as resp:
+        return resp.read().decode("utf-8")
 
-            f.write(f'{manifest_url}\n')
-            total_channels += 1
-            print(f"  ✅ {name} (ch {ch_num})")
 
-            time.sleep(0.5)
+def extract_next_data(html):
+    """Extract and parse the __NEXT_DATA__ JSON from the HTML."""
+    match = re.search(
+        r'<script\s+id="__NEXT_DATA__"\s+type="application/json">(.*?)</script>',
+        html, re.DOTALL
+    )
+    if not match:
+        raise ValueError("No __NEXT_DATA__ script tag found in HTML")
+    return json.loads(match.group(1))
 
-print(f"\n✅ Selesai! {total_channels} channel, {failed} gagal. File: {OUTPUT}")   
+
+def find_player_js_url(html):
+    """Find the live-tv player JS chunk URL from the HTML."""
+    match = re.search(
+        r'<script\s+src="(/_next/static/chunks/pages/play/live-tv-[^"]+)"',
+        html
+    )
+    if not match:
+        raise ValueError("No live-tv player JS chunk found in HTML")
+    return "https://www.cubmu.com" + match.group(1)
+
+
+def extract_drm_key(js_text):
+    """Extract drmDecryptKey value from the player JS."""
+    match = re.search(r'drmDecryptKey\s*:\s*"([^"]+)"', js_text)
+    if not match:
+        raise ValueError("drmDecryptKey not found in player JS")
+    return match.group(1)
+
+
+def safe_b64decode(s):
+    """Base64 decode with URL-safe variant support."""
+    padded = s.replace('-', '+').replace('_', '/')
+    missing = len(padded) % 4
+    if missing:
+        padded += '=' * (4 - missing)
+    return base64.b64decode(padded)
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Decrypt CubMu ClearKey DRM from live URL."
+    )
+    parser.add_argument("url", help="CubMu live-tv page URL")
+    parser.add_argument("--cookie", "-c", metavar="FILE",
+                        help="Cookie file (JSON, Netscape, or header string)")
+    args = parser.parse_args()
+
+    cookies = load_cookies(args.cookie) if args.cookie else None
+
+    # --- Fetch the live-tv HTML page ---
+    print("Fetching page: %s" % args.url)
+    html = fetch(args.url, cookies=cookies)
+    page_data = extract_next_data(html)
+    page = page_data['props']['pageProps']
+
+    # --- Find and fetch the player JS chunk ---
+    js_url = find_player_js_url(html)
+    print("Fetching player JS: %s" % js_url)
+    js_text = fetch(js_url, extra_headers={"Referer": args.url})
+
+    # --- Extract drmDecryptKey from player JS ---
+    drm_key = extract_drm_key(js_text)
+
+    # --- Extract manifest + clearKey from page data ---
+    manifest_url = page.get('manifest', '')
+    ck = page.get('clearKey', {})
+    ck_data_b64 = ck.get('data', '')
+    ck_iv_b64 = ck.get('iv', '')
+
+    if not ck_data_b64 or not ck_iv_b64:
+        print("Error: No clearKey data or IV found in page.")
+        sys.exit(1)
+
+    dk_raw = drm_key.encode('utf-8')
+    ck_data = safe_b64decode(ck_data_b64)
+    iv = safe_b64decode(ck_iv_b64)
+
+    # --- Output ---
+    print()
+    print("[DRM Decrypt Key]")
+    print("  String:  %s" % drm_key)
+    print("  Hex:     %s" % dk_raw.hex())
+    print("  Length:  %d bytes (%d bits)" % (len(dk_raw), len(dk_raw) * 8))
+    print()
+
+    print("=" * 70)
+    print("DECRYPTING clearKey.data")
+    print("=" * 70)
+    print()
+    print("Method: AES-256-CBC")
+    print("Key:    drmDecryptKey as raw string bytes (%d bytes)" % len(dk_raw))
+    print("IV:     clearKey.iv (%s)" % iv.hex())
+    print()
+
+    # --- Decrypt ---
+    try:
+        from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+    except ImportError:
+        print("Error: 'cryptography' library not available. Install with:")
+        print("  pip install cryptography")
+        sys.exit(1)
+
+    try:
+        cipher = Cipher(algorithms.AES(dk_raw), modes.CBC(iv))
+        dec = cipher.decryptor()
+        pt = dec.update(ck_data) + dec.finalize()
+
+        # Remove PKCS7 padding
+        pad_len = pt[-1]
+        if 1 <= pad_len <= 16 and all(b == pad_len for b in pt[-pad_len:]):
+            pt = pt[:-pad_len]
+
+        print("Decrypted ClearKey License (%d bytes):" % len(pt))
+        print()
+
+        license_json = json.loads(pt.decode('utf-8'))
+        print(json.dumps(license_json, indent=2))
+        print()
+
+        for i, k_entry in enumerate(license_json.get('keys', [])):
+            print("--- Content Key #%d ---" % (i + 1))
+            print("  kid (Key ID): %s" % k_entry.get('kid', 'N/A'))
+            print("  k   (Key):    %s" % k_entry.get('k', 'N/A'))
+            print("  kty (Type):   %s" % k_entry.get('kty', 'N/A'))
+            if 'k' in k_entry:
+                raw_key = safe_b64decode(k_entry['k'])
+                print("  k decoded:    %s (%d bytes)" % (raw_key.hex(), len(raw_key)))
+            if 'kid' in k_entry:
+                raw_kid = safe_b64decode(k_entry['kid'])
+                print("  kid decoded:  %s (%d bytes)" % (raw_kid.hex(), len(raw_kid)))
+            print()
+
+        if 'exp' in license_json:
+            exp_ts = license_json['exp']
+            try:
+                exp_dt = datetime.datetime.fromtimestamp(exp_ts)
+                print("Expires: %s (timestamp: %d)" % (exp_dt.isoformat(), exp_ts))
+            except Exception:
+                print("Expires: timestamp %d" % exp_ts)
+        if 'type' in license_json:
+            print("Type: %s" % license_json['type'])
+
+    except Exception as e:
+        print("AES-256-CBC decryption failed: %s" % e)
+        sys.exit(1)
+
+    print()
+    print("Done.")
+    print()
+    print("Manifest: %s" % manifest_url)
+    print()
+
+    # --- kid:key pair ---
+    raw_key = safe_b64decode(license_json['keys'][0]['k'])
+    raw_kid = safe_b64decode(license_json['keys'][0]['kid'])
+    print("%s:%s" % (raw_kid.hex(), raw_key.hex()))
+
+
+if __name__ == '__main__':
+    main()
