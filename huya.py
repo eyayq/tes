@@ -1,3 +1,4 @@
+
 import subprocess
 import json
 import sys
@@ -11,11 +12,11 @@ USERS = [
 ]
 
 OUTPUT = "playlist.m3u"
-MAX_WORKERS = 8
+MAX_WORKERS = 10
 
 def fetch_video(url):
     result = subprocess.run(
-        ["yt-dlp", "-J", "-f", "bv*", url],
+        ["yt-dlp", "-J", "-f", "b", url],  # ← "b" = video + audio
         capture_output=True, text=True
     )
     if result.returncode != 0:
@@ -30,7 +31,6 @@ def fetch_video(url):
     except json.JSONDecodeError:
         return {"title": None, "thumbnail": None, "m3u8": None}
 
-# Collect all entries with their group
 all_entries = []
 for user in USERS:
     result = subprocess.run(
@@ -40,7 +40,6 @@ for user in USERS:
     if result.returncode != 0:
         print(f"⚠️  Error: {user['url']}")
         continue
-
     data = json.loads(result.stdout)
     entries = data.get("entries", [])
     count = 0
@@ -53,7 +52,6 @@ for user in USERS:
 
 print(f"\nTotal: {len(all_entries)} video\n")
 
-# Fetch all (paralel)
 def fetch_with_group(entry):
     r = fetch_video(entry["url"])
     r["group"] = entry["group"]
@@ -71,7 +69,6 @@ with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
         status = "✅" if r["m3u8"] else "⚠️"
         print(f"[{done}/{len(all_entries)}] {status} {r['title']}")
 
-# Write M3U
 with open(OUTPUT, "w") as f:
     f.write("#EXTM3U\n")
     for r in results:
