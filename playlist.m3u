@@ -1,5 +1,8 @@
 #EXTM3U
 
+#EXTINF:-1 tvg-id="Channel157.id" group-title="Kids",BUDDY STAR
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000157/1024.m3u8
+
 #EXTINF:-1 tvg-id="Channel151.id" group-title="Kids",Channel 151
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000151/1024.m3u8
 
@@ -9,38 +12,41 @@ http://202.80.222.20/cdn/iptv/Tvod/001/channel2000152/1024.m3u8
 #EXTINF:-1 tvg-id="Channel153.id" group-title="Kids",Channel 153
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000153/1024.m3u8
 
-#EXTINF:-1 tvg-id="Channel154.id" group-title="Kids",Channel 154
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000154/1024.m3u8
-
-#EXTINF:-1 tvg-id="Channel155.id" group-title="Kids",Channel 155
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000155/1024.m3u8
-
-#EXTINF:-1 tvg-id="Channel156.id" group-title="Kids",Channel 156
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000156/1024.m3u8
-
-#EXTINF:-1 tvg-id="Channel157.id" group-title="Kids",Channel 157
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000157/1024.m3u8
-
 #EXTINF:-1 tvg-id="Channel158.id" group-title="Kids",Channel 158
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000158/1024.m3u8
 
 #EXTINF:-1 tvg-id="Channel159.id" group-title="Kids",Channel 159
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000159/1024.m3u8
 
-#EXTINF:-1 tvg-id="Channel160.id" group-title="Kids",Channel 160
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000160/1024.m3u8
-
-#EXTINF:-1 tvg-id="Channel161.id" group-title="Kids",Channel 161
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000161/1024.m3u8
-
 #EXTINF:-1 tvg-id="Channel162.id" group-title="Kids",Channel 162
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000162/1024.m3u8
 
-#EXTINF:-1 tvg-id="Channel164.id" group-title="Kids",Channel 164
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000164/1024.m3u8
-
 #EXTINF:-1 tvg-id="Channel165.id" group-title="Kids",Channel 165
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000165/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel164.id" group-title="Kids",DREAMWORKS
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000164/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel154.id" group-title="Kids",ORIGINALS
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000154/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel161.id" group-title="Kids",OUTDOOR CHANNEL
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000161/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel160.id" group-title="Kids",SPOTV
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000160/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel155.id" group-title="Kids",SUPRERRIX
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000155/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel156.id" group-title="Kids",UNIQUES
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000156/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel119.id" group-title="Movies",AXN
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000119/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel116.id" group-title="Movies",BBC EARTH
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000116/1024.m3u8
 
 #EXTINF:-1 tvg-id="Channel107.id" group-title="Movies",Channel 107
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000107/1024.m3u8
@@ -51,35 +57,11 @@ http://202.80.222.20/cdn/iptv/Tvod/001/channel2000108/1024.m3u8
 #EXTINF:-1 tvg-id="Channel109.id" group-title="Movies",Channel 109
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000109/1024.m3u8
 
-#EXTINF:-1 tvg-id="Channel110.id" group-title="Movies",Channel 110
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000110/1024.m3u8
-
 #EXTINF:-1 tvg-id="Channel111.id" group-title="Movies",Channel 111
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000111/1024.m3u8
 
 #EXTINF:-1 tvg-id="Channel112.id" group-title="Movies",Channel 112
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000112/1024.m3u8
-
-#EXTINF:-1 tvg-id="Channel114.id" group-title="Movies",Channel 114
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000114/1024.m3u8
-
-#EXTINF:-1 tvg-id="Channel115.id" group-title="Movies",Channel 115
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000115/1024.m3u8
-
-#EXTINF:-1 tvg-id="Channel116.id" group-title="Movies",Channel 116
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000116/1024.m3u8
-
-#EXTINF:-1 tvg-id="Channel117.id" group-title="Movies",Channel 117
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000117/1024.m3u8
-
-#EXTINF:-1 tvg-id="Channel118.id" group-title="Movies",Channel 118
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000118/1024.m3u8
-
-#EXTINF:-1 tvg-id="Channel119.id" group-title="Movies",Channel 119
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000119/1024.m3u8
-
-#EXTINF:-1 tvg-id="Channel120.id" group-title="Movies",Channel 120
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000120/1024.m3u8
 
 #EXTINF:-1 tvg-id="Channel81.id" group-title="Movies",Channel 81
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000081/1024.m3u8
@@ -117,6 +99,27 @@ http://202.80.222.20/cdn/iptv/Tvod/001/channel2000096/1024.m3u8
 #EXTINF:-1 tvg-id="Channel99.id" group-title="Movies",Channel 99
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000099/1024.m3u8
 
+#EXTINF:-1 tvg-id="Channel117.id" group-title="Movies",GALAXY
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000117/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel114.id" group-title="Movies",HITS
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000114/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel118.id" group-title="Movies",NICK JR
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000118/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel120.id" group-title="Movies",ROCK ACTION
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000120/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel110.id" group-title="Movies",ROCK ENTERTAINMENT
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000110/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel115.id" group-title="Movies",SINDO NEWS TV
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000115/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel70.id" group-title="News",CRIME INVESTIGATION
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000070/1024.m3u8
+
 #EXTINF:-1 tvg-id="Channel51.id" group-title="News",Channel 51
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000051/1024.m3u8
 
@@ -125,9 +128,6 @@ http://202.80.222.20/cdn/iptv/Tvod/001/channel2000052/1024.m3u8
 
 #EXTINF:-1 tvg-id="Channel53.id" group-title="News",Channel 53
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000053/1024.m3u8
-
-#EXTINF:-1 tvg-id="Channel54.id" group-title="News",Channel 54
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000054/1024.m3u8
 
 #EXTINF:-1 tvg-id="Channel55.id" group-title="News",Channel 55
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000055/1024.m3u8
@@ -143,12 +143,6 @@ http://202.80.222.20/cdn/iptv/Tvod/001/channel2000058/1024.m3u8
 
 #EXTINF:-1 tvg-id="Channel59.id" group-title="News",Channel 59
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000059/1024.m3u8
-
-#EXTINF:-1 tvg-id="Channel60.id" group-title="News",Channel 60
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000060/1024.m3u8
-
-#EXTINF:-1 tvg-id="Channel61.id" group-title="News",Channel 61
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000061/1024.m3u8
 
 #EXTINF:-1 tvg-id="Channel62.id" group-title="News",Channel 62
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000062/1024.m3u8
@@ -174,9 +168,6 @@ http://202.80.222.20/cdn/iptv/Tvod/001/channel2000068/1024.m3u8
 #EXTINF:-1 tvg-id="Channel69.id" group-title="News",Channel 69
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000069/1024.m3u8
 
-#EXTINF:-1 tvg-id="Channel70.id" group-title="News",Channel 70
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000070/1024.m3u8
-
 #EXTINF:-1 tvg-id="Channel71.id" group-title="News",Channel 71
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000071/1024.m3u8
 
@@ -201,8 +192,20 @@ http://202.80.222.20/cdn/iptv/Tvod/001/channel2000078/1024.m3u8
 #EXTINF:-1 tvg-id="Channel79.id" group-title="News",Channel 79
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000079/1024.m3u8
 
-#EXTINF:-1 tvg-id="Channel80.id" group-title="News",Channel 80
+#EXTINF:-1 tvg-id="Channel80.id" group-title="News",JAKTV
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000080/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel54.id" group-title="News",JTV
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000054/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel60.id" group-title="News",NICKELODEON
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000060/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel61.id" group-title="News",Z BIOSKOP
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000061/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel145.id" group-title="Olahraga",CINEEDGE
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000145/1024.m3u8
 
 #EXTINF:-1 tvg-id="Channel121.id" group-title="Olahraga",Channel 121
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000121/1024.m3u8
@@ -210,38 +213,14 @@ http://202.80.222.20/cdn/iptv/Tvod/001/channel2000121/1024.m3u8
 #EXTINF:-1 tvg-id="Channel122.id" group-title="Olahraga",Channel 122
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000122/1024.m3u8
 
-#EXTINF:-1 tvg-id="Channel123.id" group-title="Olahraga",Channel 123
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000123/1024.m3u8
-
-#EXTINF:-1 tvg-id="Channel124.id" group-title="Olahraga",Channel 124
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000124/1024.m3u8
-
 #EXTINF:-1 tvg-id="Channel125.id" group-title="Olahraga",Channel 125
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000125/1024.m3u8
-
-#EXTINF:-1 tvg-id="Channel126.id" group-title="Olahraga",Channel 126
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000126/1024.m3u8
-
-#EXTINF:-1 tvg-id="Channel127.id" group-title="Olahraga",Channel 127
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000127/1024.m3u8
-
-#EXTINF:-1 tvg-id="Channel128.id" group-title="Olahraga",Channel 128
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000128/1024.m3u8
 
 #EXTINF:-1 tvg-id="Channel129.id" group-title="Olahraga",Channel 129
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000129/1024.m3u8
 
-#EXTINF:-1 tvg-id="Channel130.id" group-title="Olahraga",Channel 130
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000130/1024.m3u8
-
 #EXTINF:-1 tvg-id="Channel131.id" group-title="Olahraga",Channel 131
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000131/1024.m3u8
-
-#EXTINF:-1 tvg-id="Channel132.id" group-title="Olahraga",Channel 132
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000132/1024.m3u8
-
-#EXTINF:-1 tvg-id="Channel133.id" group-title="Olahraga",Channel 133
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000133/1024.m3u8
 
 #EXTINF:-1 tvg-id="Channel134.id" group-title="Olahraga",Channel 134
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000134/1024.m3u8
@@ -255,12 +234,6 @@ http://202.80.222.20/cdn/iptv/Tvod/001/channel2000136/1024.m3u8
 #EXTINF:-1 tvg-id="Channel137.id" group-title="Olahraga",Channel 137
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000137/1024.m3u8
 
-#EXTINF:-1 tvg-id="Channel138.id" group-title="Olahraga",Channel 138
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000138/1024.m3u8
-
-#EXTINF:-1 tvg-id="Channel139.id" group-title="Olahraga",Channel 139
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000139/1024.m3u8
-
 #EXTINF:-1 tvg-id="Channel140.id" group-title="Olahraga",Channel 140
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000140/1024.m3u8
 
@@ -273,20 +246,11 @@ http://202.80.222.20/cdn/iptv/Tvod/001/channel2000142/1024.m3u8
 #EXTINF:-1 tvg-id="Channel143.id" group-title="Olahraga",Channel 143
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000143/1024.m3u8
 
-#EXTINF:-1 tvg-id="Channel144.id" group-title="Olahraga",Channel 144
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000144/1024.m3u8
-
-#EXTINF:-1 tvg-id="Channel145.id" group-title="Olahraga",Channel 145
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000145/1024.m3u8
-
 #EXTINF:-1 tvg-id="Channel146.id" group-title="Olahraga",Channel 146
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000146/1024.m3u8
 
 #EXTINF:-1 tvg-id="Channel147.id" group-title="Olahraga",Channel 147
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000147/1024.m3u8
-
-#EXTINF:-1 tvg-id="Channel148.id" group-title="Olahraga",Channel 148
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000148/1024.m3u8
 
 #EXTINF:-1 tvg-id="Channel149.id" group-title="Olahraga",Channel 149
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000149/1024.m3u8
@@ -297,14 +261,65 @@ http://202.80.222.20/cdn/iptv/Tvod/001/channel2000150/1024.m3u8
 #EXTINF:-1 tvg-id="Channel163.id" group-title="Olahraga",FIGHT SPORTS
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000163/1024.m3u8
 
+#EXTINF:-1 tvg-id="Channel126.id" group-title="Olahraga",GALAXY PREMIUM
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000126/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel132.id" group-title="Olahraga",GLOBAL TREKKER
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000132/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel139.id" group-title="Olahraga",HITS MOVIES
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000139/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel148.id" group-title="Olahraga",ID: BEIN SPORTS 2
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000148/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel133.id" group-title="Olahraga",IMC INDONESIA MOVIE CHANNEL
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000133/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel128.id" group-title="Olahraga",INEWS
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000128/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel127.id" group-title="Olahraga",LOVE NATURE 4K
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000127/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel123.id" group-title="Olahraga",ONE
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000123/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel144.id" group-title="Olahraga",SOCCER CHANNEL
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000144/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel124.id" group-title="Olahraga",SPORTSTARS 2
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000124/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel138.id" group-title="Olahraga",SPOTV2
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000138/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel130.id" group-title="Olahraga",VISION PRIME HD
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000130/1024.m3u8
+
 #EXTINF:-1 tvg-id="Channel23.id" group-title="TV Lokal",ANTV
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000023/1024.m3u8
 
-#EXTINF:-1 tvg-id="Channel34.id" group-title="TV Lokal",CHANNEL 34
+#EXTINF:-1 tvg-id="Channel22.id" group-title="TV Lokal",ANTV
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000022/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel34.id" group-title="TV Lokal",ARIRANG
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000034/1024.m3u8
 
-#EXTINF:-1 tvg-id="Channel28.id" group-title="TV Lokal",CNN INDONESIA
+#EXTINF:-1 tvg-id="Channel42.id" group-title="TV Lokal",BALI TV
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000042/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel6.id" group-title="TV Lokal",CBEEBIES
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000006/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel28.id" group-title="TV Lokal",CCM
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000028/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel15.id" group-title="TV Lokal",CELEBRITIES TV
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000015/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel32.id" group-title="TV Lokal",CELESTIAL MOVIES
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000032/1024.m3u8
 
 #EXTINF:-1 tvg-id="Channel11.id" group-title="TV Lokal",Channel 11
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000011/1024.m3u8
@@ -312,32 +327,17 @@ http://202.80.222.20/cdn/iptv/Tvod/001/channel2000011/1024.m3u8
 #EXTINF:-1 tvg-id="Channel12.id" group-title="TV Lokal",Channel 12
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000012/1024.m3u8
 
-#EXTINF:-1 tvg-id="Channel13.id" group-title="TV Lokal",Channel 13
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000013/1024.m3u8
-
 #EXTINF:-1 tvg-id="Channel14.id" group-title="TV Lokal",Channel 14
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000014/1024.m3u8
 
-#EXTINF:-1 tvg-id="Channel15.id" group-title="TV Lokal",Channel 15
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000015/1024.m3u8
-
-#EXTINF:-1 tvg-id="Channel16.id" group-title="TV Lokal",Channel 16
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000016/1024.m3u8
-
 #EXTINF:-1 tvg-id="Channel17.id" group-title="TV Lokal",Channel 17
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000017/1024.m3u8
-
-#EXTINF:-1 tvg-id="Channel18.id" group-title="TV Lokal",Channel 18
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000018/1024.m3u8
 
 #EXTINF:-1 tvg-id="Channel19.id" group-title="TV Lokal",Channel 19
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000019/1024.m3u8
 
 #EXTINF:-1 tvg-id="Channel2.id" group-title="TV Lokal",Channel 2
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000002/1024.m3u8
-
-#EXTINF:-1 tvg-id="Channel20.id" group-title="TV Lokal",Channel 20
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000020/1024.m3u8
 
 #EXTINF:-1 tvg-id="Channel21.id" group-title="TV Lokal",Channel 21
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000021/1024.m3u8
@@ -350,9 +350,6 @@ http://202.80.222.20/cdn/iptv/Tvod/001/channel2000035/1024.m3u8
 
 #EXTINF:-1 tvg-id="Channel36.id" group-title="TV Lokal",Channel 36
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000036/1024.m3u8
-
-#EXTINF:-1 tvg-id="Channel37.id" group-title="TV Lokal",Channel 37
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000037/1024.m3u8
 
 #EXTINF:-1 tvg-id="Channel38.id" group-title="TV Lokal",Channel 38
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000038/1024.m3u8
@@ -369,20 +366,11 @@ http://202.80.222.20/cdn/iptv/Tvod/001/channel2000040/1024.m3u8
 #EXTINF:-1 tvg-id="Channel41.id" group-title="TV Lokal",Channel 41
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000041/1024.m3u8
 
-#EXTINF:-1 tvg-id="Channel42.id" group-title="TV Lokal",Channel 42
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000042/1024.m3u8
-
 #EXTINF:-1 tvg-id="Channel43.id" group-title="TV Lokal",Channel 43
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000043/1024.m3u8
 
 #EXTINF:-1 tvg-id="Channel44.id" group-title="TV Lokal",Channel 44
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000044/1024.m3u8
-
-#EXTINF:-1 tvg-id="Channel45.id" group-title="TV Lokal",Channel 45
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000045/1024.m3u8
-
-#EXTINF:-1 tvg-id="Channel46.id" group-title="TV Lokal",Channel 46
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000046/1024.m3u8
 
 #EXTINF:-1 tvg-id="Channel47.id" group-title="TV Lokal",Channel 47
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000047/1024.m3u8
@@ -396,17 +384,14 @@ http://202.80.222.20/cdn/iptv/Tvod/001/channel2000049/1024.m3u8
 #EXTINF:-1 tvg-id="Channel5.id" group-title="TV Lokal",Channel 5
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000005/1024.m3u8
 
-#EXTINF:-1 tvg-id="Channel50.id" group-title="TV Lokal",Channel 50
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000050/1024.m3u8
-
-#EXTINF:-1 tvg-id="Channel6.id" group-title="TV Lokal",Channel 6
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000006/1024.m3u8
-
 #EXTINF:-1 tvg-id="Channel7.id" group-title="TV Lokal",Channel 7
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000007/1024.m3u8
 
 #EXTINF:-1 tvg-id="Channel8.id" group-title="TV Lokal",Channel 8
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000008/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel13.id" group-title="TV Lokal",ENT
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000013/1024.m3u8
 
 #EXTINF:-1 tvg-id="Channel26.id" group-title="TV Lokal",GTV
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000026/1024.m3u8
@@ -414,14 +399,26 @@ http://202.80.222.20/cdn/iptv/Tvod/001/channel2000026/1024.m3u8
 #EXTINF:-1 tvg-id="Channel113.id" group-title="TV Lokal",GTV
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000113/1024.m3u8
 
+#EXTINF:-1 tvg-id="Channel20.id" group-title="TV Lokal",HANACARAKA TV
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000020/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel27.id" group-title="TV Lokal",HISTORY
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000027/1024.m3u8
+
 #EXTINF:-1 tvg-id="Channel24.id" group-title="TV Lokal",INDOSIAR
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000024/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel37.id" group-title="TV Lokal",KIX
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000037/1024.m3u8
 
 #EXTINF:-1 tvg-id="Channel30.id" group-title="TV Lokal",KOMPAS TV
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000030/1024.m3u8
 
-#EXTINF:-1 tvg-id="Channel27.id" group-title="TV Lokal",METRO TV
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000027/1024.m3u8
+#EXTINF:-1 tvg-id="Channel50.id" group-title="TV Lokal",LIFE
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000050/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel46.id" group-title="TV Lokal",LIFETIME
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000046/1024.m3u8
 
 #EXTINF:-1 tvg-id="Channel25.id" group-title="TV Lokal",MNCTV
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000025/1024.m3u8
@@ -429,11 +426,17 @@ http://202.80.222.20/cdn/iptv/Tvod/001/channel2000025/1024.m3u8
 #EXTINF:-1 tvg-id="Channel106.id" group-title="TV Lokal",MNCTV
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000106/1024.m3u8
 
-#EXTINF:-1 tvg-id="Channel32.id" group-title="TV Lokal",NET.
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000032/1024.m3u8
+#EXTINF:-1 tvg-id="Channel29.id" group-title="TV Lokal",NHK WORLD
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000029/1024.m3u8
 
-#EXTINF:-1 tvg-id="Channel22.id" group-title="TV Lokal",SCTV
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000022/1024.m3u8
+#EXTINF:-1 tvg-id="Channel16.id" group-title="TV Lokal",REFORMED 21
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000016/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel45.id" group-title="TV Lokal",SPORTSTARS 4
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000045/1024.m3u8
+
+#EXTINF:-1 tvg-id="Channel1.id" group-title="TV Lokal",THRILL
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000001/1024.m3u8
 
 #EXTINF:-1 tvg-id="Channel10.id" group-title="TV Lokal",TRANS 7
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000010/1024.m3u8
@@ -441,11 +444,8 @@ http://202.80.222.20/cdn/iptv/Tvod/001/channel2000010/1024.m3u8
 #EXTINF:-1 tvg-id="Channel9.id" group-title="TV Lokal",TRANS TV
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000009/1024.m3u8
 
-#EXTINF:-1 tvg-id="Channel29.id" group-title="TV Lokal",TV ONE
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000029/1024.m3u8
-
-#EXTINF:-1 tvg-id="Channel1.id" group-title="TV Lokal",TVRI
-http://202.80.222.20/cdn/iptv/Tvod/001/channel2000001/1024.m3u8
+#EXTINF:-1 tvg-id="Channel18.id" group-title="TV Lokal",TVONE
+http://202.80.222.20/cdn/iptv/Tvod/001/channel2000018/1024.m3u8
 
 #EXTINF:-1 tvg-id="Channel31.id" group-title="TV Lokal",iNEWS
 http://202.80.222.20/cdn/iptv/Tvod/001/channel2000031/1024.m3u8
