@@ -1,7 +1,6 @@
 import subprocess
 import json
 import sys
-import requests
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 USER_URL = "https://www.dailymotion.com/user/Film_Horor_Indonesia"
@@ -9,19 +8,7 @@ OUTPUT = "playlist.m3u"
 GROUP = "Film Horor Indonesia"
 MAX_WORKERS = 5
 
-def extract_vid(entry):
-    """Ekstrak video ID dari entry flat-playlist"""
-    vid = entry.get("id", "")
-    if not vid:
-        url = entry.get("url", "")
-        if "/video/" in url:
-            vid = url.split("/video/")[1].split("?")[0].strip("/")
-    # Pastikan format x + angka (ID Dailymotion)
-    if not vid or not vid.startswith("x"):
-        return None
-    return vid
-
-# Step 1: Get video IDs
+# Step 1: Get video URLs (fast, flat)
 result = subprocess.run(
     ["yt-dlp", "--flat-playlist", "-J", USER_URL],
     capture_output=True, text=True
@@ -32,61 +19,53 @@ if result.returncode != 0:
 
 data = json.loads(result.stdout)
 entries = data.get("entries", [])
-
-video_ids = []
+video_urls = []
 for e in entries:
-    vid = extract_vid(e)
-    if vid:
-        video_ids.append(vid)
+    url = e.get("url") or f"https://www.dailymotion.com/video/{e.get('id', '')}"
+    if url and url.startswith("http"):
+        video_urls.append(url)
 
-print(f"Total: {len(video_ids)} video (dari {len(entries)} entries)")
+print(f"Total: {len(video_urls)} video\n")
 
-# Step 2: Batch-fetch titles & thumbnails
-meta = {}
-BATCH = 50
-for i in range(0, len(video_ids), BATCH):
-    chunk = video_ids[i:i+BATCH]
-    r = requests.get("https://api.dailymotion.com/videos",
-        params={"ids": ",".join(chunk), "fields": "id,title,thumbnail_url"})
-    for v in r.json().get("list", []):
-        meta[v["id"]] = {"title": v["title"], "thumbnail": v.get("thumbnail_url", "")}
-    print(f"  Metadata: {min(i+BATCH, len(video_ids))}/{len(video_ids)}")
-
-# Cek berapa yang tidak ketemu
-not_found = [vid for vid in video_ids if vid not in meta]
-if not_found:
-    print(f"  ⚠️  {len(not_found)} video tidak ditemukan di API")
-
-# Step 3: Get m3u8 URLs (paralel)
-def get_m3u8(vid):
-    url = f"https://www.dailymotion.com/video/{vid}"
+# Step 2: Get full metadata + m3u8 (paralel)
+def fetch_video(url):
     result = subprocess.run(
-        ["yt-dlp", "-g", "-f", "bv*", url],
+        ["yt-dlp", "-J", "-f", "bv*", url],
         capture_output=True, text=True
     )
-    return vid, result.stdout.strip() if result.returncode == 0 else None
+    if result.returncode != 0:
+        return {"url": url, "title": None, "thumbnail": None, "m3u8": None}
+    try:
+        d = json.loads(result.stdout)
+        return {
+            "url": url,
+            "title": d.get("title", "Unknown"),
+            "thumbnail": d.get("thumbnail", ""),
+            "m3u8": d.get("url", "")
+        }
+    except json.JSONDecodeError:
+        return {"url": url, "title": None, "thumbnail": None, "m3u8": None}
 
-m3u8_map = {}
+results = [None] * len(video_urls)
 with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
-    futures = {pool.submit(get_m3u8, vid): vid for vid in video_ids}
+    futures = {pool.submit(fetch_video, url): i for i, url in enumerate(video_urls)}
     done = 0
     for future in as_completed(futures):
-        vid, m3u8 = future.result()
-        m3u8_map[vid] = m3u8
+        i = futures[future]
+        results[i] = future.result()
         done += 1
-        title = meta.get(vid, {}).get("title", "Unknown")
-        print(f"[{done}/{len(video_ids)}] {'✅' if m3u8 else '⚠️'} {title}")
+        r = results[i]
+        status = "✅" if r["m3u8"] else "⚠️"
+        print(f"[{done}/{len(video_urls)}] {status} {r['title']}")
 
-# Step 4: Write M3U
+# Step 3: Write M3U
 with open(OUTPUT, "w") as f:
     f.write("#EXTM3U\n")
-    for vid in video_ids:
-        m = meta.get(vid, {})
-        m3u8 = m3u8_map.get(vid)
-        title = m.get("title", "Unknown")
-        vlogo = m.get("thumbnail", "")
-        if m3u8:
+    for r in results:
+        if r and r["m3u8"]:
+            title = r["title"] or "Unknown"
+            vlogo = r["thumbnail"] or ""
             f.write(f'#EXTINF:-1 tvg-name="{title}" tvg-logo="{vlogo}" group-title="{GROUP}",{title}\n')
-            f.write(f'{m3u8}\n')
+            f.write(f'{r["m3u8"]}\n')
 
 print(f"\n✅ Selesai! File: {OUTPUT}")   
