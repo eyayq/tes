@@ -241,7 +241,7 @@ def scrape():
 
                 if stream_url:
                     entries.append({
-                        "group_title": cat_name,
+                        "group_title": "tv nasional prem",
                         "tvg_name": title,
                         "tvg_logo": logo,
                         "stream_url": stream_url,
