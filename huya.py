@@ -4,12 +4,13 @@ import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 USERS = [
+    {"url": "https://www.dailymotion.com/user/k-dramaa", "group": "Korean Drama"},
     {"url": "https://www.dailymotion.com/user/Film_Horor_Indonesia", "group": "Film Horor Indonesia"},
     {"url": "https://www.dailymotion.com/user/sugondofilm.55", "group": "Film Horor Indonesia 2"},
 ]
 
 OUTPUT = "playlist.m3u"
-MAX_WORKERS = 5
+MAX_WORKERS = 8
 
 def fetch_video(url):
     result = subprocess.run(
