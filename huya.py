@@ -183,17 +183,8 @@ def worker_fetch_genre_page(args):
 # ============================================================
 # PROCESS MOVIE DATA
 # ============================================================
-# Genre yang punya group-title sendiri
-PRIORITY_GENRES = {"Cerita Indonesia", "Horror & Thriller"}
-
 def _process_movie_list(movies, genre_name, entries, seen_ids):
     """Proses list movie, tambahkan ke entries (dedup by movie_id)"""
-    # Tentukan group-title
-    if genre_name in PRIORITY_GENRES:
-        group = f"VOD - {genre_name}"
-    else:
-        group = "VOD - Other"
-
     for item in movies:
         movie_id = item.get("movie_id", "")
         title = item.get("title", "")
@@ -203,11 +194,11 @@ def _process_movie_list(movies, genre_name, entries, seen_ids):
         if play_url and movie_id not in seen_ids:
             seen_ids.add(movie_id)
             entries.append({
-                "group_title": group,
+                "group_title": f"VOD - {genre_name}",
                 "tvg_name": title,
                 "tvg_logo": logo,
                 "stream_url": play_url,
-            })   
+            })
 
 
 # ============================================================
@@ -279,7 +270,7 @@ def scrape():
 
                 if play_url:
                     entries.append({
-                        "group_title": "epg",
+                        "group_title": f"{ch_info['title']} - EPG",
                         "tvg_name": f"{title} [{start_end}]",
                         "tvg_logo": ch_info["logo"],
                         "stream_url": play_url,
