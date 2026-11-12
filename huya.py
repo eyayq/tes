@@ -1,52 +1,37 @@
-import requests
 import subprocess
+import json
 import time
 import sys
 
-USER = "Film_Horor_Indonesia"
+USER_URL = "https://www.dailymotion.com/user/Film_Horor_Indonesia"
 OUTPUT = "playlist.m3u"
 GROUP = "Film Horor Indonesia"
 
-# Step 1: Get user ID + logo
-r = requests.get("https://api.dailymotion.com/users",
-    params={"screenname": USER, "fields": "id,name,thumbnail_url"})
-data = r.json()
+# Step 1: Get video list via yt-dlp (flat = fast, no download)
+result = subprocess.run(
+    ["yt-dlp", "--flat-playlist", "-J", USER_URL],
+    capture_output=True, text=True
+)
 
-if not data.get("list"):
-    print(f"User '{USER}' tidak ditemukan!")
+if result.returncode != 0:
+    print(f"Error: {result.stderr}")
     sys.exit(1)
 
-user = data["list"][0]
-user_id = user["id"]
-logo = user.get("thumbnail_url", "")
-print(f"User: {user['name']} (ID: {user_id})")
+data = json.loads(result.stdout)
+entries = data.get("entries", [])
+logo = data.get("thumbnail", "")  # avatar user
+print(f"Total: {len(entries)} video\n")
 
-# Step 2: Collect all videos
-videos = []
-start = 0
-while True:
-    r = requests.get("https://api.dailymotion.com/videos",
-        params={"owner": user_id, "fields": "id,title,thumbnail_url", "limit": 20, "start": start})
-    data = r.json()
-    batch = data.get("list", [])
-    if not batch:
-        break
-    videos.extend(batch)
-    start += 20
-    if start >= data.get("total", 0):
-        break
-
-print(f"Total: {len(videos)} video\n")
-
-# Step 3: Write M3U
+# Step 2: Write M3U
 with open(OUTPUT, "w") as f:
     f.write("#EXTM3U\n")
-    for i, v in enumerate(videos, 1):
-        url = f"https://www.dailymotion.com/video/{v['id']}"
-        title = v["title"]
-        vlogo = v.get("thumbnail_url", logo)
-        print(f"[{i}/{len(videos)}] {title}")
+    for i, v in enumerate(entries, 1):
+        url = v.get("url") or f"https://www.dailymotion.com/video/{v.get('id')}"
+        title = v.get("title", "Unknown")
+        vlogo = v.get("thumbnail", logo)
+        print(f"[{i}/{len(entries)}] {title}")
 
+        # Get m3u8 stream URL
         result = subprocess.run(
             ["yt-dlp", "-g", "-f", "bv*", url],
             capture_output=True, text=True
