@@ -5,7 +5,7 @@ import time
 import base64
 
 # ─── KONFIGURASI ───
-PROXY_URL = "https://exsample.d-n-s.name/proxy.php"
+PROXY_URL = "https://exsample.d-n-s.name/proxy.mpd"
 API_PROXY = "https://exsample.d-n-s.name/index.php"
 PROXY_SECRET = "ganti-dengan-secret-panjang"
 OUTPUT = "playlist.m3u"
