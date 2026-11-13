@@ -21,16 +21,7 @@ OUTPUT_FILE = "playlist.m3u"
 IMPERSONATE = "chrome"
 DELAY = 0.3
 
-API_KEY = (
-    "CH1ZFsN4N/MIfAds1DL9mP151CNqIpWHqZGRr+LkvUyiq3FRPuP1Kt6aK+pG3nEC1FXt0ZAAJ5FKP8QU8CZ5/"
-    "kbNqmxScg7wv0Qx/FgU4yLE2Kf52t4QUCXu80YeQUkJESbfJS3ACIfGz8LFiEqCE8UkYYMHiVl12alJ+/"
-    "lhROE="
-)
-ACCESS_TOKEN = (
-    "eyJhbGciOiJIUzI1NiJ9.eyJkYXRhIjp7InR5cGUiOiJhY2Nlc3NfdG9rZW4iLCJ1aWQiOjE4Njk1Nzg1N30s"
-    "ImV4cCI6MTc5NDYyNDU0NX0.bUPeP6j3OWV0mZypBSzgz53X7-ei_FZkHyMfoYdgNDo"
-)
-
+# Fallback DRM pattern (jika stream_url kosong di data section)
 STREAM_DRM_PATTERN = (
     "https://etslive-v3-vidio-com-tokenized.akamaized.net"
     "/stream/{id}/file/drm/hls/master.m3u8"
@@ -44,20 +35,42 @@ USER_AGENT = (
 REFERER = "https://m.vidio.com/"
 ORIGIN = "https://m.vidio.com"
 
-# ==================== USER (UPDATE MANUAL) ====================
+# [FIX 1] x-api-key yang hilang
+X_API_KEY = (
+    "CH1ZFsN4N/MIfAds1DL9mP151CNqIpWHqZGRr+LkvUyiq3FRPuP1Kt6aK+pG3nEC1FXt0ZAAJ5FKP8QU8CZ5"
+    "/kbNqmxScg7wv0Qx/FgU4yLE2Kf52t4QUCXu80YeQUkJESbfJS3ACIfGz8LFiEqCE8UkYYMHiVl12alJ+/lhROE="
+)
+
+# ==================== USER ====================
 USER_ID = "186957857"
 USER_EMAIL = "bhianesee05@gmail.com"
 AHOY_VISITOR = "3489c20a-d32e-468a-bd1b-8f7d150fa132"
-AHOY_VISIT = "94286b7e-197b-4581-b481-ee5685207fac"
+
+# [FIX 4] Token baru
 REMEMBER_TOKEN = (
-    "eyJfcmFpbHMiOnsibWVzc2FnZSI6Ilcxc3hPRFk1TlRjNE5UZGRMQ0lrTW1Fa01UQWthRU0xVnpKbGNVSXlhakJTYmtaMmIwUmFjVlJ2VHlJc0lqRTNPVFExTnpVek1UZ3VNek16TlRrME9DSmQi"
-    "LCJleHAiOiIyMDI4LTExLTEzVDEzOjA4OjM4LjMzM1oiLCJwdXIiOiJjb29raWUucmVtZW1iZXJfdXNlcl90b2tlbiJ9fQ%3D%3D"
-    "--b3233d56d91a18e1cccd7d279015cf712996b89a"
+    "eyJfcmFpbHMiOnsibWVzc2FnZSI6Ilcxc3hPRFk1TlRjNE5UZGRMQ0lrTW1Fa01UQWthRU0xVnpKbGNVSXlhakJTYmtaMmIwUmFjVlJ2VHlJc0lqRTNPVFExTnpVek1EZ3VPRGc1TVRFNElsMD0i"
+    "LCJleHAiOiIyMDI4LTExLTEzVDEzOjA4OjI4Ljg4OVoiLCJwdXIiOiJjb29raWUucmVtZW1iZXJfdXNlcl90b2tlbiJ9fQ%3D%3D"
+    "--7d30ce3e8ef000910b9b05e6c368e03015aaefd1"
 )
+
+# [FIX 2] access_token dari cookie
+ACCESS_TOKEN = (
+    "eyJhbGciOiJIUzI1NiJ9.eyJkYXRhIjp7InR5cGUiOiJhY2Nlc3NfdG9rZW4iLCJ1aWQiOjE4Njk1Nzg1N30s"
+    "ImV4cCI6MTc5NDYyNDU0NX0.bUPeP6j3OWV0mZypBSzgz53X7-ei_FZkHyMfoYdgNDo"
+)
+
+# [FIX 3] _vidio_session dari cookie
 VIDIO_SESSION = (
-    "P9Rlkd3rrhXIFudYA7MruwfU%2FBs5p2908DwYqEmccRQPSBiXH59UQ%2F4Ugvp5el0haVemvtm8sR7gkeT6txuUmT8KdV95kqUcFsdeBK7uXS2YE013vqDz%2FabNKZgZlLQEPkdyCE46oeE7thMWxSAf68Tv9QPCZqI2h9y5%2FzBZgeUstvkLdoq%2FNpUYBB%2F7XH%2Bst0bhSLxng6VNomircYv%2BTE4ibAf7L3IWIC16NtySf34og%2BfctCHhitleBONifwE5flqp1lNVceG1byK3xxwdkHGuW1t0W5OnCRMCINnt9fd6MwC2uQuVR3JiUWAXRux%2B2mcPXE2yOyUNdZ1n9Q9t5JbEWi9DDyeG%2Fp4aFIlPfPVN2%2BNzHZyIwc80Wr4xXXOEHvCWHxpcL%2BN29F351B1dpu%2Bo"
-    "--52UtY5FNk5RMY864--Ut5GoaDZ8re%2FuPq6pAhGCg%3D%3D"
+    "j2K5OJoP8BXLkI9vZpq6N1hFzSS%2BtqGsQxBwG2DIN7wk6U04oZlsQ5l%2BqLqDj%2FC87hZPPvU2kbOquCYkAS0AnKhHW4PH8K8m90ayqRLBIMRbfyvD369ajaNobkvBXVh9S5n8"
+    "%2FAal6okcTC%2BwCLpHcBIixLwbw9cVw5HDLWr%2BOPDjU6IBAAmiOgS8PTTOBfBcBKMaXrP9X8%2FPqI4%2FNsu"
+    "%2Ftyrs%2FXmJkStZaYNhDKJke5s52r7eZdBeOMbpezrsaS55WvEB7LRcaIbEI9NAF9xkqMtWeL2q3JCouOMtlanZP0"
+    "%2BRHhkYxU2W4T3Q13w%2F5jf6VuweVAdSgS7lyJcdJlM2fKJgqa18ioVoP1hlox1n4hk2JNCTCaLwDoZV%2FXSOy1sCrqglkZDLhMIa0FLQHJHojHR9"
+    "--VHG1%2BLXHP%2FmMKHLh--BApQtLuesYlXXLLMx4PU5g%3D%3D"
 )
+
+# [FIX 3] ahoy_visit
+AHOY_VISIT = "94286b7e-197b-4581-b481-ee5685207fac"
+
 # ================================================================================
 
 logging.basicConfig(
@@ -82,14 +95,13 @@ def generate_x_signature() -> tuple:
 
 # ==================== API HEADERS ====================
 def api_headers(luws: str = "") -> dict:
+    """Hanya header API kustom. Biarkan impersonate handle browser headers."""
     h = {
         "x-api-platform": "web-mobile",
         "x-secure-level": "2",
         "x-visitor-id": AHOY_VISITOR,
         "x-user-id": USER_ID,
-        "x-api-key": API_KEY,
-        "x-api-app-info": "js/m.vidio.com",
-        "x-user-login": "true",
+        "x-api-key": X_API_KEY,          # [FIX 1] TAMBAH x-api-key
         "origin": ORIGIN,
         "referer": REFERER,
         "accept": "application/json",
@@ -103,13 +115,14 @@ def api_headers(luws: str = "") -> dict:
 def bootstrap_session(session) -> str:
     log.info("Bootstrap session ...")
 
+    # [FIX 2 & 3] Set SEMUA cookie yang diperlukan
     session.cookies.set("ahoy_visitor", AHOY_VISITOR, domain=".vidio.com", path="/")
     session.cookies.set("ahoy_visit", AHOY_VISIT, domain=".vidio.com", path="/")
-    session.cookies.set("plenty_id", USER_ID, domain=".vidio.com", path="/")
     session.cookies.set("remember_user_token", REMEMBER_TOKEN, domain=".vidio.com", path="/")
+    session.cookies.set("country_id", "ID", domain=".vidio.com", path="/")
     session.cookies.set("access_token", ACCESS_TOKEN, domain=".vidio.com", path="/")
     session.cookies.set("_vidio_session", VIDIO_SESSION, domain=".vidio.com", path="/")
-    session.cookies.set("country_id", "ID", domain=".vidio.com", path="/")
+    session.cookies.set("plenty_id", USER_ID, domain=".vidio.com", path="/")
     session.cookies.set("shva", "1", domain=".vidio.com", path="/")
 
     try:
@@ -121,9 +134,6 @@ def bootstrap_session(session) -> str:
     at = session.cookies.get("access_token")
     if at:
         log.info("  ✓ access_token: %s...", at[:30])
-    else:
-        log.error("  ✗ access_token kosong! Update ACCESS_TOKEN.")
-        return ""
 
     luws = session.cookies.get("luws", "")
     if not luws:
@@ -151,12 +161,17 @@ def verify_login(session) -> bool:
 
 # ==================== STEP 3: FETCH ALL CHANNELS (SCRAPE) ====================
 def fetch_all_channels(session, luws: str) -> list:
+    """
+    GET /categories/live/sections → semua section & channel.
+    Extract semua item dengan content_type == "livestreaming".
+    Deduplicate by content_id.
+    """
     url = f"{API_BASE}/categories/live/sections"
     params = {"page[number]": 1, "page[size]": 10, "included": "contents"}
     h = api_headers(luws)
 
     log.info("Fetching all channels via /categories/live/sections ...")
-    channels = {}
+    channels = {}  # dedup by content_id
     page = 1
 
     while True:
@@ -215,8 +230,9 @@ def fetch_all_channels(session, luws: str) -> list:
     return result
 
 
-# ==================== STEP 4: FETCH NON-DRM STREAM URL (LIVE) ====================
+# ==================== STEP 4: FETCH NON-DRM STREAM URL ====================
 def fetch_stream_url(session, luws: str, ch_id: int) -> str:
+    """GET /livestreamings/{id}/stream?initialize=true → non-DRM HLS URL."""
     url = f"{API_BASE}/livestreamings/{ch_id}/stream?initialize=true"
     x_client, x_signature = generate_x_signature()
 
@@ -239,25 +255,8 @@ def fetch_stream_url(session, luws: str, ch_id: int) -> str:
     return ""
 
 
-# ==================== STEP 4B: FETCH VOD STREAM URL ====================
-def fetch_vod_stream_url(session, luws: str, video_id: int) -> str:
-    url = f"{API_BASE}/api/stream/v1/video_data/{video_id}"
-    h = api_headers(luws)
-
-    try:
-        resp = session.get(url, headers=h, timeout=15)
-        if resp.status_code == 200:
-            data = resp.json()
-            hls = data.get("stream_hls_url", "")
-            if hls:
-                return hls
-    except Exception as e:
-        log.debug("  Exception: %s", e)
-    return ""
-
-
 # ==================== M3U GENERATOR ====================
-def generate_m3u(channels: list, stream_urls: dict, output_file: str, premium_ids: set = None):
+def generate_m3u(channels: list, stream_urls: dict, output_file: str):
     lines = ["#EXTM3U"]
     count = 0
 
@@ -273,12 +272,8 @@ def generate_m3u(channels: list, stream_urls: dict, output_file: str, premium_id
             or STREAM_DRM_PATTERN.format(id=ch_id)
         )
 
-        tvg_id = f"{ch_id}"
-        if premium_ids and ch_id in premium_ids:
-            tvg_id = f"{ch_id}_premium"
-
         lines.append(
-            f'#EXTINF:-1 tvg-id="{tvg_id}" '
+            f'#EXTINF:-1 tvg-id="{ch_id}" '
             f'tvg-name="{title}" '
             f'tvg-logo="{logo}" '
             f'group-title="{group}",'
@@ -313,12 +308,10 @@ def main():
 
     # Step 1: Bootstrap
     luws = bootstrap_session(session)
-    if not luws:
-        sys.exit(1)
 
     # Step 2: Verify login
     if not verify_login(session):
-        log.error("Login gagal! Update ACCESS_TOKEN / REMEMBER_TOKEN.")
+        log.error("Login gagal! Check REMEMBER_TOKEN / ACCESS_TOKEN.")
         sys.exit(1)
 
     # Step 3: Fetch ALL channels
@@ -333,16 +326,13 @@ def main():
         groups.setdefault(ch["group"], []).append(ch["title"])
     log.info("\n  Groups:")
     for g, names in groups.items():
-        log.info("    [%s] %d channels: %s", g, len(names),
-                 ", ".join(names[:5]) + ("..." if len(names) > 5 else ""))
+        log.info("    [%s] %d channels: %s", g, len(names), ", ".join(names[:5]) + ("..." if len(names) > 5 else ""))
 
     # Step 4: Fetch non-DRM stream URLs
     stream_urls = {}
-    premium_ids = set()
-
     if not args.drm_only:
         need_fetch = [ch for ch in channels if not ch.get("stream_url")]
-        log.info("\nFetching non-DRM URLs for %d channels ...", len(need_fetch))
+        log.info("\nFetching non-DRM URLs for %d channels (no stream_url in data) ...", len(need_fetch))
 
         failed = []
         for i, ch in enumerate(need_fetch, 1):
@@ -352,8 +342,7 @@ def main():
                 log.info("  [%d/%d] %s ✓", i, len(need_fetch), ch["title"])
             else:
                 failed.append(ch)
-                premium_ids.add(ch["id"])
-                log.warning("  [%d/%d] %s ✗ (premium/no access)", i, len(need_fetch), ch["title"])
+                log.warning("  [%d/%d] %s ✗", i, len(need_fetch), ch["title"])
             time.sleep(DELAY)
 
         # Retry
@@ -367,7 +356,6 @@ def main():
                 hls = fetch_stream_url(session, luws, ch["id"])
                 if hls:
                     stream_urls[ch["id"]] = hls
-                    premium_ids.discard(ch["id"])
                     log.info("  [R%d] %s ✓", attempt, ch["title"])
                 else:
                     still.append(ch)
@@ -375,12 +363,10 @@ def main():
             failed = still
 
         log.info("\n  Non-DRM: %d/%d", len(stream_urls), len(need_fetch))
-        if premium_ids:
-            log.info("  ⚠ Premium (DRM fallback): %d channels", len(premium_ids))
 
     # Step 5: Generate M3U
     log.info("\nGenerating M3U ...")
-    generate_m3u(channels, stream_urls, args.output, premium_ids)
+    generate_m3u(channels, stream_urls, args.output)
 
 
 if __name__ == "__main__":
