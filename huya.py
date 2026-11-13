@@ -43,7 +43,7 @@ USER_AGENT = (
 REFERER = "https://m.vidio.com/"
 ORIGIN = "https://m.vidio.com"
 
-# ==================== USER (HANYA INI YANG PERLU UPDATE MANUAL) ====================
+# ==================== USER (PERLU UPDATE MANUAL) ====================
 USER_ID = "186957857"
 USER_EMAIL = "bhianesee05@gmail.com"
 AHOY_VISITOR = "3489c20a-d32e-468a-bd1b-8f7d150fa132"
@@ -52,11 +52,15 @@ REMEMBER_TOKEN = (
     "LCJleHAiOiIyMDI4LTExLTEzVDA1OjU5OjE2Ljc4MloiLCJwdXIiOiJjb29raWUucmVtZW1iZXJfdXNlcl90b2tlbiJ9fQ%3D%3D"
     "--e4a3b8b2b0cab9483ad24091c987bd38a88722aa"
 )
+# ★ Update setiap ~12 jam (ambil dari browser: DevTools → Application → Cookies)
+ACCESS_TOKEN = (
+    "eyJhbGciOiJIUzI1NiJ9.eyJkYXRhIjp7InR5cGUiOiJhY2Nlc3NfdG9rZW4iLCJ1aWQiOjE4Njk1Nzg1N30s"
+    "ImV4cCI6MTc5NDYyNDU0NX0.bUPeP6j3OWV0mZypBSzgz53X7-ei_FZkHyMfoYdgNDo"
+)
 # ================================================================================
 
 # Global yang di-set saat runtime
 API_KEY = API_KEY_FALLBACK
-ACCESS_TOKEN = ""
 
 logging.basicConfig(
     level=logging.INFO,
@@ -126,36 +130,36 @@ def api_headers(luws: str = "") -> dict:
 # ==================== STEP 1: BOOTSTRAP SESSION ====================
 def bootstrap_session(session) -> str:
     """
-    Flow auto-refresh:
-    1. Set remember_user_token (master, valid lama)
-    2. Visit m.vidio.com → server issue access_token baru via Set-Cookie
-    3. Scrape API_KEY dari JS bundle
-    4. Ambil/generate luws
+    Flow:
+    1. Set semua cookie (remember_user_token, access_token, dll)
+    2. Visit m.vidio.com → coba server issue access_token baru
+    3. Jika server tidak issue, pakai ACCESS_TOKEN dari konstanta
+    4. Scrape API_KEY dari JS bundle
+    5. Ambil/generate luws
     """
-    global ACCESS_TOKEN
-
     log.info("Bootstrap session ...")
 
-    # Hanya set token master — biarkan server issue sisanya
     session.cookies.set("ahoy_visitor", AHOY_VISITOR, domain=".vidio.com", path="/")
     session.cookies.set("remember_user_token", REMEMBER_TOKEN, domain=".vidio.com", path="/")
+    session.cookies.set("access_token", ACCESS_TOKEN, domain=".vidio.com", path="/")
+    session.cookies.set("plenty_id", USER_ID, domain=".vidio.com", path="/")
     session.cookies.set("country_id", "ID", domain=".vidio.com", path="/")
+    session.cookies.set("shva", "1", domain=".vidio.com", path="/")
 
-    # Visit site → server Set-Cookie: access_token, luws, dll
     try:
         resp = session.get(SITE_URL, timeout=30)
         log.info("  GET m.vidio.com → %d", resp.status_code)
     except Exception as e:
         log.warning("  Error visit site: %s", e)
 
-    # Ambil access_token yang di-issue server
-    ACCESS_TOKEN = session.cookies.get("access_token", "")
-    if ACCESS_TOKEN:
-        log.info("  ✓ access_token: %s...", ACCESS_TOKEN[:40])
+    # Cek apakah server issue access_token baru
+    at = session.cookies.get("access_token", "")
+    if at and at != ACCESS_TOKEN:
+        log.info("  ✓ access_token di-refresh server: %s...", at[:40])
+    elif at:
+        log.info("  ✓ access_token (dari konstanta): %s...", at[:40])
     else:
-        log.error("  ✗ access_token tidak di-issue server!")
-        log.error("    → remember_user_token mungkin sudah expire/revoke.")
-        log.error("    → Ambil ulang dari browser: DevTools → Application → Cookies")
+        log.error("  ✗ access_token kosong! Update konstanta ACCESS_TOKEN.")
         return ""
 
     # Scrape API key
@@ -351,14 +355,14 @@ def main():
 
     session = cffi_requests.Session(impersonate=IMPERSONATE)
 
-    # Step 1: Bootstrap (auto-refresh access_token + scrape api_key)
+    # Step 1: Bootstrap (set cookie + coba refresh + scrape api_key)
     luws = bootstrap_session(session)
     if not luws:
         sys.exit(1)
 
     # Step 2: Verify login
     if not verify_login(session):
-        log.error("Login gagal! Check REMEMBER_TOKEN.")
+        log.error("Login gagal! Update ACCESS_TOKEN / REMEMBER_TOKEN.")
         sys.exit(1)
 
     # Step 3: Fetch ALL channels
