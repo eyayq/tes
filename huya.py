@@ -2,7 +2,7 @@
 """
 Vidio Live TV → M3U Playlist Generator (2 Proxy)
 ==================================================
-- Proxy 1 (Stream):  proxy.php?id=XXX   → output M3U (player akses ini)
+- Proxy 1 (Stream):  proxy.php?id=XXX   → output M3U
 - Proxy 2 (API):     api.php?api=...    → Python fetch channel list & stream URL
 
 Dependencies:
@@ -72,7 +72,6 @@ session = None
 
 # ==================== PROXY API CALL ====================
 def proxy_api_get(params: dict, timeout: int = 30) -> dict:
-    """GET ke proxy API (api.php), return JSON."""
     params["auth"] = SECRET
     url = f"{PROXY_API}?{urlencode(params)}"
     try:
@@ -179,12 +178,17 @@ def fetch_all_channels() -> list:
                 if group != "Lainnya":
                     break
 
+            # ─── DETEKSI DRM: cek apakah ada stream_url (DRM URL) ───
+            drm_stream = attrs.get("stream_url", "")
+            is_drm = bool(drm_stream)
+
             channels[ch_id] = {
                 "id": ch_id,
                 "title": title,
                 "logo": logo,
                 "group": group,
-                "drm_stream": attrs.get("stream_url", ""),
+                "drm_stream": drm_stream,
+                "is_drm": is_drm,  # ← BARU: flag DRM dari API
             }
 
         links = data.get("links", {})
@@ -195,16 +199,17 @@ def fetch_all_channels() -> list:
             break
 
     result = list(channels.values())
-    log.info("  Found %d unique channels", len(result))
+    drm_count = sum(1 for c in result if c["is_drm"])
+    log.info("  Found %d unique channels (%d DRM, %d non-DRM)", len(result), drm_count, len(result) - drm_count)
     return result
 
 
 # ==================== STEP 3: FETCH STREAM URL ====================
 def fetch_stream_url(ch_id: int) -> str:
-    """Fetch stream URL via proxy API (api.php handles 3 attempt server-side)."""
+    """Fetch stream URL via proxy API. Return '' jika gagal."""
     data = proxy_api_get({"api": "stream", "id": ch_id}, timeout=20)
     hls = data.get("data", {}).get("attributes", {}).get("hls", "")
-    return hls
+    return hls  # ← Return AS-IS, tanpa decode/encode
 
 
 # ==================== STEP 4: GENERATE M3U ====================
@@ -213,42 +218,62 @@ def generate_m3u(channels: list, stream_urls: dict, output_file: str):
     count = 0
     non_drm_count = 0
     drm_count = 0
+    skip_count = 0
 
     for ch in channels:
         ch_id = ch["id"]
         title = ch["title"]
         logo = ch.get("logo", "")
         group = ch.get("group", "Lainnya")
+        is_drm = ch.get("is_drm", False)
 
         non_drm_url = stream_urls.get(ch_id, "")
         drm_url = ch.get("drm_stream", "") or STREAM_DRM_HLS.format(id=ch_id)
         license_url = f"{LICENSE_WORKER}?id={ch_id}"
 
-        lines.append(
-            f'#EXTINF:-1 tvg-id="{ch_id}" '
-            f'tvg-name="{title}" '
-            f'tvg-logo="{logo}" '
-            f'group-title="{group}",'
-            f'{title}'
-        )
-        lines.append(f'#EXTVLCOPT:http-user-agent={USER_AGENT}')
-        lines.append(f'#EXTVLCOPT:http-referrer={REFERER}')
-        lines.append(f'#EXTVLCOPT:http-origin={ORIGIN}')
-
-        if non_drm_url:
-            # Proxy stream: player akses proxy.php?id=XXX
-            lines.append(f"{PROXY_STREAM}?id={ch_id}")
-            non_drm_count += 1
-        else:
+        # ─── LOGIKA: ───
+        # 1. Non-DRM + ada URL → pakai proxy
+        # 2. DRM (is_drm=True) → pakai DRM URL + license
+        # 3. Non-DRM + TIDAK ada URL → SKIP (bukan DRM!)
+        if is_drm:
+            # Channel memang DRM
+            lines.append(
+                f'#EXTINF:-1 tvg-id="{ch_id}" '
+                f'tvg-name="{title}" '
+                f'tvg-logo="{logo}" '
+                f'group-title="{group}",'
+                f'{title}'
+            )
             lines.append("#KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha")
             lines.append(f"#KODIPROP:inputstream.adaptive.license_key={license_url}")
             lines.append(drm_url)
             drm_count += 1
+            count += 1
 
-        count += 1
+        elif non_drm_url:
+            # Non-DRM, stream URL berhasil
+            lines.append(
+                f'#EXTINF:-1 tvg-id="{ch_id}" '
+                f'tvg-name="{title}" '
+                f'tvg-logo="{logo}" '
+                f'group-title="{group}",'
+                f'{title}'
+            )
+            lines.append(f'#EXTVLCOPT:http-user-agent={USER_AGENT}')
+            lines.append(f'#EXTVLCOPT:http-referrer={REFERER}')
+            lines.append(f'#EXTVLCOPT:http-origin={ORIGIN}')
+            lines.append(f"{PROXY_STREAM}?id={ch_id}")
+            non_drm_count += 1
+            count += 1
+
+        else:
+            # Non-DRM tapi gagal fetch → SKIP
+            log.debug("  [SKIP] %s (id=%d): non-DRM, stream URL gagal", title, ch_id)
+            skip_count += 1
 
     Path(output_file).write_text("\n".join(lines) + "\n", encoding="utf-8")
-    log.info("[✓] %s (%d channels: %d non-DRM, %d DRM)", output_file, count, non_drm_count, drm_count)
+    log.info("[✓] %s (%d channels: %d non-DRM, %d DRM, %d skip)",
+             output_file, count, non_drm_count, drm_count, skip_count)
 
 
 # ==================== MAIN ====================
@@ -273,20 +298,24 @@ def run_once(output_file: str, drm_only: bool, retries: int) -> bool:
         preview = ", ".join(names[:4]) + ("..." if len(names) > 4 else "")
         log.info("    [%s] %d: %s", g, len(names), preview)
 
+    # ─── Fetch stream URL HANYA untuk channel non-DRM ───
     stream_urls = {}
-    if not drm_only:
-        log.info("\nFetching stream URLs (%d channels) ...", len(channels))
+    non_drm_channels = [ch for ch in channels if not ch["is_drm"]]
+
+    if not drm_only and non_drm_channels:
+        log.info("\nFetching stream URLs (%d non-DRM channels) ...", len(non_drm_channels))
         failed = []
-        for i, ch in enumerate(channels, 1):
+        for i, ch in enumerate(non_drm_channels, 1):
             hls = fetch_stream_url(ch["id"])
             if hls:
                 stream_urls[ch["id"]] = hls
             else:
                 failed.append(ch)
-            if i % 10 == 0 or i == len(channels):
-                log.info("  Progress: %d/%d (%d ok, %d fail)", i, len(channels), len(stream_urls), len(failed))
+            if i % 10 == 0 or i == len(non_drm_channels):
+                log.info("  Progress: %d/%d (%d ok, %d fail)", i, len(non_drm_channels), len(stream_urls), len(failed))
             time.sleep(DELAY)
 
+        # Retry
         for attempt in range(1, retries + 1):
             if not failed:
                 break
@@ -302,7 +331,7 @@ def run_once(output_file: str, drm_only: bool, retries: int) -> bool:
                 time.sleep(DELAY)
             failed = still
 
-        log.info("  Non-DRM: %d/%d", len(stream_urls), len(channels))
+        log.info("  Non-DRM: %d/%d", len(stream_urls), len(non_drm_channels))
 
     log.info("\nGenerating M3U ...")
     generate_m3u(channels, stream_urls, output_file)
