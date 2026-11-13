@@ -20,6 +20,7 @@ Run:
 """
 
 import argparse
+import base64
 import hashlib
 import hmac
 import json
@@ -52,10 +53,11 @@ STREAM_DRM_HLS = (
     "/stream/{id}/file/drm/hls/master.m3u8"
 )
 
-# API Key
+# API Key (UPDATE: 2026-11-13)
 API_KEY = (
     "CH1ZFsN4N/MIfAds1DL9mP151CNqIpWHqZGRr+LkvUyiq3FRPuP1Kt6aK+pG3nEC1FXt0ZAAJ5FKP8QU8CZ5"
-    "/ieyIuWEkvNBqXdsdlXM2838+3SFjs9rtlntv7l7DHkBHWK1q/4vLGad8GAj3vfLciRFnquHuZMMW+4EX8yTe1w="
+    "/kbNqmxScg7wv0Qx/FgU4yLE2Kf52t4QUCXu80YeQUkJESbfJS3ACIfGz8LFiEqCE8UkYYMHiVl12alJ+"
+    "/lhROE="
 )
 
 # Browser headers (untuk EXT VLCOPT)
@@ -71,10 +73,16 @@ ORIGIN = "https://m.vidio.com"
 USER_ID = "186957857"
 USER_EMAIL = "bhianesee05@gmail.com"
 AHOY_VISITOR = "3489c20a-d32e-468a-bd1b-8f7d150fa132"
+AHOY_VISIT = "77150c04-67f5-410d-be84-f1777dcbde34"
+PLenty_ID = "186957857"
 REMEMBER_TOKEN = (
-    "eyJfcmFpbHMiOnsibWVzc2FnZSI6Ilcxc3hPRFk1TlRjNE5UZGRMQ0lrTW1Fa01UQWthRU0xVnpKbGNVSXlhakJTYmtaMmIwUmFjVlJ2VHlJc0lqRTNPVFF6T1RneU5ERXVNekkyTkRFM05DSmQi"
-    "LCJleHAiOiIyMDI4LTExLTExVDExOjU3OjIxLjMyNloiLCJwdXIiOiJjb29raWUucmVtZW1iZXJfdXNlcl90b2tlbiJ9fQ%3D%3D"
-    "--2c508b1dd9d15adf9f96cfcbfdbcfd3ef41d76c5"
+    "eyJfcmFpbHMiOnsibWVzc2FnZSI6Ilcxc3hPRFk1TlRjNE5UZGRMQ0lrTW1Fa01UQWthRU0xVnpKbGNVSXlhakJTYmtaMmIwUmFjVlJ2VHlJc0lqRTNPVFExTXpneE5EZ3VPVGM0TWpNeU9TSmQi"
+    "LCJleHAiOiIyMDI4LTExLTEzVDAyOjQ5OjA4Ljk3OFoiLCJwdXIiOiJjb29raWUucmVtZW1iZXJfdXNlcl90b2tlbiJ9fQ%3D%3D"
+    "--97555f39c412f51a660eccea1b164f6d72428002"
+)
+_VIDIO_SESSION = (
+    "uc%2Fdmb9Wd0QyRez8hMxdo7VoYtGTU%2FyNzKzLXQefq3sqv7WifEmgerkGkm1ysg07vLPetTegYUY28qkGSEkE3RNFrbKrfFu3ywvinKtYXDfgQ9tuzJhDuqS8ozmTfgIeHcpzvRnPkOcqnBdgsFwkNeBHOlxEAgrNRxxdyteRTDILKpqQOsD7krPRrkbw41cNFh3lX8QrFOKdlj4ojUSk%2FxryrL%2BJMN4A9KrxwcIVSSVWRbOJRD20gMdQoveCUhvd2fFQiPhzM3NgwEJxQqOgkfPoLhOtAA%3D%3D"
+    "--y2hnlFP4gYRoX1Yy--4qRsvj9oIT8slQKOOrcLDg%3D%3D"
 )
 # ==================================================================
 
@@ -103,9 +111,14 @@ def generate_x_signature() -> tuple:
 def bootstrap_session(session) -> str:
     log.info("Bootstrap session ...")
 
+    # Set semua cookies
     session.cookies.set("ahoy_visitor", AHOY_VISITOR, domain=".vidio.com", path="/")
+    session.cookies.set("ahoy_visit", AHOY_VISIT, domain=".vidio.com", path="/")
+    session.cookies.set("plenty_id", PLenty_ID, domain=".vidio.com", path="/")
     session.cookies.set("remember_user_token", REMEMBER_TOKEN, domain=".vidio.com", path="/")
     session.cookies.set("country_id", "ID", domain=".vidio.com", path="/")
+    session.cookies.set("_vidio_session", _VIDIO_SESSION, domain=".vidio.com", path="/")
+    session.cookies.set("shva", "1", domain=".vidio.com", path="/")
 
     try:
         resp = session.get(SITE_URL, timeout=30)
@@ -113,9 +126,20 @@ def bootstrap_session(session) -> str:
     except Exception as e:
         log.warning("  Error visit site: %s", e)
 
+    # Cek access_token
     at = session.cookies.get("access_token")
     if at:
-        log.info("  ✓ access_token: %s...", at[:30])
+        # Decode JWT untuk cek expiry
+        try:
+            payload = at.split(".")[1]
+            payload += "=" * (4 - len(payload) % 4)
+            exp = json.loads(base64.urlsafe_b64decode(payload)).get("exp")
+            exp_str = time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime(exp))
+            log.info("  ✓ access_token: %s... (exp: %s)", at[:30], exp_str)
+        except Exception:
+            log.info("  ✓ access_token: %s...", at[:30])
+    else:
+        log.warning("  ✗ access_token TIDAK di-set oleh server! Cek REMEMBER_TOKEN.")
 
     luws = session.cookies.get("luws", "")
     if not luws:
@@ -127,9 +151,11 @@ def bootstrap_session(session) -> str:
 # ==================== STEP 2: VERIFY LOGIN ====================
 def verify_login(session) -> bool:
     h = {
+        "x-api-key": API_KEY,
         "x-api-platform": "web-mobile",
         "x-secure-level": "2",
         "x-auth-prefer": "AccessToken",
+        "x-user-id": USER_ID,
         "origin": ORIGIN,
         "referer": REFERER,
         "accept": "*/*",
@@ -143,6 +169,16 @@ def verify_login(session) -> bool:
                 log.info("  ✓ Login: %s (id=%s)", user.get("display_name"), user.get("user_id"))
                 log.info("  ✓ Sub: %s", "Premium" if user.get("has_active_subscription") else "Free")
                 return True
+            else:
+                log.warning("  ✗ current_user kosong (unauthenticated)")
+        elif resp.status_code == 401:
+            log.error("  ✗ 401 Unauthorized — REMEMBER_TOKEN atau API_KEY sudah invalid!")
+            log.error("    → Login ulang di browser, salin cookie baru.")
+        elif resp.status_code == 403:
+            log.error("  ✗ 403 Forbidden — API_KEY mungkin sudah dirotasi!")
+            log.error("    → Sniffing DevTools Network tab untuk x-api-key baru.")
+        else:
+            log.warning("  Verify: HTTP %d", resp.status_code)
     except Exception as e:
         log.warning("  Verify gagal: %s", e)
     return False
@@ -381,6 +417,8 @@ def _try_stream(session, url: str, headers: dict, ch_id: int) -> str:
                 log.debug("  ch %d: 403 %s", ch_id, title)
             except Exception:
                 pass
+        elif resp.status_code == 401:
+            log.debug("  ch %d: 401 Unauthorized", ch_id)
     except Exception as e:
         log.debug("  ch %d: exception %s", ch_id, e)
     return ""
@@ -443,7 +481,8 @@ def run_once(output_file: str, drm_only: bool, retries: int) -> bool:
     luws = bootstrap_session(session)
 
     if not verify_login(session):
-        log.error("Login gagal! Update REMEMBER_TOKEN.")
+        log.error("Login gagal! Update REMEMBER_TOKEN dan/atau API_KEY.")
+        log.error("  → Buka m.vidio.com di browser, login, lalu salin cookie baru.")
         return False
 
     channels = fetch_all_channels(session, luws)
