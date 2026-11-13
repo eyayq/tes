@@ -1,34 +1,28 @@
 #!/usr/bin/env python3
 """
-Vidio Live TV → M3U Playlist Generator (Complete)
+Vidio Live TV → M3U Playlist Generator (2 Proxy)
 ==================================================
-- Scrape semua channel dari /categories/live/sections (included[])
-- Non-DRM: fetch via API stream (valid 2 jam) — 3 attempt (auth, anonymous, preview)
-- DRM: fallback ke URL DRM + license proxy (Cloudflare Worker)
-- EXT VLCOPT: user-agent, origin, referrer per channel
-- Auto-refresh loop (opsional)
+- Proxy 1 (Stream):  proxy.php?id=XXX   → output M3U (player akses ini)
+- Proxy 2 (API):     api.php?api=...    → Python fetch channel list & stream URL
 
 Dependencies:
     pip install "curl-cffi<0.14"
 
 Run:
     python vidio_m3u.py
-    python vidio_m3u.py --loop          # auto-refresh tiap 115 menit
-    python vidio_m3u.py --drm-only      # skip non-DRM, langsung DRM
-    python vidio_m3u.py -o my.m3u       # custom output
-    python vidio_m3u.py --debug         # lihat response mentah
+    python vidio_m3u.py --loop
+    python vidio_m3u.py --drm-only
+    python vidio_m3u.py -o my.m3u
+    python vidio_m3u.py --debug
 """
 
 import argparse
-import base64
-import hashlib
-import hmac
 import json
 import sys
 import time
-import uuid
 import logging
 from pathlib import Path
+from urllib.parse import urlencode
 
 try:
     from curl_cffi import requests as cffi_requests
@@ -37,15 +31,14 @@ except ImportError:
     sys.exit(1)
 
 # ==================== KONFIGURASI ====================
-API_BASE = "https://api.vidio.com"
-SITE_URL = "https://m.vidio.com"
+PROXY_API = "https://exsample.d-n-s.name/api.php"
+PROXY_STREAM = "https://exsample.d-n-s.name/ch.m3u8"
+SECRET = "ganti-dengan-secret-panjang"
+
 OUTPUT_FILE = "playlist.m3u"
 IMPERSONATE = "chrome"
 DELAY = 0.3
 REFRESH_MINUTES = 115
-
-# License proxy (Cloudflare Worker)
-LICENSE_WORKER = "https://b.bhns.workers.dev/license.mpd"
 
 # DRM stream pattern
 STREAM_DRM_HLS = (
@@ -53,12 +46,8 @@ STREAM_DRM_HLS = (
     "/stream/{id}/file/drm/hls/master.m3u8"
 )
 
-# API Key (UPDATE: 2026-11-13)
-API_KEY = (
-    "CH1ZFsN4N/MIfAds1DL9mP151CNqIpWHqZGRr+LkvUyiq3FRPuP1Kt6aK+pG3nEC1FXt0ZAAJ5FKP8QU8CZ5"
-    "/kbNqmxScg7wv0Qx/FgU4yLE2Kf52t4QUCXu80YeQUkJESbfJS3ACIfGz8LFiEqCE8UkYYMHiVl12alJ+"
-    "/lhROE="
-)
+# License proxy (Cloudflare Worker)
+LICENSE_WORKER = "https://b.bhns.workers.dev/license.mpd"
 
 # Browser headers (untuk EXT VLCOPT)
 USER_AGENT = (
@@ -68,22 +57,6 @@ USER_AGENT = (
 )
 REFERER = "https://m.vidio.com/"
 ORIGIN = "https://m.vidio.com"
-
-# ==================== USER (UPDATE DI SINI) ====================
-USER_ID = "186957857"
-USER_EMAIL = "bhianesee05@gmail.com"
-AHOY_VISITOR = "3489c20a-d32e-468a-bd1b-8f7d150fa132"
-AHOY_VISIT = "77150c04-67f5-410d-be84-f1777dcbde34"
-PLenty_ID = "186957857"
-REMEMBER_TOKEN = (
-    "eyJfcmFpbHMiOnsibWVzc2FnZSI6Ilcxc3hPRFk1TlRjNE5UZGRMQ0lrTW1Fa01UQWthRU0xVnpKbGNVSXlhakJTYmtaMmIwUmFjVlJ2VHlJc0lqRTNPVFExTXpneE5EZ3VPVGM0TWpNeU9TSmQi"
-    "LCJleHAiOiIyMDI4LTExLTEzVDAyOjQ5OjA4Ljk3OFoiLCJwdXIiOiJjb29raWUucmVtZW1iZXJfdXNlcl90b2tlbiJ9fQ%3D%3D"
-    "--97555f39c412f51a660eccea1b164f6d72428002"
-)
-_VIDIO_SESSION = (
-    "uc%2Fdmb9Wd0QyRez8hMxdo7VoYtGTU%2FyNzKzLXQefq3sqv7WifEmgerkGkm1ysg07vLPetTegYUY28qkGSEkE3RNFrbKrfFu3ywvinKtYXDfgQ9tuzJhDuqS8ozmTfgIeHcpzvRnPkOcqnBdgsFwkNeBHOlxEAgrNRxxdyteRTDILKpqQOsD7krPRrkbw41cNFh3lX8QrFOKdlj4ojUSk%2FxryrL%2BJMN4A9KrxwcIVSSVWRbOJRD20gMdQoveCUhvd2fFQiPhzM3NgwEJxQqOgkfPoLhOtAA%3D%3D"
-    "--y2hnlFP4gYRoX1Yy--4qRsvj9oIT8slQKOOrcLDg%3D%3D"
-)
 # ==================================================================
 
 # ==================== LOGGING ====================
@@ -94,133 +67,50 @@ logging.basicConfig(
 )
 log = logging.getLogger("vidio-m3u")
 
-
-# ==================== X-SIGNATURE ====================
-def generate_x_signature() -> tuple:
-    t = str(time.time())
-    secret_key = f"V1d10D3v:{t}"
-    signature = hmac.new(
-        secret_key.encode(),
-        t.encode(),
-        hashlib.sha256
-    ).hexdigest()
-    return t, signature
+session = None
 
 
-# ==================== STEP 1: BOOTSTRAP SESSION ====================
-def bootstrap_session(session) -> str:
-    log.info("Bootstrap session ...")
-
-    # Set semua cookies
-    session.cookies.set("ahoy_visitor", AHOY_VISITOR, domain=".vidio.com", path="/")
-    session.cookies.set("ahoy_visit", AHOY_VISIT, domain=".vidio.com", path="/")
-    session.cookies.set("plenty_id", PLenty_ID, domain=".vidio.com", path="/")
-    session.cookies.set("remember_user_token", REMEMBER_TOKEN, domain=".vidio.com", path="/")
-    session.cookies.set("country_id", "ID", domain=".vidio.com", path="/")
-    session.cookies.set("_vidio_session", _VIDIO_SESSION, domain=".vidio.com", path="/")
-    session.cookies.set("shva", "1", domain=".vidio.com", path="/")
-
+# ==================== PROXY API CALL ====================
+def proxy_api_get(params: dict, timeout: int = 30) -> dict:
+    """GET ke proxy API (api.php), return JSON."""
+    params["auth"] = SECRET
+    url = f"{PROXY_API}?{urlencode(params)}"
     try:
-        resp = session.get(SITE_URL, timeout=30)
-        log.info("  GET m.vidio.com → %d", resp.status_code)
-    except Exception as e:
-        log.warning("  Error visit site: %s", e)
-
-    # Cek access_token
-    at = session.cookies.get("access_token")
-    if at:
-        # Decode JWT untuk cek expiry
-        try:
-            payload = at.split(".")[1]
-            payload += "=" * (4 - len(payload) % 4)
-            exp = json.loads(base64.urlsafe_b64decode(payload)).get("exp")
-            exp_str = time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime(exp))
-            log.info("  ✓ access_token: %s... (exp: %s)", at[:30], exp_str)
-        except Exception:
-            log.info("  ✓ access_token: %s...", at[:30])
-    else:
-        log.warning("  ✗ access_token TIDAK di-set oleh server! Cek REMEMBER_TOKEN.")
-
-    luws = session.cookies.get("luws", "")
-    if not luws:
-        luws = f"{str(uuid.uuid4()).upper()}_{USER_ID}"
-    log.info("  ✓ luws: %s", luws)
-    return luws
-
-
-# ==================== STEP 2: VERIFY LOGIN ====================
-def verify_login(session) -> bool:
-    h = {
-        "x-api-key": API_KEY,
-        "x-api-platform": "web-mobile",
-        "x-secure-level": "2",
-        "x-auth-prefer": "AccessToken",
-        "x-user-id": USER_ID,
-        "origin": ORIGIN,
-        "referer": REFERER,
-        "accept": "*/*",
-        "accept-language": "id",
-    }
-    try:
-        resp = session.get(f"{SITE_URL}/interactions.json", headers=h, timeout=15)
+        resp = session.get(url, timeout=timeout)
         if resp.status_code == 200:
-            user = resp.json().get("current_user", {})
-            if user:
-                log.info("  ✓ Login: %s (id=%s)", user.get("display_name"), user.get("user_id"))
-                log.info("  ✓ Sub: %s", "Premium" if user.get("has_active_subscription") else "Free")
-                return True
-            else:
-                log.warning("  ✗ current_user kosong (unauthenticated)")
-        elif resp.status_code == 401:
-            log.error("  ✗ 401 Unauthorized — REMEMBER_TOKEN atau API_KEY sudah invalid!")
-            log.error("    → Login ulang di browser, salin cookie baru.")
-        elif resp.status_code == 403:
-            log.error("  ✗ 403 Forbidden — API_KEY mungkin sudah dirotasi!")
-            log.error("    → Sniffing DevTools Network tab untuk x-api-key baru.")
-        else:
-            log.warning("  Verify: HTTP %d", resp.status_code)
+            return resp.json()
+        log.debug("  API HTTP %d: %s", resp.status_code, resp.text[:200])
     except Exception as e:
-        log.warning("  Verify gagal: %s", e)
-    return False
+        log.debug("  API error: %s", e)
+    return {}
 
 
-# ==================== STEP 3: FETCH ALL CHANNELS ====================
-def fetch_all_channels(session, luws: str) -> list:
-    """
-    GET /categories/live/sections → parse included[] (type="content", content_type="livestreaming").
-    """
-    url = f"{API_BASE}/categories/live/sections"
-    h = {
-        "x-api-key": API_KEY,
-        "x-api-platform": "web-mobile",
-        "x-secure-level": "2",
-        "x-visitor-id": AHOY_VISITOR,
-        "x-user-id": USER_ID,
-        "luws": luws,
-        "origin": ORIGIN,
-        "referer": REFERER,
-        "accept": "application/json",
-        "accept-language": "id",
-    }
+# ==================== STEP 1: VERIFY LOGIN ====================
+def verify_login() -> bool:
+    log.info("Verify login ...")
+    data = proxy_api_get({"api": "interactions"}, timeout=15)
+    user = data.get("current_user", {})
+    if user:
+        log.info("  ✓ Login: %s (id=%s)", user.get("display_name"), user.get("user_id"))
+        log.info("  ✓ Sub: %s", "Premium" if user.get("has_active_subscription") else "Free")
+        return True
+    else:
+        log.error("  ✗ Login gagal — cek api.php (API_KEY / cookies)")
+        return False
 
+
+# ==================== STEP 2: FETCH ALL CHANNELS ====================
+def fetch_all_channels() -> list:
     log.info("Fetching all channels ...")
     channels = {}
     page = 1
 
     while True:
-        params = {"page[number]": page, "page[size]": 10, "included": "contents"}
-        try:
-            resp = session.get(url, params=params, headers=h, timeout=30)
-            if resp.status_code != 200:
-                log.warning("  Page %d: HTTP %d %s", page, resp.status_code, resp.text[:200])
-                break
-        except Exception as e:
-            log.error("  Page %d error: %s", page, e)
+        data = proxy_api_get({"api": "channels", "page": page}, timeout=30)
+        if not data:
+            log.warning("  Page %d: no data", page)
             break
 
-        data = resp.json()
-
-        # Build section title mapping
         sections = data.get("data", [])
         if isinstance(sections, dict):
             sections = [sections]
@@ -232,14 +122,12 @@ def fetch_all_channels(session, luws: str) -> list:
             sec_id = str(section.get("id", ""))
             attrs = section.get("attributes", {})
             section_id_to_title[sec_id] = attrs.get("title", "Lainnya")
-
             rels = section.get("relationships", {})
             contents_rel = rels.get("contents", {})
             content_list = contents_rel.get("data", [])
             if isinstance(content_list, list):
                 section_contents_map[sec_id] = content_list
 
-        # Parse included[]
         included = data.get("included", [])
         if page == 1 and included:
             types = {}
@@ -251,15 +139,10 @@ def fetch_all_channels(session, luws: str) -> list:
         for item in included:
             if item.get("type") != "content":
                 continue
-
             attrs = item.get("attributes", {})
-
-            # Filter: hanya livestreaming
-            content_type = attrs.get("content_type", "")
-            if content_type != "livestreaming":
+            if attrs.get("content_type", "") != "livestreaming":
                 continue
 
-            # Channel ID
             ch_id = attrs.get("content_id")
             if not ch_id:
                 id_str = str(item.get("id", ""))
@@ -276,10 +159,7 @@ def fetch_all_channels(session, luws: str) -> list:
             if ch_id in channels:
                 continue
 
-            # Title: prefer alt_title (nama channel)
             title = attrs.get("alt_title") or attrs.get("title", "Unknown")
-
-            # Logo
             logo = attrs.get("cover_url", "")
             if not logo:
                 sq = attrs.get("square_image")
@@ -288,7 +168,6 @@ def fetch_all_channels(session, luws: str) -> list:
                 elif isinstance(sq, str):
                     logo = sq
 
-            # Group: cari dari section relationships
             group = "Lainnya"
             item_id_str = str(ch_id)
             for sec_id, content_list in section_contents_map.items():
@@ -308,7 +187,6 @@ def fetch_all_channels(session, luws: str) -> list:
                 "drm_stream": attrs.get("stream_url", ""),
             }
 
-        # Pagination
         links = data.get("links", {})
         if links.get("next"):
             page += 1
@@ -321,114 +199,16 @@ def fetch_all_channels(session, luws: str) -> list:
     return result
 
 
-# ==================== STEP 4: FETCH NON-DRM STREAM URL ====================
-def fetch_stream_url(session, luws: str, ch_id: int) -> str:
-    """
-    GET /livestreamings/{id}/stream?initialize=true
-    3 attempt: full auth → anonymous → x-user-login=false
-    """
-    url = f"{API_BASE}/livestreamings/{ch_id}/stream?initialize=true"
-
-    # --- Attempt 1: Full auth ---
-    x_client, x_signature = generate_x_signature()
-    h1 = {
-        "x-api-key": API_KEY,
-        "x-api-platform": "web-mobile",
-        "x-secure-level": "2",
-        "x-user-id": USER_ID,
-        "x-user-email": USER_EMAIL,
-        "luws": luws,
-        "x-client": x_client,
-        "x-signature": x_signature,
-        "origin": ORIGIN,
-        "referer": REFERER,
-        "sec-fetch-site": "same-site",
-        "sec-fetch-mode": "cors",
-        "sec-fetch-dest": "empty",
-        "accept": "*/*",
-        "accept-language": "id",
-    }
-    result = _try_stream(session, url, h1, ch_id)
-    if result:
-        return result
-
-    # --- Attempt 2: Anonymous (tanpa user headers) ---
-    x_client2, x_signature2 = generate_x_signature()
-    h2 = {
-        "x-api-key": API_KEY,
-        "x-api-platform": "web-mobile",
-        "x-secure-level": "1",
-        "luws": luws,
-        "x-client": x_client2,
-        "x-signature": x_signature2,
-        "origin": ORIGIN,
-        "referer": REFERER,
-        "sec-fetch-site": "same-site",
-        "sec-fetch-mode": "cors",
-        "sec-fetch-dest": "empty",
-        "accept": "*/*",
-        "accept-language": "id",
-    }
-    result = _try_stream(session, url, h2, ch_id)
-    if result:
-        log.debug("  ch %d: preview OK (anonymous)", ch_id)
-        return result
-
-    # --- Attempt 3: x-user-login=false ---
-    x_client3, x_signature3 = generate_x_signature()
-    h3 = {
-        "x-api-key": API_KEY,
-        "x-api-platform": "web-mobile",
-        "x-secure-level": "2",
-        "x-user-login": "false",
-        "luws": luws,
-        "x-client": x_client3,
-        "x-signature": x_signature3,
-        "origin": ORIGIN,
-        "referer": REFERER,
-        "sec-fetch-site": "same-site",
-        "sec-fetch-mode": "cors",
-        "sec-fetch-dest": "empty",
-        "accept": "*/*",
-        "accept-language": "id",
-    }
-    result = _try_stream(session, url, h3, ch_id)
-    if result:
-        log.debug("  ch %d: preview OK (x-user-login=false)", ch_id)
-        return result
-
-    return ""
+# ==================== STEP 3: FETCH STREAM URL ====================
+def fetch_stream_url(ch_id: int) -> str:
+    """Fetch stream URL via proxy API (api.php handles 3 attempt server-side)."""
+    data = proxy_api_get({"api": "stream", "id": ch_id}, timeout=20)
+    hls = data.get("data", {}).get("attributes", {}).get("hls", "")
+    return hls
 
 
-def _try_stream(session, url: str, headers: dict, ch_id: int) -> str:
-    """Try one stream request, return hls url or ''."""
-    try:
-        resp = session.get(url, headers=headers, timeout=15)
-        if resp.status_code == 200:
-            data = resp.json()
-            attrs = data.get("data", {}).get("attributes", {})
-            hls = attrs.get("hls", "")
-            if hls:
-                return hls
-        elif resp.status_code == 403:
-            try:
-                err = resp.json()
-                title = err.get("errors", [{}])[0].get("title", "")
-                log.debug("  ch %d: 403 %s", ch_id, title)
-            except Exception:
-                pass
-        elif resp.status_code == 401:
-            log.debug("  ch %d: 401 Unauthorized", ch_id)
-    except Exception as e:
-        log.debug("  ch %d: exception %s", ch_id, e)
-    return ""
-
-
-# ==================== STEP 5: GENERATE M3U ====================
+# ==================== STEP 4: GENERATE M3U ====================
 def generate_m3u(channels: list, stream_urls: dict, output_file: str):
-    """
-    Generate M3U dengan #EXTVLCOPT (user-agent, origin, referrer) per channel.
-    """
     lines = ["#EXTM3U"]
     count = 0
     non_drm_count = 0
@@ -444,7 +224,6 @@ def generate_m3u(channels: list, stream_urls: dict, output_file: str):
         drm_url = ch.get("drm_stream", "") or STREAM_DRM_HLS.format(id=ch_id)
         license_url = f"{LICENSE_WORKER}?id={ch_id}"
 
-        # EXTINF
         lines.append(
             f'#EXTINF:-1 tvg-id="{ch_id}" '
             f'tvg-name="{title}" '
@@ -452,17 +231,15 @@ def generate_m3u(channels: list, stream_urls: dict, output_file: str):
             f'group-title="{group}",'
             f'{title}'
         )
-
-        # EXT VLCOPT: browser headers
         lines.append(f'#EXTVLCOPT:http-user-agent={USER_AGENT}')
         lines.append(f'#EXTVLCOPT:http-referrer={REFERER}')
         lines.append(f'#EXTVLCOPT:http-origin={ORIGIN}')
 
         if non_drm_url:
-            lines.append(non_drm_url)
+            # Proxy stream: player akses proxy.php?id=XXX
+            lines.append(f"{PROXY_STREAM}?id={ch_id}")
             non_drm_count += 1
         else:
-            # DRM: Kodi license
             lines.append("#KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha")
             lines.append(f"#KODIPROP:inputstream.adaptive.license_key={license_url}")
             lines.append(drm_url)
@@ -476,21 +253,18 @@ def generate_m3u(channels: list, stream_urls: dict, output_file: str):
 
 # ==================== MAIN ====================
 def run_once(output_file: str, drm_only: bool, retries: int) -> bool:
+    global session
     session = cffi_requests.Session(impersonate=IMPERSONATE)
 
-    luws = bootstrap_session(session)
-
-    if not verify_login(session):
-        log.error("Login gagal! Update REMEMBER_TOKEN dan/atau API_KEY.")
-        log.error("  → Buka m.vidio.com di browser, login, lalu salin cookie baru.")
+    if not verify_login():
+        log.error("Login gagal!")
         return False
 
-    channels = fetch_all_channels(session, luws)
+    channels = fetch_all_channels()
     if not channels:
         log.error("Tidak ada channel ditemukan.")
         return False
 
-    # Summary
     groups = {}
     for ch in channels:
         groups.setdefault(ch["group"], []).append(ch["title"])
@@ -499,13 +273,12 @@ def run_once(output_file: str, drm_only: bool, retries: int) -> bool:
         preview = ", ".join(names[:4]) + ("..." if len(names) > 4 else "")
         log.info("    [%s] %d: %s", g, len(names), preview)
 
-    # Fetch non-DRM URLs
     stream_urls = {}
     if not drm_only:
-        log.info("\nFetching non-DRM URLs (%d channels) ...", len(channels))
+        log.info("\nFetching stream URLs (%d channels) ...", len(channels))
         failed = []
         for i, ch in enumerate(channels, 1):
-            hls = fetch_stream_url(session, luws, ch["id"])
+            hls = fetch_stream_url(ch["id"])
             if hls:
                 stream_urls[ch["id"]] = hls
             else:
@@ -514,7 +287,6 @@ def run_once(output_file: str, drm_only: bool, retries: int) -> bool:
                 log.info("  Progress: %d/%d (%d ok, %d fail)", i, len(channels), len(stream_urls), len(failed))
             time.sleep(DELAY)
 
-        # Retry
         for attempt in range(1, retries + 1):
             if not failed:
                 break
@@ -522,7 +294,7 @@ def run_once(output_file: str, drm_only: bool, retries: int) -> bool:
             time.sleep(5)
             still = []
             for ch in failed:
-                hls = fetch_stream_url(session, luws, ch["id"])
+                hls = fetch_stream_url(ch["id"])
                 if hls:
                     stream_urls[ch["id"]] = hls
                 else:
@@ -532,14 +304,13 @@ def run_once(output_file: str, drm_only: bool, retries: int) -> bool:
 
         log.info("  Non-DRM: %d/%d", len(stream_urls), len(channels))
 
-    # Generate M3U
     log.info("\nGenerating M3U ...")
     generate_m3u(channels, stream_urls, output_file)
     return True
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Vidio Live TV M3U Generator")
+    parser = argparse.ArgumentParser(description="Vidio Live TV M3U Generator (2 Proxy)")
     parser.add_argument("-o", "--output", type=str, default=OUTPUT_FILE)
     parser.add_argument("--drm-only", action="store_true",
                         help="Skip non-DRM, langsung DRM + license worker")
@@ -554,8 +325,9 @@ def main():
 
     print("=" * 55)
     print("  Vidio Live TV → M3U Playlist Generator")
-    print("  Non-DRM: direct (3 attempt) | DRM: via license worker")
-    print(f"  License: {LICENSE_WORKER}")
+    print(f"  Proxy API:    {PROXY_API}")
+    print(f"  Proxy Stream: {PROXY_STREAM}")
+    print(f"  License:      {LICENSE_WORKER}")
     print("=" * 55)
 
     if args.loop:
