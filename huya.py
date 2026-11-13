@@ -1,349 +1,412 @@
-
-import argparse
-import json
-import sys
+import requests
 import time
-import logging
-from pathlib import Path
-from urllib.parse import urlencode
+import json
+from datetime import date
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
-try:
-    from curl_cffi import requests as cffi_requests
-except ImportError:
-    print("Error: pip install 'curl-cffi<0.14'")
-    sys.exit(1)
-
-# ==================== KONFIGURASI ====================
-PROXY_API = "https://exsample.d-n-s.name/api.php"
-PROXY_STREAM = "https://exsample.d-n-s.name/ch.m3u8"
-SECRET = "ganti-dengan-secret-panjang"
-
+# ============================================================
+# CONFIG
+# ============================================================
+BASE_URL = "https://www.dens.tv/api/dens3/"
 OUTPUT_FILE = "playlist.m3u"
-IMPERSONATE = "chrome"
-DELAY = 1.0
-REFRESH_MINUTES = 115
+DELAY = 0.3
+MAX_WORKERS = 8
 
-STREAM_DRM_HLS = (
-    "https://etslive-v3-vidio-com-tokenized.akamaized.net"
-    "/stream/{id}/file/drm/hls/master.m3u8"
-)
-LICENSE_WORKER = "https://b.bhns.workers.dev/license.mpd"
+# HTTP Headers untuk streaming
+STREAM_UA = 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36'
+STREAM_REFERER = 'https://www.dens.tv/'
 
-USER_AGENT = (
-    "Mozilla/5.0 (Linux; Android 10; K) "
-    "AppleWebKit/537.36 (KHTML, like Gecko) "
-    "Chrome/157.0.0.0 Mobile Safari/537.36"
-)
-REFERER = "https://m.vidio.com/"
-ORIGIN = "https://m.vidio.com"
-# ==================================================================
+# Tanggal untuk EPG (default: hari ini)
+EPG_DATE = date.today().strftime("%Y-%m-%d")
 
-# ==================== LOGGING ====================
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s",
-    datefmt="%H:%M:%S",
-)
-log = logging.getLogger("vidio-m3u")
+# Kategori channel
+CATEGORIES = {
+    "1": "Local",
+    "2": "Premium",
+    "3": "International",
+    "13": "Free Streaming",
+}
 
-session = None
+# Genre VOD (keyword_id, slug, name)
+VOD_GENRES = [
+    ("5", "drama", "Drama"),
+    ("7", "horror-thriller", "Horror & Thriller"),
+    ("8", "action", "Action"),
+    ("56", "comedy", "Comedy"),
+    ("4559", "others", "Others"),
+    ("1118", "sports-and-hobbies", "Sports and Hobbies"),
+    ("5754", "cooking-show", "Cooking Show"),
+    ("5756", "music", "Music"),
+    ("5764", "lifestyle-travels", "Lifestyle & Travels"),
+    ("5501", "cerita-indonesia", "Cerita Indonesia"),
+]
 
+# ============================================================
+# SESSION
+# ============================================================
+session = requests.Session()
 
-# ==================== PROXY API CALL ====================
-def proxy_api_get(params: dict, timeout: int = 30) -> dict:
-    params["auth"] = SECRET
-    url = f"{PROXY_API}?{urlencode(params)}"
-    try:
-        resp = session.get(url, timeout=timeout)
-        if resp.status_code == 200:
-            return resp.json()
-        log.debug("  API HTTP %d: %s", resp.status_code, resp.text[:200])
-    except Exception as e:
-        log.debug("  API error: %s", str(e)[:100])
-    return {}
+session.cookies.update({
+    'dtv_atl': '14325',
+    'dtv_adt': '1794511834',
+    'dens_session': 'o393l30kndtbn6oirvfb2vqolpeoa2m1',
+    'tvCategories': 'W3siaWQiOiIxIiwidGl0bGUiOiJMb2NhbCIsInNsdWciOiJsb2NhbCIsInR5cGUiOiJMaXZlIFRWIn0seyJpZCI6IjIiLCJ0aXRsZSI6IlByZW1pdW0iLCJzbHVnIjoicHJlbWl1bSIsInR5cGUiOiJMaXZlIFRWIn0seyJpZCI6IjMiLCJ0aXRsZSI6IkludGVybmF0aW9uYWwiLCJzbHVnIjoiaW50ZXJuYXRpb25hbCIsInR5cGUiOiJMaXZlIFRWIn0seyJpZCI6IjEzIiwidGl0bGUiOiJGcmVlIFN0cmVhbWluZyIsInNsdWciOiJmcmVlLXN0cmVhbWluZyIsInR5cGUiOiJMaXZlIFRWIn1d',
+    'dtv_hrls': '713a42fe9b1e51d3f06039055cb60023',
+    'dtv_rls': 'eyJyZXBlYXQiOnRydWUsImZyZWVfZGF5cyI6MywiZnJlZV9ob3VycyI6NCwiY2F0Y2h1cF9hY2Nlc3MiOnRydWV9',
+    'dtv_msg': 'eyJzaWduX2luIjoiWW91ciBGcmVlIEV4cGVyaWVuY2UgRXhwaXJlZCAtIFBsZWFzZSBTaWduSW4iLCJzdWJzY3JpcHRpb24iOiJZb3VyIEZyZWUgRXhwZXJpZW5jZSBFeHBpcmVkIC0gUGxlYXNlIFN1YmNyaWJlIiwiZXhwaXJlZF9jYXRjaHVwIjoiQ2F0Y2h1cCBFeHBpcmVkIn0%3D',
+    'dtv_grf': 'guest_563d281270327285',
+    'dtv_axp': '2026-11-15T05%3A37%3A30%2B07%3A00',
+    'dtv_alm': '14400',
+    'last_visit': 'https%3A%2F%2Fwww.dens.tv%2F',
+})
 
-
-# ==================== STEP 1: VERIFY LOGIN ====================
-def verify_login() -> bool:
-    log.info("Verify login ...")
-    data = proxy_api_get({"api": "interactions"}, timeout=15)
-    user = data.get("current_user", {})
-    if user:
-        log.info("  ✓ Login: %s (id=%s)", user.get("display_name"), user.get("user_id"))
-        log.info("  ✓ Sub: %s", "Premium" if user.get("has_active_subscription") else "Free")
-        return True
-    else:
-        log.error("  ✗ Login gagal — cek api.php (cookies / access_token)")
-        return False
-
-
-# ==================== STEP 2: FETCH ALL CHANNELS ====================
-def fetch_all_channels() -> list:
-    log.info("Fetching all channels ...")
-    channels = {}
-    page = 1
-
-    while True:
-        data = proxy_api_get({"api": "channels", "page": page}, timeout=30)
-        if not data:
-            log.warning("  Page %d: no data", page)
-            break
-
-        sections = data.get("data", [])
-        if isinstance(sections, dict):
-            sections = [sections]
-
-        section_id_to_title = {}
-        section_contents_map = {}
-        for section in sections:
-            sec_id = str(section.get("id", ""))
-            attrs = section.get("attributes", {})
-            section_id_to_title[sec_id] = attrs.get("title", "Lainnya")
-            rels = section.get("relationships", {})
-            contents_rel = rels.get("contents", {})
-            content_list = contents_rel.get("data", [])
-            if isinstance(content_list, list):
-                section_contents_map[sec_id] = content_list
-
-        included = data.get("included", [])
-        if page == 1 and included:
-            types = {}
-            for item in included:
-                t = item.get("type", "?")
-                types[t] = types.get(t, 0) + 1
-            log.info("  [DEBUG] included types: %s", types)
-
-        for item in included:
-            if item.get("type") != "content":
-                continue
-            attrs = item.get("attributes", {})
-            if attrs.get("content_type", "") != "livestreaming":
-                continue
-
-            ch_id = attrs.get("content_id")
-            if not ch_id:
-                id_str = str(item.get("id", ""))
-                parts = id_str.split("-")
-                try:
-                    ch_id = int(parts[-1])
-                except (ValueError, IndexError):
-                    continue
-            try:
-                ch_id = int(ch_id)
-            except (ValueError, TypeError):
-                continue
-
-            if ch_id in channels:
-                continue
-
-            title = attrs.get("alt_title") or attrs.get("title", "Unknown")
-            logo = attrs.get("cover_url", "")
-            if not logo:
-                sq = attrs.get("square_image")
-                if isinstance(sq, dict):
-                    logo = sq.get("url", "")
-                elif isinstance(sq, str):
-                    logo = sq
-
-            group = "Lainnya"
-            item_id_str = str(ch_id)
-            for sec_id, content_list in section_contents_map.items():
-                for c in content_list:
-                    c_id = str(c.get("id", ""))
-                    if item_id_str in c_id:
-                        group = section_id_to_title.get(sec_id, "Lainnya")
-                        break
-                if group != "Lainnya":
-                    break
-
-            drm_stream = attrs.get("stream_url", "")
-            is_drm = bool(drm_stream)
-
-            channels[ch_id] = {
-                "id": ch_id,
-                "title": title,
-                "logo": logo,
-                "group": group,
-                "drm_stream": drm_stream,
-                "is_drm": is_drm,
-            }
-
-        links = data.get("links", {})
-        if links.get("next"):
-            page += 1
-            time.sleep(DELAY)
-        else:
-            break
-
-    result = list(channels.values())
-    drm_count = sum(1 for c in result if c["is_drm"])
-    log.info("  Found %d unique channels (%d DRM, %d non-DRM)", len(result), drm_count, len(result) - drm_count)
-    return result
+session.headers.update({
+    'User-Agent': STREAM_UA,
+    'Accept': '*/*',
+    'Referer': 'https://www.dens.tv/',
+    'Accept-Language': 'id-ID,id;q=0.7',
+})
 
 
-# ==================== STEP 3: FETCH STREAM URL ====================
-def fetch_stream_url(ch_id: int) -> str:
-    """
-    Fetch stream URL via proxy API.
-    Endpoint: /api/stream/v1/video_data/{id}
-    Response key: stream_hls_url
-    """
-    data = proxy_api_get({"api": "stream", "id": ch_id}, timeout=20)
-    hls = data.get("stream_hls_url", "")
-    return hls
+# ============================================================
+# API CALLS
+# ============================================================
+def fetch_channels_by_category(category_id):
+    """Fetch channel list per kategori"""
+    url = f"{BASE_URL}tv/TvChannels/listByCategory?id_category={category_id}"
+    resp = session.get(url)
+    resp.raise_for_status()
+    return resp.json()
 
 
-# ==================== STEP 4: GENERATE M3U ====================
-def generate_m3u(channels: list, stream_urls: dict, output_file: str):
+def fetch_home_sections(page=1, limit=10):
+    """Fetch HomeSections (untuk catchup & VOD)"""
+    url = f"{BASE_URL}HomeSections?page={page}&limit={limit}&app_type=10"
+    resp = session.get(url)
+    resp.raise_for_status()
+    return resp.json()
+
+
+def fetch_epg_by_date(channel_id, ep_date):
+    """Fetch EPG untuk channel tertentu"""
+    url = f"{BASE_URL}tv/TvChannels/listEpgByDate?date={ep_date}&id_channel={channel_id}&app_type=10"
+    resp = session.get(url)
+    resp.raise_for_status()
+    return resp.json()
+
+
+def fetch_movie_related(keyword_id, slug, page=1, limit=50):
+    """Fetch movie related by genre (paginated)"""
+    url = f"https://www.dens.tv/movie/related/{keyword_id}/{slug}?page={page}&limit={limit}&json=true"
+    resp = session.get(url)
+    resp.raise_for_status()
+    return resp.json()
+
+
+# ============================================================
+# M3U BUILDER
+# ============================================================
+def esc(val):
+    """Escape untuk M3U attribute"""
+    if not val:
+        return ""
+    return str(val).replace('"', "'").replace("\n", " ").strip()
+
+
+def build_m3u(entries):
     lines = ["#EXTM3U"]
-    count = 0
-    non_drm_count = 0
-    drm_count = 0
-    skip_count = 0
+    for e in entries:
+        if not e.get("stream_url"):
+            continue
+        group = esc(e.get("group_title", ""))
+        name = esc(e.get("tvg_name", ""))
+        logo = esc(e.get("tvg_logo", ""))
+        stream_url = e["stream_url"]
 
-    for ch in channels:
-        ch_id = ch["id"]
-        title = ch["title"]
-        logo = ch.get("logo", "")
-        group = ch.get("group", "Lainnya")
-        is_drm = ch.get("is_drm", False)
-
-        non_drm_url = stream_urls.get(ch_id, "")
-        drm_url = ch.get("drm_stream", "") or STREAM_DRM_HLS.format(id=ch_id)
-        license_url = f"{LICENSE_WORKER}?id={ch_id}"
-
-        if is_drm:
-            lines.append(
-                f'#EXTINF:-1 tvg-id="{ch_id}" '
-                f'tvg-name="{title}" '
-                f'tvg-logo="{logo}" '
-                f'group-title="{group}",'
-                f'{title}'
-            )
-            lines.append("#KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha")
-            lines.append(f"#KODIPROP:inputstream.adaptive.license_key={license_url}")
-            lines.append(drm_url)
-            drm_count += 1
-            count += 1
-
-        elif non_drm_url:
-            lines.append(
-                f'#EXTINF:-1 tvg-id="{ch_id}" '
-                f'tvg-name="{title}" '
-                f'tvg-logo="{logo}" '
-                f'group-title="{group}",'
-                f'{title}'
-            )
-            lines.append(f'#EXTVLCOPT:http-user-agent={USER_AGENT}')
-            lines.append(f'#EXTVLCOPT:http-referrer={REFERER}')
-            lines.append(f'#EXTVLCOPT:http-origin={ORIGIN}')
-            lines.append(f"{PROXY_STREAM}?id={ch_id}")
-            non_drm_count += 1
-            count += 1
-
-        else:
-            log.debug("  [SKIP] %s (id=%d): non-DRM, stream URL gagal", title, ch_id)
-            skip_count += 1
-
-    Path(output_file).write_text("\n".join(lines) + "\n", encoding="utf-8")
-    log.info("[✓] %s (%d channels: %d non-DRM, %d DRM, %d skip)",
-             output_file, count, non_drm_count, drm_count, skip_count)
+        lines.append(f'#EXTINF:-1 group-title="{group}" tvg-name="{name}" tvg-logo="{logo}",{name}')
+        lines.append(f'#EXTVLCOPT:http-user-agent={STREAM_UA}')
+        lines.append(f'#EXTVLCOPT:http-referrer={STREAM_REFERER}')
+        lines.append(stream_url)
+    return "\n".join(lines) + "\n"
 
 
-# ==================== MAIN ====================
-def run_once(output_file: str, drm_only: bool, retries: int) -> bool:
-    global session
-    session = cffi_requests.Session(impersonate=IMPERSONATE)
-
-    if not verify_login():
-        log.error("Login gagal!")
-        return False
-
-    channels = fetch_all_channels()
-    if not channels:
-        log.error("Tidak ada channel ditemukan.")
-        return False
-
-    groups = {}
-    for ch in channels:
-        groups.setdefault(ch["group"], []).append(ch["title"])
-    log.info("\n  Groups (%d):", len(groups))
-    for g, names in sorted(groups.items()):
-        preview = ", ".join(names[:4]) + ("..." if len(names) > 4 else "")
-        log.info("    [%s] %d: %s", g, len(names), preview)
-
-    stream_urls = {}
-    non_drm_channels = [ch for ch in channels if not ch["is_drm"]]
-
-    if not drm_only and non_drm_channels:
-        log.info("\nFetching stream URLs (%d non-DRM channels) ...", len(non_drm_channels))
-        failed = []
-        for i, ch in enumerate(non_drm_channels, 1):
-            hls = fetch_stream_url(ch["id"])
-            if hls:
-                stream_urls[ch["id"]] = hls
-            else:
-                failed.append(ch)
-            if i % 10 == 0 or i == len(non_drm_channels):
-                log.info("  Progress: %d/%d (%d ok, %d fail)", i, len(non_drm_channels), len(stream_urls), len(failed))
-            time.sleep(DELAY)
-
-        for attempt in range(1, retries + 1):
-            if not failed:
-                break
-            log.info("  Retry %d/%d (%d failed) ...", attempt, retries, len(failed))
-            time.sleep(10)
-            still = []
-            for ch in failed:
-                hls = fetch_stream_url(ch["id"])
-                if hls:
-                    stream_urls[ch["id"]] = hls
-                else:
-                    still.append(ch)
-                time.sleep(DELAY)
-            failed = still
-
-        log.info("  Non-DRM: %d/%d", len(stream_urls), len(non_drm_channels))
-
-    log.info("\nGenerating M3U ...")
-    generate_m3u(channels, stream_urls, output_file)
-    return True
+# ============================================================
+# WORKER FUNCTIONS (untuk ThreadPool)
+# ============================================================
+def worker_fetch_channel_category(cat_id, cat_name):
+    """Worker: fetch channel per kategori"""
+    try:
+        data = fetch_channels_by_category(cat_id)
+        if data.get("success"):
+            return cat_name, data["data"]["contents"]
+    except Exception as ex:
+        print(f"    [!] {cat_name}: {ex}")
+    return cat_name, []
 
 
-def main():
-    parser = argparse.ArgumentParser(description="Vidio Live TV M3U Generator (2 Proxy)")
-    parser.add_argument("-o", "--output", type=str, default=OUTPUT_FILE)
-    parser.add_argument("--drm-only", action="store_true",
-                        help="Skip non-DRM, langsung DRM + license worker")
-    parser.add_argument("--retries", type=int, default=2)
-    parser.add_argument("--loop", action="store_true",
-                        help="Auto-refresh tiap 115 menit")
-    parser.add_argument("--debug", action="store_true")
-    args = parser.parse_args()
+def worker_fetch_epg(ch_info):
+    """Worker: fetch EPG per channel"""
+    ch_id = ch_info["id"]
+    try:
+        data = fetch_epg_by_date(ch_id, EPG_DATE)
+        if data.get("success") and data.get("data"):
+            return ch_info, data["data"]
+    except Exception:
+        pass
+    return ch_info, []
 
-    if args.debug:
-        logging.getLogger().setLevel(logging.DEBUG)
 
-    print("=" * 55)
-    print("  Vidio Live TV → M3U Playlist Generator")
-    print(f"  Proxy API:    {PROXY_API}")
-    print(f"  Proxy Stream: {PROXY_STREAM}")
-    print(f"  License:      {LICENSE_WORKER}")
-    print("=" * 55)
+def worker_fetch_genre_first_page(genre):
+    """Worker: fetch page 1 untuk genre tertentu (untuk tahu total pages)"""
+    kid, slug, name = genre
+    try:
+        data = fetch_movie_related(kid, slug, page=1, limit=50)
+        if data.get("success"):
+            return genre, data["data"]
+    except Exception as ex:
+        print(f"    [!] Genre {name}: {ex}")
+    return genre, None
 
-    if args.loop:
-        log.info("Loop mode: refresh every %d minutes", REFRESH_MINUTES)
-        while True:
-            try:
-                run_once(args.output, args.drm_only, args.retries)
-            except Exception as e:
-                log.error("Error: %s", e)
-            log.info("Sleeping %d minutes ...", REFRESH_MINUTES)
-            time.sleep(REFRESH_MINUTES * 60)
+
+def worker_fetch_genre_page(args):
+    """Worker: fetch halaman tertentu untuk genre"""
+    kid, slug, name, page = args
+    try:
+        data = fetch_movie_related(kid, slug, page=page, limit=50)
+        if data.get("success"):
+            return (kid, slug, name), data["data"]
+    except Exception as ex:
+        print(f"    [!] Genre {name} page {page}: {ex}")
+    return (kid, slug, name), None
+
+
+# ============================================================
+# PROCESS MOVIE DATA
+# ============================================================
+# Genre yang punya group-title sendiri
+PRIORITY_GENRES = {"Cerita Indonesia", "Drama", "Horror & Thriller"}
+
+def _process_movie_list(movies, genre_name, entries, seen_ids):
+    """Proses list movie, tambahkan ke entries (dedup by movie_id)"""
+    # Tentukan group-title
+    if genre_name in PRIORITY_GENRES:
+        group = f"VOD - {genre_name}"
     else:
-        if not run_once(args.output, args.drm_only, args.retries):
-            sys.exit(1)
+        group = "VOD - Other"
+
+    for item in movies:
+        movie_id = item.get("movie_id", "")
+        title = item.get("title", "")
+        play_url = item.get("extra", {}).get("stream", {}).get("play_url", "")
+        logo = item.get("url_handle", {}).get("img_land_large", "") or item.get("url_handle", {}).get("img_port_large", "")
+
+        if play_url and movie_id not in seen_ids:
+            seen_ids.add(movie_id)
+            entries.append({
+                "group_title": group,
+                "tvg_name": title,
+                "tvg_logo": logo,
+                "stream_url": play_url,
+            })   
 
 
+# ============================================================
+# MAIN
+# ============================================================
+def scrape():
+    entries = []
+    all_channels = []
+    seen_movie_ids = set()
+
+    # ----------------------------------------------------------
+    # 1. LIVE TV — dari TvChannels/listByCategory (PARALLEL)
+    # ----------------------------------------------------------
+    print("[*] ...")
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+        futures = {
+            executor.submit(worker_fetch_channel_category, cid, cname): (cid, cname)
+            for cid, cname in CATEGORIES.items()
+        }
+        for future in as_completed(futures):
+            cat_name, contents = future.result()
+            count = 0
+            for item in contents:
+                meta = item.get("meta", {})
+                rules = item.get("rules", {})
+
+                title = meta.get("title", "")
+                logo = meta.get("images", {}).get("default", "")
+                stream_url = meta.get("videos", {}).get("live", "")
+                ch_id = meta.get("id", "")
+
+                if stream_url:
+                    entries.append({
+                        "group_title": "tv nasional prem",
+                        "tvg_name": title,
+                        "tvg_logo": logo,
+                        "stream_url": stream_url,
+                    })
+                    count += 1
+
+                all_channels.append({
+                    "id": ch_id,
+                    "title": title,
+                    "logo": logo,
+                    "category": cat_name,
+                    "catchup_enable": rules.get("catchup", {}).get("enable", 0),
+                })
+
+            print(f"    \u2713 {cat_name}: {count} channels")
+
+    # ----------------------------------------------------------
+    # 2. EPG — dari TvChannels/listEpgByDate (PARALLEL)
+    # ----------------------------------------------------------
+    print(f"[*] F: {EPG_DATE} ...")
+    epg_channels = [ch for ch in all_channels if ch["catchup_enable"]]
+    epg_count = 0
+
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+        futures = {
+            executor.submit(worker_fetch_epg, ch): ch
+            for ch in epg_channels
+        }
+        for future in as_completed(futures):
+            ch_info, programs = future.result()
+            for prog in programs:
+                title = prog.get("title", "")
+                play_url = prog.get("play", "")
+                start_end = prog.get("start_end", "")
+
+                if play_url:
+                    entries.append({
+                        "group_title": "epg even",
+                        "tvg_name": f"{title} [{start_end}]",
+                        "tvg_logo": ch_info["logo"],
+                        "stream_url": play_url,
+                    })
+                    epg_count += 1
+
+    print(f"    \u2713 {epg_count} EPG  {len(epg_channels)} channels")
+
+    # ----------------------------------------------------------
+    # 3. CATCHUP & VOD — dari HomeSections
+    # ----------------------------------------------------------
+    print("[*] F...")
+    try:
+        data = fetch_home_sections()
+        if data.get("success"):
+            sections = data["data"]["contents"]
+            for section in sections:
+                section_title = section.get("title", "")
+                contents = section.get("content", [])
+
+                for item in contents:
+                    item_type = item.get("type", "")
+                    title = item.get("title", "")
+                    logo = item.get("image_landscape", "") or item.get("image_square", "")
+
+                    stream_url = None
+                    if item_type == "catchup_schedule":
+                        stream_url = item.get("stream_url_web", "")
+                    elif item_type == "vod":
+                        stream_url = item.get("vod_url_web", "")
+                    else:
+                        continue
+
+                    if stream_url:
+                        entries.append({
+                            "group_title": section_title,
+                            "tvg_name": title,
+                            "tvg_logo": logo,
+                            "stream_url": stream_url,
+                        })
+            print(f"    \u2713 Done")
+    except Exception as ex:
+        print(f"    [!] H: {ex}")
+
+    # ----------------------------------------------------------
+    # 4. VOD BY GENRE — dari movie/related (PARALLEL + PAGINATED)
+    # ----------------------------------------------------------
+    print("[*] F...")
+    vod_count = 0
+
+    # Phase 1: Fetch page 1 semua genre (parallel) untuk tahu total
+    genre_page1_data = {}
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+        futures = {
+            executor.submit(worker_fetch_genre_first_page, g): g
+            for g in VOD_GENRES
+        }
+        for future in as_completed(futures):
+            genre, data = future.result()
+            if data:
+                genre_page1_data[genre] = data
+
+    # Process page 1 data
+    for genre, data in genre_page1_data.items():
+        kid, slug, name = genre
+        movies = data.get("movies", [])
+        total = data.get("totalrecord", 0)
+        _process_movie_list(movies, name, entries, seen_movie_ids)
+        print(f"    \u2713 {name}: {len(movies)}/{total} items")
+
+    # Phase 2: Fetch remaining pages (parallel)
+    remaining_tasks = []
+    for genre, data in genre_page1_data.items():
+        kid, slug, name = genre
+        total = data.get("totalrecord", 0)
+        if total > 50:
+            total_pages = (total + 49) // 50
+            for p in range(2, total_pages + 1):
+                remaining_tasks.append((kid, slug, name, p))
+
+    if remaining_tasks:
+        print(f"    F {len(remaining_tasks)} ...")
+        with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+            futures = {
+                executor.submit(worker_fetch_genre_page, task): task
+                for task in remaining_tasks
+            }
+            for future in as_completed(futures):
+                genre_key, data = future.result()
+                if data:
+                    kid, slug, name = genre_key
+                    movies = data.get("movies", [])
+                    _process_movie_list(movies, name, entries, seen_movie_ids)
+
+    vod_count = sum(1 for e in entries if "VOD -" in e.get("group_title", ""))
+    print(f"    \u2713 Total VOD: {vod_count} items")
+
+    return entries
+
+
+# ============================================================
+# WRITE OUTPUT
+# ============================================================
+def write_output(entries):
+    m3u = build_m3u(entries)
+
+    with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
+        f.write(m3u)
+
+    live_count = sum(1 for e in entries if "op-flashcon-digdayahd" in e.get("stream_url", "") or "op-flashcon-digdayasd" in e.get("stream_url", ""))
+    epg_total = sum(1 for e in entries if " - EPG" in e.get("group_title", ""))
+    vod_count = sum(1 for e in entries if "VOD -" in e.get("group_title", ""))
+    other_count = len(entries) - live_count - epg_total - vod_count
+
+    print(f"\n[\u2713] Selesai! Total: {len(entries)} entri \u2192 '{OUTPUT_FILE}'")
+    print(f"    - Live TV: {live_count}")
+    print(f"    - EPG/Catchup: {epg_total}")
+    print(f"    - VOD (by genre): {vod_count}")
+    print(f"    - Other: {other_count}")
+
+
+# ============================================================
+# ENTRY POINT
+# ============================================================
 if __name__ == "__main__":
-    main()   
+    start = time.time()
+    entries = scrape()
+    write_output(entries)
+    elapsed = time.time() - start
+    print(f"    Time: {elapsed:.1f}s")   
