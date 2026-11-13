@@ -1,12 +1,31 @@
 #!/usr/bin/env python3
 """
-Vidio Live TV → M3U Playlist Generator (via Proxy)
-Semua API call lewat proxy (IP server tercatat)
+Vidio Live TV → M3U Playlist Generator (Complete)
+==================================================
+- Scrape semua channel dari /categories/live/sections (included[])
+- Non-DRM: fetch via API stream (valid 2 jam) — 3 attempt (auth, anonymous, preview)
+- DRM: fallback ke URL DRM + license proxy (Cloudflare Worker)
+- EXT VLCOPT: user-agent, origin, referrer per channel
+- Auto-refresh loop (opsional)
+
+Dependencies:
+    pip install "curl-cffi<0.14"
+
+Run:
+    python vidio_m3u.py
+    python vidio_m3u.py --loop          # auto-refresh tiap 115 menit
+    python vidio_m3u.py --drm-only      # skip non-DRM, langsung DRM
+    python vidio_m3u.py -o my.m3u       # custom output
+    python vidio_m3u.py --debug         # lihat response mentah
 """
 
+import argparse
+import hashlib
+import hmac
 import json
 import sys
 import time
+import uuid
 import logging
 from pathlib import Path
 
@@ -17,73 +36,243 @@ except ImportError:
     sys.exit(1)
 
 # ==================== KONFIGURASI ====================
-API_PROXY = "https://exsample.d-n-s.name/api.php"
-STREAM_PROXY = "https://exsample.d-n-s.name/ch.m3u8"
-PROXY_SECRET = "ganti-dengan-secret-panjang"
+API_BASE = "https://api.vidio.com"
+SITE_URL = "https://m.vidio.com"
 OUTPUT_FILE = "playlist.m3u"
 IMPERSONATE = "chrome"
 DELAY = 0.3
+REFRESH_MINUTES = 115
 
-UA = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36"
-ORIGIN = "https://m.vidio.com"
-REFERER = "https://m.vidio.com/"
+# License proxy (Cloudflare Worker)
+LICENSE_WORKER = "https://b.bhns.workers.dev/license.mpd"
 
-DRM_PATTERN = (
+# DRM stream pattern
+STREAM_DRM_HLS = (
     "https://etslive-v3-vidio-com-tokenized.akamaized.net"
     "/stream/{id}/file/drm/hls/master.m3u8"
 )
-# =====================================================
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s", datefmt="%H:%M:%S")
+# API Key
+API_KEY = (
+    "CH1ZFsN4N/MIfAds1DL9mP151CNqIpWHqZGRr+LkvUyiq3FRPuP1Kt6aK+pG3nEC1FXt0ZAAJ5FKP8QU8CZ5"
+    "/ieyIuWEkvNBqXdsdlXM2838+3SFjs9rtlntv7l7DHkBHWK1q/4vLGad8GAj3vfLciRFnquHuZMMW+4EX8yTe1w="
+)
+
+# Browser headers (untuk EXT VLCOPT)
+USER_AGENT = (
+    "Mozilla/5.0 (Linux; Android 10; K) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) "
+    "Chrome/157.0.0.0 Mobile Safari/537.36"
+)
+REFERER = "https://m.vidio.com/"
+ORIGIN = "https://m.vidio.com"
+
+# ==================== USER (UPDATE DI SINI) ====================
+USER_ID = "186957857"
+USER_EMAIL = "bhianesee05@gmail.com"
+AHOY_VISITOR = "3489c20a-d32e-468a-bd1b-8f7d150fa132"
+REMEMBER_TOKEN = (
+    "eyJfcmFpbHMiOnsibWVzc2FnZSI6Ilcxc3hPRFk1TlRjNE5UZGRMQ0lrTW1Fa01UQWthRU0xVnpKbGNVSXlhakJTYmtaMmIwUmFjVlJ2VHlJc0lqRTNPVFF6T1RneU5ERXVNekkyTkRFM05DSmQi"
+    "LCJleHAiOiIyMDI4LTExLTExVDExOjU3OjIxLjMyNloiLCJwdXIiOiJjb29raWUucmVtZW1iZXJfdXNlcl90b2tlbiJ9fQ%3D%3D"
+    "--2c508b1dd9d15adf9f96cfcbfdbcfd3ef41d76c5"
+)
+# ==================================================================
+
+# ==================== LOGGING ====================
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    datefmt="%H:%M:%S",
+)
 log = logging.getLogger("vidio-m3u")
 
 
-def api_get(params: dict) -> dict:
-    """Fetch via API proxy."""
-    qs = "&".join(f"{k}={v}" for k, v in params.items())
-    url = f"{API_PROXY}?auth={PROXY_SECRET}&{qs}"
-    resp = cffi_requests.get(url, impersonate=IMPERSONATE, timeout=30)
-    if resp.status_code != 200:
-        log.warning("  API error: %d — %s", resp.status_code, resp.text[:200])
-        return {}
-    return resp.json()
+# ==================== X-SIGNATURE ====================
+def generate_x_signature() -> tuple:
+    t = str(time.time())
+    secret_key = f"V1d10D3v:{t}"
+    signature = hmac.new(
+        secret_key.encode(),
+        t.encode(),
+        hashlib.sha256
+    ).hexdigest()
+    return t, signature
 
 
-def fetch_all_channels() -> list:
-    """Fetch semua channel via proxy."""
-    log.info("Fetching channels via proxy...")
+# ==================== STEP 1: BOOTSTRAP SESSION ====================
+def bootstrap_session(session) -> str:
+    log.info("Bootstrap session ...")
+
+    session.cookies.set("ahoy_visitor", AHOY_VISITOR, domain=".vidio.com", path="/")
+    session.cookies.set("remember_user_token", REMEMBER_TOKEN, domain=".vidio.com", path="/")
+    session.cookies.set("country_id", "ID", domain=".vidio.com", path="/")
+
+    try:
+        resp = session.get(SITE_URL, timeout=30)
+        log.info("  GET m.vidio.com → %d", resp.status_code)
+    except Exception as e:
+        log.warning("  Error visit site: %s", e)
+
+    at = session.cookies.get("access_token")
+    if at:
+        log.info("  ✓ access_token: %s...", at[:30])
+
+    luws = session.cookies.get("luws", "")
+    if not luws:
+        luws = f"{str(uuid.uuid4()).upper()}_{USER_ID}"
+    log.info("  ✓ luws: %s", luws)
+    return luws
+
+
+# ==================== STEP 2: VERIFY LOGIN ====================
+def verify_login(session) -> bool:
+    h = {
+        "x-api-platform": "web-mobile",
+        "x-secure-level": "2",
+        "x-auth-prefer": "AccessToken",
+        "origin": ORIGIN,
+        "referer": REFERER,
+        "accept": "*/*",
+        "accept-language": "id",
+    }
+    try:
+        resp = session.get(f"{SITE_URL}/interactions.json", headers=h, timeout=15)
+        if resp.status_code == 200:
+            user = resp.json().get("current_user", {})
+            if user:
+                log.info("  ✓ Login: %s (id=%s)", user.get("display_name"), user.get("user_id"))
+                log.info("  ✓ Sub: %s", "Premium" if user.get("has_active_subscription") else "Free")
+                return True
+    except Exception as e:
+        log.warning("  Verify gagal: %s", e)
+    return False
+
+
+# ==================== STEP 3: FETCH ALL CHANNELS ====================
+def fetch_all_channels(session, luws: str) -> list:
+    """
+    GET /categories/live/sections → parse included[] (type="content", content_type="livestreaming").
+    """
+    url = f"{API_BASE}/categories/live/sections"
+    h = {
+        "x-api-key": API_KEY,
+        "x-api-platform": "web-mobile",
+        "x-secure-level": "2",
+        "x-visitor-id": AHOY_VISITOR,
+        "x-user-id": USER_ID,
+        "luws": luws,
+        "origin": ORIGIN,
+        "referer": REFERER,
+        "accept": "application/json",
+        "accept-language": "id",
+    }
+
+    log.info("Fetching all channels ...")
     channels = {}
     page = 1
 
     while True:
-        data = api_get({"action": "channels", "page": page})
-        if not data:
+        params = {"page[number]": page, "page[size]": 10, "included": "contents"}
+        try:
+            resp = session.get(url, params=params, headers=h, timeout=30)
+            if resp.status_code != 200:
+                log.warning("  Page %d: HTTP %d %s", page, resp.status_code, resp.text[:200])
+                break
+        except Exception as e:
+            log.error("  Page %d error: %s", page, e)
             break
 
+        data = resp.json()
+
+        # Build section title mapping
         sections = data.get("data", [])
         if isinstance(sections, dict):
             sections = [sections]
 
+        section_id_to_title = {}
+        section_contents_map = {}
+
         for section in sections:
+            sec_id = str(section.get("id", ""))
             attrs = section.get("attributes", {})
-            section_title = attrs.get("title", "Lainnya")
-            contents = attrs.get("contents", [])
+            section_id_to_title[sec_id] = attrs.get("title", "Lainnya")
 
-            for item in contents:
-                if item.get("content_type") != "livestreaming":
+            rels = section.get("relationships", {})
+            contents_rel = rels.get("contents", {})
+            content_list = contents_rel.get("data", [])
+            if isinstance(content_list, list):
+                section_contents_map[sec_id] = content_list
+
+        # Parse included[]
+        included = data.get("included", [])
+        if page == 1 and included:
+            types = {}
+            for item in included:
+                t = item.get("type", "?")
+                types[t] = types.get(t, 0) + 1
+            log.info("  [DEBUG] included types: %s", types)
+
+        for item in included:
+            if item.get("type") != "content":
+                continue
+
+            attrs = item.get("attributes", {})
+
+            # Filter: hanya livestreaming
+            content_type = attrs.get("content_type", "")
+            if content_type != "livestreaming":
+                continue
+
+            # Channel ID
+            ch_id = attrs.get("content_id")
+            if not ch_id:
+                id_str = str(item.get("id", ""))
+                parts = id_str.split("-")
+                try:
+                    ch_id = int(parts[-1])
+                except (ValueError, IndexError):
                     continue
-                ch_id = item.get("content_id")
-                if not ch_id or ch_id in channels:
-                    continue
+            try:
+                ch_id = int(ch_id)
+            except (ValueError, TypeError):
+                continue
 
-                channels[ch_id] = {
-                    "id": int(ch_id),
-                    "title": item.get("alt_title") or item.get("title", "Unknown"),
-                    "logo": item.get("cover_url", ""),
-                    "group": section_title,
-                    "stream_url": item.get("stream_url", ""),
-                }
+            if ch_id in channels:
+                continue
 
+            # Title: prefer alt_title (nama channel)
+            title = attrs.get("alt_title") or attrs.get("title", "Unknown")
+
+            # Logo
+            logo = attrs.get("cover_url", "")
+            if not logo:
+                sq = attrs.get("square_image")
+                if isinstance(sq, dict):
+                    logo = sq.get("url", "")
+                elif isinstance(sq, str):
+                    logo = sq
+
+            # Group: cari dari section relationships
+            group = "Lainnya"
+            item_id_str = str(ch_id)
+            for sec_id, content_list in section_contents_map.items():
+                for c in content_list:
+                    c_id = str(c.get("id", ""))
+                    if item_id_str in c_id:
+                        group = section_id_to_title.get(sec_id, "Lainnya")
+                        break
+                if group != "Lainnya":
+                    break
+
+            channels[ch_id] = {
+                "id": ch_id,
+                "title": title,
+                "logo": logo,
+                "group": group,
+                "drm_stream": attrs.get("stream_url", ""),
+            }
+
+        # Pagination
         links = data.get("links", {})
         if links.get("next"):
             page += 1
@@ -92,32 +281,120 @@ def fetch_all_channels() -> list:
             break
 
     result = list(channels.values())
-    log.info("  Found %d channels", len(result))
+    log.info("  Found %d unique channels", len(result))
     return result
 
 
-def fetch_stream_url(ch_id: int) -> str:
-    """Fetch stream URL via proxy."""
-    data = api_get({"action": "stream", "id": ch_id})
-    return data.get("data", {}).get("attributes", {}).get("hls", "")
+# ==================== STEP 4: FETCH NON-DRM STREAM URL ====================
+def fetch_stream_url(session, luws: str, ch_id: int) -> str:
+    """
+    GET /livestreamings/{id}/stream?initialize=true
+    3 attempt: full auth → anonymous → x-user-login=false
+    """
+    url = f"{API_BASE}/livestreamings/{ch_id}/stream?initialize=true"
+
+    # --- Attempt 1: Full auth ---
+    x_client, x_signature = generate_x_signature()
+    h1 = {
+        "x-api-key": API_KEY,
+        "x-api-platform": "web-mobile",
+        "x-secure-level": "2",
+        "x-user-id": USER_ID,
+        "x-user-email": USER_EMAIL,
+        "luws": luws,
+        "x-client": x_client,
+        "x-signature": x_signature,
+        "origin": ORIGIN,
+        "referer": REFERER,
+        "sec-fetch-site": "same-site",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-dest": "empty",
+        "accept": "*/*",
+        "accept-language": "id",
+    }
+    result = _try_stream(session, url, h1, ch_id)
+    if result:
+        return result
+
+    # --- Attempt 2: Anonymous (tanpa user headers) ---
+    x_client2, x_signature2 = generate_x_signature()
+    h2 = {
+        "x-api-key": API_KEY,
+        "x-api-platform": "web-mobile",
+        "x-secure-level": "1",
+        "luws": luws,
+        "x-client": x_client2,
+        "x-signature": x_signature2,
+        "origin": ORIGIN,
+        "referer": REFERER,
+        "sec-fetch-site": "same-site",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-dest": "empty",
+        "accept": "*/*",
+        "accept-language": "id",
+    }
+    result = _try_stream(session, url, h2, ch_id)
+    if result:
+        log.debug("  ch %d: preview OK (anonymous)", ch_id)
+        return result
+
+    # --- Attempt 3: x-user-login=false ---
+    x_client3, x_signature3 = generate_x_signature()
+    h3 = {
+        "x-api-key": API_KEY,
+        "x-api-platform": "web-mobile",
+        "x-secure-level": "2",
+        "x-user-login": "false",
+        "luws": luws,
+        "x-client": x_client3,
+        "x-signature": x_signature3,
+        "origin": ORIGIN,
+        "referer": REFERER,
+        "sec-fetch-site": "same-site",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-dest": "empty",
+        "accept": "*/*",
+        "accept-language": "id",
+    }
+    result = _try_stream(session, url, h3, ch_id)
+    if result:
+        log.debug("  ch %d: preview OK (x-user-login=false)", ch_id)
+        return result
+
+    return ""
 
 
-def push_to_proxy(channels: list):
-    """Push stream URLs ke proxy (cache)."""
-    body = {"channels": [{"id": ch["id"], "url": ch.get("stream_url", "")} for ch in channels if ch.get("stream_url")]}
-    if not body["channels"]:
-        return {"ok": False, "count": 0}
-    url = f"{STREAM_PROXY}?auth={PROXY_SECRET}"
-    resp = cffi_requests.post(url, json=body, impersonate=IMPERSONATE, timeout=30)
-    if resp.status_code != 200:
-        log.warning("  Push gagal: %d", resp.status_code)
-        return {"error": resp.text[:200]}
-    return resp.json()
+def _try_stream(session, url: str, headers: dict, ch_id: int) -> str:
+    """Try one stream request, return hls url or ''."""
+    try:
+        resp = session.get(url, headers=headers, timeout=15)
+        if resp.status_code == 200:
+            data = resp.json()
+            attrs = data.get("data", {}).get("attributes", {})
+            hls = attrs.get("hls", "")
+            if hls:
+                return hls
+        elif resp.status_code == 403:
+            try:
+                err = resp.json()
+                title = err.get("errors", [{}])[0].get("title", "")
+                log.debug("  ch %d: 403 %s", ch_id, title)
+            except Exception:
+                pass
+    except Exception as e:
+        log.debug("  ch %d: exception %s", ch_id, e)
+    return ""
 
 
-def generate_m3u(channels: list, output_file: str):
+# ==================== STEP 5: GENERATE M3U ====================
+def generate_m3u(channels: list, stream_urls: dict, output_file: str):
+    """
+    Generate M3U dengan #EXTVLCOPT (user-agent, origin, referrer) per channel.
+    """
     lines = ["#EXTM3U"]
     count = 0
+    non_drm_count = 0
+    drm_count = 0
 
     for ch in channels:
         ch_id = ch["id"]
@@ -125,9 +402,11 @@ def generate_m3u(channels: list, output_file: str):
         logo = ch.get("logo", "")
         group = ch.get("group", "Lainnya")
 
-        # URL: proxy upstream (refresh otomatis)
-        stream_url = f"{STREAM_PROXY}?ch={ch_id}"
+        non_drm_url = stream_urls.get(ch_id, "")
+        drm_url = ch.get("drm_stream", "") or STREAM_DRM_HLS.format(id=ch_id)
+        license_url = f"{LICENSE_WORKER}?id={ch_id}"
 
+        # EXTINF
         lines.append(
             f'#EXTINF:-1 tvg-id="{ch_id}" '
             f'tvg-name="{title}" '
@@ -135,62 +414,123 @@ def generate_m3u(channels: list, output_file: str):
             f'group-title="{group}",'
             f'{title}'
         )
-        lines.append(f'#EXTVLCOPT:http-user-agent={UA}')
+
+        # EXT VLCOPT: browser headers
+        lines.append(f'#EXTVLCOPT:http-user-agent={USER_AGENT}')
+        lines.append(f'#EXTVLCOPT:http-referrer={REFERER}')
         lines.append(f'#EXTVLCOPT:http-origin={ORIGIN}')
-        lines.append(f'#EXTVLCOPT:http-referer={REFERER}')
-        lines.append(f'#KODIPROP:inputstream.adaptive.user_agent={UA}')
-        lines.append(f'#KODIPROP:inputstream.adaptive.headers=Origin:{ORIGIN};Referer:{REFERER}')
-        lines.append(stream_url)
-        lines.append("")
+
+        if non_drm_url:
+            lines.append(non_drm_url)
+            non_drm_count += 1
+        else:
+            # DRM: Kodi license
+            lines.append("#KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha")
+            lines.append(f"#KODIPROP:inputstream.adaptive.license_key={license_url}")
+            lines.append(drm_url)
+            drm_count += 1
+
         count += 1
 
     Path(output_file).write_text("\n".join(lines) + "\n", encoding="utf-8")
-    log.info("[✓] %s (%d channels)", output_file, count)
+    log.info("[✓] %s (%d channels: %d non-DRM, %d DRM)", output_file, count, non_drm_count, drm_count)
 
 
-def main():
-    print("=" * 55)
-    print("  Vidio Live TV → M3U (via Proxy)")
-    print("  API: " + API_PROXY)
-    print("  Stream: " + STREAM_PROXY)
-    print("=" * 55)
+# ==================== MAIN ====================
+def run_once(output_file: str, drm_only: bool, retries: int) -> bool:
+    session = cffi_requests.Session(impersonate=IMPERSONATE)
 
-    # Step 1: Fetch channels via proxy
-    channels = fetch_all_channels()
+    luws = bootstrap_session(session)
+
+    if not verify_login(session):
+        log.error("Login gagal! Update REMEMBER_TOKEN.")
+        return False
+
+    channels = fetch_all_channels(session, luws)
     if not channels:
-        log.error("Tidak ada channel.")
-        sys.exit(1)
+        log.error("Tidak ada channel ditemukan.")
+        return False
 
-    # Group summary
+    # Summary
     groups = {}
     for ch in channels:
         groups.setdefault(ch["group"], []).append(ch["title"])
-    log.info("\n  Groups:")
-    for g, names in groups.items():
-        log.info("    [%s] %d: %s", g, len(names), ", ".join(names[:5]) + ("..." if len(names) > 5 else ""))
+    log.info("\n  Groups (%d):", len(groups))
+    for g, names in sorted(groups.items()):
+        preview = ", ".join(names[:4]) + ("..." if len(names) > 4 else "")
+        log.info("    [%s] %d: %s", g, len(names), preview)
 
-    # Step 2: Fetch stream URLs (hanya yang kosong)
-    need_fetch = [ch for ch in channels if not ch.get("stream_url")]
-    if need_fetch:
-        log.info("\nFetching stream URLs for %d channels...", len(need_fetch))
-        for i, ch in enumerate(need_fetch, 1):
-            url = fetch_stream_url(ch["id"])
-            if url:
-                ch["stream_url"] = url
-                log.info("  [%d/%d] %s ✓", i, len(need_fetch), ch["title"])
+    # Fetch non-DRM URLs
+    stream_urls = {}
+    if not drm_only:
+        log.info("\nFetching non-DRM URLs (%d channels) ...", len(channels))
+        failed = []
+        for i, ch in enumerate(channels, 1):
+            hls = fetch_stream_url(session, luws, ch["id"])
+            if hls:
+                stream_urls[ch["id"]] = hls
             else:
-                ch["stream_url"] = DRM_PATTERN.format(id=ch["id"])
-                log.warning("  [%d/%d] %s → DRM fallback", i, len(need_fetch), ch["title"])
+                failed.append(ch)
+            if i % 10 == 0 or i == len(channels):
+                log.info("  Progress: %d/%d (%d ok, %d fail)", i, len(channels), len(stream_urls), len(failed))
             time.sleep(DELAY)
 
-    # Step 3: Push ke proxy (cache)
-    log.info("\nPushing to proxy...")
-    result = push_to_proxy(channels)
-    log.info("  Proxy: %s", result)
+        # Retry
+        for attempt in range(1, retries + 1):
+            if not failed:
+                break
+            log.info("  Retry %d/%d (%d failed) ...", attempt, retries, len(failed))
+            time.sleep(5)
+            still = []
+            for ch in failed:
+                hls = fetch_stream_url(session, luws, ch["id"])
+                if hls:
+                    stream_urls[ch["id"]] = hls
+                else:
+                    still.append(ch)
+                time.sleep(DELAY)
+            failed = still
 
-    # Step 4: Generate M3U
-    log.info("\nGenerating M3U...")
-    generate_m3u(channels, OUTPUT_FILE)
+        log.info("  Non-DRM: %d/%d", len(stream_urls), len(channels))
+
+    # Generate M3U
+    log.info("\nGenerating M3U ...")
+    generate_m3u(channels, stream_urls, output_file)
+    return True
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Vidio Live TV M3U Generator")
+    parser.add_argument("-o", "--output", type=str, default=OUTPUT_FILE)
+    parser.add_argument("--drm-only", action="store_true",
+                        help="Skip non-DRM, langsung DRM + license worker")
+    parser.add_argument("--retries", type=int, default=2)
+    parser.add_argument("--loop", action="store_true",
+                        help="Auto-refresh tiap 115 menit")
+    parser.add_argument("--debug", action="store_true")
+    args = parser.parse_args()
+
+    if args.debug:
+        logging.getLogger().setLevel(logging.DEBUG)
+
+    print("=" * 55)
+    print("  Vidio Live TV → M3U Playlist Generator")
+    print("  Non-DRM: direct (3 attempt) | DRM: via license worker")
+    print(f"  License: {LICENSE_WORKER}")
+    print("=" * 55)
+
+    if args.loop:
+        log.info("Loop mode: refresh every %d minutes", REFRESH_MINUTES)
+        while True:
+            try:
+                run_once(args.output, args.drm_only, args.retries)
+            except Exception as e:
+                log.error("Error: %s", e)
+            log.info("Sleeping %d minutes ...", REFRESH_MINUTES)
+            time.sleep(REFRESH_MINUTES * 60)
+    else:
+        if not run_once(args.output, args.drm_only, args.retries):
+            sys.exit(1)
 
 
 if __name__ == "__main__":
