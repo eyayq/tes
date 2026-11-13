@@ -9,19 +9,20 @@ from urllib.parse import quote
 from curl_cffi import requests as cffi_requests
 
 # ─── CONFIG ─────────────────────────────────────────────
-PROXY_BASE = "https://exsample.d-n-s.name/http.php"
+API_PROXY  = "https://exsample.d-n-s.name/https.php"   # Proxy API & Website
+PROXY_BASE = "https://exsample.d-n-s.name/http.php"   # Proxy Upstream (m3u8)
 SECRET     = "ganti-dengan-secret-panjang"
 
 OUTPUT_M3U  = "playlist.m3u"
-MAX_WORKERS = 200
+MAX_WORKERS = 5
 RETRIES     = 3
 RETRY_DELAY = 2
 
-APP_CODE  = "D04B29D6B957CD44DC5F9894189380B8"
+APP_CODE    = "D04B29D6B957CD44DC5F9894189380B8"
 GROUP_TITLE = "live camelia vip [tes]"
 USER_AGENT  = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36"
-REFERER   = "https://www.camel1.tv/"
-ORIGIN    = "https://www.camel1.tv"
+REFERER     = "https://www.camel1.tv/"
+ORIGIN      = "https://www.camel1.tv"
 
 WIB = timezone(timedelta(hours=7))
 STATUS_MAP = {1: "NS", 2: "LIVE", 3: "UPC", 4: "FT", 5: "HT"}
@@ -32,19 +33,25 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 log = logging.getLogger("camel")
 
 
-# ─── PROXY HELPER ───────────────────────────────────────
+# ─── PROXY HELPERS ──────────────────────────────────────
 
-def _proxy(api, **params):
+def _api_proxy(api, **params):
+    """Bangun URL untuk proxy API/website (index.php)."""
     qs = f"auth={SECRET}&api={api}"
     for k, v in params.items():
         qs += f"&{k}={quote(str(v), safe='')}"
-    return f"{PROXY_BASE}?{qs}"
+    return f"{API_PROXY}?{qs}"
+
+
+def _upstream_proxy(stream_url):
+    """Wrap stream URL ke proxy upstream (proxy.php) — m3u8 rewrite."""
+    return f"{PROXY_BASE}?u={quote(stream_url, safe='')}"
 
 
 # ─── API VIA PROXY ──────────────────────────────────────
 
 def anonymous_login():
-    r = SESSION.get(_proxy("login"))
+    r = SESSION.get(_api_proxy("login"))
     if r.status_code != 200:
         return None, None
     data = r.json()
@@ -52,7 +59,7 @@ def anonymous_login():
 
 
 def fetch_matches_html():
-    r = SESSION.get(_proxy("matches"))
+    r = SESSION.get(_api_proxy("matches"))
     if r.status_code != 200:
         return ""
     return r.text
@@ -60,7 +67,7 @@ def fetch_matches_html():
 
 def get_stream_url(match_id, uid):
     for attempt in range(RETRIES):
-        r = SESSION.get(_proxy("stream", match_id=match_id, uid=uid))
+        r = SESSION.get(_api_proxy("stream", match_id=match_id, uid=uid))
         if r.status_code == 200:
             data = r.json()
             url = data.get("stream_url")
@@ -73,7 +80,7 @@ def get_stream_url(match_id, uid):
 
 def get_token(stream_url, uid):
     stream_name = stream_url.rstrip(".m3u8").split("/")[-1]
-    r = SESSION.get(_proxy("token", stream_name=stream_name, uid=uid))
+    r = SESSION.get(_api_proxy("token", stream_name=stream_name, uid=uid))
     if r.status_code == 200:
         data = r.json()
         return data.get("tx_time"), data.get("tx_secret")
@@ -152,10 +159,17 @@ def extract_matches_rsc(html):
 # ─── BUILD URL ──────────────────────────────────────────
 
 def build_final_url(stream_url, tx_time, tx_secret):
+    """
+    1. Tambah txSecret/txTime jika ada
+    2. Wrap ke proxy upstream (proxy.php) — m3u8 di-rewrite, segment langsung ke CDN
+    """
     if tx_time and tx_secret:
         tx_secret_url = hashlib.md5(tx_secret.encode()).hexdigest()
-        return f"{stream_url}?txSecret={tx_secret_url}&txTime={tx_time}&lat=9000"
-    return stream_url
+        full_url = f"{stream_url}?txSecret={tx_secret_url}&txTime={tx_time}&lat=9000"
+    else:
+        full_url = stream_url
+
+    return _upstream_proxy(full_url)
 
 
 def get_stream_for_match(match, uid):
@@ -204,8 +218,11 @@ def generate_m3u(streams):
 
 def main():
     print("=" * 70)
+    print(f"  Camel TV — M3U Generator")
     print(f"  {datetime.now(WIB).strftime('%Y-%m-%d %H:%M WIB')}")
     print(f"  Workers: {MAX_WORKERS} | Retries: {RETRIES}")
+    print(f"  API Proxy:  {API_PROXY}")
+    print(f"  Upstream:   {PROXY_BASE}")
     print("=" * 70)
 
     print("\n🔑 Login...")
@@ -264,7 +281,7 @@ def main():
             f.write(m3u)
         print(f"\n✅ {OUTPUT_M3U} — {len(results)} streams")
         print(f"   Failed: {len(failed)}")
-        print(m3u[:1000])
+        print("\n" + m3u[:1500])
     else:
         print("\n❌ 0 streams.")
 
