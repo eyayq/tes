@@ -1,5 +1,3 @@
-
-
 import json
 import uuid
 import hashlib
@@ -11,15 +9,15 @@ from urllib.parse import urlparse
 from curl_cffi import requests as cffi_requests
 
 # ─── CONFIG ─────────────────────────────────────────────
-WEB_BASE = "https://exsample.d-n-s.name/http.php"
+WEB_BASE = "https://www.camel1.tv"
 API_BASE = "https://api.cameltv.live"
 OUTPUT_M3U = "playlist.m3u"
-MAX_WORKERS = 200          # ← DITURUNKAN dari 500 (anti rate-limit)
-RETRIES = 3               # ← JENIS BARU: retry per match
-RETRY_DELAY = 2           # ← JENIS BARU: jeda antar retry (detik)
+MAX_WORKERS = 200
+RETRIES = 3
+RETRY_DELAY = 2
 
-PROXY_BASE = "https://live123.bhns.workers.dev"
-HARDCODE_AUTH = "aad639d3a1b66cb8c384364342600a6b"
+# PHP Proxy - satu file untuk semua (CDN, API, Website)
+PROXY_BASE = "https://exsample.d-n-s.name/http.php"
 
 APP_CODE = "D04B29D6B957CD44DC5F9894189380B8"
 DEVICE_ID = str(uuid.uuid4())
@@ -59,12 +57,13 @@ def _headers(uid=None):
 
 
 def to_proxy_url(cdn_url):
+    """Wrap CDN URL via PHP proxy — tanpa auth di sisi client."""
     parsed = urlparse(cdn_url)
     query = parsed.query
     if query:
-        query += f"&auth={HARDCODE_AUTH}&d={parsed.netloc}"
+        query += f"&d={parsed.netloc}"
     else:
-        query = f"auth={HARDCODE_AUTH}&d={parsed.netloc}"
+        query = f"d={parsed.netloc}"
     return f"{PROXY_BASE}/{parsed.path.lstrip('/')}?{query}"
 
 
@@ -149,23 +148,16 @@ def extract_matches_rsc(html):
     return matches
 
 
-# ─── PERBAIKAN UTAMA: get_stream_url lebih robust ───────
-
 def _extract_stream_from_response(data):
-    """Ekstrak stream URL dari berbagai kemungkinan struktur response API."""
-    # Cek beberapa kemungkinan lokasi data
     detail = data.get("detail", data.get("data", data.get("result", {})))
 
-    # Jika detail sendiri adalah list
     if isinstance(detail, list):
         streams = detail
     elif isinstance(detail, dict):
-        # Coba berbagai key
         streams = (detail.get("streams")
                    or detail.get("streamList")
                    or detail.get("list")
                    or [])
-        # Kalau detail punya streamUrl langsung
         if not streams:
             if detail.get("streamUrlM3u8"):
                 return detail["streamUrlM3u8"].replace("http://", "https://")
@@ -177,11 +169,9 @@ def _extract_stream_from_response(data):
     if not streams:
         return None
 
-    # Cari URL dari setiap item
     for s in streams:
         if not isinstance(s, dict):
             continue
-        # Prioritas: streamUrlM3u8 > streamUrl > url > playUrl
         for key in ("streamUrlM3u8", "streamUrl", "url", "playUrl", "m3u8Url", "hlsUrl"):
             val = s.get(key, "")
             if val and val.startswith("http"):
@@ -190,7 +180,6 @@ def _extract_stream_from_response(data):
 
 
 def get_stream_url(match_id, uid):
-    """Coba beberapa endpoint dengan retry."""
     endpoints = [
         f"{API_BASE}/camel-service/ee/sports_live/football/stream?matchId={match_id}",
         f"{API_BASE}/camel-service/ee/sports_live/loadAnchorsByMatchId?matchId={match_id}&sportType=football",
@@ -206,19 +195,14 @@ def get_stream_url(match_id, uid):
                 data = r.json()
                 if not (data.get("success") or data.get("code") == 0 or data.get("status") == 200):
                     continue
-
                 stream_url = _extract_stream_from_response(data)
                 if stream_url:
                     return stream_url
-
             except Exception as e:
                 log.debug(f"  Attempt {attempt+1} {ep}: {e}")
                 continue
-
-        # Jeda sebelum retry
         if attempt < RETRIES - 1:
             time.sleep(RETRY_DELAY * (attempt + 1))
-
     return None
 
 
@@ -243,7 +227,8 @@ def build_final_url(stream_url, tx_time, tx_secret):
     if tx_time and tx_secret:
         tx_secret_url = hashlib.md5(tx_secret.encode()).hexdigest()
         return f"{stream_url}?txSecret={tx_secret_url}&txTime={tx_time}&lat=9000"
-    return f"{stream_url}?auth={HARDCODE_AUTH}"
+    # Tanpa hardcoded auth — PHP proxy akan inject auth saat forward ke CDN
+    return stream_url
 
 
 def get_stream_for_match(match, uid):
@@ -314,8 +299,6 @@ def main():
     for m in matches:
         print(f"     [{m['status']}] {m['home']} vs {m['away']} | id={m['id']} | has_stream={m['has_stream']}")
 
-    # ─── PERBAIKAN: filter dengan has_stream + status ───
-    # Hanya coba match yang memang punya stream (has_stream=1) ATAU sedang LIVE/UPC
     streamable = [m for m in matches
                   if m["status_id"] in (1, 2, 3, 4)
                   and (m["has_stream"] in (1, True) or m["status_id"] in (2, 3))]
@@ -339,7 +322,6 @@ def main():
             else:
                 failed.append(match)
 
-    # ─── PERBAIKAN: Second pass untuk yang gagal ───
     if failed:
         print(f"\n🔄 Retry {len(failed)} failed (delay 5s)...")
         time.sleep(5)
@@ -366,18 +348,3 @@ def main():
 
 if __name__ == "__main__":
     main()   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
