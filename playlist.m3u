@@ -1,30 +1,30 @@
 #EXTM3U
-#EXTINF:0,tvg-name="Egypt vs Malawi - CAF Africa Cup of Nations [FT] (3-0) 02:00 WIB 14-11-2026" tvg-logo="https://img.thesports.com/football/team/f31ddd679d7c453f8438244437b8f51f.png" group-title="live camelia vip [tes]",Egypt vs Malawi - CAF Africa Cup of Nations [FT] (3-0) 02:00 WIB 14-11-2026
-#EXTVLCOPT:http-origin=https://www.camel1.tv
-#EXTVLCOPT:http-referrer=https://www.camel1.tv/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-https://exsample.d-n-s.name/https.php?u=https%3A%2F%2Fliveplay1.camel4.live%2Flive%2F27551_12568345_ednm9whw1ne3ryo_md.m3u8%3FtxSecret%3D98cae9b8b5800157e0a31abb4c1cfa33%26txTime%3D6AF7748C%26lat%3D9000
-
 #EXTINF:0,tvg-name="Mali vs Rwanda - CAF Africa Cup of Nations [FT] (2-2) 02:00 WIB 14-11-2026" tvg-logo="https://img.thesports.com/football/team/04af5581fd20db49cb24499cec830e1a.png" group-title="live camelia vip [tes]",Mali vs Rwanda - CAF Africa Cup of Nations [FT] (2-2) 02:00 WIB 14-11-2026
 #EXTVLCOPT:http-origin=https://www.camel1.tv
 #EXTVLCOPT:http-referrer=https://www.camel1.tv/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-https://exsample.d-n-s.name/https.php?u=https%3A%2F%2Fliveplay1.camel4.live%2Flive%2F27551_12385001_y0or5jh87p15qwz_md.m3u8%3FtxSecret%3D6e4e25d4bf1bdfcaf3999de5189eb48f%26txTime%3D6AF7748C%26lat%3D9000
+https://exsample.d-n-s.name/https.m3u8?u=https%3A%2F%2Fliveplay1.camel4.live%2Flive%2F27551_12385001_y0or5jh87p15qwz_md.m3u8%3FtxSecret%3D7fec7b52d878d9ea1280ff17e6aead09%26txTime%3D6AF775D4%26lat%3D9000
 
-#EXTINF:0,tvg-name="Serbia vs Germany - UEFA Nations League [LIVE] (0-2) 02:45 WIB 14-11-2026" tvg-logo="https://img.thesports.com/football/team/91f136909a553eb3427a280cb21f17ca.png" group-title="live camelia vip [tes]",Serbia vs Germany - UEFA Nations League [LIVE] (0-2) 02:45 WIB 14-11-2026
+#EXTINF:0,tvg-name="Egypt vs Malawi - CAF Africa Cup of Nations [FT] (4-0) 02:00 WIB 14-11-2026" tvg-logo="https://img.thesports.com/football/team/f31ddd679d7c453f8438244437b8f51f.png" group-title="live camelia vip [tes]",Egypt vs Malawi - CAF Africa Cup of Nations [FT] (4-0) 02:00 WIB 14-11-2026
 #EXTVLCOPT:http-origin=https://www.camel1.tv
 #EXTVLCOPT:http-referrer=https://www.camel1.tv/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-https://exsample.d-n-s.name/https.php?u=https%3A%2F%2Fliveplay1.camel4.live%2Flive%2F27551_12568348_n54qllhn4go4qvy_md.m3u8%3FtxSecret%3D979ac12db10bbab401cfeaddaa0e0d11%26txTime%3D6AF7748C%26lat%3D9000
+https://exsample.d-n-s.name/https.m3u8?u=https%3A%2F%2Fliveplay1.camel4.live%2Flive%2F27551_12568345_ednm9whw1ne3ryo_md.m3u8%3FtxSecret%3Dc4aeb2ed0e2e39d0c1ce094d901216b3%26txTime%3D6AF775D4%26lat%3D9000
+
+#EXTINF:0,tvg-name="Serbia vs Germany - UEFA Nations League [UPC] (0-2) 02:45 WIB 14-11-2026" tvg-logo="https://img.thesports.com/football/team/91f136909a553eb3427a280cb21f17ca.png" group-title="live camelia vip [tes]",Serbia vs Germany - UEFA Nations League [UPC] (0-2) 02:45 WIB 14-11-2026
+#EXTVLCOPT:http-origin=https://www.camel1.tv
+#EXTVLCOPT:http-referrer=https://www.camel1.tv/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+https://exsample.d-n-s.name/https.m3u8?u=https%3A%2F%2Fliveplay1.camel4.live%2Flive%2F27551_12568348_n54qllhn4go4qvy_md.m3u8%3FtxSecret%3D48a30ec04e21546c79226d86cd1507d4%26txTime%3D6AF775D4%26lat%3D9000
 
 #EXTINF:0,tvg-name="Netherlands vs Greece - UEFA Nations League [LIVE] (5-0) 02:45 WIB 14-11-2026" tvg-logo="https://img.thesports.com/football/team/299e5135f9cf34205563ff2a5a29ff2a.png" group-title="live camelia vip [tes]",Netherlands vs Greece - UEFA Nations League [LIVE] (5-0) 02:45 WIB 14-11-2026
 #EXTVLCOPT:http-origin=https://www.camel1.tv
 #EXTVLCOPT:http-referrer=https://www.camel1.tv/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-https://exsample.d-n-s.name/https.php?u=https%3A%2F%2Fliveplay1.camel4.live%2Flive%2F27551_12568347_y0or5jh89y28qwz_md.m3u8%3FtxSecret%3D0963735c7b2b3f70862299e079f4a2db%26txTime%3D6AF7748C%26lat%3D9000
+https://exsample.d-n-s.name/https.m3u8?u=https%3A%2F%2Fliveplay1.camel4.live%2Flive%2F27551_12568347_y0or5jh89y28qwz_md.m3u8%3FtxSecret%3D5d255ab975e1b785e1a5634574f308d0%26txTime%3D6AF775D4%26lat%3D9000
 
-#EXTINF:0,tvg-name="Morocco vs Niger - CAF Africa Cup of Nations [LIVE] (1-0) 03:00 WIB 14-11-2026" tvg-logo="https://img.thesports.com/football/team/8cb80a922c22b0865fc66c3bf3612cd8.png" group-title="live camelia vip [tes]",Morocco vs Niger - CAF Africa Cup of Nations [LIVE] (1-0) 03:00 WIB 14-11-2026
+#EXTINF:0,tvg-name="Morocco vs Niger - CAF Africa Cup of Nations [LIVE] (2-0) 03:00 WIB 14-11-2026" tvg-logo="https://img.thesports.com/football/team/8cb80a922c22b0865fc66c3bf3612cd8.png" group-title="live camelia vip [tes]",Morocco vs Niger - CAF Africa Cup of Nations [LIVE] (2-0) 03:00 WIB 14-11-2026
 #EXTVLCOPT:http-origin=https://www.camel1.tv
 #EXTVLCOPT:http-referrer=https://www.camel1.tv/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-https://exsample.d-n-s.name/https.php?u=https%3A%2F%2Fliveplay1.camel4.live%2Flive%2F27551_12568346_jw2r09hk8zpwrz8.m3u8%3FtxSecret%3D64ae8985f68f1c77fdc643bfa256e3f4%26txTime%3D6AF7748C%26lat%3D9000
+https://exsample.d-n-s.name/https.m3u8?u=https%3A%2F%2Fliveplay1.camel4.live%2Flive%2F27551_12568346_jw2r09hk8zpwrz8_md.m3u8%3FtxSecret%3Df6e2f419760095b927d0d49a108c3aec%26txTime%3D6AF775D3%26lat%3D9000
