@@ -5,29 +5,23 @@ import time
 import logging
 from datetime import datetime, timezone, timedelta
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from urllib.parse import urlparse
+from urllib.parse import quote
 from curl_cffi import requests as cffi_requests
 
 # ─── CONFIG ─────────────────────────────────────────────
-WEB_BASE = "https://www.camel1.tv"
-API_BASE = "https://api.cameltv.live"
-OUTPUT_M3U = "playlist.m3u"
+PROXY_BASE = "https://exsample.d-n-s.name/http.php"
+SECRET     = "ganti-dengan-secret-panjang"
+
+OUTPUT_M3U  = "playlist.m3u"
 MAX_WORKERS = 200
-RETRIES = 3
+RETRIES     = 3
 RETRY_DELAY = 2
 
-# PHP Proxy - satu file untuk semua (CDN, API, Website)
-PROXY_BASE = "https://exsample.d-n-s.name/http.php"
-
-APP_CODE = "D04B29D6B957CD44DC5F9894189380B8"
-DEVICE_ID = str(uuid.uuid4())
-NODE = "camel"
-REGION = "XM"
-
+APP_CODE  = "D04B29D6B957CD44DC5F9894189380B8"
 GROUP_TITLE = "live camelia vip [tes]"
-USER_AGENT = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36"
-REFERER = "https://www.camel1.tv/"
-ORIGIN = "https://www.camel1.tv"
+USER_AGENT  = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36"
+REFERER   = "https://www.camel1.tv/"
+ORIGIN    = "https://www.camel1.tv"
 
 WIB = timezone(timedelta(hours=7))
 STATUS_MAP = {1: "NS", 2: "LIVE", 3: "UPC", 4: "FT", 5: "HT"}
@@ -38,48 +32,55 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 log = logging.getLogger("camel")
 
 
-def _headers(uid=None):
-    h = {
-        "user-agent": USER_AGENT,
-        "accept": "application/json, text/plain, */*",
-        "origin": ORIGIN,
-        "referer": REFERER,
-        "deviceid": DEVICE_ID,
-        "device": "WEB",
-        "appversion": "20.0.0.0",
-        "node": NODE,
-        "region": REGION,
-        "accept-language": "en",
-    }
-    if uid:
-        h["uid"] = uid
-    return h
+# ─── PROXY HELPER ───────────────────────────────────────
+
+def _proxy(api, **params):
+    qs = f"auth={SECRET}&api={api}"
+    for k, v in params.items():
+        qs += f"&{k}={quote(str(v), safe='')}"
+    return f"{PROXY_BASE}?{qs}"
 
 
-def to_proxy_url(cdn_url):
-    """Wrap CDN URL via PHP proxy — tanpa auth di sisi client."""
-    parsed = urlparse(cdn_url)
-    query = parsed.query
-    if query:
-        query += f"&d={parsed.netloc}"
-    else:
-        query = f"d={parsed.netloc}"
-    return f"{PROXY_BASE}/{parsed.path.lstrip('/')}?{query}"
-
-
-# ─── API ────────────────────────────────────────────────
+# ─── API VIA PROXY ──────────────────────────────────────
 
 def anonymous_login():
-    url = f"{API_BASE}/account-service/login/anonymous/web?appCode={APP_CODE}"
-    h = _headers()
-    h["content-type"] = "application/x-www-form-urlencoded"
-    r = SESSION.post(url, headers=h, data=json.dumps({"appCode": APP_CODE}))
+    r = SESSION.get(_proxy("login"))
+    if r.status_code != 200:
+        return None, None
     data = r.json()
-    if data.get("success") or data.get("code") == 0:
-        d = data.get("detail", {})
-        return d.get("key", ""), d.get("value", "")
+    return data.get("uid"), data.get("token")
+
+
+def fetch_matches_html():
+    r = SESSION.get(_proxy("matches"))
+    if r.status_code != 200:
+        return ""
+    return r.text
+
+
+def get_stream_url(match_id, uid):
+    for attempt in range(RETRIES):
+        r = SESSION.get(_proxy("stream", match_id=match_id, uid=uid))
+        if r.status_code == 200:
+            data = r.json()
+            url = data.get("stream_url")
+            if url:
+                return url
+        if attempt < RETRIES - 1:
+            time.sleep(RETRY_DELAY * (attempt + 1))
+    return None
+
+
+def get_token(stream_url, uid):
+    stream_name = stream_url.rstrip(".m3u8").split("/")[-1]
+    r = SESSION.get(_proxy("token", stream_name=stream_name, uid=uid))
+    if r.status_code == 200:
+        data = r.json()
+        return data.get("tx_time"), data.get("tx_secret")
     return None, None
 
+
+# ─── PARSE RSC ──────────────────────────────────────────
 
 def extract_matches_rsc(html):
     unescaped = html.replace('\\"', '"').replace('\\\\', '\\')
@@ -148,86 +149,12 @@ def extract_matches_rsc(html):
     return matches
 
 
-def _extract_stream_from_response(data):
-    detail = data.get("detail", data.get("data", data.get("result", {})))
-
-    if isinstance(detail, list):
-        streams = detail
-    elif isinstance(detail, dict):
-        streams = (detail.get("streams")
-                   or detail.get("streamList")
-                   or detail.get("list")
-                   or [])
-        if not streams:
-            if detail.get("streamUrlM3u8"):
-                return detail["streamUrlM3u8"].replace("http://", "https://")
-            if detail.get("streamUrl"):
-                return detail["streamUrl"].replace("http://", "https://")
-    else:
-        return None
-
-    if not streams:
-        return None
-
-    for s in streams:
-        if not isinstance(s, dict):
-            continue
-        for key in ("streamUrlM3u8", "streamUrl", "url", "playUrl", "m3u8Url", "hlsUrl"):
-            val = s.get(key, "")
-            if val and val.startswith("http"):
-                return val.replace("http://", "https://")
-    return None
-
-
-def get_stream_url(match_id, uid):
-    endpoints = [
-        f"{API_BASE}/camel-service/ee/sports_live/football/stream?matchId={match_id}",
-        f"{API_BASE}/camel-service/ee/sports_live/loadAnchorsByMatchId?matchId={match_id}&sportType=football",
-        f"{API_BASE}/camel-service/ee/sports_live/getStreamByMatchId?matchId={match_id}",
-    ]
-
-    for attempt in range(RETRIES):
-        for ep in endpoints:
-            try:
-                r = SESSION.get(ep, headers=_headers(uid))
-                if r.status_code != 200:
-                    continue
-                data = r.json()
-                if not (data.get("success") or data.get("code") == 0 or data.get("status") == 200):
-                    continue
-                stream_url = _extract_stream_from_response(data)
-                if stream_url:
-                    return stream_url
-            except Exception as e:
-                log.debug(f"  Attempt {attempt+1} {ep}: {e}")
-                continue
-        if attempt < RETRIES - 1:
-            time.sleep(RETRY_DELAY * (attempt + 1))
-    return None
-
-
-def get_token(stream_url, uid):
-    stream_name = stream_url.rstrip(".m3u8").split("/")[-1]
-    try:
-        url = f"{API_BASE}/camel-service/ee/sports_live/token?streamName={stream_name}"
-        r = SESSION.get(url, headers=_headers(uid))
-        data = r.json()
-        if data.get("status") == 200 or data.get("code") == 0:
-            d = data.get("data", data.get("detail", {}))
-            tx_time = d.get("txTime", "")
-            tx_secret = d.get("txSecret", "")
-            if tx_time and tx_secret:
-                return tx_time, tx_secret
-    except:
-        pass
-    return None, None
-
+# ─── BUILD URL ──────────────────────────────────────────
 
 def build_final_url(stream_url, tx_time, tx_secret):
     if tx_time and tx_secret:
         tx_secret_url = hashlib.md5(tx_secret.encode()).hexdigest()
         return f"{stream_url}?txSecret={tx_secret_url}&txTime={tx_time}&lat=9000"
-    # Tanpa hardcoded auth — PHP proxy akan inject auth saat forward ke CDN
     return stream_url
 
 
@@ -237,15 +164,14 @@ def get_stream_for_match(match, uid):
 
     stream_url = get_stream_url(match_id, uid)
     if not stream_url:
-        log.info(f"  ❌ No stream: {label} (id={match_id}, has_stream={match['has_stream']})")
+        log.info(f"  ❌ No stream: {label}")
         return match, None
 
     tx_time, tx_secret = get_token(stream_url, uid)
     final_url = build_final_url(stream_url, tx_time, tx_secret)
-    proxy_url = to_proxy_url(final_url)
 
     log.info(f"  ✅ {label}")
-    return match, proxy_url
+    return match, final_url
 
 
 # ─── M3U ────────────────────────────────────────────────
@@ -278,10 +204,8 @@ def generate_m3u(streams):
 
 def main():
     print("=" * 70)
-    print("  ✓")
     print(f"  {datetime.now(WIB).strftime('%Y-%m-%d %H:%M WIB')}")
-    print(f"  ✓")
-    print(f"  ✓:{MAX_WORKERS} | ✓:{RETRIES}")
+    print(f"  Workers: {MAX_WORKERS} | Retries: {RETRIES}")
     print("=" * 70)
 
     print("\n🔑 Login...")
@@ -291,9 +215,9 @@ def main():
         return
     print(f"  uid = {uid}")
 
-    print("\n📡 Fetching...")
-    r = SESSION.get(f"{WEB_BASE}/")
-    matches = extract_matches_rsc(r.text)
+    print("\n📡 Fetching matches...")
+    html = fetch_matches_html()
+    matches = extract_matches_rsc(html)
     print(f"  ✅ {len(matches)} matches")
 
     for m in matches:
@@ -302,21 +226,20 @@ def main():
     streamable = [m for m in matches
                   if m["status_id"] in (1, 2, 3, 4)
                   and (m["has_stream"] in (1, True) or m["status_id"] in (2, 3))]
-    print(f"  📺 {len(streamable)}")
+    print(f"  📺 {len(streamable)} streamable")
 
     if not streamable:
         print("  ⚠ Tidak ada.")
         return
 
-    print(f"\n🔧 ({MAX_WORKERS} {RETRIES} )...")
+    print(f"\n🔧 Fetching streams ({MAX_WORKERS} workers, {RETRIES} retries)...")
     results = []
     failed = []
 
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
         futures = {pool.submit(get_stream_for_match, m, uid): m for m in streamable}
-        for i, fut in enumerate(as_completed(futures)):
+        for fut in as_completed(futures):
             match, stream_url = fut.result()
-            label = f"{match['home']} vs {match['away']} [{match['status']}]"
             if stream_url:
                 results.append({**match, "stream_url": stream_url})
             else:
@@ -339,7 +262,7 @@ def main():
         m3u = generate_m3u(results)
         with open(OUTPUT_M3U, "w", encoding="utf-8") as f:
             f.write(m3u)
-        print(f"\n✅ {OUTPUT_M3U} {len(results)}")
+        print(f"\n✅ {OUTPUT_M3U} — {len(results)} streams")
         print(f"   Failed: {len(failed)}")
         print(m3u[:1000])
     else:
