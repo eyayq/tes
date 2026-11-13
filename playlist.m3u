@@ -1,42 +1,12 @@
 #EXTM3U
-#EXTINF:0,tvg-name="Moldova vs Kazakhstan - UEFA Nations League [FT] (2-1) 00:00 WIB 14-11-2026" tvg-logo="https://img.thesports.com/football/team/0aa984737265ab1eb09981533793b1ed.crdownload" group-title="live camelia vip [tes]",Moldova vs Kazakhstan - UEFA Nations League [FT] (2-1) 00:00 WIB 14-11-2026
+#EXTINF:0,tvg-name="Egypt vs Malawi - CAF Africa Cup of Nations [LIVE] (0-0) 02:00 WIB 14-11-2026" tvg-logo="https://img.thesports.com/football/team/f31ddd679d7c453f8438244437b8f51f.png" group-title="live camelia vip [tes]",Egypt vs Malawi - CAF Africa Cup of Nations [LIVE] (0-0) 02:00 WIB 14-11-2026
 #EXTVLCOPT:http-origin=https://www.camel1.tv
 #EXTVLCOPT:http-referrer=https://www.camel1.tv/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-https://live123.bhns.workers.dev/live/sd-6MwcqstKMiN4rDRnej_md.m3u8?txSecret=5f38f7ada8c440c7e6a68a4086cd345d&txTime=6AF75D32&lat=9000&auth=aad639d3a1b66cb8c384364342600a6b&d=liveplay1.camel4.live
+https://exsample.d-n-s.name/px.php?csurl=live/27551_12568345_ednm9whw1ne3ryo.m3u8?txSecret=54cbcbb5478d9b2f053de97353b21472&txTime=6AF760A8&lat=9000&auth=aad639d3a1b66cb8c384364342600a6b&d=liveplay1.camel4.live
 
-#EXTINF:0,tvg-name="Germany U21 vs Belgium U21 - International Friendly [FT] (1-2) 00:00 WIB 14-11-2026" tvg-logo="https://img.thesports.com/football/team/a79ee12c5481739714254c33814977d9.png" group-title="live camelia vip [tes]",Germany U21 vs Belgium U21 - International Friendly [FT] (1-2) 00:00 WIB 14-11-2026
+#EXTINF:0,tvg-name="Mali vs Rwanda - CAF Africa Cup of Nations [LIVE] (0-0) 02:00 WIB 14-11-2026" tvg-logo="https://img.thesports.com/football/team/04af5581fd20db49cb24499cec830e1a.png" group-title="live camelia vip [tes]",Mali vs Rwanda - CAF Africa Cup of Nations [LIVE] (0-0) 02:00 WIB 14-11-2026
 #EXTVLCOPT:http-origin=https://www.camel1.tv
 #EXTVLCOPT:http-referrer=https://www.camel1.tv/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-https://live123.bhns.workers.dev/live/sd-6Mxk4CyDojoXDvf3HR.m3u8?txSecret=c389e88b06e87e3cddb892ec3850c0a8&txTime=6AF75D32&lat=9000&auth=aad639d3a1b66cb8c384364342600a6b&d=liveplay1.camel4.live
-
-#EXTINF:0,tvg-name="Hamburger SV Women vs 1.FSV Mainz 05Women Women - German Frauen Bundesliga [FT] (4-1) 00:30 WIB 14-11-2026" tvg-logo="https://img.thesports.com/football/team/892e9bfe2c8ce65dd685452a1a80faa0.png" group-title="live camelia vip [tes]",Hamburger SV Women vs 1.FSV Mainz 05Women Women - German Frauen Bundesliga [FT] (4-1) 00:30 WIB 14-11-2026
-#EXTVLCOPT:http-origin=https://www.camel1.tv
-#EXTVLCOPT:http-referrer=https://www.camel1.tv/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-https://live123.bhns.workers.dev/live/sd-6Mwb7CauitqcSKxz63.m3u8?txSecret=70b8cdd3a013a3092a9ace6984cf27c6&txTime=6AF75D32&lat=9000&auth=aad639d3a1b66cb8c384364342600a6b&d=liveplay1.camel4.live
-
-#EXTINF:0,tvg-name="France U21 vs Italy U21 - International Friendly [FT] (1-1) 00:30 WIB 14-11-2026" tvg-logo="https://img.thesports.com/football/team/e5596332462c18d03eab231431527ee4.png" group-title="live camelia vip [tes]",France U21 vs Italy U21 - International Friendly [FT] (1-1) 00:30 WIB 14-11-2026
-#EXTVLCOPT:http-origin=https://www.camel1.tv
-#EXTVLCOPT:http-referrer=https://www.camel1.tv/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-https://live123.bhns.workers.dev/live/sd-6Mxk3sP4NPG1Ha2xNB.m3u8?txSecret=c95db55b83788de55a8f0a71dcc66767&txTime=6AF75D32&lat=9000&auth=aad639d3a1b66cb8c384364342600a6b&d=liveplay1.camel4.live
-
-#EXTINF:0,tvg-name="Nantes Women vs Lens Women - French Division 1 Feminine [UPC] (0-0) 01:00 WIB 14-11-2026" tvg-logo="https://img.thesports.com/football/team/4cbd90d3090411b79d985960c371e55d.png" group-title="live camelia vip [tes]",Nantes Women vs Lens Women - French Division 1 Feminine [UPC] (0-0) 01:00 WIB 14-11-2026
-#EXTVLCOPT:http-origin=https://www.camel1.tv
-#EXTVLCOPT:http-referrer=https://www.camel1.tv/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-https://live123.bhns.workers.dev/live/sd-6MxjZ76SG5iz7BHfhy.m3u8?txSecret=7a99ab6d3754beecefa03eb54323bfd2&txTime=6AF75D32&lat=9000&auth=aad639d3a1b66cb8c384364342600a6b&d=liveplay1.camel4.live
-
-#EXTINF:0,tvg-name="Albania U21 vs Luxembourg U21 - International Friendly [UPC] (2-1) 01:00 WIB 14-11-2026" tvg-logo="https://img.thesports.com/football/team/67ca9e527610edebffe68ee6b750f548.png" group-title="live camelia vip [tes]",Albania U21 vs Luxembourg U21 - International Friendly [UPC] (2-1) 01:00 WIB 14-11-2026
-#EXTVLCOPT:http-origin=https://www.camel1.tv
-#EXTVLCOPT:http-referrer=https://www.camel1.tv/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-https://live123.bhns.workers.dev/live/sd-6Mxk4CyDohc3MSq88X.m3u8?txSecret=eaaebab061225a4928c7b64145ed3862&txTime=6AF75D32&lat=9000&auth=aad639d3a1b66cb8c384364342600a6b&d=liveplay1.camel4.live
-
-#EXTINF:0,tvg-name="Spain U21 vs Japan U21 - International Friendly [UPC] (1-0) 01:00 WIB 14-11-2026" tvg-logo="https://img.thesports.com/football/team/18e2807d11d74bab9640852627017e50.png" group-title="live camelia vip [tes]",Spain U21 vs Japan U21 - International Friendly [UPC] (1-0) 01:00 WIB 14-11-2026
-#EXTVLCOPT:http-origin=https://www.camel1.tv
-#EXTVLCOPT:http-referrer=https://www.camel1.tv/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-https://live123.bhns.workers.dev/live/sd-6Mxk46Rmg1nRfaCFrf.m3u8?txSecret=344b0c95188b53772ba4678228a8c443&txTime=6AF75D32&lat=9000&auth=aad639d3a1b66cb8c384364342600a6b&d=liveplay1.camel4.live
+https://exsample.d-n-s.name/px.php?csurl=live/27551_12385001_y0or5jh87p15qwz_md.m3u8?txSecret=115fbe3dfa5db1b8b365e9faf35fa508&txTime=6AF760A9&lat=9000&auth=aad639d3a1b66cb8c384364342600a6b&d=liveplay1.camel4.live
