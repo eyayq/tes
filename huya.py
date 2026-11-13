@@ -2,6 +2,7 @@ import argparse
 import hashlib
 import hmac
 import json
+import re
 import sys
 import time
 import uuid
@@ -21,20 +22,14 @@ OUTPUT_FILE = "playlist.m3u"
 IMPERSONATE = "chrome"
 DELAY = 0.3
 
-# ★ API Key (wajib untuk semua request ke api.vidio.com)
-API_KEY = (
+# Fallback API Key (jika scrape gagal)
+API_KEY_FALLBACK = (
     "CH1ZFsN4N/MIfAds1DL9mP151CNqIpWHqZGRr+LkvUyiq3FRPuP1Kt6aK+pG3nEC1FXt0ZAAJ5FKP8QU8CZ5/"
     "kbNqmxScg7wv0Qx/FgU4yLE2Kf52t4QUCXu80YeQUkJESbfJS3ACIfGz8LFiEqCE8UkYYMHiVl12alJ+/"
     "lhROE="
 )
 
-# ★ Access Token (expire ~12 jam, ambil ulang dari browser jika perlu)
-ACCESS_TOKEN = (
-    "eyJhbGciOiJIUzI1NiJ9.eyJkYXRhIjp7InR5cGUiOiJhY2Nlc3NfdG9rZW4iLCJ1aWQiOjE4Njk1Nzg1N30s"
-    "ImV4cCI6MTc5NDYyNDU0NX0.bUPeP6j3OWV0mZypBSzgz53X7-ei_FZkHyMfoYdgNDo"
-)
-
-# Fallback DRM pattern (jika stream_url kosong di data section)
+# Fallback DRM pattern
 STREAM_DRM_PATTERN = (
     "https://etslive-v3-vidio-com-tokenized.akamaized.net"
     "/stream/{id}/file/drm/hls/master.m3u8"
@@ -48,7 +43,7 @@ USER_AGENT = (
 REFERER = "https://m.vidio.com/"
 ORIGIN = "https://m.vidio.com"
 
-# ==================== USER ====================
+# ==================== USER (HANYA INI YANG PERLU UPDATE MANUAL) ====================
 USER_ID = "186957857"
 USER_EMAIL = "bhianesee05@gmail.com"
 AHOY_VISITOR = "3489c20a-d32e-468a-bd1b-8f7d150fa132"
@@ -58,6 +53,10 @@ REMEMBER_TOKEN = (
     "--8d03ff9749c920966159108beb64bd0cccab8ac9"
 )
 # ================================================================================
+
+# Global yang di-set saat runtime
+API_KEY = API_KEY_FALLBACK
+ACCESS_TOKEN = ""
 
 logging.basicConfig(
     level=logging.INFO,
@@ -79,9 +78,34 @@ def generate_x_signature() -> tuple:
     return t, signature
 
 
+# ==================== SCRAPE API KEY ====================
+def scrape_api_key(session) -> str:
+    """Scrape API key dari JS bundle m.vidio.com."""
+    global API_KEY
+    try:
+        resp = session.get(SITE_URL, timeout=15)
+        js_urls = re.findall(r'src="(/_next/static/[^"]+\.js)"', resp.text)
+
+        for js_path in js_urls[:5]:
+            js_resp = session.get(f"{SITE_URL}{js_path}", timeout=15)
+            match = re.search(
+                r'["\'](CH[1-9A-Za-z0-9+/=]{100,})["\']',
+                js_resp.text
+            )
+            if match:
+                API_KEY = match.group(1)
+                log.info("  ✓ API_KEY di-scrape dari JS bundle")
+                return API_KEY
+
+        log.warning("  ⚠ API_KEY tidak ditemukan, pakai fallback")
+    except Exception as e:
+        log.warning("  Scrape API_KEY gagal: %s", e)
+
+    return API_KEY_FALLBACK
+
+
 # ==================== API HEADERS ====================
 def api_headers(luws: str = "") -> dict:
-    """Header API kustom. Biarkan impersonate handle browser headers."""
     h = {
         "x-api-platform": "web-mobile",
         "x-secure-level": "2",
@@ -101,33 +125,48 @@ def api_headers(luws: str = "") -> dict:
 
 # ==================== STEP 1: BOOTSTRAP SESSION ====================
 def bootstrap_session(session) -> str:
+    """
+    Flow auto-refresh:
+    1. Set remember_user_token (master, valid lama)
+    2. Visit m.vidio.com → server issue access_token baru via Set-Cookie
+    3. Scrape API_KEY dari JS bundle
+    4. Ambil/generate luws
+    """
+    global ACCESS_TOKEN
+
     log.info("Bootstrap session ...")
 
+    # Hanya set token master — biarkan server issue sisanya
     session.cookies.set("ahoy_visitor", AHOY_VISITOR, domain=".vidio.com", path="/")
     session.cookies.set("remember_user_token", REMEMBER_TOKEN, domain=".vidio.com", path="/")
     session.cookies.set("country_id", "ID", domain=".vidio.com", path="/")
-    session.cookies.set("access_token", ACCESS_TOKEN, domain=".vidio.com", path="/")
-    session.cookies.set("plenty_id", USER_ID, domain=".vidio.com", path="/")
-    session.cookies.set("shva", "1", domain=".vidio.com", path="/")
 
+    # Visit site → server Set-Cookie: access_token, luws, dll
     try:
         resp = session.get(SITE_URL, timeout=30)
         log.info("  GET m.vidio.com → %d", resp.status_code)
     except Exception as e:
         log.warning("  Error visit site: %s", e)
 
-    at = session.cookies.get("access_token")
-    if at and at != ACCESS_TOKEN:
-        log.info("  ✓ access_token di-refresh dari server")
-    elif at:
-        log.info("  ✓ access_token: %s...", at[:30])
+    # Ambil access_token yang di-issue server
+    ACCESS_TOKEN = session.cookies.get("access_token", "")
+    if ACCESS_TOKEN:
+        log.info("  ✓ access_token: %s...", ACCESS_TOKEN[:40])
     else:
-        log.warning("  ⚠ access_token tidak ditemukan, pakai yang di-set manual")
+        log.error("  ✗ access_token tidak di-issue server!")
+        log.error("    → remember_user_token mungkin sudah expire/revoke.")
+        log.error("    → Ambil ulang dari browser: DevTools → Application → Cookies")
+        return ""
 
+    # Scrape API key
+    scrape_api_key(session)
+
+    # Ambil/generate luws
     luws = session.cookies.get("luws", "")
     if not luws:
         luws = f"{str(uuid.uuid4()).upper()}_{USER_ID}"
     log.info("  ✓ luws: %s", luws)
+
     return luws
 
 
@@ -143,6 +182,10 @@ def verify_login(session) -> bool:
                 log.info("  ✓ Login: %s (id=%s)", user.get("display_name"), user.get("user_id"))
                 log.info("  ✓ Sub: %s", "Premium" if user.get("has_active_subscription") else "Free")
                 return True
+            else:
+                log.warning("  current_user kosong")
+        else:
+            log.warning("  HTTP %d", resp.status_code)
     except Exception as e:
         log.warning("  Verify gagal: %s", e)
     return False
@@ -150,11 +193,6 @@ def verify_login(session) -> bool:
 
 # ==================== STEP 3: FETCH ALL CHANNELS (SCRAPE) ====================
 def fetch_all_channels(session, luws: str) -> list:
-    """
-    GET /categories/live/sections → semua section & channel.
-    Extract semua item dengan content_type == "livestreaming".
-    Deduplicate by content_id.
-    """
     url = f"{API_BASE}/categories/live/sections"
     params = {"page[number]": 1, "page[size]": 10, "included": "contents"}
     h = api_headers(luws)
@@ -219,7 +257,7 @@ def fetch_all_channels(session, luws: str) -> list:
     return result
 
 
-# ==================== STEP 4: FETCH NON-DRM STREAM URL ====================
+# ==================== STEP 4: FETCH NON-DRM STREAM URL (LIVE) ====================
 def fetch_stream_url(session, luws: str, ch_id: int) -> str:
     """GET /livestreamings/{id}/stream?initialize=true → non-DRM HLS URL."""
     url = f"{API_BASE}/livestreamings/{ch_id}/stream?initialize=true"
@@ -295,7 +333,7 @@ def generate_m3u(channels: list, stream_urls: dict, output_file: str):
 
 # ==================== MAIN ====================
 def main():
-    parser = argparse.ArgumentParser(description="Vidio Live TV M3U Generator (Scrape All)")
+    parser = argparse.ArgumentParser(description="Vidio Live TV M3U Generator (Auto-Refresh)")
     parser.add_argument("-o", "--output", type=str, default=OUTPUT_FILE)
     parser.add_argument("--drm-only", action="store_true",
                         help="Skip non-DRM, langsung pakai DRM URL dari section")
@@ -307,18 +345,20 @@ def main():
         logging.getLogger().setLevel(logging.DEBUG)
 
     print("=" * 55)
-    print("  Vidio Live TV → M3U (Scrape All Channels)")
+    print("  Vidio Live TV → M3U (Auto-Refresh)")
     print("  Source: /categories/live/sections")
     print("=" * 55)
 
     session = cffi_requests.Session(impersonate=IMPERSONATE)
 
-    # Step 1: Bootstrap
+    # Step 1: Bootstrap (auto-refresh access_token + scrape api_key)
     luws = bootstrap_session(session)
+    if not luws:
+        sys.exit(1)
 
     # Step 2: Verify login
     if not verify_login(session):
-        log.error("Login gagal! Check REMEMBER_TOKEN / ACCESS_TOKEN.")
+        log.error("Login gagal! Check REMEMBER_TOKEN.")
         sys.exit(1)
 
     # Step 3: Fetch ALL channels
