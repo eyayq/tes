@@ -5,7 +5,7 @@
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=210-trans-tv
+https://exsample.d-n-s.name/proxy.mpd?slug=210-trans-tv
 
 #EXTINF:0 tvg-name="Trans 7" tvg-id="801" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/df7bddc8-675e-47e0-9e62-4c04afbf347a.jpg" group-title="TV Nasional",Trans 7
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -13,7 +13,7 @@ https://exsample.d-n-s.name/proxy.php?slug=210-trans-tv
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=201-trans-7
+https://exsample.d-n-s.name/proxy.mpd?slug=201-trans-7
 
 #EXTINF:0 tvg-name="CNN Indonesia" tvg-id="803" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/34157c4e-9c56-4f08-8271-22524b5ad39e.jpg" group-title="TV Nasional",CNN Indonesia
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -21,7 +21,7 @@ https://exsample.d-n-s.name/proxy.php?slug=201-trans-7
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=212-cnn-indonesia
+https://exsample.d-n-s.name/proxy.mpd?slug=212-cnn-indonesia
 
 #EXTINF:0 tvg-name="CNBC Indonesia" tvg-id="805" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/ea2f3817-add8-44b7-b222-664cacd221ca.jpg" group-title="TV Nasional",CNBC Indonesia
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -29,7 +29,7 @@ https://exsample.d-n-s.name/proxy.php?slug=212-cnn-indonesia
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=213-cnbc-indonesia
+https://exsample.d-n-s.name/proxy.mpd?slug=213-cnbc-indonesia
 
 #EXTINF:0 tvg-name="Metro TV" tvg-id="802" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/cfc9d256-0421-447e-9aae-431db3de77c3.png" group-title="TV Nasional",Metro TV
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -37,7 +37,7 @@ https://exsample.d-n-s.name/proxy.php?slug=213-cnbc-indonesia
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=211-metro-tv
+https://exsample.d-n-s.name/proxy.mpd?slug=211-metro-tv
 
 #EXTINF:0 tvg-name="TVOne" tvg-id="804" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/930c8097-dc6b-4161-b414-d7a70b0b8b98.png" group-title="TV Nasional",TVOne
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -45,7 +45,30 @@ https://exsample.d-n-s.name/proxy.php?slug=211-metro-tv
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=363-tvone
+https://exsample.d-n-s.name/proxy.mpd?slug=363-tvone
+
+#EXTINF:0 tvg-name="SCTV" tvg-id="807" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/3277a6c8-1294-418c-920b-575e598f0804.png" group-title="TV Nasional",SCTV
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-origin=https://www.cubmu.com
+#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
+https://exsample.d-n-s.name/proxy.mpd?slug=215-sctv
+
+#EXTINF:0 tvg-name="Indosiar" tvg-id="808" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/1aac6c51-ebad-4c50-af70-13bf371bed25.png" group-title="TV Nasional",Indosiar
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-origin=https://www.cubmu.com
+#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
+#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
+https://exsample.d-n-s.name/proxy.mpd?slug=216-indosiar
+
+#EXTINF:0 tvg-name="RCTI" tvg-id="809" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/15c10f90-4304-4410-a418-67891b5c185d.png" group-title="TV Nasional",RCTI
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-origin=https://www.cubmu.com
+#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
+#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
+https://exsample.d-n-s.name/proxy.mpd?slug=217-rcti
 
 #EXTINF:0 tvg-name="GTV" tvg-id="810" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/419ddbb6-dc83-4e1a-89e6-13c6c9422577.png" group-title="TV Nasional",GTV
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -53,7 +76,7 @@ https://exsample.d-n-s.name/proxy.php?slug=363-tvone
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=218-gtv
+https://exsample.d-n-s.name/proxy.mpd?slug=218-gtv
 
 #EXTINF:0 tvg-name="JakTV" tvg-id="812" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/912d53a1-8222-40e0-8e97-affb43129850.jpg" group-title="TV Nasional",JakTV
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -61,7 +84,7 @@ https://exsample.d-n-s.name/proxy.php?slug=218-gtv
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=243-jaktv
+https://exsample.d-n-s.name/proxy.mpd?slug=243-jaktv
 
 #EXTINF:0 tvg-name="BTV" tvg-id="813" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/e1d6bd56-4209-4337-b0f7-553fb6fdec9a.png" group-title="TV Nasional",BTV
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -69,7 +92,7 @@ https://exsample.d-n-s.name/proxy.php?slug=243-jaktv
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=245-btv
+https://exsample.d-n-s.name/proxy.mpd?slug=245-btv
 
 #EXTINF:0 tvg-name="Kompas TV" tvg-id="814" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/f0771c7b-d473-4fa4-ad0f-cdffd4bc0ac5.jpg" group-title="TV Nasional",Kompas TV
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -77,7 +100,7 @@ https://exsample.d-n-s.name/proxy.php?slug=245-btv
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=220-kompas-tv
+https://exsample.d-n-s.name/proxy.mpd?slug=220-kompas-tv
 
 #EXTINF:0 tvg-name="MDTV" tvg-id="815" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/b717b7b9-4dab-4e80-8221-9bd42d3f26f1.png" group-title="TV Nasional",MDTV
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -85,7 +108,7 @@ https://exsample.d-n-s.name/proxy.php?slug=220-kompas-tv
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=221-mdtv
+https://exsample.d-n-s.name/proxy.mpd?slug=221-mdtv
 
 #EXTINF:0 tvg-name="RTV" tvg-id="816" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/f4bd6cd9-d8a5-4f42-8dce-7f332ec55940.jpg" group-title="TV Nasional",RTV
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -93,7 +116,7 @@ https://exsample.d-n-s.name/proxy.php?slug=221-mdtv
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=246-rtv
+https://exsample.d-n-s.name/proxy.mpd?slug=246-rtv
 
 #EXTINF:0 tvg-name="MNC TV" tvg-id="817" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/788c4e9e-363d-47f7-9ef5-6ee1d9dd2619.png" group-title="TV Nasional",MNC TV
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -101,7 +124,7 @@ https://exsample.d-n-s.name/proxy.php?slug=246-rtv
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=222-mnc-tv
+https://exsample.d-n-s.name/proxy.mpd?slug=222-mnc-tv
 
 #EXTINF:0 tvg-name="TVRI" tvg-id="818" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/6e55c83f-b399-4884-8b57-273acb663344.png" group-title="TV Nasional",TVRI
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -109,7 +132,7 @@ https://exsample.d-n-s.name/proxy.php?slug=222-mnc-tv
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=223-tvri
+https://exsample.d-n-s.name/proxy.mpd?slug=223-tvri
 
 #EXTINF:0 tvg-name="ANTV" tvg-id="819" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/804a0414-edd9-4e16-bd7e-1fbb593525ec.png" group-title="TV Nasional",ANTV
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -117,7 +140,7 @@ https://exsample.d-n-s.name/proxy.php?slug=223-tvri
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=364-antv
+https://exsample.d-n-s.name/proxy.mpd?slug=364-antv
 
 #EXTINF:0 tvg-name="jtv" tvg-id="820" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/52d0d978-6550-4935-9899-aa78db628fff.png" group-title="TV Nasional",jtv
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -125,7 +148,7 @@ https://exsample.d-n-s.name/proxy.php?slug=364-antv
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=284-jtv
+https://exsample.d-n-s.name/proxy.mpd?slug=284-jtv
 
 #EXTINF:0 tvg-name="Berita Satu" tvg-id="806" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/c2f01ed0-b8ba-45ae-8b44-dc09e69aaaa9.png" group-title="TV Nasional",Berita Satu
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -133,7 +156,7 @@ https://exsample.d-n-s.name/proxy.php?slug=284-jtv
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=214-berita-satu
+https://exsample.d-n-s.name/proxy.mpd?slug=214-berita-satu
 
 #EXTINF:0 tvg-name="Garuda TV" tvg-id="811" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/dc7d7072-39d4-4978-bc34-4e7654fe4469.jpg" group-title="TV Nasional",Garuda TV
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -141,14 +164,14 @@ https://exsample.d-n-s.name/proxy.php?slug=214-berita-satu
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=219-garuda-tv
+https://exsample.d-n-s.name/proxy.mpd?slug=219-garuda-tv
 
 #EXTINF:0 tvg-name="tvN MOVIES" tvg-id="113" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/28836514-2fd7-4011-92c7-68d610d25dd8.png" group-title="Film",tvN MOVIES
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-origin=https://www.cubmu.com
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-https://exsample.d-n-s.name/proxy.php?slug=227-tvn-movies
+https://exsample.d-n-s.name/proxy.mpd?slug=227-tvn-movies
 
 #EXTINF:0 tvg-name="Celestial Movies" tvg-id="141" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/f124427a-931e-47d1-ab50-1b29a7a3e406.jpg" group-title="Film",Celestial Movies
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -156,7 +179,7 @@ https://exsample.d-n-s.name/proxy.php?slug=227-tvn-movies
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=229-celestial-movies
+https://exsample.d-n-s.name/proxy.mpd?slug=229-celestial-movies
 
 #EXTINF:0 tvg-name="Bioskop Indonesia" tvg-id="144" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/e3276355-306c-4ed8-8f06-725bcc8247c1.png" group-title="Film",Bioskop Indonesia
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -164,7 +187,7 @@ https://exsample.d-n-s.name/proxy.php?slug=229-celestial-movies
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=230-bioskop-indonesia
+https://exsample.d-n-s.name/proxy.mpd?slug=230-bioskop-indonesia
 
 #EXTINF:0 tvg-name="Thrill" tvg-id="161" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/6bec4b1b-262f-44e0-821f-a3897ce93251.jpg" group-title="Film",Thrill
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -172,7 +195,7 @@ https://exsample.d-n-s.name/proxy.php?slug=230-bioskop-indonesia
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=232-thrill
+https://exsample.d-n-s.name/proxy.mpd?slug=232-thrill
 
 #EXTINF:0 tvg-name="Movies News" tvg-id="162" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/8c6fb1a8-44f6-4d20-9093-fb4bb93bc5cd.jpg" group-title="Film",Movies News
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -180,7 +203,7 @@ https://exsample.d-n-s.name/proxy.php?slug=232-thrill
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=185-movies-news
+https://exsample.d-n-s.name/proxy.mpd?slug=185-movies-news
 
 #EXTINF:0 tvg-name="Cartoon TV Premium" tvg-id="220" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/6e735e2f-e7db-47ec-b13b-23d3a0342124.jpg" group-title="Anak",Cartoon TV Premium
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -188,7 +211,7 @@ https://exsample.d-n-s.name/proxy.php?slug=185-movies-news
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=248-cartoon-tv-premium
+https://exsample.d-n-s.name/proxy.mpd?slug=248-cartoon-tv-premium
 
 #EXTINF:0 tvg-name="Cartoon TV" tvg-id="221" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/9e422d53-5c00-49ea-8422-e2a3f1e03f70.jpg" group-title="Anak",Cartoon TV
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -196,7 +219,7 @@ https://exsample.d-n-s.name/proxy.php?slug=248-cartoon-tv-premium
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=249-cartoon-tv
+https://exsample.d-n-s.name/proxy.mpd?slug=249-cartoon-tv
 
 #EXTINF:0 tvg-name="Dunia Anak" tvg-id="222" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/76e39ba2-62b9-4f96-90ae-3de803edb400.png" group-title="Anak",Dunia Anak
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -204,7 +227,7 @@ https://exsample.d-n-s.name/proxy.php?slug=249-cartoon-tv
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=186-dunia-anak
+https://exsample.d-n-s.name/proxy.mpd?slug=186-dunia-anak
 
 #EXTINF:0 tvg-name="Cartoon TV Classic" tvg-id="223" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/87c43b67-b234-41a8-b188-ae6b498a40b4.jpg" group-title="Anak",Cartoon TV Classic
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -212,7 +235,7 @@ https://exsample.d-n-s.name/proxy.php?slug=186-dunia-anak
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=250-cartoon-tv-classic
+https://exsample.d-n-s.name/proxy.mpd?slug=250-cartoon-tv-classic
 
 #EXTINF:0 tvg-name="Knowledge+" tvg-id="260" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/96641a38-47bd-479c-8e6d-efa73e7f618d.jpg" group-title="Edukasi",Knowledge+
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -220,7 +243,7 @@ https://exsample.d-n-s.name/proxy.php?slug=250-cartoon-tv-classic
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=205-knowledge
+https://exsample.d-n-s.name/proxy.mpd?slug=205-knowledge
 
 #EXTINF:0 tvg-name="CGTN Documentary" tvg-id="265" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/7cbb5733-87c4-43c5-afa8-ab01c2075132.jpg" group-title="Edukasi",CGTN Documentary
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -228,14 +251,14 @@ https://exsample.d-n-s.name/proxy.php?slug=205-knowledge
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=234-cgtn-documentary
+https://exsample.d-n-s.name/proxy.mpd?slug=234-cgtn-documentary
 
 #EXTINF:0 tvg-name="tvN" tvg-id="321" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/e92c8090-0efe-4191-8e9a-bf858b0e15bc.png" group-title="Hiburan Asia",tvN
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-origin=https://www.cubmu.com
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-https://exsample.d-n-s.name/proxy.php?slug=194-tvn
+https://exsample.d-n-s.name/proxy.mpd?slug=194-tvn
 
 #EXTINF:0 tvg-name="K+" tvg-id="322" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/4ff96e7e-b79f-47e0-8ebc-9b81398c49b8.jpg" group-title="Hiburan Asia",K+
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -243,14 +266,14 @@ https://exsample.d-n-s.name/proxy.php?slug=194-tvn
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=667-k
+https://exsample.d-n-s.name/proxy.mpd?slug=667-k
 
 #EXTINF:0 tvg-name="NHK World Premium" tvg-id="500" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/9edbe0b9-984f-4e57-8746-44007e64d4dd.png" group-title="Hiburan Asia",NHK World Premium
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-origin=https://www.cubmu.com
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-https://exsample.d-n-s.name/proxy.php?slug=236-nhk-world-premium
+https://exsample.d-n-s.name/proxy.mpd?slug=236-nhk-world-premium
 
 #EXTINF:0 tvg-name="Channel Jowo" tvg-id="327" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/64efefa1-5f19-47e4-ac3d-7a871b590a23.jpg" group-title="Hiburan",Channel Jowo
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -258,7 +281,7 @@ https://exsample.d-n-s.name/proxy.php?slug=236-nhk-world-premium
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=247-channel-jowo
+https://exsample.d-n-s.name/proxy.mpd?slug=247-channel-jowo
 
 #EXTINF:0 tvg-name="!nsert" tvg-id="330" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/7be43f18-a28f-4825-b888-2d1ed538c667.png" group-title="Hiburan",!nsert
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -266,7 +289,7 @@ https://exsample.d-n-s.name/proxy.php?slug=247-channel-jowo
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=263-nsert
+https://exsample.d-n-s.name/proxy.mpd?slug=263-nsert
 
 #EXTINF:0 tvg-name="Dunia Lain" tvg-id="344" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/02985354-4453-4792-a8dd-275517d88012.png" group-title="Hiburan",Dunia Lain
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -274,7 +297,7 @@ https://exsample.d-n-s.name/proxy.php?slug=263-nsert
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=265-dunia-lain
+https://exsample.d-n-s.name/proxy.mpd?slug=265-dunia-lain
 
 #EXTINF:0 tvg-name="CCTV4" tvg-id="381" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/934d3d55-c1c5-4570-afc4-428e0bf0c86d.png" group-title="Hiburan",CCTV4
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -282,7 +305,7 @@ https://exsample.d-n-s.name/proxy.php?slug=265-dunia-lain
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=266-cctv4
+https://exsample.d-n-s.name/proxy.mpd?slug=266-cctv4
 
 #EXTINF:0 tvg-name="TV5 Monde" tvg-id="391" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/fb33f9d0-75ea-409d-8898-9d8111c4211c.png" group-title="Hiburan",TV5 Monde
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -290,7 +313,7 @@ https://exsample.d-n-s.name/proxy.php?slug=266-cctv4
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=267-tv5-monde
+https://exsample.d-n-s.name/proxy.mpd?slug=267-tv5-monde
 
 #EXTINF:0 tvg-name="One TV" tvg-id="395" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/1b5b6dab-c6e7-4109-8813-273c05910c53.jpg" group-title="Hiburan",One TV
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -298,7 +321,7 @@ https://exsample.d-n-s.name/proxy.php?slug=267-tv5-monde
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=268-one-tv
+https://exsample.d-n-s.name/proxy.mpd?slug=268-one-tv
 
 #EXTINF:0 tvg-name="Travel TV" tvg-id="500" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/9a3142d7-c566-476f-b6f8-d0d7350b2733.jpg" group-title="Gaya Hidup",Travel TV
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -306,7 +329,7 @@ https://exsample.d-n-s.name/proxy.php?slug=268-one-tv
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=274-travel-tv
+https://exsample.d-n-s.name/proxy.mpd?slug=274-travel-tv
 
 #EXTINF:0 tvg-name="Eat N Go" tvg-id="501" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/96eaf2cb-49fd-4710-b3bf-1d3b6833a1d5.png" group-title="Gaya Hidup",Eat N Go
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -314,7 +337,7 @@ https://exsample.d-n-s.name/proxy.php?slug=274-travel-tv
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=208-eat-n-go
+https://exsample.d-n-s.name/proxy.mpd?slug=208-eat-n-go
 
 #EXTINF:0 tvg-name="Fashion TV" tvg-id="505" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/edc764c8-f879-4c80-aa9e-b7ba8bff73f7.jpg" group-title="Gaya Hidup",Fashion TV
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -322,14 +345,14 @@ https://exsample.d-n-s.name/proxy.php?slug=208-eat-n-go
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=196-fashion-tv
+https://exsample.d-n-s.name/proxy.mpd?slug=196-fashion-tv
 
 #EXTINF:0 tvg-name="Cooking TV" tvg-id="508" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/3afdd138-2f44-4825-9917-7615972095c1.jpg" group-title="Gaya Hidup",Cooking TV
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-origin=https://www.cubmu.com
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-https://exsample.d-n-s.name/proxy.php?slug=276-cooking-tv
+https://exsample.d-n-s.name/proxy.mpd?slug=276-cooking-tv
 
 #EXTINF:0 tvg-name="Gaming TV" tvg-id="509" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/dcbc4bc6-19c3-4719-9ee7-587aa3edffea.jpg" group-title="Gaya Hidup",Gaming TV
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -337,7 +360,7 @@ https://exsample.d-n-s.name/proxy.php?slug=276-cooking-tv
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=277-gaming-tv
+https://exsample.d-n-s.name/proxy.mpd?slug=277-gaming-tv
 
 #EXTINF:0 tvg-name="DENS Food Channel" tvg-id="513" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/2dbb1a79-69ac-4b91-9e9a-1d42e79963b5.jpg" group-title="Gaya Hidup",DENS Food Channel
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -345,7 +368,7 @@ https://exsample.d-n-s.name/proxy.php?slug=277-gaming-tv
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=278-dens-food-channel
+https://exsample.d-n-s.name/proxy.mpd?slug=278-dens-food-channel
 
 #EXTINF:0 tvg-name="DENS Play Channel" tvg-id="514" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/2e8b912a-015c-41c4-97bf-ea248c0b35e0.jpg" group-title="Gaya Hidup",DENS Play Channel
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -353,7 +376,7 @@ https://exsample.d-n-s.name/proxy.php?slug=278-dens-food-channel
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=279-dens-play-channel
+https://exsample.d-n-s.name/proxy.mpd?slug=279-dens-play-channel
 
 #EXTINF:0 tvg-name="Superyacht TV" tvg-id="515" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/eaa4d0a4-af9f-4fc6-96a7-5d9427a9d41a.jpg" group-title="Gaya Hidup",Superyacht TV
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -361,7 +384,7 @@ https://exsample.d-n-s.name/proxy.php?slug=279-dens-play-channel
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=251-superyacht-tv
+https://exsample.d-n-s.name/proxy.mpd?slug=251-superyacht-tv
 
 #EXTINF:0 tvg-name="DENS Show Bizz" tvg-id="517" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/a06f0dd7-751f-442a-98bc-e6cad4b4f18d.jpg" group-title="Gaya Hidup",DENS Show Bizz
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -369,7 +392,7 @@ https://exsample.d-n-s.name/proxy.php?slug=251-superyacht-tv
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=280-dens-show-bizz
+https://exsample.d-n-s.name/proxy.mpd?slug=280-dens-show-bizz
 
 #EXTINF:0 tvg-name="Musik Indonesia" tvg-id="560" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/5532f74e-07ee-4a70-b7d4-b5233778381d.png" group-title="Musik",Musik Indonesia
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -377,7 +400,7 @@ https://exsample.d-n-s.name/proxy.php?slug=280-dens-show-bizz
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=195-musik-indonesia
+https://exsample.d-n-s.name/proxy.mpd?slug=195-musik-indonesia
 
 #EXTINF:0 tvg-name="Song TV" tvg-id="563" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/3974fd33-9c3a-44b2-acdb-66c90f9492e5.jpg" group-title="Musik",Song TV
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -385,7 +408,7 @@ https://exsample.d-n-s.name/proxy.php?slug=195-musik-indonesia
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=281-song-tv
+https://exsample.d-n-s.name/proxy.mpd?slug=281-song-tv
 
 #EXTINF:0 tvg-name="ABC Australia" tvg-id="604" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/89301bb9-40dc-4239-8f7f-ea59ef3555c8.png" group-title="Berita & Bisnis",ABC Australia
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -393,7 +416,7 @@ https://exsample.d-n-s.name/proxy.php?slug=281-song-tv
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=238-abc-australia
+https://exsample.d-n-s.name/proxy.mpd?slug=238-abc-australia
 
 #EXTINF:0 tvg-name="Channel NewsAsia" tvg-id="620" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/10dc34b0-674b-42fe-901f-d75a45de415a.png" group-title="Berita & Bisnis",Channel NewsAsia
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -401,7 +424,7 @@ https://exsample.d-n-s.name/proxy.php?slug=238-abc-australia
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=209-channel-newsasia
+https://exsample.d-n-s.name/proxy.mpd?slug=209-channel-newsasia
 
 #EXTINF:0 tvg-name="CNBC Asia" tvg-id="609" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/dc57da9a-b87b-4145-b2ac-fead00387d1e.jpg" group-title="Berita & Bisnis",CNBC Asia
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -409,7 +432,7 @@ https://exsample.d-n-s.name/proxy.php?slug=209-channel-newsasia
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=237-cnbc-asia
+https://exsample.d-n-s.name/proxy.mpd?slug=237-cnbc-asia
 
 #EXTINF:0 tvg-name="Al Jazeera" tvg-id="610" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/120d8d56-bd33-442d-b3c1-9c7581e5d18a.png" group-title="Berita & Bisnis",Al Jazeera
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -417,7 +440,7 @@ https://exsample.d-n-s.name/proxy.php?slug=237-cnbc-asia
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=197-al-jazeera
+https://exsample.d-n-s.name/proxy.mpd?slug=197-al-jazeera
 
 #EXTINF:0 tvg-name="Euronews" tvg-id="612" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/2d1b5330-1fe8-4818-a9af-0216328d510a.png" group-title="Berita & Bisnis",Euronews
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -425,7 +448,7 @@ https://exsample.d-n-s.name/proxy.php?slug=197-al-jazeera
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=199-euronews
+https://exsample.d-n-s.name/proxy.mpd?slug=199-euronews
 
 #EXTINF:0 tvg-name="France 24" tvg-id="615" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/3888cfeb-554b-4ae9-81f6-2e44a707f2b1.png" group-title="Berita & Bisnis",France 24
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -433,7 +456,7 @@ https://exsample.d-n-s.name/proxy.php?slug=199-euronews
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=258-france-24
+https://exsample.d-n-s.name/proxy.mpd?slug=258-france-24
 
 #EXTINF:0 tvg-name="CGTN" tvg-id="616" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/b222c8a2-83eb-40d4-a716-ead1379d7b9e.jpg" group-title="Berita & Bisnis",CGTN
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -441,7 +464,7 @@ https://exsample.d-n-s.name/proxy.php?slug=258-france-24
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=259-cgtn
+https://exsample.d-n-s.name/proxy.mpd?slug=259-cgtn
 
 #EXTINF:0 tvg-name="Russia Today" tvg-id="617" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/423c22b4-75af-470c-92b9-0ce3406c8f75.jpg" group-title="Berita & Bisnis",Russia Today
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -449,7 +472,7 @@ https://exsample.d-n-s.name/proxy.php?slug=259-cgtn
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=260-russia-today
+https://exsample.d-n-s.name/proxy.mpd?slug=260-russia-today
 
 #EXTINF:0 tvg-name="Arirang" tvg-id="618" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/0d652a6e-a7c8-4561-8ea8-c9f37acfd9a4.png" group-title="Berita & Bisnis",Arirang
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -457,7 +480,7 @@ https://exsample.d-n-s.name/proxy.php?slug=260-russia-today
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=261-arirang
+https://exsample.d-n-s.name/proxy.mpd?slug=261-arirang
 
 #EXTINF:0 tvg-name="Wion TV" tvg-id="619" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/7f7b868a-ce07-46c1-bd1d-fa1ec36dc8f1.png" group-title="Berita & Bisnis",Wion TV
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -465,7 +488,7 @@ https://exsample.d-n-s.name/proxy.php?slug=261-arirang
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=283-wion-tv
+https://exsample.d-n-s.name/proxy.mpd?slug=283-wion-tv
 
 #EXTINF:0 tvg-name="Al Quran Al Kareem" tvg-id="700" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/aa008aca-68fe-4efe-9918-2fd4c6b97884.png" group-title="Religi",Al Quran Al Kareem
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -473,7 +496,7 @@ https://exsample.d-n-s.name/proxy.php?slug=283-wion-tv
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=204-al-quran-al-kareem
+https://exsample.d-n-s.name/proxy.mpd?slug=204-al-quran-al-kareem
 
 #EXTINF:0 tvg-name="tvMU" tvg-id="701" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/1b908432-e3a7-4d39-ba32-1acc69966989.jpg" group-title="Religi",tvMU
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -481,7 +504,7 @@ https://exsample.d-n-s.name/proxy.php?slug=204-al-quran-al-kareem
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=187-tvmu
+https://exsample.d-n-s.name/proxy.mpd?slug=187-tvmu
 
 #EXTINF:0 tvg-name="TV9" tvg-id="702" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/8f63ea40-deea-4756-b93a-d19a9a3dbe2a.jpg" group-title="Religi",TV9
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -489,7 +512,7 @@ https://exsample.d-n-s.name/proxy.php?slug=187-tvmu
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=239-tv9
+https://exsample.d-n-s.name/proxy.mpd?slug=239-tv9
 
 #EXTINF:0 tvg-name="Nabawi TV" tvg-id="704" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/9e6c3b4e-129e-4fcb-963e-957098927079.jpg" group-title="Religi",Nabawi TV
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -497,7 +520,7 @@ https://exsample.d-n-s.name/proxy.php?slug=239-tv9
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=240-nabawi-tv
+https://exsample.d-n-s.name/proxy.mpd?slug=240-nabawi-tv
 
 #EXTINF:0 tvg-name="DayStar" tvg-id="706" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/84b254cf-472f-47ab-9ddb-29d2114f180c.jpg" group-title="Religi",DayStar
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -505,7 +528,7 @@ https://exsample.d-n-s.name/proxy.php?slug=240-nabawi-tv
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=244-daystar
+https://exsample.d-n-s.name/proxy.mpd?slug=244-daystar
 
 #EXTINF:0 tvg-name="DAAI TV" tvg-id="708" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/706612c8-0d26-483e-b2fd-6baf2dec262b.jpg" group-title="Religi",DAAI TV
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -513,7 +536,7 @@ https://exsample.d-n-s.name/proxy.php?slug=244-daystar
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=241-daai-tv
+https://exsample.d-n-s.name/proxy.mpd?slug=241-daai-tv
 
 #EXTINF:0 tvg-name="Hope Channel" tvg-id="777" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/56c72279-6125-4b52-8460-9fe65b7905fc.png" group-title="Religi",Hope Channel
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -521,7 +544,7 @@ https://exsample.d-n-s.name/proxy.php?slug=241-daai-tv
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=594-hope-channel
+https://exsample.d-n-s.name/proxy.mpd?slug=594-hope-channel
 
 #EXTINF:0 tvg-name="Pijar TV" tvg-id="778" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/d721bd65-1913-45a9-925a-f13b1c831d52.jpg" group-title="Religi",Pijar TV
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -529,7 +552,7 @@ https://exsample.d-n-s.name/proxy.php?slug=594-hope-channel
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=242-pijar-tv
+https://exsample.d-n-s.name/proxy.mpd?slug=242-pijar-tv
 
 #EXTINF:0 tvg-name="Khazanah" tvg-id="798" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/a445911e-df40-413d-b4d5-59cff4b342cc.png" group-title="Religi",Khazanah
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -537,7 +560,7 @@ https://exsample.d-n-s.name/proxy.php?slug=242-pijar-tv
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=200-khazanah
+https://exsample.d-n-s.name/proxy.mpd?slug=200-khazanah
 
 #EXTINF:0 tvg-name="TVRI Sport" tvg-id="900" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/0be1fcc1-0579-4332-ab7f-9f45e989fb85.png" group-title="Olahraga",TVRI Sport
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -545,7 +568,7 @@ https://exsample.d-n-s.name/proxy.php?slug=200-khazanah
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=224-tvri-sport
+https://exsample.d-n-s.name/proxy.mpd?slug=224-tvri-sport
 
 #EXTINF:0 tvg-name="Golf Plus ID" tvg-id="901" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/e5009dc7-2cae-4c8a-aa38-36bc224f7b8b.jpg" group-title="Olahraga",Golf Plus ID
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -553,7 +576,7 @@ https://exsample.d-n-s.name/proxy.php?slug=224-tvri-sport
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=203-golf-plus-id
+https://exsample.d-n-s.name/proxy.mpd?slug=203-golf-plus-id
 
 #EXTINF:0 tvg-name="Football TV" tvg-id="902" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/df2bdc3d-9bc6-43ca-a4e6-2002d47fdac1.jpg" group-title="Olahraga",Football TV
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -561,7 +584,7 @@ https://exsample.d-n-s.name/proxy.php?slug=203-golf-plus-id
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=252-football-tv
+https://exsample.d-n-s.name/proxy.mpd?slug=252-football-tv
 
 #EXTINF:0 tvg-name="Sports TV" tvg-id="903" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/f974ea07-54bf-4463-854a-fbbe51a70cc3.jpg" group-title="Olahraga",Sports TV
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -569,7 +592,7 @@ https://exsample.d-n-s.name/proxy.php?slug=252-football-tv
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=253-sports-tv
+https://exsample.d-n-s.name/proxy.mpd?slug=253-sports-tv
 
 #EXTINF:0 tvg-name="Xtrem Sports" tvg-id="904" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/17f217c6-7009-45de-a54e-e7b15fa5f061.jpg" group-title="Olahraga",Xtrem Sports
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -577,7 +600,7 @@ https://exsample.d-n-s.name/proxy.php?slug=253-sports-tv
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=254-xtrem-sports
+https://exsample.d-n-s.name/proxy.mpd?slug=254-xtrem-sports
 
 #EXTINF:0 tvg-name="Speed TV" tvg-id="908" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/8e4b7fc8-624a-4d99-ae7c-a75ed13ede9a.jpg" group-title="Olahraga",Speed TV
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -585,7 +608,7 @@ https://exsample.d-n-s.name/proxy.php?slug=254-xtrem-sports
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=255-speed-tv
+https://exsample.d-n-s.name/proxy.mpd?slug=255-speed-tv
 
 #EXTINF:0 tvg-name="Fight TV Premium" tvg-id="914" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/65030d16-c4fc-4c89-9b03-1b809797964f.jpg" group-title="Olahraga",Fight TV Premium
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -593,7 +616,7 @@ https://exsample.d-n-s.name/proxy.php?slug=255-speed-tv
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=256-fight-tv-premium
+https://exsample.d-n-s.name/proxy.mpd?slug=256-fight-tv-premium
 
 #EXTINF:0 tvg-name="PSJ TV" tvg-id="916" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/310a7a17-0149-4623-b375-5fa1a47f2484.jpg" group-title="Olahraga",PSJ TV
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -601,7 +624,7 @@ https://exsample.d-n-s.name/proxy.php?slug=256-fight-tv-premium
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=257-psj-tv
+https://exsample.d-n-s.name/proxy.mpd?slug=257-psj-tv
 
 #EXTINF:0 tvg-name="Route du Rhum" tvg-id="917" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/541b70a8-5228-4cfe-947e-ac3cf04af46e.jpg" group-title="Olahraga",Route du Rhum
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -609,7 +632,7 @@ https://exsample.d-n-s.name/proxy.php?slug=257-psj-tv
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=826-route-du-rhum
+https://exsample.d-n-s.name/proxy.mpd?slug=826-route-du-rhum
 
 #EXTINF:0 tvg-name="Liga Sentra ID" tvg-id="918" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/67bc4613-a408-4e2b-8a57-628865ac12b1.jpg" group-title="Olahraga",Liga Sentra ID
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
@@ -617,5 +640,5 @@ https://exsample.d-n-s.name/proxy.php?slug=826-route-du-rhum
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/proxy.php?slug=747-liga-sentra-id
+https://exsample.d-n-s.name/proxy.mpd?slug=747-liga-sentra-id
 
