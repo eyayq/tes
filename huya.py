@@ -9,8 +9,8 @@ from urllib.parse import quote
 from curl_cffi import requests as cffi_requests
 
 # ─── CONFIG ─────────────────────────────────────────────
-API_PROXY  = "https://exsample.d-n-s.name/https.php"   # Proxy API & Website
-PROXY_BASE = "https://exsample.d-n-s.name/http.php"   # Proxy Upstream (m3u8)
+API_PROXY  = "https://exsample.d-n-s.name/http.php"   # Proxy API & Website
+PROXY_BASE = "https://exsample.d-n-s.name/https.php"   # Proxy Upstream (m3u8)
 SECRET     = "ganti-dengan-secret-panjang"
 
 OUTPUT_M3U  = "playlist.m3u"
