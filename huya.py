@@ -1,51 +1,35 @@
 
-
 import json
+import re
 import uuid
 import hashlib
-import time
-import logging
-from datetime import datetime, timezone, timedelta
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from urllib.parse import urlparse
+from datetime import datetime
+from concurrent.futures import ThreadPoolExecutor
 from curl_cffi import requests as cffi_requests
 
-# ─── CONFIG ─────────────────────────────────────────────
-WEB_BASE = "https://www.camel1.tv"
+WEB_BASE = "https://exsample.d-n-s.name/px.php?csurl=https://www.camel1.tv"
 API_BASE = "https://api.cameltv.live"
 OUTPUT_M3U = "playlist.m3u"
-MAX_WORKERS = 200          # ← DITURUNKAN dari 500 (anti rate-limit)
-RETRIES = 3               # ← JENIS BARU: retry per match
-RETRY_DELAY = 2           # ← JENIS BARU: jeda antar retry (detik)
-
-PROXY_BASE = "https://live123.bhns.workers.dev"
-HARDCODE_AUTH = "aad639d3a1b66cb8c384364342600a6b"
+MAX_WORKERS = 500
 
 APP_CODE = "D04B29D6B957CD44DC5F9894189380B8"
 DEVICE_ID = str(uuid.uuid4())
-NODE = "camel"
+NODE = "camel2"
 REGION = "XM"
 
-GROUP_TITLE = "live camelia vip [tes]"
-USER_AGENT = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36"
-REFERER = "https://www.camel1.tv/"
-ORIGIN = "https://www.camel1.tv"
-
-WIB = timezone(timedelta(hours=7))
 STATUS_MAP = {1: "NS", 2: "LIVE", 3: "UPC", 4: "FT", 5: "HT"}
 
-SESSION = cffi_requests.Session(impersonate="chrome", timeout=30)
+SESSION = cffi_requests.Session(impersonate="chrome", timeout=20)
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
-log = logging.getLogger("camel")
-
-
-def _headers(uid=None):
-    h = {
-        "user-agent": USER_AGENT,
+# ─── STEP 1: ANONYMOUS LOGIN ───────────────────────────
+def anonymous_login():
+    url = f"{API_BASE}/account-service/login/anonymous/web?appCode={APP_CODE}"
+    headers = {
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
         "accept": "application/json, text/plain, */*",
-        "origin": ORIGIN,
-        "referer": REFERER,
+        "content-type": "application/x-www-form-urlencoded",
+        "origin": "https://www.camel1.tv",
+        "referer": "https://www.camel1.tv/",
         "deviceid": DEVICE_ID,
         "device": "WEB",
         "appversion": "20.0.0.0",
@@ -53,35 +37,24 @@ def _headers(uid=None):
         "region": REGION,
         "accept-language": "en",
     }
-    if uid:
-        h["uid"] = uid
-    return h
+    body = json.dumps({"appCode": APP_CODE})
+    try:
+        r = SESSION.post(url, headers=headers, data=body)
+        data = r.json()
+        if data.get("success") or data.get("code") == 0:
+            detail = data.get("detail", {})
+            uid = detail.get("key", "")
+            token = detail.get("value", "")
+            print(f"  ✅ uid={uid}")
+            return uid, token
+        else:
+            print(f"  ⚠ {data}")
+            return None, None
+    except Exception as e:
+        print(f"  [ERROR] {e}")
+        return None, None
 
-
-def to_proxy_url(cdn_url):
-    parsed = urlparse(cdn_url)
-    query = parsed.query
-    if query:
-        query += f"&auth={HARDCODE_AUTH}&d={parsed.netloc}"
-    else:
-        query = f"auth={HARDCODE_AUTH}&d={parsed.netloc}"
-    return f"{PROXY_BASE}/{parsed.path.lstrip('/')}?{query}"
-
-
-# ─── API ────────────────────────────────────────────────
-
-def anonymous_login():
-    url = f"{API_BASE}/account-service/login/anonymous/web?appCode={APP_CODE}"
-    h = _headers()
-    h["content-type"] = "application/x-www-form-urlencoded"
-    r = SESSION.post(url, headers=h, data=json.dumps({"appCode": APP_CODE}))
-    data = r.json()
-    if data.get("success") or data.get("code") == 0:
-        d = data.get("detail", {})
-        return d.get("key", ""), d.get("value", "")
-    return None, None
-
-
+# ─── STEP 2: EKSTRAK MATCH DATA ─────────────────────────
 def extract_matches_rsc(html):
     unescaped = html.replace('\\"', '"').replace('\\\\', '\\')
     start = unescaped.find('[{"competition"')
@@ -110,7 +83,6 @@ def extract_matches_rsc(html):
         data = json.loads(unescaped[start:end + 1])
     except:
         return []
-
     matches = []
     for cb in data:
         cn = cb.get("competition", {}).get("name", "")
@@ -119,265 +91,172 @@ def extract_matches_rsc(html):
             a = m.get("away_team", {})
             hs = m.get("home_scores", [0] * 7)
             as_ = m.get("away_scores", [0] * 7)
-
-            match_time = None
-            raw_time = m.get("start_time") or m.get("match_time") or m.get("kickoff_time") or ""
-            if raw_time:
-                try:
-                    if isinstance(raw_time, (int, float)):
-                        match_time = datetime.fromtimestamp(raw_time, tz=WIB)
-                    else:
-                        match_time = datetime.fromisoformat(str(raw_time).replace("Z", "+00:00")).astimezone(WIB)
-                except:
-                    pass
-
             matches.append({
                 "id": m.get("id", ""),
                 "competition": cn,
                 "home": h.get("name", "?"),
                 "away": a.get("name", "?"),
-                "home_logo": h.get("logo") or h.get("logo_url") or h.get("crest") or "",
-                "away_logo": a.get("logo") or a.get("logo_url") or a.get("crest") or "",
                 "home_score": hs[0] if hs else 0,
                 "away_score": as_[0] if as_ else 0,
                 "status": STATUS_MAP.get(m.get("status_id", 0), "?"),
                 "status_id": m.get("status_id", 0),
                 "has_stream": m.get("coverage", {}).get("has_stream", 0),
-                "match_time": match_time,
-                "match_time_raw": raw_time,
             })
     return matches
 
-
-# ─── PERBAIKAN UTAMA: get_stream_url lebih robust ───────
-
-def _extract_stream_from_response(data):
-    """Ekstrak stream URL dari berbagai kemungkinan struktur response API."""
-    # Cek beberapa kemungkinan lokasi data
-    detail = data.get("detail", data.get("data", data.get("result", {})))
-
-    # Jika detail sendiri adalah list
-    if isinstance(detail, list):
-        streams = detail
-    elif isinstance(detail, dict):
-        # Coba berbagai key
-        streams = (detail.get("streams")
-                   or detail.get("streamList")
-                   or detail.get("list")
-                   or [])
-        # Kalau detail punya streamUrl langsung
-        if not streams:
-            if detail.get("streamUrlM3u8"):
-                return detail["streamUrlM3u8"].replace("http://", "https://")
-            if detail.get("streamUrl"):
-                return detail["streamUrl"].replace("http://", "https://")
-    else:
-        return None
-
-    if not streams:
-        return None
-
-    # Cari URL dari setiap item
-    for s in streams:
-        if not isinstance(s, dict):
-            continue
-        # Prioritas: streamUrlM3u8 > streamUrl > url > playUrl
-        for key in ("streamUrlM3u8", "streamUrl", "url", "playUrl", "m3u8Url", "hlsUrl"):
-            val = s.get(key, "")
-            if val and val.startswith("http"):
-                return val.replace("http://", "https://")
-    return None
-
-
-def get_stream_url(match_id, uid):
-    """Coba beberapa endpoint dengan retry."""
-    endpoints = [
-        f"{API_BASE}/camel-service/ee/sports_live/football/stream?matchId={match_id}",
-        f"{API_BASE}/camel-service/ee/sports_live/loadAnchorsByMatchId?matchId={match_id}&sportType=football",
-        f"{API_BASE}/camel-service/ee/sports_live/getStreamByMatchId?matchId={match_id}",
-    ]
-
-    for attempt in range(RETRIES):
-        for ep in endpoints:
-            try:
-                r = SESSION.get(ep, headers=_headers(uid))
-                if r.status_code != 200:
-                    continue
-                data = r.json()
-                if not (data.get("success") or data.get("code") == 0 or data.get("status") == 200):
-                    continue
-
-                stream_url = _extract_stream_from_response(data)
-                if stream_url:
-                    return stream_url
-
-            except Exception as e:
-                log.debug(f"  Attempt {attempt+1} {ep}: {e}")
-                continue
-
-        # Jeda sebelum retry
-        if attempt < RETRIES - 1:
-            time.sleep(RETRY_DELAY * (attempt + 1))
-
-    return None
-
-
-def get_token(stream_url, uid):
-    stream_name = stream_url.rstrip(".m3u8").split("/")[-1]
+# ─── STEP 3: LOAD ANCHORS ───────────────────────────────
+def load_anchors(match_id, uid):
+    url = f"{API_BASE}/camel-service/ee/sports_live/loadAnchorsByMatchId?matchId={match_id}&sportType=football"
+    headers = {
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+        "accept": "application/json, text/plain, */*",
+        "content-type": "application/json",
+        "origin": "https://www.camel1.tv",
+        "referer": "https://www.camel1.tv/",
+        "deviceid": DEVICE_ID,
+        "device": "WEB",
+        "appversion": "20.0.0.0",
+        "node": NODE,
+        "region": REGION,
+        "accept-language": "en",
+        "uid": uid,
+    }
     try:
-        url = f"{API_BASE}/camel-service/ee/sports_live/token?streamName={stream_name}"
-        r = SESSION.get(url, headers=_headers(uid))
+        r = SESSION.get(url, headers=headers)
+        data = r.json()
+        if data.get("success") or data.get("code") == 0:
+            streams = data.get("detail", {}).get("streams", [])
+            if streams:
+                s = streams[0]
+                stream_url = s.get("streamUrl", "")
+                stream_name = stream_url.rstrip(".m3u8").split("/")[-1] if stream_url else ""
+                return {"stream_url": stream_url, "stream_name": stream_name}
+        return None
+    except Exception as e:
+        return None
+
+# ─── STEP 4: GET STREAM TOKEN ───────────────────────────
+def get_stream_token(stream_name, uid):
+    url = f"{API_BASE}/camel-service/ee/sports_live/token?streamName={stream_name}"
+    headers = {
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+        "accept": "application/json, text/plain, */*",
+        "content-type": "multipart/form-data",
+        "origin": "https://www.camel1.tv",
+        "referer": "https://www.camel1.tv/",
+        "deviceid": DEVICE_ID,
+        "device": "WEB",
+        "appversion": "20.0.0.0",
+        "node": NODE,
+        "region": REGION,
+        "accept-language": "en",
+        "uid": uid,
+    }
+    try:
+        r = SESSION.get(url, headers=headers)
         data = r.json()
         if data.get("status") == 200 or data.get("code") == 0:
-            d = data.get("data", data.get("detail", {}))
-            tx_time = d.get("txTime", "")
-            tx_secret = d.get("txSecret", "")
-            if tx_time and tx_secret:
-                return tx_time, tx_secret
+            d = data.get("data", {})
+            return {
+                "txTime": d.get("txTime", ""),
+                "txSecret": d.get("txSecret", ""),
+                "txDevice": d.get("txDevice", ""),
+            }
+        return None
     except:
-        pass
-    return None, None
+        return None
 
-
-def build_final_url(stream_url, tx_time, tx_secret):
-    if tx_time and tx_secret:
-        tx_secret_url = hashlib.md5(tx_secret.encode()).hexdigest()
+# ─── STEP 5: BUILD FINAL URL ────────────────────────────
+def build_final_url(stream_url, token_data):
+    if not token_data:
+        return stream_url
+    tx_time = token_data.get("txTime", "")
+    tx_secret = token_data.get("txSecret", "")
+    # MD5 hex dari txSecret (32 char)
+    tx_secret_url = hashlib.md5(tx_secret.encode()).hexdigest() if tx_secret else ""
+    if tx_time and tx_secret_url:
         return f"{stream_url}?txSecret={tx_secret_url}&txTime={tx_time}&lat=9000"
-    return f"{stream_url}?auth={HARDCODE_AUTH}"
+    return stream_url
 
-
+# ─── STEP 6: FULL PIPELINE PER MATCH ────────────────────
 def get_stream_for_match(match, uid):
     match_id = match["id"]
-    label = f"{match['home']} vs {match['away']} [{match['status']}]"
-
-    stream_url = get_stream_url(match_id, uid)
-    if not stream_url:
-        log.info(f"  ❌ No stream: {label} (id={match_id}, has_stream={match['has_stream']})")
+    anchors = load_anchors(match_id, uid)
+    if not anchors or not anchors.get("stream_url"):
         return match, None
+    stream_url = anchors["stream_url"]
+    stream_name = anchors.get("stream_name", "")
+    token_data = get_stream_token(stream_name, uid)
+    final_url = build_final_url(stream_url, token_data)
+    return match, final_url
 
-    tx_time, tx_secret = get_token(stream_url, uid)
-    final_url = build_final_url(stream_url, tx_time, tx_secret)
-    proxy_url = to_proxy_url(final_url)
-
-    log.info(f"  ✅ {label}")
-    return match, proxy_url
-
-
-# ─── M3U ────────────────────────────────────────────────
-
-def format_match_time(match):
-    mt = match.get("match_time")
-    if mt:
-        return f"{mt.strftime('%H:%M')} WIB {mt.strftime('%d-%m-%Y')}"
-    raw = match.get("match_time_raw", "")
-    return str(raw) if raw else "TBD"
-
-
+# ─── GENERATE M3U ───────────────────────────────────────
 def generate_m3u(streams):
     lines = ["#EXTM3U"]
     for s in streams:
-        time_str = format_match_time(s)
         title = (f"{s['home']} vs {s['away']} - {s['competition']} "
-                 f"[{s['status']}] ({s['home_score']}-{s['away_score']}) {time_str}")
-        logo = s.get("home_logo") or s.get("away_logo") or ""
-        lines.append(f'#EXTINF:0,tvg-name="{title}" tvg-logo="{logo}" group-title="{GROUP_TITLE}",{title}')
-        lines.append(f'#EXTVLCOPT:http-origin={ORIGIN}')
-        lines.append(f'#EXTVLCOPT:http-referrer={REFERER}')
-        lines.append(f'#EXTVLCOPT:http-user-agent={USER_AGENT}')
+                 f"[{s['status']}] ({s['home_score']}-{s['away_score']})")
+        lines.append(f'#EXTINF:0,tvg-name="{title}",{title}')
         lines.append(s['stream_url'])
-        lines.append("")
     return "\n".join(lines)
 
-
 # ─── MAIN ───────────────────────────────────────────────
-
 def main():
     print("=" * 70)
-    print("  ✓")
-    print(f"  {datetime.now(WIB).strftime('%Y-%m-%d %H:%M WIB')}")
-    print(f"  ✓")
-    print(f"  ✓:{MAX_WORKERS} | ✓:{RETRIES}")
+    print("  CAMEL LIVE - M3U STREAM SCRAPER (API)")
+    print(f"  {datetime.now().strftime('%Y-%m-%d %H:%M')}")
+    print(f"  Device: {DEVICE_ID}")
     print("=" * 70)
 
-    print("\n🔑 Login...")
-    uid, _ = anonymous_login()
+    # 1. Login
+    print("\n🔑 Anonymous login...")
+    uid, token = anonymous_login()
     if not uid:
         print("  ❌ Login gagal.")
         return
-    print(f"  uid = {uid}")
 
-    print("\n📡 Fetching...")
+    # 2. Homepage
+    print("\n📡 Fetching homepage...")
     r = SESSION.get(f"{WEB_BASE}/")
     matches = extract_matches_rsc(r.text)
     print(f"  ✅ {len(matches)} matches")
 
-    for m in matches:
-        print(f"     [{m['status']}] {m['home']} vs {m['away']} | id={m['id']} | has_stream={m['has_stream']}")
-
-    # ─── PERBAIKAN: filter dengan has_stream + status ───
-    # Hanya coba match yang memang punya stream (has_stream=1) ATAU sedang LIVE/UPC
-    streamable = [m for m in matches
-                  if m["status_id"] in (1, 2, 3, 4)
-                  and (m["has_stream"] in (1, True) or m["status_id"] in (2, 3))]
-    print(f"  📺 {len(streamable)}")
+    streamable = [m for m in matches if m.get("has_stream") and m["status_id"] in (2, 4)]
+    print(f"  📺 Streamable (LIVE/FT): {len(streamable)}")
 
     if not streamable:
-        print("  ⚠ Tidak ada.")
+        print("  ⚠ Tidak ada match dengan stream.")
         return
 
-    print(f"\n🔧 ({MAX_WORKERS} {RETRIES} )...")
+    # 3. ThreadPool
+    print(f"\n🔧 Fetching stream URLs ({MAX_WORKERS} workers)...")
     results = []
-    failed = []
 
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
-        futures = {pool.submit(get_stream_for_match, m, uid): m for m in streamable}
-        for i, fut in enumerate(as_completed(futures)):
+        futures = [pool.submit(get_stream_for_match, m, uid) for m in streamable]
+        for i, fut in enumerate(futures):
             match, stream_url = fut.result()
             label = f"{match['home']} vs {match['away']} [{match['status']}]"
             if stream_url:
+                print(f"  [{i + 1}/{len(streamable)}] ✅ {label}")
+                print(f"       → {stream_url[:130]}")
                 results.append({**match, "stream_url": stream_url})
             else:
-                failed.append(match)
+                print(f"  [{i + 1}/{len(streamable)}] ❌ {label}")
 
-    # ─── PERBAIKAN: Second pass untuk yang gagal ───
-    if failed:
-        print(f"\n🔄 Retry {len(failed)} failed (delay 5s)...")
-        time.sleep(5)
-        with ThreadPoolExecutor(max_workers=MAX_WORKERS // 2) as pool:
-            futures = {pool.submit(get_stream_for_match, m, uid): m for m in failed}
-            for fut in as_completed(futures):
-                match, stream_url = fut.result()
-                if stream_url:
-                    results.append({**match, "stream_url": stream_url})
-                    failed.remove(match)
-
-    results.sort(key=lambda x: x.get("match_time") or datetime.max.replace(tzinfo=WIB))
-
+    # 4. Output
+    print(f"\n{'═' * 70}")
     if results:
         m3u = generate_m3u(results)
         with open(OUTPUT_M3U, "w", encoding="utf-8") as f:
             f.write(m3u)
-        print(f"\n✅ {OUTPUT_M3U} {len(results)}")
-        print(f"   Failed: {len(failed)}")
-        print(m3u[:1000])
+        print(f"  ✅ {OUTPUT_M3U} → {len(results)} streams")
+        print(f"{'═' * 70}")
+        print(f"\n{m3u[:600]}")
     else:
-        print("\n❌ 0 streams.")
-
+        print(f"  ❌ 0 streams.")
+        print(f"{'═' * 70}")
 
 if __name__ == "__main__":
     main()   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
