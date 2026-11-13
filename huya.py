@@ -11,8 +11,8 @@ from urllib.parse import urlparse
 from curl_cffi import requests as cffi_requests
 
 # ─── CONFIG ─────────────────────────────────────────────
-WEB_BASE = "https://exsample.d-n-s.name/px.php?csurl=https://www.camel1.tv"
-API_BASE = "https://exsample.d-n-s.name/px.php?csurl=https://api.cameltv.live"
+WEB_BASE = "https://www.camel1.tv"
+API_BASE = "https://api.cameltv.live"
 OUTPUT_M3U = "playlist.m3u"
 MAX_WORKERS = 200          # ← DITURUNKAN dari 500 (anti rate-limit)
 RETRIES = 3               # ← JENIS BARU: retry per match
