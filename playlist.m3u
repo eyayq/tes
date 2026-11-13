@@ -1,644 +1,154 @@
 #EXTM3U
-#EXTINF:0 tvg-name="Trans TV" tvg-id="800" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/3545b53b-8e35-4f44-953a-274720f77968.jpg" group-title="tv nasional prem",Trans TV [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=210-trans-tv
-
-#EXTINF:0 tvg-name="Trans 7" tvg-id="801" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/df7bddc8-675e-47e0-9e62-4c04afbf347a.jpg" group-title="tv nasional prem",Trans 7 [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=201-trans-7
-
-#EXTINF:0 tvg-name="CNN Indonesia" tvg-id="803" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/34157c4e-9c56-4f08-8271-22524b5ad39e.jpg" group-title="tv nasional prem",CNN Indonesia [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=212-cnn-indonesia
-
-#EXTINF:0 tvg-name="CNBC Indonesia" tvg-id="805" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/ea2f3817-add8-44b7-b222-664cacd221ca.jpg" group-title="tv nasional prem",CNBC Indonesia [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=213-cnbc-indonesia
-
-#EXTINF:0 tvg-name="Metro TV" tvg-id="802" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/cfc9d256-0421-447e-9aae-431db3de77c3.png" group-title="tv nasional prem",Metro TV [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=211-metro-tv
-
-#EXTINF:0 tvg-name="TVOne" tvg-id="804" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/930c8097-dc6b-4161-b414-d7a70b0b8b98.png" group-title="tv nasional prem",TVOne [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=363-tvone
-
-#EXTINF:0 tvg-name="SCTV" tvg-id="807" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/3277a6c8-1294-418c-920b-575e598f0804.png" group-title="tv nasional prem",SCTV [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-https://exsample.d-n-s.name/playlist.mpd?slug=215-sctv
-
-#EXTINF:0 tvg-name="Indosiar" tvg-id="808" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/1aac6c51-ebad-4c50-af70-13bf371bed25.png" group-title="tv nasional prem",Indosiar [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=216-indosiar
-
-#EXTINF:0 tvg-name="RCTI" tvg-id="809" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/15c10f90-4304-4410-a418-67891b5c185d.png" group-title="tv nasional prem",RCTI [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=217-rcti
-
-#EXTINF:0 tvg-name="GTV" tvg-id="810" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/419ddbb6-dc83-4e1a-89e6-13c6c9422577.png" group-title="tv nasional prem",GTV [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=218-gtv
-
-#EXTINF:0 tvg-name="JakTV" tvg-id="812" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/912d53a1-8222-40e0-8e97-affb43129850.jpg" group-title="tv nasional prem",JakTV [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=243-jaktv
-
-#EXTINF:0 tvg-name="BTV" tvg-id="813" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/e1d6bd56-4209-4337-b0f7-553fb6fdec9a.png" group-title="tv nasional prem",BTV [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=245-btv
-
-#EXTINF:0 tvg-name="Kompas TV" tvg-id="814" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/f0771c7b-d473-4fa4-ad0f-cdffd4bc0ac5.jpg" group-title="tv nasional prem",Kompas TV [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=220-kompas-tv
-
-#EXTINF:0 tvg-name="MDTV" tvg-id="815" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/b717b7b9-4dab-4e80-8221-9bd42d3f26f1.png" group-title="tv nasional prem",MDTV [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=221-mdtv
-
-#EXTINF:0 tvg-name="RTV" tvg-id="816" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/f4bd6cd9-d8a5-4f42-8dce-7f332ec55940.jpg" group-title="tv nasional prem",RTV [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=246-rtv
-
-#EXTINF:0 tvg-name="MNC TV" tvg-id="817" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/788c4e9e-363d-47f7-9ef5-6ee1d9dd2619.png" group-title="tv nasional prem",MNC TV [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=222-mnc-tv
-
-#EXTINF:0 tvg-name="TVRI" tvg-id="818" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/6e55c83f-b399-4884-8b57-273acb663344.png" group-title="tv nasional prem",TVRI [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=223-tvri
-
-#EXTINF:0 tvg-name="ANTV" tvg-id="819" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/804a0414-edd9-4e16-bd7e-1fbb593525ec.png" group-title="tv nasional prem",ANTV [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=364-antv
-
-#EXTINF:0 tvg-name="jtv" tvg-id="820" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/52d0d978-6550-4935-9899-aa78db628fff.png" group-title="tv nasional prem",jtv [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=284-jtv
-
-#EXTINF:0 tvg-name="Berita Satu" tvg-id="806" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/c2f01ed0-b8ba-45ae-8b44-dc09e69aaaa9.png" group-title="tv nasional prem",Berita Satu [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=214-berita-satu
-
-#EXTINF:0 tvg-name="Garuda TV" tvg-id="811" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/dc7d7072-39d4-4978-bc34-4e7654fe4469.jpg" group-title="tv nasional prem",Garuda TV [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=219-garuda-tv
-
-#EXTINF:0 tvg-name="tvN MOVIES" tvg-id="113" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/28836514-2fd7-4011-92c7-68d610d25dd8.png" group-title="tv nasional prem",tvN MOVIES [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-https://exsample.d-n-s.name/playlist.mpd?slug=227-tvn-movies
-
-#EXTINF:0 tvg-name="Celestial Movies" tvg-id="141" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/f124427a-931e-47d1-ab50-1b29a7a3e406.jpg" group-title="tv nasional prem",Celestial Movies [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=229-celestial-movies
-
-#EXTINF:0 tvg-name="Bioskop Indonesia" tvg-id="144" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/e3276355-306c-4ed8-8f06-725bcc8247c1.png" group-title="tv nasional prem",Bioskop Indonesia [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=230-bioskop-indonesia
-
-#EXTINF:0 tvg-name="Thrill" tvg-id="161" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/6bec4b1b-262f-44e0-821f-a3897ce93251.jpg" group-title="tv nasional prem",Thrill [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=232-thrill
-
-#EXTINF:0 tvg-name="Movies News" tvg-id="162" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/8c6fb1a8-44f6-4d20-9093-fb4bb93bc5cd.jpg" group-title="tv nasional prem",Movies News [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=185-movies-news
-
-#EXTINF:0 tvg-name="Cartoon TV Premium" tvg-id="220" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/6e735e2f-e7db-47ec-b13b-23d3a0342124.jpg" group-title="tv nasional prem",Cartoon TV Premium [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=248-cartoon-tv-premium
-
-#EXTINF:0 tvg-name="Cartoon TV" tvg-id="221" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/9e422d53-5c00-49ea-8422-e2a3f1e03f70.jpg" group-title="tv nasional prem",Cartoon TV [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=249-cartoon-tv
-
-#EXTINF:0 tvg-name="Dunia Anak" tvg-id="222" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/76e39ba2-62b9-4f96-90ae-3de803edb400.png" group-title="tv nasional prem",Dunia Anak [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=186-dunia-anak
-
-#EXTINF:0 tvg-name="Cartoon TV Classic" tvg-id="223" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/87c43b67-b234-41a8-b188-ae6b498a40b4.jpg" group-title="tv nasional prem",Cartoon TV Classic [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=250-cartoon-tv-classic
-
-#EXTINF:0 tvg-name="Knowledge+" tvg-id="260" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/96641a38-47bd-479c-8e6d-efa73e7f618d.jpg" group-title="tv nasional prem",Knowledge+ [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=205-knowledge
-
-#EXTINF:0 tvg-name="CGTN Documentary" tvg-id="265" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/7cbb5733-87c4-43c5-afa8-ab01c2075132.jpg" group-title="tv nasional prem",CGTN Documentary [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=234-cgtn-documentary
-
-#EXTINF:0 tvg-name="tvN" tvg-id="321" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/e92c8090-0efe-4191-8e9a-bf858b0e15bc.png" group-title="tv nasional prem",tvN [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-https://exsample.d-n-s.name/playlist.mpd?slug=194-tvn
-
-#EXTINF:0 tvg-name="K+" tvg-id="322" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/4ff96e7e-b79f-47e0-8ebc-9b81398c49b8.jpg" group-title="tv nasional prem",K+ [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=667-k
-
-#EXTINF:0 tvg-name="NHK World Premium" tvg-id="500" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/9edbe0b9-984f-4e57-8746-44007e64d4dd.png" group-title="tv nasional prem",NHK World Premium [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-https://exsample.d-n-s.name/playlist.mpd?slug=236-nhk-world-premium
-
-#EXTINF:0 tvg-name="Channel Jowo" tvg-id="327" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/64efefa1-5f19-47e4-ac3d-7a871b590a23.jpg" group-title="tv nasional prem",Channel Jowo [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=247-channel-jowo
-
-#EXTINF:0 tvg-name="!nsert" tvg-id="330" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/7be43f18-a28f-4825-b888-2d1ed538c667.png" group-title="tv nasional prem",!nsert [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=263-nsert
-
-#EXTINF:0 tvg-name="Dunia Lain" tvg-id="344" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/02985354-4453-4792-a8dd-275517d88012.png" group-title="tv nasional prem",Dunia Lain [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=265-dunia-lain
-
-#EXTINF:0 tvg-name="CCTV4" tvg-id="381" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/934d3d55-c1c5-4570-afc4-428e0bf0c86d.png" group-title="tv nasional prem",CCTV4 [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=266-cctv4
-
-#EXTINF:0 tvg-name="TV5 Monde" tvg-id="391" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/fb33f9d0-75ea-409d-8898-9d8111c4211c.png" group-title="tv nasional prem",TV5 Monde [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=267-tv5-monde
-
-#EXTINF:0 tvg-name="One TV" tvg-id="395" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/1b5b6dab-c6e7-4109-8813-273c05910c53.jpg" group-title="tv nasional prem",One TV [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=268-one-tv
-
-#EXTINF:0 tvg-name="Travel TV" tvg-id="500" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/9a3142d7-c566-476f-b6f8-d0d7350b2733.jpg" group-title="tv nasional prem",Travel TV [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=274-travel-tv
-
-#EXTINF:0 tvg-name="Eat N Go" tvg-id="501" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/96eaf2cb-49fd-4710-b3bf-1d3b6833a1d5.png" group-title="tv nasional prem",Eat N Go [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=208-eat-n-go
-
-#EXTINF:0 tvg-name="Fashion TV" tvg-id="505" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/edc764c8-f879-4c80-aa9e-b7ba8bff73f7.jpg" group-title="tv nasional prem",Fashion TV [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=196-fashion-tv
-
-#EXTINF:0 tvg-name="Cooking TV" tvg-id="508" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/3afdd138-2f44-4825-9917-7615972095c1.jpg" group-title="tv nasional prem",Cooking TV [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-https://exsample.d-n-s.name/playlist.mpd?slug=276-cooking-tv
-
-#EXTINF:0 tvg-name="Gaming TV" tvg-id="509" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/dcbc4bc6-19c3-4719-9ee7-587aa3edffea.jpg" group-title="tv nasional prem",Gaming TV [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=277-gaming-tv
-
-#EXTINF:0 tvg-name="DENS Food Channel" tvg-id="513" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/2dbb1a79-69ac-4b91-9e9a-1d42e79963b5.jpg" group-title="tv nasional prem",DENS Food Channel [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=278-dens-food-channel
-
-#EXTINF:0 tvg-name="DENS Play Channel" tvg-id="514" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/2e8b912a-015c-41c4-97bf-ea248c0b35e0.jpg" group-title="tv nasional prem",DENS Play Channel [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=279-dens-play-channel
-
-#EXTINF:0 tvg-name="Superyacht TV" tvg-id="515" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/eaa4d0a4-af9f-4fc6-96a7-5d9427a9d41a.jpg" group-title="tv nasional prem",Superyacht TV [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=251-superyacht-tv
-
-#EXTINF:0 tvg-name="DENS Show Bizz" tvg-id="517" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/a06f0dd7-751f-442a-98bc-e6cad4b4f18d.jpg" group-title="tv nasional prem",DENS Show Bizz [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=280-dens-show-bizz
-
-#EXTINF:0 tvg-name="Musik Indonesia" tvg-id="560" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/5532f74e-07ee-4a70-b7d4-b5233778381d.png" group-title="tv nasional prem",Musik Indonesia [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=195-musik-indonesia
-
-#EXTINF:0 tvg-name="Song TV" tvg-id="563" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/3974fd33-9c3a-44b2-acdb-66c90f9492e5.jpg" group-title="tv nasional prem",Song TV [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=281-song-tv
-
-#EXTINF:0 tvg-name="ABC Australia" tvg-id="604" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/89301bb9-40dc-4239-8f7f-ea59ef3555c8.png" group-title="tv nasional prem",ABC Australia [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=238-abc-australia
-
-#EXTINF:0 tvg-name="Channel NewsAsia" tvg-id="620" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/10dc34b0-674b-42fe-901f-d75a45de415a.png" group-title="tv nasional prem",Channel NewsAsia [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=209-channel-newsasia
-
-#EXTINF:0 tvg-name="CNBC Asia" tvg-id="609" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/dc57da9a-b87b-4145-b2ac-fead00387d1e.jpg" group-title="tv nasional prem",CNBC Asia [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=237-cnbc-asia
-
-#EXTINF:0 tvg-name="Al Jazeera" tvg-id="610" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/120d8d56-bd33-442d-b3c1-9c7581e5d18a.png" group-title="tv nasional prem",Al Jazeera [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=197-al-jazeera
-
-#EXTINF:0 tvg-name="Euronews" tvg-id="612" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/2d1b5330-1fe8-4818-a9af-0216328d510a.png" group-title="tv nasional prem",Euronews [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=199-euronews
-
-#EXTINF:0 tvg-name="France 24" tvg-id="615" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/3888cfeb-554b-4ae9-81f6-2e44a707f2b1.png" group-title="tv nasional prem",France 24 [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=258-france-24
-
-#EXTINF:0 tvg-name="CGTN" tvg-id="616" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/b222c8a2-83eb-40d4-a716-ead1379d7b9e.jpg" group-title="tv nasional prem",CGTN [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=259-cgtn
-
-#EXTINF:0 tvg-name="Russia Today" tvg-id="617" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/423c22b4-75af-470c-92b9-0ce3406c8f75.jpg" group-title="tv nasional prem",Russia Today [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=260-russia-today
-
-#EXTINF:0 tvg-name="Arirang" tvg-id="618" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/0d652a6e-a7c8-4561-8ea8-c9f37acfd9a4.png" group-title="tv nasional prem",Arirang [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=261-arirang
-
-#EXTINF:0 tvg-name="Wion TV" tvg-id="619" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/7f7b868a-ce07-46c1-bd1d-fa1ec36dc8f1.png" group-title="tv nasional prem",Wion TV [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=283-wion-tv
-
-#EXTINF:0 tvg-name="Al Quran Al Kareem" tvg-id="700" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/aa008aca-68fe-4efe-9918-2fd4c6b97884.png" group-title="tv nasional prem",Al Quran Al Kareem [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=204-al-quran-al-kareem
-
-#EXTINF:0 tvg-name="tvMU" tvg-id="701" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/1b908432-e3a7-4d39-ba32-1acc69966989.jpg" group-title="tv nasional prem",tvMU [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=187-tvmu
-
-#EXTINF:0 tvg-name="TV9" tvg-id="702" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/8f63ea40-deea-4756-b93a-d19a9a3dbe2a.jpg" group-title="tv nasional prem",TV9 [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=239-tv9
-
-#EXTINF:0 tvg-name="Nabawi TV" tvg-id="704" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/9e6c3b4e-129e-4fcb-963e-957098927079.jpg" group-title="tv nasional prem",Nabawi TV [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=240-nabawi-tv
-
-#EXTINF:0 tvg-name="DayStar" tvg-id="706" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/84b254cf-472f-47ab-9ddb-29d2114f180c.jpg" group-title="tv nasional prem",DayStar [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=244-daystar
-
-#EXTINF:0 tvg-name="DAAI TV" tvg-id="708" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/706612c8-0d26-483e-b2fd-6baf2dec262b.jpg" group-title="tv nasional prem",DAAI TV [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=241-daai-tv
-
-#EXTINF:0 tvg-name="Hope Channel" tvg-id="777" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/56c72279-6125-4b52-8460-9fe65b7905fc.png" group-title="tv nasional prem",Hope Channel [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=594-hope-channel
-
-#EXTINF:0 tvg-name="Pijar TV" tvg-id="778" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/d721bd65-1913-45a9-925a-f13b1c831d52.jpg" group-title="tv nasional prem",Pijar TV [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=242-pijar-tv
-
-#EXTINF:0 tvg-name="Khazanah" tvg-id="798" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/a445911e-df40-413d-b4d5-59cff4b342cc.png" group-title="tv nasional prem",Khazanah [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=200-khazanah
-
-#EXTINF:0 tvg-name="TVRI Sport" tvg-id="900" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/0be1fcc1-0579-4332-ab7f-9f45e989fb85.png" group-title="tv nasional prem",TVRI Sport [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=224-tvri-sport
-
-#EXTINF:0 tvg-name="Golf Plus ID" tvg-id="901" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/e5009dc7-2cae-4c8a-aa38-36bc224f7b8b.jpg" group-title="tv nasional prem",Golf Plus ID [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=203-golf-plus-id
-
-#EXTINF:0 tvg-name="Football TV" tvg-id="902" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/df2bdc3d-9bc6-43ca-a4e6-2002d47fdac1.jpg" group-title="tv nasional prem",Football TV [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=252-football-tv
-
-#EXTINF:0 tvg-name="Sports TV" tvg-id="903" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/f974ea07-54bf-4463-854a-fbbe51a70cc3.jpg" group-title="tv nasional prem",Sports TV [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=253-sports-tv
-
-#EXTINF:0 tvg-name="Xtrem Sports" tvg-id="904" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/17f217c6-7009-45de-a54e-e7b15fa5f061.jpg" group-title="tv nasional prem",Xtrem Sports [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=254-xtrem-sports
-
-#EXTINF:0 tvg-name="Speed TV" tvg-id="908" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/8e4b7fc8-624a-4d99-ae7c-a75ed13ede9a.jpg" group-title="tv nasional prem",Speed TV [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=255-speed-tv
-
-#EXTINF:0 tvg-name="Fight TV Premium" tvg-id="914" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/65030d16-c4fc-4c89-9b03-1b809797964f.jpg" group-title="tv nasional prem",Fight TV Premium [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=256-fight-tv-premium
-
-#EXTINF:0 tvg-name="PSJ TV" tvg-id="916" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/310a7a17-0149-4623-b375-5fa1a47f2484.jpg" group-title="tv nasional prem",PSJ TV [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=257-psj-tv
-
-#EXTINF:0 tvg-name="Route du Rhum" tvg-id="917" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/541b70a8-5228-4cfe-947e-ac3cf04af46e.jpg" group-title="tv nasional prem",Route du Rhum [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=826-route-du-rhum
-
-#EXTINF:0 tvg-name="Liga Sentra ID" tvg-id="918" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/67bc4613-a408-4e2b-8a57-628865ac12b1.jpg" group-title="tv nasional prem",Liga Sentra ID [vip tes]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://www.cubmu.com
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://exsample.d-n-s.name/playlist.mpd?slug=747-liga-sentra-id
-
+#EXTINF:-1 tvg-id="22684" tvg-name="HSS Series 8: The Revelation · 28 Nov 2026 - 17:00" tvg-logo="https://thumbor.prod.vidiocdn.com/cLBzvYJSQo__oVpV8Rup2R2_6Ro=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/22684/hss-series-8-the-revelation-f72209.jpg" group-title="Matches Today",HSS Series 8: The Revelation · 28 Nov 2026 - 17:00
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://m.vidio.com/
+#EXTVLCOPT:http-origin=https://m.vidio.com
+#KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
+#KODIPROP:inputstream.adaptive.license_key=https://b.bhns.workers.dev/license.mpd?id=22684
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/22684/file/drm/hls/master.m3u8
+#EXTINF:-1 tvg-id="204" tvg-name="SCTV" tvg-logo="https://thumbor.prod.vidiocdn.com/5G7P7azF1nN5Hd_UfEZI_46ysDc=/640x360/filters:strip_icc():quality(70)/vidio-media-production/uploads/livestreaming/schedule/thumbnail/5433529/61e05e.jpg" group-title="National TV",SCTV
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://m.vidio.com/
+#EXTVLCOPT:http-origin=https://m.vidio.com
+#KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
+#KODIPROP:inputstream.adaptive.license_key=https://b.bhns.workers.dev/license.mpd?id=204
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/204/file/drm/hls/master.m3u8
+#EXTINF:-1 tvg-id="205" tvg-name="Indosiar" tvg-logo="https://thumbor.prod.vidiocdn.com/gxy8QH6sCBLPn-U8t43dA0neRkE=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/205/indosiar-d9a3d0.jpg" group-title="National TV",Indosiar
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://m.vidio.com/
+#EXTVLCOPT:http-origin=https://m.vidio.com
+#KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
+#KODIPROP:inputstream.adaptive.license_key=https://b.bhns.workers.dev/license.mpd?id=205
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/205/file/drm/hls/master.m3u8
+#EXTINF:-1 tvg-id="733" tvg-name="TRANS TV" tvg-logo="https://thumbor.prod.vidiocdn.com/fiYfVHabd3fp-RXrCLOQkBwS1Og=/640x360/filters:strip_icc():quality(70)/vidio-media-production/uploads/livestreaming/schedule/thumbnail/5430269/231529.png" group-title="National TV",TRANS TV
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://m.vidio.com/
+#EXTVLCOPT:http-origin=https://m.vidio.com
+https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/733/res=1080p/file/drm/hls/master.m3u8?hdnts=exp=1794540494~acl=/stream/733/res=1080p/file/drm/hls/master.m3u8!/stream/733/file/drm/hls/*/aac/*!/stream/733/file/drm/hls/*/*-1080p/*!/stream/733/file/drm/hls/*/*-720p/*!/stream/733/file/drm/hls/*/*-480p/*!/stream/733/file/drm/hls/*/*-360p/*~id=186957857~hmac=fb873684c7d13343cfaa38585ff87a1163af9b45e6147dd87090b1511b85e906
+#EXTINF:-1 tvg-id="734" tvg-name="Trans7" tvg-logo="https://thumbor.prod.vidiocdn.com/XSpSRDs94R38OpBmssaBVngAr2Q=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/734/trans7-9dade4.jpg" group-title="National TV",Trans7
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://m.vidio.com/
+#EXTVLCOPT:http-origin=https://m.vidio.com
+https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/734/res=1080p/file/drm/hls/master.m3u8?hdnts=exp=1794540495~acl=/stream/734/res=1080p/file/drm/hls/master.m3u8!/stream/734/file/drm/hls/*/aac/*!/stream/734/file/drm/hls/*/*-1080p/*!/stream/734/file/drm/hls/*/*-720p/*!/stream/734/file/drm/hls/*/*-480p/*!/stream/734/file/drm/hls/*/*-360p/*~id=186957857~hmac=8be9c65cd5448f3678cecb3c27fe08fe85d00d27b9f3a3aec61df2dcada7db07
+#EXTINF:-1 tvg-id="206" tvg-name="Moji" tvg-logo="https://thumbor.prod.vidiocdn.com/k-sY_yuIcw_2WlMiaRGVZf_ctXI=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/206/moji-a5bd3e.jpg" group-title="National TV",Moji
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://m.vidio.com/
+#EXTVLCOPT:http-origin=https://m.vidio.com
+#KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
+#KODIPROP:inputstream.adaptive.license_key=https://b.bhns.workers.dev/license.mpd?id=206
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/206/file/drm/hls/master.m3u8
+#EXTINF:-1 tvg-id="6441" tvg-name="TVRI" tvg-logo="https://thumbor.prod.vidiocdn.com/q2tpT2-AjDqonv5M-q5SxihUuDw=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/6441/tvri-tv-stream-f6cbb3.jpg" group-title="National TV",TVRI
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://m.vidio.com/
+#EXTVLCOPT:http-origin=https://m.vidio.com
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/6441/res=1080p/file/master.m3u8?hdnts=exp=1794540497~acl=/stream/6441/res=1080p/file/master.m3u8!/stream/6441/file/*/aac/*!/stream/6441/file/*/*-1080p/*!/stream/6441/file/*/*-720p/*!/stream/6441/file/*/*-480p/*!/stream/6441/file/*/*-360p/*~id=186957857~hmac=d748f768bb7652dee0e52ddb3838a2d291cde89a1d48171d20602caf69261227
+#EXTINF:-1 tvg-id="5415" tvg-name="Jaktv" tvg-logo="https://thumbor.prod.vidiocdn.com/3L_QHkQKeNS3CiLUj1Ya4s08I3Q=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/5415/jaktv-72a5da.jpg" group-title="National TV",Jaktv
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://m.vidio.com/
+#EXTVLCOPT:http-origin=https://m.vidio.com
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/5415/res=1080p/file/master.m3u8?hdnts=exp=1794540498~acl=/stream/5415/res=1080p/file/master.m3u8!/stream/5415/file/*/aac/*!/stream/5415/file/*/*-1080p/*!/stream/5415/file/*/*-720p/*!/stream/5415/file/*/*-480p/*!/stream/5415/file/*/*-360p/*~id=186957857~hmac=57f75d0378135ab6f7f3478417013aca4962f3380335a39141b32cdced69ae68
+#EXTINF:-1 tvg-id="874" tvg-name="Kompas TV" tvg-logo="https://thumbor.prod.vidiocdn.com/hEIoJ7adV7Pjb8EgAO5Kkrvni8s=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/874/kompas-tv-98863c.jpg" group-title="National TV",Kompas TV
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://m.vidio.com/
+#EXTVLCOPT:http-origin=https://m.vidio.com
+https://etslive-v3-vidio-com-preview-tokenized.akamaized.net/stream/874/res=1080p/file/master.m3u8?hdnts=exp=1794540499~acl=/stream/874/res=1080p/file/master.m3u8!/stream/874/file/*/aac/*!/stream/874/file/*/*-1080p/*!/stream/874/file/*/*-720p/*!/stream/874/file/*/*-480p/*!/stream/874/file/*/*-360p/*~id=186957857~hmac=d06016a221701a3c7be39729437c15f2b152a16e11bda4750ff1ca457bb72d68
+#EXTINF:-1 tvg-id="777" tvg-name="Metro TV" tvg-logo="https://thumbor.prod.vidiocdn.com/GRiO5cAOau_WcE1lzhFq51j1eAY=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/777/metro-tv-2eba56.jpg" group-title="National TV",Metro TV
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://m.vidio.com/
+#EXTVLCOPT:http-origin=https://m.vidio.com
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/777/res=1080p/file/master.m3u8?hdnts=exp=1794540500~acl=/stream/777/res=1080p/file/master.m3u8!/stream/777/file/*/aac/*!/stream/777/file/*/*-1080p/*!/stream/777/file/*/*-720p/*!/stream/777/file/*/*-480p/*!/stream/777/file/*/*-360p/*~id=186957857~hmac=50bce5cd20f5d907d981902b291d88ac1da9b53809d778cb8becd116276e209e
+#EXTINF:-1 tvg-id="18280" tvg-name="Berita Satu" tvg-logo="https://thumbor.prod.vidiocdn.com/BaOhOMeyQ6fF-jCy0ej0sS_we5c=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/18280/berita-satu-f3779f.jpg" group-title="National TV",Berita Satu
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://m.vidio.com/
+#EXTVLCOPT:http-origin=https://m.vidio.com
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/18280/res=1080p/file/master.m3u8?hdnts=exp=1794540501~acl=/stream/18280/res=1080p/file/master.m3u8!/stream/18280/file/*/aac/*!/stream/18280/file/*/*-1080p/*!/stream/18280/file/*/*-720p/*!/stream/18280/file/*/*-480p/*!/stream/18280/file/*/*-360p/*~id=186957857~hmac=973c8aee430ec05d524f6f4bb4aa2e1ed62c2076d9be36cefb3cdad731df4d2c
+#EXTINF:-1 tvg-id="6165" tvg-name="BTV" tvg-logo="https://thumbor.prod.vidiocdn.com/_BxJeS85VII-ISq9BAZ9MWlAw30=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/6165/btv-bd893c.jpg" group-title="National TV",BTV
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://m.vidio.com/
+#EXTVLCOPT:http-origin=https://m.vidio.com
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/6165/res=1080p/file/master.m3u8?hdnts=exp=1794540502~acl=/stream/6165/res=1080p/file/master.m3u8!/stream/6165/file/*/aac/*!/stream/6165/file/*/*-1080p/*!/stream/6165/file/*/*-720p/*!/stream/6165/file/*/*-480p/*!/stream/6165/file/*/*-360p/*~id=186957857~hmac=2ba074e72b2f882f51d50711cf1ca3b98850a9692c0a3022815313cf116eec1c
+#EXTINF:-1 tvg-id="18162" tvg-name="Garuda TV" tvg-logo="https://thumbor.prod.vidiocdn.com/5HMNjpeS6Q0Y2Ao9oSDAaW3IHaY=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/18162/garuda-tv-b27da3.jpg" group-title="National TV",Garuda TV
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://m.vidio.com/
+#EXTVLCOPT:http-origin=https://m.vidio.com
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/18162/res=1080p/file/master.m3u8?hdnts=exp=1794540503~acl=/stream/18162/res=1080p/file/master.m3u8!/stream/18162/file/*/aac/*!/stream/18162/file/*/*-1080p/*!/stream/18162/file/*/*-720p/*!/stream/18162/file/*/*-480p/*!/stream/18162/file/*/*-360p/*~id=186957857~hmac=237e12e3179f9cad00ee10f377e52a1bff6cc438845cfd095fac16dd7ca3c36c
+#EXTINF:-1 tvg-id="9713" tvg-name="JTV" tvg-logo="https://thumbor.prod.vidiocdn.com/gQsLCQtTmBo5d8ntn--ztw6BqNY=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/9713/jawa-pos-tv-779e10.jpg" group-title="National TV",JTV
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://m.vidio.com/
+#EXTVLCOPT:http-origin=https://m.vidio.com
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/9713/res=1080p/file/master.m3u8?hdnts=exp=1794540504~acl=/stream/9713/res=1080p/file/master.m3u8!/stream/9713/file/*/aac/*!/stream/9713/file/*/*-1080p/*!/stream/9713/file/*/*-720p/*!/stream/9713/file/*/*-480p/*!/stream/9713/file/*/*-360p/*~id=186957857~hmac=3f75e440f526afbff9eead6823c72230968caed08b492b51691b3cbec3b2efbc
+#EXTINF:-1 tvg-id="7464" tvg-name="AJWA TV" tvg-logo="https://thumbor.prod.vidiocdn.com/kb9YJxwGUw22IXVI8dGwpDltMl0=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/7464/ajwa-tv-dad8c3.jpg" group-title="National TV",AJWA TV
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://m.vidio.com/
+#EXTVLCOPT:http-origin=https://m.vidio.com
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/7464/res=1080p/file/master.m3u8?hdnts=exp=1794540505~acl=/stream/7464/res=1080p/file/master.m3u8!/stream/7464/file/*/aac/*!/stream/7464/file/*/*-1080p/*!/stream/7464/file/*/*-720p/*!/stream/7464/file/*/*-480p/*!/stream/7464/file/*/*-360p/*~id=186957857~hmac=471c7f7a7cb69c9bb1c0f8ac09883733aa0d1eb26f8d08e596c50846f3ecfb08
+#EXTINF:-1 tvg-id="7432" tvg-name="Nusantara TV" tvg-logo="https://thumbor.prod.vidiocdn.com/I0RnDq0LuQmzX-3UNATgRJ4ftxQ=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/7432/nusantara-tv-b373d0.jpg" group-title="National TV",Nusantara TV
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://m.vidio.com/
+#EXTVLCOPT:http-origin=https://m.vidio.com
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/7432/res=1080p/file/master.m3u8?hdnts=exp=1794540505~acl=/stream/7432/res=1080p/file/master.m3u8!/stream/7432/file/*/aac/*!/stream/7432/file/*/*-1080p/*!/stream/7432/file/*/*-720p/*!/stream/7432/file/*/*-480p/*!/stream/7432/file/*/*-360p/*~id=186957857~hmac=8b7bd63808347d9ff244452bf8f2bcab92c5b4244f972c63053ef9d68e5ab09c
+#EXTINF:-1 tvg-id="6482" tvg-name="DAAI TV" tvg-logo="https://thumbor.prod.vidiocdn.com/QZT3Rz43nCZH_USTXiwmuK3rcZw=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/6482/daai-tv-83240c.jpg" group-title="National TV",DAAI TV
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://m.vidio.com/
+#EXTVLCOPT:http-origin=https://m.vidio.com
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/6482/res=1080p/file/master.m3u8?hdnts=exp=1794540506~acl=/stream/6482/res=1080p/file/master.m3u8!/stream/6482/file/*/aac/*!/stream/6482/file/*/*-1080p/*!/stream/6482/file/*/*-720p/*!/stream/6482/file/*/*-480p/*!/stream/6482/file/*/*-360p/*~id=186957857~hmac=4d435e5dd6c3dae73d2a3f6dc7cae24664963dace87512ca5ecaeeb674d1f63b
+#EXTINF:-1 tvg-id="9714" tvg-name="jawaposTV" tvg-logo="https://thumbor.prod.vidiocdn.com/OjwFYSw1LBL0_wdt6Q5fkrNjnio=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/9714/jawa-pos-tv-da3bbf.jpg" group-title="National TV",jawaposTV
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://m.vidio.com/
+#EXTVLCOPT:http-origin=https://m.vidio.com
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/9714/res=1080p/file/master.m3u8?hdnts=exp=1794540507~acl=/stream/9714/res=1080p/file/master.m3u8!/stream/9714/file/*/aac/*!/stream/9714/file/*/*-1080p/*!/stream/9714/file/*/*-720p/*!/stream/9714/file/*/*-480p/*!/stream/9714/file/*/*-360p/*~id=186957857~hmac=de778c907dcc11793650642b6861e8496da82c63f712d5ee33b532f0f10cb638
+#EXTINF:-1 tvg-id="6784" tvg-name="Arirang" tvg-logo="https://thumbor.prod.vidiocdn.com/nkgtwd5f9lgiHwuLSBTFfZ2Usj4=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/6784/arirang-12980d.jpg" group-title="Entertainment",Arirang
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://m.vidio.com/
+#EXTVLCOPT:http-origin=https://m.vidio.com
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/6784/res=1080p/start=1794538800/file/dvr-master.m3u8?hdnts=exp=1794540508~acl=/stream/6784/res=1080p/start=1794538800/file/dvr-master.m3u8!/stream/6784/file/*/aac/*!/stream/6784/file/*/*-1080p/*!/stream/6784/file/*/*-720p/*!/stream/6784/file/*/*-480p/*!/stream/6784/file/*/*-360p/*~id=186957857~hmac=62647069294b94fd0e93c47359b7c938c35c623df1a17160d64e1cd4f3960f40
+#EXTINF:-1 tvg-id="7619" tvg-name="musica" tvg-logo="https://thumbor.prod.vidiocdn.com/WPWZbvGP8QAtCzAxNhvRp9E-J18=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/7619/musica-e98c30.jpg" group-title="Entertainment",musica
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://m.vidio.com/
+#EXTVLCOPT:http-origin=https://m.vidio.com
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/7619/res=1080p/file/master.m3u8?hdnts=exp=1794540509~acl=/stream/7619/res=1080p/file/master.m3u8!/stream/7619/file/*/aac/*!/stream/7619/file/*/*-1080p/*!/stream/7619/file/*/*-720p/*!/stream/7619/file/*/*-480p/*!/stream/7619/file/*/*-360p/*~id=186957857~hmac=7db11d593054f515b3d9727a77bca48fee9b6f90c7a04fbc576454e1d3cc5712
+#EXTINF:-1 tvg-id="7230" tvg-name="magnachannel" tvg-logo="https://thumbor.prod.vidiocdn.com/js-wGeyru_2IwlapPABOq8fi2sA=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/7230/magna-tv-8f461a.jpg" group-title="Entertainment",magnachannel
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://m.vidio.com/
+#EXTVLCOPT:http-origin=https://m.vidio.com
+https://edge.medcom.id/live-edge/smil:magna.smil/playlist.m3u8
+#EXTINF:-1 tvg-id="19046" tvg-name="Sin Po TV" tvg-logo="https://thumbor.prod.vidiocdn.com/-fJcdGieHvetPDosR_ZwDD-YE5M=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/19046/sin-po-tv-c5cad0.jpg" group-title="News",Sin Po TV
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://m.vidio.com/
+#EXTVLCOPT:http-origin=https://m.vidio.com
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/19046/res=1080p/file/master.m3u8?hdnts=exp=1794540511~acl=/stream/19046/res=1080p/file/master.m3u8!/stream/19046/file/*/aac/*!/stream/19046/file/*/*-1080p/*!/stream/19046/file/*/*-720p/*!/stream/19046/file/*/*-480p/*!/stream/19046/file/*/*-360p/*~id=186957857~hmac=a17b2c7720c1ded92bcd947f6bb8b1184c1a4c868ec45a4c3e0180dd380d0140
+#EXTINF:-1 tvg-id="22337" tvg-name="France24" tvg-logo="https://thumbor.prod.vidiocdn.com/9mqFHoUEkSdD613Ixe0EB9Et7QY=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/22337/france24-d4665d.jpg" group-title="News",France24
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://m.vidio.com/
+#EXTVLCOPT:http-origin=https://m.vidio.com
+https://production-france24-vidio-com.akamaized.net/live/F24_EN_HI_HLS/playlist.m3u8?hdnts=exp=1821164820~acl=/live/F24_EN_HI_HLS/*~hmac=b004f12cd9463be69a87341bcd3faeba9ebaa73028287cda0ac719086d4c5409&partner=vidio
+#EXTINF:-1 tvg-id="6411" tvg-name="CNA" tvg-logo="https://thumbor.prod.vidiocdn.com/nBRneLipjed0tzgVoHIft83fOYk=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/6411/news-asia-31d4e8.jpg" group-title="News",CNA
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://m.vidio.com/
+#EXTVLCOPT:http-origin=https://m.vidio.com
+https://d2e1asnsl7br7b.cloudfront.net/7782e205e72f43aeb4a48ec97f66ebbe/index.m3u8
+#EXTINF:-1 tvg-id="6412" tvg-name="Euronews" tvg-logo="https://thumbor.prod.vidiocdn.com/W08g9zS7QaGtPMErcsZ81Va_dKc=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/6412/euronews-795a60.jpg" group-title="News",Euronews
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://m.vidio.com/
+#EXTVLCOPT:http-origin=https://m.vidio.com
+https://geo-ban-ca-etslive-v3-vidio-com-tokenized.akamaized.net/stream/6412/res=1080p/start=1794539520/file/dvr-master.m3u8?hdnts=exp=1794540513~acl=/stream/6412/res=1080p/start=1794539520/file/dvr-master.m3u8!/stream/6412/file/*/aac/*!/stream/6412/file/*/*-1080p/*!/stream/6412/file/*/*-720p/*!/stream/6412/file/*/*-480p/*!/stream/6412/file/*/*-360p/*~id=186957857~hmac=60b50bb2af29011ea94f9cd8abd87fd1ace7a72e948e5a4b4bfae41b0e0650f6
+#EXTINF:-1 tvg-id="7150" tvg-name="ABC Australia" tvg-logo="https://thumbor.prod.vidiocdn.com/ylbaeruDsVWau2s0PNo5jyEL9XE=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/7150/abc-australia-694ecd.jpg" group-title="Favorite Broadcast",ABC Australia
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://m.vidio.com/
+#EXTVLCOPT:http-origin=https://m.vidio.com
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/7150/res=1080p/file/master.m3u8?hdnts=exp=1794540514~acl=/stream/7150/res=1080p/file/master.m3u8!/stream/7150/file/*/aac/*!/stream/7150/file/*/*-1080p/*!/stream/7150/file/*/*-720p/*!/stream/7150/file/*/*-480p/*!/stream/7150/file/*/*-360p/*~id=186957857~hmac=03e4a44da69246bed64a4c40f82fae7d5c6b6be6dacab07bd2d008d17cd9a9af
+#EXTINF:-1 tvg-id="6852" tvg-name="makkah_tv" tvg-logo="https://thumbor.prod.vidiocdn.com/uyQ4DSnHtTWmJQD9OTs5liQDeBs=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/6852/al-quran-al-kareem-tv-62095c.jpg" group-title="Religion",makkah_tv
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://m.vidio.com/
+#EXTVLCOPT:http-origin=https://m.vidio.com
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/6852/res=1080p/file/master.m3u8?hdnts=exp=1794540515~acl=/stream/6852/res=1080p/file/master.m3u8!/stream/6852/file/*/aac/*!/stream/6852/file/*/*-1080p/*!/stream/6852/file/*/*-720p/*!/stream/6852/file/*/*-480p/*!/stream/6852/file/*/*-360p/*~id=186957857~hmac=da2dce30ddd3d638c4bff7a133ea223d489478ea841dadaa53b82a73207903c0
+#EXTINF:-1 tvg-id="6898" tvg-name="u-channel" tvg-logo="https://thumbor.prod.vidiocdn.com/cqM8vf1xK3YG5E3XF4DiuQ6LxR0=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/6898/u-channel-tv-cd4f34.jpg" group-title="Religion",u-channel
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://m.vidio.com/
+#EXTVLCOPT:http-origin=https://m.vidio.com
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/6898/res=1080p/file/master.m3u8?hdnts=exp=1794540516~acl=/stream/6898/res=1080p/file/master.m3u8!/stream/6898/file/*/aac/*!/stream/6898/file/*/*-1080p/*!/stream/6898/file/*/*-720p/*!/stream/6898/file/*/*-480p/*!/stream/6898/file/*/*-360p/*~id=186957857~hmac=60e20d655b30aac44f85e162dafc7b0a0cdd977004e3258b12fbaa59e027831a
+#EXTINF:-1 tvg-id="12607" tvg-name="dmitv" tvg-logo="https://thumbor.prod.vidiocdn.com/c_718cCh2RH2UIUd4C3juKKZ9Wc=/640x360/filters:strip_icc():quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/image/12607/dmi-tv-8f4cb7.jpg" group-title="Religion",dmitv
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://m.vidio.com/
+#EXTVLCOPT:http-origin=https://m.vidio.com
+https://etslive-v3-vidio-com-tokenized.akamaized.net/stream/12607/res=1080p/file/master.m3u8?hdnts=exp=1794540517~acl=/stream/12607/res=1080p/file/master.m3u8!/stream/12607/file/*/aac/*!/stream/12607/file/*/*-1080p/*!/stream/12607/file/*/*-720p/*!/stream/12607/file/*/*-480p/*!/stream/12607/file/*/*-360p/*~id=186957857~hmac=11302fffd8835cf5b9ff2e8a1a5fe84a408bf8567ca484c711a5b715cd2e6613
