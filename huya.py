@@ -1,4 +1,5 @@
 
+
 import json
 import uuid
 import hashlib
@@ -10,14 +11,14 @@ from urllib.parse import urlparse
 from curl_cffi import requests as cffi_requests
 
 # ─── CONFIG ─────────────────────────────────────────────
-WEB_BASE = "https://exsample.d-n-s.name/px.php?csurl=https://www.camel1.tv"
+WEB_BASE = "https://exsample.d-n-s.name/http.php"
 API_BASE = "https://api.cameltv.live"
 OUTPUT_M3U = "playlist.m3u"
-MAX_WORKERS = 20          # ← DITURUNKAN dari 500 (anti rate-limit)
+MAX_WORKERS = 200          # ← DITURUNKAN dari 500 (anti rate-limit)
 RETRIES = 3               # ← JENIS BARU: retry per match
 RETRY_DELAY = 2           # ← JENIS BARU: jeda antar retry (detik)
 
-PROXY_BASE = "https://exsample.d-n-s.name/px.php"
+PROXY_BASE = "https://live123.bhns.workers.dev"
 HARDCODE_AUTH = "aad639d3a1b66cb8c384364342600a6b"
 
 APP_CODE = "D04B29D6B957CD44DC5F9894189380B8"
@@ -64,7 +65,7 @@ def to_proxy_url(cdn_url):
         query += f"&auth={HARDCODE_AUTH}&d={parsed.netloc}"
     else:
         query = f"auth={HARDCODE_AUTH}&d={parsed.netloc}"
-    return f"{PROXY_BASE}?csurl={parsed.path.lstrip('/')}?{query}"
+    return f"{PROXY_BASE}/{parsed.path.lstrip('/')}?{query}"
 
 
 # ─── API ────────────────────────────────────────────────
@@ -242,7 +243,7 @@ def build_final_url(stream_url, tx_time, tx_secret):
     if tx_time and tx_secret:
         tx_secret_url = hashlib.md5(tx_secret.encode()).hexdigest()
         return f"{stream_url}?txSecret={tx_secret_url}&txTime={tx_time}&lat=9000"
-    return f"{stream_url}"
+    return f"{stream_url}?auth={HARDCODE_AUTH}"
 
 
 def get_stream_for_match(match, uid):
