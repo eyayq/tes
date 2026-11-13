@@ -40,7 +40,7 @@ USER_AGENT = (
 REFERER = "https://m.vidio.com/"
 ORIGIN = "https://m.vidio.com"
 
-# ==================== USER (FRESH - 13 Nov 2026) ====================
+# ==================== USER (FRESH 13 Nov 2026) ====================
 USER_ID = "186957857"
 USER_EMAIL = "bhianesee05@gmail.com"
 AHOY_VISITOR = "3489c20a-d32e-468a-bd1b-8f7d150fa132"
@@ -172,59 +172,104 @@ def fetch_all_channels(session, luws: str) -> list:
             break
 
         data = resp.json()
-
-        # ★ DEBUG: print struktur response (hanya page 1)
-        if page == 1:
-            log.info("  [DEBUG] keys: %s", list(data.keys()))
-            raw = data.get("data", [])
-            log.info("  [DEBUG] data type=%s len=%s", type(raw).__name__, len(raw) if hasattr(raw, '__len__') else 'N/A')
-            if isinstance(raw, list) and raw:
-                log.info("  [DEBUG] data[0] keys: %s", list(raw[0].keys()) if isinstance(raw[0], dict) else type(raw[0]))
-                if isinstance(raw[0], dict):
-                    a = raw[0].get("attributes", {})
-                    log.info("  [DEBUG] attrs keys: %s", list(a.keys())[:10])
-                    c = a.get("contents", [])
-                    log.info("  [DEBUG] contents: %d", len(c))
-                    if c:
-                        log.info("  [DEBUG] contents[0]: %s", json.dumps(c[0])[:400])
-            elif isinstance(raw, dict):
-                log.info("  [DEBUG] data(dict) keys: %s", list(raw.keys())[:10])
-            if not raw:
-                log.info("  [DEBUG] FULL: %s", json.dumps(data)[:2000])
-
-        # Parse
         sections = data.get("data", [])
         if isinstance(sections, dict):
-            sections = sections.get("sections", sections.get("contents", [sections]))
-        if not isinstance(sections, list):
             sections = [sections]
+        if not isinstance(sections, list):
+            break
+
+        # ★ Build index dari included (JSON:API format)
+        included = data.get("included", [])
+        included_map = {}
+        for item in included:
+            if isinstance(item, dict):
+                item_id = item.get("id")
+                if item_id:
+                    included_map[str(item_id)] = item
 
         for section in sections:
             if not isinstance(section, dict):
                 continue
-            attrs = section.get("attributes", {})
-            if not attrs:
-                attrs = section
-            section_title = attrs.get("title", "Lainnya")
-            contents = attrs.get("contents", [])
 
-            for item in contents:
+            attrs = section.get("attributes", {})
+            section_title = attrs.get("title", "Lainnya")
+
+            # ★ Cara 1: dari attributes.segments
+            segments = attrs.get("segments", [])
+            # ★ Cara 2: dari relationships.contents.data
+            rel = section.get("relationships", {})
+            rel_contents = []
+            if isinstance(rel, dict):
+                for key in ("contents", "items", "segments"):
+                    if key in rel and isinstance(rel[key], dict):
+                        rel_contents = rel[key].get("data", [])
+                        break
+
+            # Gabungkan semua sumber konten
+            all_items = []
+
+            # Dari segments (bisa langsung punya data atau reference)
+            for seg in segments:
+                if isinstance(seg, dict):
+                    # Jika segment langsung punya content_type → pakai langsung
+                    if "content_type" in seg:
+                        all_items.append(seg)
+                    # Jika segment punya "items" atau "contents" di dalamnya
+                    elif "items" in seg and isinstance(seg["items"], list):
+                        all_items.extend(seg["items"])
+                    elif "contents" in seg and isinstance(seg["contents"], list):
+                        all_items.extend(seg["contents"])
+
+            # Dari relationships → resolve via included_map
+            for ref in rel_contents:
+                if isinstance(ref, dict):
+                    ref_id = str(ref.get("id", ""))
+                    if ref_id in included_map:
+                        all_items.append(included_map[ref_id])
+                    # Jika ref langsung punya data
+                    elif "content_type" in ref:
+                        all_items.append(ref)
+
+            # Debug page 1
+            if page == 1:
+                log.info("  [DEBUG] segments: %d, rel_contents: %d, all_items: %d",
+                         len(segments), len(rel_contents), len(all_items))
+                if all_items:
+                    log.info("  [DEBUG] all_items[0] keys: %s", list(all_items[0].keys())[:10])
+                    log.info("  [DEBUG] all_items[0]: %s", json.dumps(all_items[0])[:400])
+
+            # Parse items
+            for item in all_items:
                 if not isinstance(item, dict):
                     continue
-                if item.get("content_type") != "livestreaming":
+
+                # Cek content_type di level item
+                content_type = item.get("content_type", "")
+
+                # Jika content_type ada di attributes (JSON:API)
+                if not content_type and isinstance(item.get("attributes"), dict):
+                    content_type = item["attributes"].get("content_type", "")
+                    item = {**item, **item.get("attributes", {})}
+
+                if content_type != "livestreaming":
                     continue
 
-                ch_id = item.get("content_id")
-                if not ch_id or ch_id in channels:
+                ch_id = item.get("content_id") or item.get("id")
+                if not ch_id or str(ch_id) in channels:
                     continue
 
-                channels[ch_id] = {
+                channel_name = item.get("alt_title") or item.get("title", "Unknown")
+                program_name = item.get("title", "")
+                logo = item.get("cover_url") or item.get("image_url", "")
+                stream_url = item.get("stream_url", "")
+
+                channels[str(ch_id)] = {
                     "id": int(ch_id),
-                    "title": item.get("alt_title") or item.get("title", "Unknown"),
-                    "program": item.get("title", ""),
-                    "logo": item.get("cover_url", ""),
+                    "title": channel_name,
+                    "program": program_name,
+                    "logo": logo,
                     "group": section_title,
-                    "stream_url": item.get("stream_url", ""),
+                    "stream_url": stream_url,
                 }
 
         links = data.get("links", {})
