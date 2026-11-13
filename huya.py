@@ -44,18 +44,18 @@ def push_to_proxy(channels):
         timeout=30,
     )
     if resp.status_code != 200:
-        print(f"   ❌ Push gagal: {resp.status_code} — {resp.text[:200]}")
+        print(f"   ❌ {resp.status_code} — {resp.text[:200]}")
         return {"error": resp.text[:200]}
     try:
         return resp.json()
     except:
-        print(f"   ❌ Bukan JSON: {resp.text[:200]}")
+        print(f"   ❌ {resp.text[:200]}")
         return {"error": "not json"}
 
 
 def main():
     # Step 1: Fetch channel list (via proxy → IP server)
-    print("📡 Fetch channel list via proxy...")
+    print("📡 ...")
     data = fetch_channels()
     if data.get("status") != "success":
         print(f"Error: {data.get('message')}")
@@ -66,7 +66,7 @@ def main():
     print(f"✅ {total_channels} channel")
 
     # Step 2: Fetch detail per channel (via proxy → IP server)
-    print("🔍 Fetch channel detail via proxy...")
+    print("🔍...")
     all_channels = []
     for i, genre in enumerate(items):
         for j, ch in enumerate(genre["channels"]):
@@ -88,7 +88,7 @@ def main():
             time.sleep(0.3)
 
     # Step 3: Push ke streaming proxy
-    print(f"📤 Push {len(all_channels)} channel ke proxy...")
+    print(f"📤 {len(all_channels)}...")
     result = push_to_proxy(all_channels)
     print(f"   Proxy: {result}")
 
@@ -116,7 +116,7 @@ def main():
             if is_clearkey:
                 clearkey_count += 1
 
-            f.write(f'#EXTINF:0 tvg-name="{name}" tvg-id="{ch_num}" tvg-logo="{logo}" group-title="{genre}",{name}\n')
+            f.write(f'#EXTINF:0 tvg-name="{name}" tvg-id="{ch_num}" tvg-logo="{logo}" group-title="tv nasional prem",{name} [vip tes]\n')
             f.write(f'#EXTVLCOPT:http-user-agent={UA}\n')
             f.write(f'#EXTVLCOPT:http-origin={ORIGIN}\n')
             f.write(f'#EXTVLCOPT:http-referer={REFERER}\n')
