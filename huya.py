@@ -1,17 +1,11 @@
-#!/usr/bin/env python3
-"""
-
-"""
 
 import argparse
-import base64
 import json
 import sys
 import time
-import uuid
 import logging
 from pathlib import Path
-from urllib.parse import urlencode, quote
+from urllib.parse import urlencode
 
 try:
     from curl_cffi import requests as cffi_requests
@@ -24,10 +18,9 @@ PROXY_API = "https://exsample.d-n-s.name/api.php"
 PROXY_STREAM = "https://exsample.d-n-s.name/ch.m3u8"
 SECRET = "ganti-dengan-secret-panjang"
 
-SITE_URL = "https://m.vidio.com"
 OUTPUT_FILE = "playlist.m3u"
 IMPERSONATE = "chrome"
-DELAY = 1.0  # ← NAIKKAN: 1 detik (hindari overload server)
+DELAY = 1.0
 REFRESH_MINUTES = 115
 
 STREAM_DRM_HLS = (
@@ -43,23 +36,9 @@ USER_AGENT = (
 )
 REFERER = "https://m.vidio.com/"
 ORIGIN = "https://m.vidio.com"
-
-# ==================== USER ====================
-USER_ID = "186957857"
-AHOY_VISITOR = "3489c20a-d32e-468a-bd1b-8f7d150fa132"
-AHOY_VISIT = "77150c04-67f5-410d-be84-f1777dcbde34"
-PLenty_ID = "186957857"
-REMEMBER_TOKEN = (
-    "eyJfcmFpbHMiOnsibWVzc2FnZSI6Ilcxc3hPRFk1TlRjNE5UZGRMQ0lrTW1Fa01UQWthRU0xVnpKbGNVSXlhakJTYmtaMmIwUmFjVlJ2VHlJc0lqRTNPVFExTXpneE5EZ3VPVGM0TWpNeU9TSmQi"
-    "LCJleHAiOiIyMDI4LTExLTEzVDAyOjQ5OjA4Ljk3OFoiLCJwdXIiOiJjb29raWUucmVtZW1iZXJfdXNlcl90b2tlbiJ9fQ%3D%3D"
-    "--97555f39c412f51a660eccea1b164f6d72428002"
-)
-_VIDIO_SESSION = (
-    "uc%2Fdmb9Wd0QyRez8hMxdo7VoYtGTU%2FyNzKzLXQefq3sqv7WifEmgerkGkm1ysg07vLPetTegYUY28qkGSEkE3RNFrbKrfFu3ywvinKtYXDfgQ9tuzJhDuqS8ozmTfgIeHcpzvRnPkOcqnBdgsFwkNeBHOlxEAgrNRxxdyteRTDILKpqQOsD7krPRrkbw41cNFh3lX8QrFOKdlj4ojUSk%2FxryrL%2BJMN4A9KrxwcIVSSVWRbOJRD20gMdQoveCUhvd2fFQiPhzM3NgwEJxQqOgkfPoLhOtAA%3D%3D"
-    "--y2hnlFP4gYRoX1Yy--4qRsvj9oIT8slQKOOrcLDg%3D%3D"
-)
 # ==================================================================
 
+# ==================== LOGGING ====================
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s",
@@ -68,58 +47,11 @@ logging.basicConfig(
 log = logging.getLogger("vidio-m3u")
 
 session = None
-COOKIE_STR = ""  # di-set setelah bootstrap
-
-
-# ==================== BOOTSTRAP (di Python) ====================
-def bootstrap() -> str:
-    """Visit m.vidio.com, kumpulkan semua cookies termasuk access_token."""
-    global COOKIE_STR
-    log.info("Bootstrap session ...")
-
-    session.cookies.set("ahoy_visitor", AHOY_VISITOR, domain=".vidio.com", path="/")
-    session.cookies.set("ahoy_visit", AHOY_VISIT, domain=".vidio.com", path="/")
-    session.cookies.set("plenty_id", PLenty_ID, domain=".vidio.com", path="/")
-    session.cookies.set("remember_user_token", REMEMBER_TOKEN, domain=".vidio.com", path="/")
-    session.cookies.set("country_id", "ID", domain=".vidio.com", path="/")
-    session.cookies.set("_vidio_session", _VIDIO_SESSION, domain=".vidio.com", path="/")
-    session.cookies.set("shva", "1", domain=".vidio.com", path="/")
-
-    try:
-        resp = session.get(SITE_URL, timeout=30)
-        log.info("  GET m.vidio.com → %d", resp.status_code)
-    except Exception as e:
-        log.warning("  Bootstrap error: %s", e)
-
-    # Kumpulkan semua cookies jadi string
-    cookie_parts = []
-    for name, value in session.cookies.items():
-        cookie_parts.append(f"{name}={value}")
-    COOKIE_STR = "; ".join(cookie_parts)
-
-    at = session.cookies.get("access_token")
-    if at:
-        try:
-            payload = at.split(".")[1]
-            payload += "=" * (4 - len(payload) % 4)
-            exp = json.loads(base64.urlsafe_b64decode(payload)).get("exp")
-            exp_str = time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime(exp))
-            log.info("  ✓ access_token: %s... (exp: %s)", at[:30], exp_str)
-        except Exception:
-            log.info("  ✓ access_token: %s...", at[:30])
-    else:
-        log.warning("  ✗ access_token tidak di-set!")
-
-    return COOKIE_STR
 
 
 # ==================== PROXY API CALL ====================
 def proxy_api_get(params: dict, timeout: int = 30) -> dict:
-    """GET ke proxy API, kirim cookie string."""
-    global COOKIE_STR
     params["auth"] = SECRET
-    if COOKIE_STR:
-        params["cookie"] = COOKIE_STR
     url = f"{PROXY_API}?{urlencode(params)}"
     try:
         resp = session.get(url, timeout=timeout)
@@ -141,7 +73,7 @@ def verify_login() -> bool:
         log.info("  ✓ Sub: %s", "Premium" if user.get("has_active_subscription") else "Free")
         return True
     else:
-        log.error("  ✗ Login gagal")
+        log.error("  ✗ Login gagal — cek api.php (cookies / access_token)")
         return False
 
 
@@ -251,8 +183,13 @@ def fetch_all_channels() -> list:
 
 # ==================== STEP 3: FETCH STREAM URL ====================
 def fetch_stream_url(ch_id: int) -> str:
+    """
+    Fetch stream URL via proxy API.
+    Endpoint: /api/stream/v1/video_data/{id}
+    Response key: stream_hls_url
+    """
     data = proxy_api_get({"api": "stream", "id": ch_id}, timeout=20)
-    hls = data.get("data", {}).get("attributes", {}).get("hls", "")
+    hls = data.get("stream_hls_url", "")
     return hls
 
 
@@ -318,8 +255,6 @@ def run_once(output_file: str, drm_only: bool, retries: int) -> bool:
     global session
     session = cffi_requests.Session(impersonate=IMPERSONATE)
 
-    bootstrap()
-
     if not verify_login():
         log.error("Login gagal!")
         return False
@@ -357,7 +292,7 @@ def run_once(output_file: str, drm_only: bool, retries: int) -> bool:
             if not failed:
                 break
             log.info("  Retry %d/%d (%d failed) ...", attempt, retries, len(failed))
-            time.sleep(10)  # ← 10 detik jeda sebelum retry
+            time.sleep(10)
             still = []
             for ch in failed:
                 hls = fetch_stream_url(ch["id"])
@@ -378,9 +313,11 @@ def run_once(output_file: str, drm_only: bool, retries: int) -> bool:
 def main():
     parser = argparse.ArgumentParser(description="Vidio Live TV M3U Generator (2 Proxy)")
     parser.add_argument("-o", "--output", type=str, default=OUTPUT_FILE)
-    parser.add_argument("--drm-only", action="store_true")
+    parser.add_argument("--drm-only", action="store_true",
+                        help="Skip non-DRM, langsung DRM + license worker")
     parser.add_argument("--retries", type=int, default=2)
-    parser.add_argument("--loop", action="store_true")
+    parser.add_argument("--loop", action="store_true",
+                        help="Auto-refresh tiap 115 menit")
     parser.add_argument("--debug", action="store_true")
     args = parser.parse_args()
 
