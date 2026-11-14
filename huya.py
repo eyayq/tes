@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """
 Scrape daddylive.app → playlist.m3u (IPTV)
-JSON structure:
-  { "Top Cat": { "Sub Cat": [ {time, event, channels:[{channel_name, embed_N}]} ] } }
-Embed URLs: https://matchora.pro/embed/channel/XXXX → resolve m3u8 via Playwright
+- Fetch /player/tv*.json
+- Parse events → embed URLs (matchora.pro)
+- Resolve m3u8 via Playwright (handle wrapper URLs)
+- Output: tvg-logo, group-title, #EXTVLCOPT (referrer, UA, origin)
 
 Requirements:
   pip install requests playwright
@@ -14,7 +15,7 @@ import re
 import json
 import asyncio
 import requests
-from urllib.parse import urlparse
+from urllib.parse import urlparse, parse_qs, unquote
 from playwright.async_api import async_playwright
 
 # ─────────────────────────────────────────────
@@ -30,19 +31,14 @@ CONCURRENCY = 5
 TIMEOUT = 25_000
 OUTPUT = "playlist.m3u"
 
-# Semua endpoint JSON
 JSON_KEYS = [f"tv{i}" for i in range(1, 20)]
 
-# Headers untuk stream
 STREAM_HEADERS = {
     "user-agent": "Mozilla/5.0 (Linux; Android 10; K) "
                   "AppleWebKit/537.36 (KHTML, like Gecko) "
                   "Chrome/157.0.0.0 Mobile Safari/537.36",
-    "origin": "https://matchora.pro",
-    "referer": "https://matchora.pro/",
 }
 
-# Max embed per event yang akan di-try (hemat waktu)
 MAX_EMBEDS_PER_EVENT = 3
 # ─────────────────────────────────────────────
 
@@ -83,20 +79,12 @@ def count_events(data) -> int:
 # STEP 2: PARSE EVENTS
 # ─────────────────────────────────────────────
 def extract_category(event_name: str) -> str:
-    """
-    'Ice Hockey : Chicago Blackhawks vs Winnipeg Jets (NHL)'
-    → 'Ice Hockey'
-    """
     if " :" in event_name:
         return event_name.split(" :")[0].strip()
     return "Other"
 
 
 def extract_clean_name(event_name: str) -> str:
-    """
-    'Ice Hockey : Chicago Blackhawks vs Winnipeg Jets (NHL)'
-    → 'Chicago Blackhawks vs Winnipeg Jets (NHL)'
-    """
     if " :" in event_name:
         return event_name.split(" :")[1].strip()
     return event_name.strip()
@@ -125,7 +113,6 @@ def parse_all_events(all_data: dict) -> list[dict]:
                         continue
                     seen.add(dedup_key)
 
-                    # Kumpulkan embed URLs
                     embeds = []
                     for ch in (ev.get("channels") or []):
                         if not isinstance(ch, dict):
@@ -151,19 +138,52 @@ def parse_all_events(all_data: dict) -> list[dict]:
 
 
 # ─────────────────────────────────────────────
-# STEP 3: RESOLVE M3U8 VIA PLAYWRIGHT
+# STEP 3: RESOLVE M3U8 (Playwright)
 # ─────────────────────────────────────────────
+def extract_m3u8_from_wrapper(url: str) -> str | None:
+    """
+    Ekstrak m3u8 dari wrapper URL:
+    https://fancoodee.pages.dev/?src=https://...player.html?url=https%3A%2F%2F...%2Funknown.m3u8
+    """
+    parsed = urlparse(url)
+    qs = parse_qs(parsed.query)
+    for key in ("url", "src", "file", "source", "stream", "playlist"):
+        if key in qs:
+            val = unquote(qs[key][0])
+            if ".m3u8" in val:
+                # Kalau val sendiri masih wrapper, rekursi
+                if ".html" in val or "?url=" in val or "?src=" in val:
+                    return extract_m3u8_from_wrapper(val)
+                return val
+    # Regex fallback
+    m = re.search(r'(https?://[^&"\']+\.m3u8[^&"\']*)', unquote(url))
+    if m:
+        return m.group(1)
+    return None
+
+
 async def resolve_m3u8(page, embed_url: str) -> str | None:
-    """
-    Kunjungi https://matchora.pro/embed/channel/XXXX
-    Intercept request .m3u8 dari video player.
-    """
     m3u8_url = None
 
     def on_request(request):
         nonlocal m3u8_url
-        if ".m3u8" in request.url and not m3u8_url:
-            m3u8_url = request.url
+        if m3u8_url:
+            return
+        url = request.url
+        parsed = urlparse(url)
+        path = parsed.path
+
+        # ✅ Direct m3u8
+        if path.endswith(".m3u8"):
+            m3u8_url = url
+            return
+
+        # ❌ Wrapper → ekstrak
+        if ".m3u8" in url and not path.endswith(".m3u8"):
+            extracted = extract_m3u8_from_wrapper(url)
+            if extracted:
+                m3u8_url = extracted
+                return
 
     page.on("request", on_request)
     try:
@@ -180,12 +200,13 @@ async def resolve_m3u8(page, embed_url: str) -> str | None:
     # Fallback: regex di DOM
     try:
         content = await page.content()
-        m = re.search(r'["\']([^"\']*?\.m3u8[^"\']*)["\']', content)
-        if m:
-            url = m.group(1).strip()
-            if url.startswith("//"):
-                url = "https:" + url
-            return url
+        for m in re.finditer(r'["\']([^"\']*?\.m3u8[^"\']*)["\']', content):
+            candidate = m.group(1).strip()
+            if candidate.startswith("//"):
+                candidate = "https:" + candidate
+            p = urlparse(candidate)
+            if p.path.endswith(".m3u8") or not p.path.endswith(".html"):
+                return candidate
     except Exception:
         pass
     return None
@@ -204,11 +225,18 @@ async def build_playlist(events: list[dict]):
         pages = [await browser.new_page() for _ in range(CONCURRENCY)]
 
         async def process(ev: dict, idx: int):
+            nonlocal results, failed
             async with semaphore:
                 page = pages[idx % CONCURRENCY]
-                # Coba max N embed sampai dapat m3u8
                 m3u8 = None
+
                 for embed_url in ev["embeds"][:MAX_EMBEDS_PER_EVENT]:
+                    # Reset page ke blank (cegah m3u8 bocor antar event)
+                    try:
+                        await page.goto("about:blank", timeout=5000)
+                    except Exception:
+                        pass
+
                     m3u8 = await resolve_m3u8(page, embed_url)
                     if m3u8:
                         break
@@ -227,7 +255,6 @@ async def build_playlist(events: list[dict]):
     # ── Tulis playlist ──
     lines = ["#EXTM3U"]
     for ev in results:
-        # Ambil origin dari m3u8 URL untuk referrer
         stream_origin = urlparse(ev["m3u8"]).netloc
         referrer = f"https://{stream_origin}/"
 
