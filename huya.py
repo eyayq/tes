@@ -12,7 +12,7 @@ from curl_cffi import requests as cffi_requests
 # ─── CONFIG ─────────────────────────────────────────────
 WEB_BASE = "https://px.bhns.workers.dev/?url=https://www.camel1.tv"
 API_BASE = "https://px.bhns.workers.dev/?url=https://api.cameltv.live"
-OUTPUT_M3U = "a/camelia.gif"
+OUTPUT_M3U = "playlist.m3u"
 MAX_WORKERS = 200          # ← DITURUNKAN dari 500 (anti rate-limit)
 RETRIES = 3               # ← JENIS BARU: retry per match
 RETRY_DELAY = 2           # ← JENIS BARU: jeda antar retry (detik)
