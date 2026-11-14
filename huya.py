@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Scrape malaysia-tv.net → playlist.m3u (IPTV)
-Features: tvg-logo, group-title, #EXTVLCOPT, concurrent
+Features: tvg-logo, group-title, #EXTVLCOPT (full headers), concurrent
 Requirements:
   pip install requests beautifulsoup4 playwright
   playwright install chromium --with-deps
@@ -23,8 +23,8 @@ HEADERS = {
                   "AppleWebKit/537.36 (KHTML, like Gecko) "
                   "Chrome/125.0.0.0 Safari/537.36"
 }
-CONCURRENCY = 10       # jumlah page concurrent
-TIMEOUT = 20_000      # ms per halaman
+CONCURRENCY = 50
+TIMEOUT = 20_000
 OUTPUT = "playlist.m3u"
 
 GROUP_MAP = {
@@ -32,14 +32,28 @@ GROUP_MAP = {
     "g-in": "International",
     "g-sp": "Sports",
 }
+
+# Headers yang dikirim ke stream (dari browser)
+STREAM_HEADERS = {
+    "sec-ch-ua-platform": '"Android"',
+    "user-agent": 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36',
+    "sec-ch-ua": '"Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"',
+    "sec-ch-ua-mobile": "?1",
+    "accept": "*/*",
+    "sec-gpc": "1",
+    "origin": "https://malaysia-tv.net",
+    "sec-fetch-site": "cross-site",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-dest": "empty",
+    "referer": "https://malaysia-tv.net/",
+    "accept-encoding": "gzip, deflate, br, zstd",
+    "accept-language": "id-ID,id;q=0.7",
+    "priority": "u=1, i",
+}
 # ─────────────────────────────────────────────
 
 
-# ─────────────────────────────────────────────
-# UTILITIES
-# ─────────────────────────────────────────────
 def extract_m3u8_static(page_source: str) -> str | None:
-    """Cari URL .m3u8 via regex (cepat, tanpa browser)."""
     patterns = [
         r'["\']([^"\']*?\.m3u8[^"\']*)["\']',
         r'(?:src|data-src|data-source|file)\s*[:=]\s*["\']([^"\']*?\.m3u8[^"\']*)["\']',
@@ -56,9 +70,6 @@ def extract_m3u8_static(page_source: str) -> str | None:
     return None
 
 
-# ─────────────────────────────────────────────
-# STEP 1: SCRAPE DAFTAR CHANNEL
-# ─────────────────────────────────────────────
 def scrape_channels() -> list[dict]:
     print("→ Mengambil daftar channel dari halaman utama...")
     r = requests.get(BASE_URL, headers=HEADERS, timeout=15)
@@ -93,11 +104,7 @@ def scrape_channels() -> list[dict]:
     return channels
 
 
-# ─────────────────────────────────────────────
-# STEP 2: EXTRACT M3U8 (REGEX → BROWSER)
-# ─────────────────────────────────────────────
 async def get_m3u8_browser(page, channel_url: str) -> str | None:
-    """Load halaman di headless browser, intercept request .m3u8."""
     m3u8_url = None
 
     def on_request(request):
@@ -117,7 +124,6 @@ async def get_m3u8_browser(page, channel_url: str) -> str | None:
     if m3u8_url:
         return m3u8_url
 
-    # Fallback: cek DOM setelah JS render
     try:
         content = await page.content()
         return extract_m3u8_static(content)
@@ -126,9 +132,7 @@ async def get_m3u8_browser(page, channel_url: str) -> str | None:
 
 
 async def fetch_channel(page, ch: dict, semaphore: asyncio.Semaphore) -> dict | None:
-    """Fetch satu channel (concurrent via semaphore)."""
     async with semaphore:
-        # Stage 1: regex cepat (requests)
         m3u8_url = None
         try:
             r = requests.get(ch["url"], headers=HEADERS, timeout=15)
@@ -136,7 +140,6 @@ async def fetch_channel(page, ch: dict, semaphore: asyncio.Semaphore) -> dict | 
         except Exception:
             pass
 
-        # Stage 2: browser (Playwright)
         if not m3u8_url:
             m3u8_url = await get_m3u8_browser(page, ch["url"])
 
@@ -145,9 +148,27 @@ async def fetch_channel(page, ch: dict, semaphore: asyncio.Semaphore) -> dict | 
         return None
 
 
-# ─────────────────────────────────────────────
-# STEP 3: BUILD PLAYLIST
-# ─────────────────────────────────────────────
+def build_extvlcopt_lines(ch: dict) -> list[str]:
+    """
+    Generate semua baris #EXTVLCOPT untuk satu channel.
+    - referer & user-agent → opsi khusus VLC
+    - header lain → http-headers
+    """
+    lines = []
+
+    # Opsi khusus VLC (lebih prioritas)
+    lines.append(f'#EXTVLCOPT:http-referrer={ch["url"]}')
+    lines.append(f'#EXTVLCOPT:http-user-agent={STREAM_HEADERS["user-agent"]}')
+
+    # Header lain via http-headers
+    for key, value in STREAM_HEADERS.items():
+        if key in ("user-agent", "referer"):
+            continue  # sudah di atas
+        lines.append(f'#EXTVLCOPT:http-headers={key}: {value}')
+
+    return lines
+
+
 async def build_playlist(channels: list[dict]):
     semaphore = asyncio.Semaphore(CONCURRENCY)
     results: list[dict] = []
@@ -175,7 +196,7 @@ async def build_playlist(channels: list[dict]):
 
         await browser.close()
 
-    # ── Tulis file playlist.m3u ──
+    # ── Tulis playlist ──
     lines = ["#EXTM3U"]
     for ch in results:
         logo_attr = f' tvg-logo="{ch["logo"]}"' if ch["logo"] else ""
@@ -183,9 +204,7 @@ async def build_playlist(channels: list[dict]):
             f'#EXTINF:-1 tvg-id="{ch["name"]}"'
             f'{logo_attr} group-title="{ch["group"]}",{ch["name"]}'
         )
-        lines.append(f'#EXTVLCOPT:http-origin="https://malaysia-tv.net"')
-        lines.append(f'#EXTVLCOPT:http-referrer=https://malaysia-tv.net/')
-        lines.append(f'#EXTVLCOPT:http-user-agent={HEADERS["User-Agent"]}')
+        lines.extend(build_extvlcopt_lines(ch))
         lines.append(ch["m3u8"])
 
     with open(OUTPUT, "w", encoding="utf-8") as f:
@@ -202,12 +221,9 @@ async def build_playlist(channels: list[dict]):
     print(f"{'='*50}")
 
 
-# ─────────────────────────────────────────────
-# MAIN
-# ─────────────────────────────────────────────
 if __name__ == "__main__":
     channels = scrape_channels()
     if channels:
         asyncio.run(build_playlist(channels))
     else:
-        print("Tidak ada channel ditemukan. Cek struktur HTML situs.")   
+        print("Tidak ada channel ditemukan.")   
