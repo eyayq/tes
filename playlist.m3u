@@ -1,24 +1,1073 @@
-#EXTM3U
-#EXTINF:0,tvg-name="Real Valladolid CF vs Castellon - Spanish Segunda Division [FT] (0-1) 20:00 WIB 14-11-2026" tvg-logo="https://img.thesports.com/football/team/fdf63461c00668597319a4f0db14dcee.png" group-title="live camelia vip [tes]",Real Valladolid CF vs Castellon - Spanish Segunda Division [FT] (0-1) 20:00 WIB 14-11-2026
-#EXTVLCOPT:http-origin=https://www.camel1.tv
-#EXTVLCOPT:http-referrer=https://www.camel1.tv/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-https://live123.bhns.workers.dev/live/sd-6MweaARkPkq3NFBiZm.m3u8?txSecret=b812578f3e9edcf055f21a2c884f28dd&txTime=6AF87874&lat=9000&auth=bd1fad4321f25695de5142c0db0ed272&d=liveplay1.camel4.live
-
-#EXTINF:0,tvg-name="Chelsea FC Women vs Manchester City Women - English FA Women's Super League [FT] (1-0) 20:30 WIB 14-11-2026" tvg-logo="https://img.thesports.com/football/team/be4671c3b73541959a18e358dd8de4d2.png" group-title="live camelia vip [tes]",Chelsea FC Women vs Manchester City Women - English FA Women's Super League [FT] (1-0) 20:30 WIB 14-11-2026
-#EXTVLCOPT:http-origin=https://www.camel1.tv
-#EXTVLCOPT:http-referrer=https://www.camel1.tv/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-https://live123.bhns.workers.dev/live/sd-6MxiZaLwaRtPc8ToLT.m3u8?txSecret=f70ae089e6f77bd345254ef7b7454a0a&txTime=6AF87874&lat=9000&auth=bd1fad4321f25695de5142c0db0ed272&d=liveplay1.camel4.live
-
-#EXTINF:0,tvg-name="Kosovo vs Israel - UEFA Nations League [UPC] (0-0) 21:00 WIB 14-11-2026" tvg-logo="https://img.thesports.com/football/team/bbea012d53f21d784f380f3f33892f09.png" group-title="live camelia vip [tes]",Kosovo vs Israel - UEFA Nations League [UPC] (0-0) 21:00 WIB 14-11-2026
-#EXTVLCOPT:http-origin=https://www.camel1.tv
-#EXTVLCOPT:http-referrer=https://www.camel1.tv/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-https://live123.bhns.workers.dev/live/sd-6MwcqstKX7TEhCK4h5_md.m3u8?txSecret=41695f11b262e5ec2b4dc172a65e7f44&txTime=6AF87874&lat=9000&auth=bd1fad4321f25695de5142c0db0ed272&d=liveplay1.camel4.live
-
-#EXTINF:0,tvg-name="Dinamo-2 Minsk vs Energetik-BGU Minsk - Belarusian First League [LIVE] (0-3) 21:30 WIB 14-11-2026" tvg-logo="https://img.thesports.com/football/team/e9626addec90806fa6d8b291155f8d1e.png" group-title="live camelia vip [tes]",Dinamo-2 Minsk vs Energetik-BGU Minsk - Belarusian First League [LIVE] (0-3) 21:30 WIB 14-11-2026
-#EXTVLCOPT:http-origin=https://www.camel1.tv
-#EXTVLCOPT:http-referrer=https://www.camel1.tv/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-https://live123.bhns.workers.dev/live/sd-6MwdaoSUnjveMr5ELo.m3u8?txSecret=60c9e254d694d130bf38033545d3d9a1&txTime=6AF87874&lat=9000&auth=bd1fad4321f25695de5142c0db0ed272&d=liveplay1.camel4.live
+[
+  {
+    "id": "a3371576-2a69-4204-adc9-d1c7d0523c7d",
+    "name": "SK Langenfeld/Solingen-Damen 2 vs  SG Aachen",
+    "slug": "sk-langenfeld-solingen-1-vs-gw-roesrath-1",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Bowling",
+    "profile_name": "SK Langenfeld 1962 e.V.",
+    "profile_slug": "sportkeglerlangenfeld1962",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T14:45:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/3/7/1/6/3/f/fab0/4756/80bb/c73c347b075f/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/T8t1uS13N43Lj1HlFN4aQs8y6wPB007ddgWwS01mt6uLw.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJUOHQxdVMxM040M0xqMUhsRk40YVFzOHk2d1BCMDA3ZGRnV3dTMDFtdDZ1THciLCJhdWQiOiJ2IiwiZXhwIjoxNzk0NzE0Nzg5LCJraWQiOiI5czFQblhwanBiU1B2V0cwMlZaajFqSE1QdjlIcWpUR0l4bGVEY2JnMDA0MDI4IiwiY3VzdG9tIjp7InVzZXJfaWQiOiItIn0sInBsYXliYWNrX3Jlc3RyaWN0aW9uX2lkIjoidEh3bjlJSFpHUjlWeTkxWkREMDJ0dWt4MDBsTzFxVGFPNVB4R0xadG5ORkxvIiwicHJvZ3JhbV9zdGFydF90aW1lIjoxNzk0NjY3NTAwfQ.WNyl0KSzzJ2M9tqU5DUVGQMVAV8SdJ7qV2-W0yVF4_EsTHCKvEkVHxJcmvg3ZGTsprbmj7t9TjdxuoNUyBaQ71FmSxTTppX07n3NhWwavAAHVTuDP_Bt85hKEh5nV3DPBybvUiNKY4k12SxptxdU2K8W9caFazQzqtUGkQ7hV-SCOSJ5wH2kNgZ6zDmuTkEwT5sn7KErUjAP35yutymZjr3PDXkgAbQwmmPyIX2iK8uIvn2nUNKLrPlJDqRso5dWXbLOPBMysE1ywPhyQVNiIES3UJtwkaWaODMloPsuUDYm89zh48Dk9ENN2Cd0BPwPSOYaNFB0tmn0esdZmNZwIw",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "T8t1uS13N43Lj1HlFN4aQs8y6wPB007ddgWwS01mt6uLw"
+      }
+    ]
+  },
+  {
+    "id": "a335d80b-66df-4701-8719-7ae7a0551bfb",
+    "name": "Bundesliga Damen KC 87  Wieseck vs KF Oberthal",
+    "slug": "bundesliga-damen-kc-87-wieseck-vs-kf-oberthal",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Sports bowling shear",
+    "profile_name": "GH Großen Buseck",
+    "profile_slug": "ghgrossenbuseck",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T13:00:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/3/5/d/7/f/4/921f/43a6/a750/6e317ba533de/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/00KbthTqFSKpql01pb0002v9caINGPTAhTm2UYW5TsiNsyo.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwMEtidGhUcUZTS3BxbDAxcGIwMDAydjljYUlOR1BUQWhUbTJVWVc1VHNpTnN5byIsImF1ZCI6InYiLCJleHAiOjE3OTQ3MTQ3ODksImtpZCI6IjlzMVBuWHBqcGJTUHZXRzAyVlpqMWpITVB2OUhxalRHSXhsZURjYmcwMDQwMjgiLCJjdXN0b20iOnsidXNlcl9pZCI6Ii0ifSwicGxheWJhY2tfcmVzdHJpY3Rpb25faWQiOiJ0SHduOUlIWkdSOVZ5OTFaREQwMnR1a3gwMGxPMXFUYU81UHhHTFp0bk5GTG8iLCJwcm9ncmFtX3N0YXJ0X3RpbWUiOjE3OTQ2NjEyMDB9.iWCaBOUWNwEUdsu1nsUENkTvetkamKTOkMY1BPE6aUDRTjmnY9u2nCavc0YDrfn7QDB_hD2YSr5ZCGm2eBmbJmLD3wr_S0kPvOZ-HVzvtMODGfArehAPl-t6z1yCktZ2vAG0Fjh1VHktqu1mf3iQQg6v0agffDv2R4WHJrnej91gh4kcjzidtGUshgAIY_6FpMYr3N_X2CgRsP2zKpveXYc0jFJY2PhjajzydozYi5G--eWznL912ZwRkW3qsrKXLx49_5fcN2Bu-8Eu2v27y93Kn2WN5khmrSnY8FPHfaZ0vGA3l4q3-JTrtR4xb1IOJo0_jQshcevnwXoJqNrFjQ",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "00KbthTqFSKpql01pb0002v9caINGPTAhTm2UYW5TsiNsyo"
+      }
+    ]
+  },
+  {
+    "id": "a2da86ab-0a45-46df-98d9-99bd4f8ce248",
+    "name": "KSC Hüttersdorf 3 gg Dillingen 1 & 09  KSC Hüttersdorf 1 gg Wettenberg",
+    "slug": "09-ksc-huettersdorf-1-gg-wettenberg",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Sports bowling shear",
+    "profile_name": "KSC Hüttersdorf",
+    "profile_slug": "kschuettersdorf",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T11:20:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/2/d/a/8/6/8/5/7897/4d66/91a4/3056b9d90765/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/pzqNqAuA4OHYAid01oM8B00EwO6RfWqgLcKDxaR701NEs4.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJwenFOcUF1QTRPSFlBaWQwMW9NOEIwMEV3TzZSZldxZ0xjS0R4YVI3MDFORXM0IiwiYXVkIjoidiIsImV4cCI6MTc5NDcxNDc4OSwia2lkIjoiOXMxUG5YcGpwYlNQdldHMDJWWmoxakhNUHY5SHFqVEdJeGxlRGNiZzAwNDAyOCIsImN1c3RvbSI6eyJ1c2VyX2lkIjoiLSJ9LCJwbGF5YmFja19yZXN0cmljdGlvbl9pZCI6InRId245SUhaR1I5Vnk5MVpERDAydHVreDAwbE8xcVRhTzVQeEdMWnRuTkZMbyIsInByb2dyYW1fc3RhcnRfdGltZSI6MTc5NDY1NzE4OH0.fyt0ENoR7Fms9dK1Oxg4pHyq-fnPTwdpdSOYwgeX1l6tYWzasj9h05VQCpihtG9JLFu0MVRm7sxnw74wdYAlcjK9W_TTMHdcniK5YusTYTUKfaMXyZLuPnj96KR2ciZwR3pfiBrigDTSsFZzHtBFxjBh1vtS4JgEg1MirX4UCyrj7r3BREcJBqTMlqYEkd_R_DZGrDwUZt0p2lox_6I9RNblmqwJTLiaQHmeCtBxYINtMdJ1IfWvWgnl3mFfwhPsyI2svSRGjf0GE8Gg64bJ2M6cAX_9SpBv4uE1DtsXo6viuvMUFjVCsVIXfs0An-IvUjFRcpE-GxsvH9aD9bSJ9Q",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "pzqNqAuA4OHYAid01oM8B00EwO6RfWqgLcKDxaR701NEs4"
+      }
+    ]
+  },
+  {
+    "id": "a31ef487-d56d-4999-bceb-4f22ec93439d",
+    "name": "OTM-2026 Eiskunstlauf Tag2",
+    "slug": "otm-2026-eiskunstlauf-tag2",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Figure skating",
+    "profile_name": "ESC Erfurt",
+    "profile_slug": "eiserfurt",
+    "duration_in_seconds": 23874,
+    "content_start_date": "2026-11-14T07:00:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/1/e/f/4/6/0/5cf8/40e1/a820/77f3f495778a/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/VUVueZWZaNG6xgEP02UY3sf01V1Jo4pZnQR2kJ5XA2fzk.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJWVVZ1ZVpXWmFORzZ4Z0VQMDJVWTNzZjAxVjFKbzRwWm5RUjJrSjVYQTJmemsiLCJhdWQiOiJ2IiwiZXhwIjoxNzk0NzE0Nzg5LCJraWQiOiI5czFQblhwanBiU1B2V0cwMlZaajFqSE1QdjlIcWpUR0l4bGVEY2JnMDA0MDI4IiwiY3VzdG9tIjp7InVzZXJfaWQiOiItIn0sInBsYXliYWNrX3Jlc3RyaWN0aW9uX2lkIjoidEh3bjlJSFpHUjlWeTkxWkREMDJ0dWt4MDBsTzFxVGFPNVB4R0xadG5ORkxvIiwicHJvZ3JhbV9zdGFydF90aW1lIjoxNzk0NjYzMTI0fQ.SdQvFd0CYZN-5p8_mwvWfwx1jwntxGv_gmr-UEsl4uL78qfEShJQOX-nfXCjpjZtxBVXQyWKjT0UDC5fVARdoVudg54I6czPmH2QyIl56FrrwUHew5_wf21ppebiXqnUFLnUTZcx2V-fDwRIV4nq7oiSyeYSP9DxN2NxmXraFXuJ2ICJwddNQLLvx8-WXyBn2lSaqn1SD08bFWf4FyrbHMxnPEu0mflpggHIT9fnTP_l-s58SYt-lewzRrVMTpgRsl4cH8T2ByLN1rdix2i0cmhGMDWipelN4GlDscnEGKLUbR29fopcCQlsaC0_c3yrExdNAkbxzS0K8LgIc_c0Aw",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "VUVueZWZaNG6xgEP02UY3sf01V1Jo4pZnQR2kJ5XA2fzk"
+      },
+      {
+        "hls": "https://stream.mux.com/qCW6PynkvV5keTzGVeJRE4wgjNERdQX00kVu2WOrhrlQ.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJxQ1c2UHlua3ZWNWtlVHpHVmVKUkU0d2dqTkVSZFFYMDBrVnUyV09yaHJsUSIsImF1ZCI6InYiLCJleHAiOjE3OTQ3MTQ3ODksImtpZCI6IjlzMVBuWHBqcGJTUHZXRzAyVlpqMWpITVB2OUhxalRHSXhsZURjYmcwMDQwMjgiLCJjdXN0b20iOnsidXNlcl9pZCI6Ii0ifSwicGxheWJhY2tfcmVzdHJpY3Rpb25faWQiOiJ0SHduOUlIWkdSOVZ5OTFaREQwMnR1a3gwMGxPMXFUYU81UHhHTFp0bk5GTG8iLCJwcm9ncmFtX3N0YXJ0X3RpbWUiOjE3OTQ2Mzk1NzB9.L9zfds1ZpYRuMxhB6uNRPapDxEqnFkqbKwj3QfBDDFeOqtjKzt9EK0yFlrwrmWBsPEsPVsJZqKWZvQvCmZDrkDRTNaD6Fq8AmOB2dLxhZGbc7I9ZOS7JGXpy9PRVJBJblsruuduJK_bur4G82oZT-ily_qeFF_lxBMFCHAmUpbrVYS2c4JNptl6uSe1MJlDZ3SszzaVWe2WmH4ZPA9Rskg66J_ppAbe1bQi0cgtz4mi49xOFs6gTZJohVRnER6cLMISiINLEFrQRFGtPFZ6F2bXvlIAJx7cgxn5VCFbbJapHeUQLiz7T6g2QzLHXQWXMFBL8ysFFJ6BJxiX6_9Mq_A",
+        "title": "Teil 1",
+        "type": "VIDEO",
+        "playback_id": "qCW6PynkvV5keTzGVeJRE4wgjNERdQX00kVu2WOrhrlQ"
+      }
+    ]
+  },
+  {
+    "id": "a32d3ed0-7177-4801-9e95-fb7ea2736291",
+    "name": "4. DBV Rangliste O19 Mellensee 2026 Court6",
+    "slug": "4-dbv-rangliste-o19-mellensee-2026",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Badminton",
+    "profile_name": "Deutscher Badminton Verband",
+    "profile_slug": "deutscherbadmintonverband",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T08:00:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/2/d/3/c/5/e/272c/490f/aae7/b4bc94745a5c/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/HVB28Jx2XOqtIYgak4L01Br73qq26AWao4kBbHLmYk01w.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJIVkIyOEp4MlhPcXRJWWdhazRMMDFCcjczcXEyNkFXYW80a0JiSExtWWswMXciLCJhdWQiOiJ2IiwiZXhwIjoxNzk0NzE0Nzg5LCJraWQiOiI5czFQblhwanBiU1B2V0cwMlZaajFqSE1QdjlIcWpUR0l4bGVEY2JnMDA0MDI4IiwiY3VzdG9tIjp7InVzZXJfaWQiOiItIn0sInBsYXliYWNrX3Jlc3RyaWN0aW9uX2lkIjoidEh3bjlJSFpHUjlWeTkxWkREMDJ0dWt4MDBsTzFxVGFPNVB4R0xadG5ORkxvIiwicHJvZ3JhbV9zdGFydF90aW1lIjoxNzk0NjU3MTg4fQ.bk5KThohRS0fQIx1KO3IMEOP8ZHGfCr9USJ1qdcILGbY42qtNKMJHYqpoFRLDviyZsQi4TkVyG-Fp7S-Rf9n1XZLpui7fU8bUc2GnR9D4e-VaxeMBLH6R1Kl9WuLyLfcVu3ULjlYjj-5mDRgEVZETsB0lighM8fcRPmWK0ing6K3x5TpEo6cP-rE9P5eg4fkjvUoLmISh2_ntkgiwNIh30BBAI-QLVgwO7Wa_iFKNXeH-Ep1rcUHXKAbLilP91W36wX6uNcehkUlOfvZcw4Puwa6cI-3zrbLp93t9xH9Ist9XS1tq-ZaF7A_ldioC18-LOa18nLLHVmz3JSlYUmPyA",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "HVB28Jx2XOqtIYgak4L01Br73qq26AWao4kBbHLmYk01w"
+      }
+    ]
+  },
+  {
+    "id": "a32d3f31-5729-4205-8505-24bc90e98f02",
+    "name": "4. DBV Rangliste O19 Mellensee 2026 Court5",
+    "slug": "4-dbv-rangliste-o19-mellensee-2026-0",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Badminton",
+    "profile_name": "Deutscher Badminton Verband",
+    "profile_slug": "deutscherbadmintonverband",
+    "duration_in_seconds": 4860,
+    "content_start_date": "2026-11-14T08:00:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/2/d/3/f/0/a/6019/4fb6/94aa/51f503d5b6c2/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/94nI9SSYl4jR8MHQpSu3Kb01Lb2l0001JaxlI1jaf4k02u00.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NG5JOVNTWWw0alI4TUhRcFN1M0tiMDFMYjJsMDAwMUpheGxJMWphZjRrMDJ1MDAiLCJhdWQiOiJ2IiwiZXhwIjoxNzk0NzE0Nzg5LCJraWQiOiI5czFQblhwanBiU1B2V0cwMlZaajFqSE1QdjlIcWpUR0l4bGVEY2JnMDA0MDI4IiwiY3VzdG9tIjp7InVzZXJfaWQiOiItIn0sInBsYXliYWNrX3Jlc3RyaWN0aW9uX2lkIjoidEh3bjlJSFpHUjlWeTkxWkREMDJ0dWt4MDBsTzFxVGFPNVB4R0xadG5ORkxvIiwicHJvZ3JhbV9zdGFydF90aW1lIjoxNzk0NjU3MTg4fQ.Wm387PCzKxCtWfMv4N3E-r1cSS99NKXDEnCF-Kv23pKwqOU955tduGmiUtj6SRID3x6Iayq5S6yHO__xt19yl9UN7ukwyjDTPu3b4OMqlA5cgltG8ER3KLQG6SOwanm9B1ifjgO25slWNCK45EgkdD7sacakFrn59aAPv4x4OKwrp-_N06QlSEPblgp_Bf91b0AH5Rd6ZlrJg9GOjcmP4SBhgqe-mbXvFW1rk06UVwmfNlSnPMzfP3lixBnC9SG2FEc7od0ZJJa3dArss16Y57UbH-utjKt0ynfdQEoc2qgtmAkilgh14iPiBA6EtCgqqHaOGnBM4SRDpygU72v9mg",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "94nI9SSYl4jR8MHQpSu3Kb01Lb2l0001JaxlI1jaf4k02u00"
+      },
+      {
+        "hls": "https://stream.mux.com/PUadafenxGlMKVE00fn029UhM00G6FQERII8pXM79jOZis.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJQVWFkYWZlbnhHbE1LVkUwMGZuMDI5VWhNMDBHNkZRRVJJSThwWE03OWpPWmlzIiwiYXVkIjoidiIsImV4cCI6MTc5NDcxNDc4OSwia2lkIjoiOXMxUG5YcGpwYlNQdldHMDJWWmoxakhNUHY5SHFqVEdJeGxlRGNiZzAwNDAyOCIsImN1c3RvbSI6eyJ1c2VyX2lkIjoiLSJ9LCJwbGF5YmFja19yZXN0cmljdGlvbl9pZCI6InRId245SUhaR1I5Vnk5MVpERDAydHVreDAwbE8xcVRhTzVQeEdMWnRuTkZMbyIsInByb2dyYW1fc3RhcnRfdGltZSI6MTc5NDY0MzE3MH0.irLWWo7GZjCzCHcmJIiXo6sEOCh6yadg8RL8u9q34M2YReB3hkgX1FBIepYNBArHfYnJWK8FOIGFBKmQL9f5TBb5JCSJ9nTjmy_873OkYHohNPIBdq3foxX5u2Xr1H-05qJGJWq3Rw0hJ-PFdLnhZ2U3W-hgKa93p1JurIv5gKuZfKpcOP2V3h5Se6k7J8HsQ4idY54ACz6ylgkU9CElXwtHhEpwwLhV0696LwVd-IU0hUBx1gOxPRDAvhkdPIueSN9uAFC8obV2P7eRJ5K5sjZ3VQiKdp4dxX_K_NunUefCYlavA4nMCq89Bm31V5RYx2_lVoz8o5-PDf5kb5WSuA",
+        "title": "Teil 1",
+        "type": "VIDEO",
+        "playback_id": "PUadafenxGlMKVE00fn029UhM00G6FQERII8pXM79jOZis"
+      },
+      {
+        "hls": "https://stream.mux.com/d6Lqi02Hh02fEkI2CetVAlmEnz5NZlxx92zgmSjaGjwqg.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkNkxxaTAySGgwMmZFa0kyQ2V0VkFsbUVuejVOWmx4eDkyemdtU2phR2p3cWciLCJhdWQiOiJ2IiwiZXhwIjoxNzk0NzE0Nzg5LCJraWQiOiI5czFQblhwanBiU1B2V0cwMlZaajFqSE1QdjlIcWpUR0l4bGVEY2JnMDA0MDI4IiwiY3VzdG9tIjp7InVzZXJfaWQiOiItIn0sInBsYXliYWNrX3Jlc3RyaWN0aW9uX2lkIjoidEh3bjlJSFpHUjlWeTkxWkREMDJ0dWt4MDBsTzFxVGFPNVB4R0xadG5ORkxvIiwicHJvZ3JhbV9zdGFydF90aW1lIjoxNzk0NjQzMTcwfQ.Ll-GwpfjjqpYm3UecFIssUmArRjH931WIRbZx2GHnPeev5hjQokEBiIo1M8ZeJN9yrMozCjj-3KpZuTOZ9xRy9gPa_GChkCrPmPCdmOwSNkmfWaVJofrWdQT2tXnipupC0UKsOYRaVxvokBmIieHtcTvycKJGympp9DgI4loX8DlUl7CYbgaW45H7MvyiGIqB741XpLPajb8HY2aTyHxNaAVPfqEWq6uxQlhQm6I16aYPSuOXddCtQYBt4wsZsmDkoSHx2A_3FdX-awdg5VlcTFccPSYHdTFyzUQLQqTxG_hIGWZ-jqPdVX6dMjAHvHGNF63_v94IjN2kVWwTbqExQ",
+        "title": "Teil 2",
+        "type": "VIDEO",
+        "playback_id": "d6Lqi02Hh02fEkI2CetVAlmEnz5NZlxx92zgmSjaGjwqg"
+      }
+    ]
+  },
+  {
+    "id": "a31481a0-082d-41a2-bac4-076d87c45a0a",
+    "name": "1. Bundesliga 120 Männer: SKV Rot Weiß Zerbst - SKC Unterharmersbach",
+    "slug": "1-bundesliga-120-maenner-skv-rot-weiss-zerbst-skc-unterharmersbach-1",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Bowling",
+    "profile_name": "SKV Rot-Weiß Zerbst",
+    "profile_slug": "skv-rot-weiss-zerbst",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T11:50:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/1/4/8/1/7/1/8623/412a/bbae/1c62e93cbcdb/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/wrC3drjlyDsTspoQOZzl6WQEht8mRvS6LzvANRrVVJc.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ3ckMzZHJqbHlEc1RzcG9RT1p6bDZXUUVodDhtUnZTNkx6dkFOUnJWVkpjIiwiYXVkIjoidiIsImV4cCI6MTc5NDcxNDc4OSwia2lkIjoiOXMxUG5YcGpwYlNQdldHMDJWWmoxakhNUHY5SHFqVEdJeGxlRGNiZzAwNDAyOCIsImN1c3RvbSI6eyJ1c2VyX2lkIjoiLSJ9LCJwbGF5YmFja19yZXN0cmljdGlvbl9pZCI6InRId245SUhaR1I5Vnk5MVpERDAydHVreDAwbE8xcVRhTzVQeEdMWnRuTkZMbyIsInByb2dyYW1fc3RhcnRfdGltZSI6MTc5NDY1NzE4OH0.IMOmyQP9nqAt_G5CzC98gYN-iTPe5ZayHJAZf5bFB6qVsbPZ5mcVG571cB7_O-jX1MOsdz8V5PUEyMwgmaqefl3tJP_2zI0hSWOSviMcy9IJfyLncE7UHSaKX3Y_vidlhoj7PHN_WqCqSmSeEKBZ-6nQIEaaDv2nFXA2Q1p3UjwgnQjPYtYv8e_is5Rb79iH0b7sg3-xcCQegIl5XELyQHIPcMVDtUkLR_HOYONgBJgDjuwLXkIAaqkhWW2tI9kUB85k2gnZYbZ8TrwGmNJdC1VuhX7No9249WY5FfGEJkT7ajvUMabIhbazlpTEVMyyfpgyZ0W-mqkiSOpRspI4lA",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "wrC3drjlyDsTspoQOZzl6WQEht8mRvS6LzvANRrVVJc"
+      }
+    ]
+  },
+  {
+    "id": "a2f0f7a8-0d2d-4486-a089-7c8caff5c7f3",
+    "name": "Nordost Landesliga PBC Schwerte 87 5 - 1. PBV Werne 80 2 Tisch 3",
+    "slug": "nordost-landesliga-pbc-schwerte-87-5-1-pbv-werne-80-2-tisch-3",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Billiards",
+    "profile_name": "PBC Schwerte 87",
+    "profile_slug": "pbc-schwerte-87",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T11:00:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/2/f/0/f/6/7/9/63c7/4030/a62b/d66593983328/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/oPSwtSQl9r00fJA9GArnMc003qtULAcr9RTyZCQF6GDZg.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJvUFN3dFNRbDlyMDBmSkE5R0Fybk1jMDAzcXRVTEFjcjlSVHlaQ1FGNkdEWmciLCJhdWQiOiJ2IiwiZXhwIjoxNzk0NzE0Nzg5LCJraWQiOiI5czFQblhwanBiU1B2V0cwMlZaajFqSE1QdjlIcWpUR0l4bGVEY2JnMDA0MDI4IiwiY3VzdG9tIjp7InVzZXJfaWQiOiItIn0sInBsYXliYWNrX3Jlc3RyaWN0aW9uX2lkIjoidEh3bjlJSFpHUjlWeTkxWkREMDJ0dWt4MDBsTzFxVGFPNVB4R0xadG5ORkxvIiwicHJvZ3JhbV9zdGFydF90aW1lIjoxNzk0NjU3MTg4fQ.qjAJ6btyAMvznVixAnZNNJbsUd-ZGrzoZZdkJc4dkj_VdCF3P5xw-JDr0NKkmcrlvodAOucMpOAmMOjF9EEppPiBrtjrHrg5Ug_PdbHqviOfJLVHOHQ1HvWj7NsT8HUMmbzpi3Hn4LhoNQHHGACJV3prGeWYOxFRxqCdaZiVic3W8g1ywvSAXoHGi1-KqZILQqHpqkwamlq6HmR1oNYH49_6iyRJU5odE-y16wkaOEw3xBd5ABanmrInnJW8EpCdQszIW12Q0X_b9y6XhURWOiei5aVGsDfVJAhREpM77hJ70QzlyDHTxnZwq9gxNJG4nBNFJv17Sl3YlK9CC56Wbg",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "oPSwtSQl9r00fJA9GArnMc003qtULAcr9RTyZCQF6GDZg"
+      }
+    ]
+  },
+  {
+    "id": "a335beb4-51d0-4fc5-b67e-bdad41fb01e2",
+    "name": "2. Bundesliga Süd 120 Männer: Gut Holz 78 Sandhausen - Rot-Weiß Sandhausen",
+    "slug": "2-bundesliga-sued-120-maenner-gut-holz-78-sandhausen-rot-weiss-sandhausen",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Bowling",
+    "profile_name": "Gut Holz 78 Sandhausen",
+    "profile_slug": "gh78sandhausen",
+    "duration_in_seconds": 792,
+    "content_start_date": "2026-11-14T13:15:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/3/5/b/e/0/0/d017/43af/96ae/f8c3848c70a3/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/mY5eNdztN9zVzsWYmHED5NPjGcj9FLcW02So2rOjkM014.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtWTVlTmR6dE45elZ6c1dZbUhFRDVOUGpHY2o5RkxjVzAyU28yck9qa00wMTQiLCJhdWQiOiJ2IiwiZXhwIjoxNzk0NzE0Nzg5LCJraWQiOiI5czFQblhwanBiU1B2V0cwMlZaajFqSE1QdjlIcWpUR0l4bGVEY2JnMDA0MDI4IiwiY3VzdG9tIjp7InVzZXJfaWQiOiItIn0sInBsYXliYWNrX3Jlc3RyaWN0aW9uX2lkIjoidEh3bjlJSFpHUjlWeTkxWkREMDJ0dWt4MDBsTzFxVGFPNVB4R0xadG5ORkxvIiwicHJvZ3JhbV9zdGFydF90aW1lIjoxNzk0NjYzOTA1fQ.mb5HzmcXkFV-RPSnxuNv6N9QSdOOnIC5HqxdYAZI9rRhTgAN1O_z0mRzo9aq4m5wDvIDBXlVGAr-k0EsaNVDamNOrg0gMCOfJutYVC2xwwQu3SL_0SJlqAL8ol5odnHvqVGUn73PGXYc-xuNwXDXubWso9wiR-VfXe3F90COOEno24ZCrdYp23LUsVgZJapBFLX1HCDp3W1xlQqd8AwRN4sOGA5ZbcxSPSWSt0FTKwlm_1_jfxBpdSkaPe97Vwy6hVJPxpsznD05MQl8dfrxSWkMbbg2FSWrNqNWuWWVZu25m5bUvPypJQKbD2JR7wQtwPv46zIu_iqja9bzFOWXEQ",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "mY5eNdztN9zVzsWYmHED5NPjGcj9FLcW02So2rOjkM014"
+      },
+      {
+        "hls": "https://stream.mux.com/frO3O1sG22N7Wv1pu00GhN8QR00XkvehMCWgjZ9vzthRw.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmck8zTzFzRzIyTjdXdjFwdTAwR2hOOFFSMDBYa3ZlaE1DV2dqWjl2enRoUnciLCJhdWQiOiJ2IiwiZXhwIjoxNzk0NzE0Nzg5LCJraWQiOiI5czFQblhwanBiU1B2V0cwMlZaajFqSE1QdjlIcWpUR0l4bGVEY2JnMDA0MDI4IiwiY3VzdG9tIjp7InVzZXJfaWQiOiItIn0sInBsYXliYWNrX3Jlc3RyaWN0aW9uX2lkIjoidEh3bjlJSFpHUjlWeTkxWkREMDJ0dWt4MDBsTzFxVGFPNVB4R0xadG5ORkxvIiwicHJvZ3JhbV9zdGFydF90aW1lIjoxNzk0NjYyMDcwfQ.nU_Rf1PgBKbxKtJFU2fiQpc2JWayCy5tmpn5jzLwgwlT6Q1VDt1HAZFZZr23M9CRdswmVUz1e4CL_FjoTw_snFFrSHLEPzGbsMcO35AmMTMOODgzWWjsQHvXKKLJAyBxmA97x-NJSeA7pXfxeR5iE8aNNR-bzuY-s-ZZTlroZZeg5AOfsOwvVFxYmnTAf-1ZNq3OOSGBGI4l9mN31XrNYloZyCk56FtpM6eabGS-w_8OuMM6jKiidHmtsqOkaRjIKE9FUvO_crz0qLfYVSB2YKMVET106BuGFJH7C5yknq-EI8ZxijKqmRL2B-nyrDQmwY8hwzDOQdf5euArsaedag",
+        "title": "Teil 1",
+        "type": "VIDEO",
+        "playback_id": "frO3O1sG22N7Wv1pu00GhN8QR00XkvehMCWgjZ9vzthRw"
+      }
+    ]
+  },
+  {
+    "id": "a338dde7-e98d-4836-ac0f-76bfd64ea56b",
+    "name": "Herren Bundesliga | KF Oberthal - SK Eifelland Gilzem",
+    "slug": "herren-bundesliga-kf-oberthal-sk-eifelland-gilzem",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Bowling",
+    "profile_name": "KF Oberthal",
+    "profile_slug": "kfoberthal",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T15:30:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/3/8/d/d/e/3/6f4b/4c93/96bb/2df187908347/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/Pul5DqlaiSOU62VPZEs68fgQWNnXCZ1OTxpZf93bZJ8.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJQdWw1RHFsYWlTT1U2MlZQWkVzNjhmZ1FXTm5YQ1oxT1R4cFpmOTNiWko4IiwiYXVkIjoidiIsImV4cCI6MTc5NDcxNDc4OSwia2lkIjoiOXMxUG5YcGpwYlNQdldHMDJWWmoxakhNUHY5SHFqVEdJeGxlRGNiZzAwNDAyOCIsImN1c3RvbSI6eyJ1c2VyX2lkIjoiLSJ9LCJwbGF5YmFja19yZXN0cmljdGlvbl9pZCI6InRId245SUhaR1I5Vnk5MVpERDAydHVreDAwbE8xcVRhTzVQeEdMWnRuTkZMbyIsInByb2dyYW1fc3RhcnRfdGltZSI6MTc5NDY3MDIwMH0.KQlid4seb2XpIY1Wgu5rrKdSmh-2Hj-pJR4ceSo54WsmlrGvnzNkRZmlLIxsiTAZTkVJqNMssi72dYwcQbA_-AtWgErwk9dxByIsuOGo7EkuE4ncu_TAbx0S3k-meKMf80zXtgIg6fNGFt4Rlu8bJgcTeHpICjVBnYa3WiKji4_rCkO2caTMUiFj8KpJT5YN537_hdKKB3Qh3IpsGJdtGAukge7dPqRdcMm1P5lZt0plO6iuzu5HduVnXtKVhG3WV_b-BwJLmaTe1_vJ92KMvSHpIO238TWBI_X6Y34RYlADzn46hvajeScmJ2GRTpe61JWHjTUi8BWPyvfot-UhYg",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "Pul5DqlaiSOU62VPZEs68fgQWNnXCZ1OTxpZf93bZJ8"
+      }
+    ]
+  },
+  {
+    "id": "a332c69f-d32e-4b7f-bbbc-7a50f48da389",
+    "name": "1. Masters Rangliste 2026-2027 C1/C2/C3/Arena 14.11.2026",
+    "slug": "1-masters-rangliste-2026-2027",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Squash",
+    "profile_name": "WeCareSquash Germering",
+    "profile_slug": "wecaresquash",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T09:00:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/3/8/a/e/d/0/b3de/4453/bf6d/166fe86852f9/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/1kiip162PbSOF5T3korAhujIu5Hge7As3b85014H1ib8.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxa2lpcDE2MlBiU09GNVQza29yQWh1akl1NUhnZTdBczNiODUwMTRIMWliOCIsImF1ZCI6InYiLCJleHAiOjE3OTQ3MTQ3ODksImtpZCI6IjlzMVBuWHBqcGJTUHZXRzAyVlpqMWpITVB2OUhxalRHSXhsZURjYmcwMDQwMjgiLCJjdXN0b20iOnsidXNlcl9pZCI6Ii0ifSwicGxheWJhY2tfcmVzdHJpY3Rpb25faWQiOiJ0SHduOUlIWkdSOVZ5OTFaREQwMnR1a3gwMGxPMXFUYU81UHhHTFp0bk5GTG8iLCJwcm9ncmFtX3N0YXJ0X3RpbWUiOjE3OTQ2NTcxODh9.Ksz2Sx8Mvd3AEnn8s-pbhf3W7esjNRrCpn_UoP_McMx_LnZezCkoRhqD0xCdvTX8CnEb5FX-5HgjDTlhewp8w20ud_cdGIkEUVDRgTeJG9_NoLuUE57OFNd0yic6AWXnuXQz_IDBTcBaE7Pt9kW0qa3M1kOtkqD-voR_Mrn4rRL-kTRkmo_K5iZuXo0NmeU3ODrTd6Vv_-cRPi_JgvtJ3ECZ6pemLlBwZP8n7p_kY8l6yaUByTbsoLCYmYIh5PIm0q5n2eS4-URXhWOEwrns5hpKlrNdWqmADuYod5JxVIQ1S_1N199MDxiQfCHRefIFbHyRAdUY5Bx_9zEs59eeAQ",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "1kiip162PbSOF5T3korAhujIu5Hge7As3b85014H1ib8"
+      }
+    ]
+  },
+  {
+    "id": "a335ad21-f808-446a-9bf3-1b7d9ee5129d",
+    "name": "2. Bundesliga Ost Männer  TSV 90 Zwickau gegen KV Wolfsburg",
+    "slug": "2-bundesliga-ost-maenner-tsv-90-zwickau-gegen-kv-wolfsburg",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Bowling",
+    "profile_name": "TSV 90 Zwickau",
+    "profile_slug": "tsv-90-zwickau",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T12:20:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/3/5/a/c/7/3/33f1/41c6/be73/9177c74394c0/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/ulam012GbqqzXpEteErFHGG3J2edTCpTLCUYvs2ZbHQM.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1bGFtMDEyR2JxcXpYcEV0ZUVyRkhHRzNKMmVkVENwVExDVVl2czJaYkhRTSIsImF1ZCI6InYiLCJleHAiOjE3OTQ3MTQ3ODksImtpZCI6IjlzMVBuWHBqcGJTUHZXRzAyVlpqMWpITVB2OUhxalRHSXhsZURjYmcwMDQwMjgiLCJjdXN0b20iOnsidXNlcl9pZCI6Ii0ifSwicGxheWJhY2tfcmVzdHJpY3Rpb25faWQiOiJ0SHduOUlIWkdSOVZ5OTFaREQwMnR1a3gwMGxPMXFUYU81UHhHTFp0bk5GTG8iLCJwcm9ncmFtX3N0YXJ0X3RpbWUiOjE3OTQ2NTg4MDB9.oL0FOHnktfNoBPV46-JjemcrOcuxdd3Y1dUgXT-gHgtiOfntVhxPmcOhA6QZtPMDoLK23--Qf0fPvJHXYd2DoJEi651Y7I6Bj36sRA5EHUlv7NIpSCnSc6UlTLesHfz7HXULF-CXA4eWT1DPtikear4TvLgQQ5seL3A2t5dnqrw3qFu0xhCcruRFUSbMI_auYvEp58kmQ8wPF-YOFCXqSl3IFq101JPiWZZTRtmcg3RMvYFPAjvlNhdq5rQUzmjeBoSWMkJlDrq05ToeRXTrkSiPPSwgnBzlGf_MskM0XttD0BP6MSWnm8Fgouu0S7AulHeGc9BXeNXdf9j4CngePQ",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "ulam012GbqqzXpEteErFHGG3J2edTCpTLCUYvs2ZbHQM"
+      }
+    ]
+  },
+  {
+    "id": "a2f0f7d0-2b9f-4bf2-9870-b494a05df234",
+    "name": "Nordost Landesliga PBC Schwerte 87 5 - 1. PBV Werne 80 2 Tisch 1",
+    "slug": "nordost-landesliga-pbc-schwerte-87-5-1-pbv-werne-80-2-tisch-1",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Billiards",
+    "profile_name": "PBC Schwerte 87",
+    "profile_slug": "pbc-schwerte-87",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T11:00:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/2/f/0/f/6/6/2/b965/42d8/8cce/0fc3572a7bd6/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/a9UARmXGcvMjpCTyeIQ6eJUnPeN3tNjjlSMQDvOsewM.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhOVVBUm1YR2N2TWpwQ1R5ZUlRNmVKVW5QZU4zdE5qamxTTVFEdk9zZXdNIiwiYXVkIjoidiIsImV4cCI6MTc5NDcxNDc4OSwia2lkIjoiOXMxUG5YcGpwYlNQdldHMDJWWmoxakhNUHY5SHFqVEdJeGxlRGNiZzAwNDAyOCIsImN1c3RvbSI6eyJ1c2VyX2lkIjoiLSJ9LCJwbGF5YmFja19yZXN0cmljdGlvbl9pZCI6InRId245SUhaR1I5Vnk5MVpERDAydHVreDAwbE8xcVRhTzVQeEdMWnRuTkZMbyIsInByb2dyYW1fc3RhcnRfdGltZSI6MTc5NDY1NzE4OH0.T9swm3sj85Ep3MgJlLz6vyE78wTCFWVUPQjijqarfxMqsR24dnS01IXPzrYFh-YAMCyUs7Dlwhdvhg7kLX7uXRObUiwjkxvwUmosxWessjA9-x7aeFhugD9MsLdzhIroObRvNiu5yzybGa2nujtizEs3vhifH143jWFBw82sFnwvssRCJqnmO2eLTwOknNG1_MJxJU_K9KkUV59Aq7iRRBvnb6oSdrBLBW-Il452Xv4fObwuhsgjCKT_Ovc-EhQNE9ihhvncMwLXuyZQX9NlRKuXsbmTm4ZUXM4O1xMyexwMlgbC4tVdEhYjAN8H5YpCU7U7TYejtj6ia2kCW4tj0g",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "a9UARmXGcvMjpCTyeIQ6eJUnPeN3tNjjlSMQDvOsewM"
+      }
+    ]
+  },
+  {
+    "id": "a332edde-6316-47bb-a578-5666701843da",
+    "name": "2026 | 1. Bundesliga Turnen Frauen | 4. Wettkampftag | Esslingen",
+    "slug": "2026-1-bundesliga-turnen-frauen-4-wettkampftag-esslingen",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Gymnastics",
+    "profile_name": "Deutsche Turnliga",
+    "profile_slug": "deutsche-turnliga",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T14:45:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/3/2/e/d/9/1/cef6/4ac3/8e00/af0db6409126/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/HTcNSmOij1dQXBld2ciIWcHASbc7WtAKLmWj501jdyqg.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJIVGNOU21PaWoxZFFYQmxkMmNpSVdjSEFTYmM3V3RBS0xtV2o1MDFqZHlxZyIsImF1ZCI6InYiLCJleHAiOjE3OTQ3MTQ3ODksImtpZCI6IjlzMVBuWHBqcGJTUHZXRzAyVlpqMWpITVB2OUhxalRHSXhsZURjYmcwMDQwMjgiLCJjdXN0b20iOnsidXNlcl9pZCI6Ii0ifSwicGxheWJhY2tfcmVzdHJpY3Rpb25faWQiOiJ0SHduOUlIWkdSOVZ5OTFaREQwMnR1a3gwMGxPMXFUYU81UHhHTFp0bk5GTG8iLCJwcm9ncmFtX3N0YXJ0X3RpbWUiOjE3OTQ2Njc1MDB9.WsfkJ4ErlzJV9PJ-aF--6EWjrUpoD7gw7jLFB1q8Nf8Xdxihx9mKMSa1qiXtoqlOd7uvdSaJqwA2v15maH3ZHBcWKdMcfFScn123P_XljvsnOe69Pq_2yfSrNdabaqmD9noQ1-NETasjtNKXBgEzhRD2vpjNwLFJhQBSslS8rdh9WQAPiOASfEv6vp-t9h-CG2ezvF2pv1lbqEsM4WS5F4ujwkroKV_M3wOJWjxlK1gLRZxZWwg5bjypGIHnmy8eenYdCOTK2qU7PTg3SQfanP4UGVB4GgZlUix00MksKBGKaFfsFe3qMsoZReS9tQaNhjws2hHwmlN_sw1i0kMXsg",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "HTcNSmOij1dQXBld2ciIWcHASbc7WtAKLmWj501jdyqg"
+      }
+    ]
+  },
+  {
+    "id": "a33598a4-5407-4be1-b3e9-fd030b4d7791",
+    "name": "SG Wolftal - KC Schwabsberg SG Wolftal 2 - SKC Scherzh./Helmlingen 1",
+    "slug": "sg-wolftal-kc-schwabsberg-sg-wolftal-2-skc-scherzh-helmlingen-1",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Bowling",
+    "profile_name": "SG Wolfach-Oberwolfach",
+    "profile_slug": "sg-wolfach-oberwolfach",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T09:45:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/3/5/9/8/7/4/1954/4985/8a80/885c55a83f80/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/V5D00xTTZVFkAlacTjXs9P53edRIRX5FDK5fY01Q4p4QE.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJWNUQwMHhUVFpWRmtBbGFjVGpYczlQNTNlZFJJUlg1RkRLNWZZMDFRNHA0UUUiLCJhdWQiOiJ2IiwiZXhwIjoxNzk0NzE0Nzg5LCJraWQiOiI5czFQblhwanBiU1B2V0cwMlZaajFqSE1QdjlIcWpUR0l4bGVEY2JnMDA0MDI4IiwiY3VzdG9tIjp7InVzZXJfaWQiOiItIn0sInBsYXliYWNrX3Jlc3RyaWN0aW9uX2lkIjoidEh3bjlJSFpHUjlWeTkxWkREMDJ0dWt4MDBsTzFxVGFPNVB4R0xadG5ORkxvIiwicHJvZ3JhbV9zdGFydF90aW1lIjoxNzk0NjU3MTg4fQ.P7jHcLV4Yflq37_u13aXmvgz9dfFRQrqEN-UT3EaWFBRMrtoB9YGZWiEoEQhH5Exa650LrePZfERjEQIJjZdMnw4BcQSgfpUt5n1rZBf6VEHAXdhcXzmNZPDPb9CgYyf2mgN65CCp4I7Mve8q9tu6a1ypaUIcIj1X0I1bakgTLL2K5cR2KNaaIB0d9vJGZ0M6gZqLkytCVt15fFR-VSXWJAUMr0iXSKenVTRIyDH9NKFsyPhiytOO2L7SDSllTzjnyocImdrio1AGE4koUAKWz2_b6NHYm1Rb7kEQLN0mI_wp3OuGBr06rq6r3Hgf8APXjhLId4eK2sm3i16hT4Nfw",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "V5D00xTTZVFkAlacTjXs9P53edRIRX5FDK5fY01Q4p4QE"
+      }
+    ]
+  },
+  {
+    "id": "a31704ea-e67c-47b6-ab15-84cdc2d24c61",
+    "name": "NRW Trophy 2026 Tag 3",
+    "slug": "nrw-trophy-2026-tag-3",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Figure skating",
+    "profile_name": "Deutsche Eislauf-Union e.V.",
+    "profile_slug": "deutsche-eislauf-union",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T10:00:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/1/7/0/4/b/3/c9ab/4f9b/9021/887ed924136d/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/gyYmb2002vV9aQv2lODZzWNSAKnQ8UCv15nsyPiieot4.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJneVltYjIwMDJ2VjlhUXYybE9EWnpXTlNBS25ROFVDdjE1bnN5UGlpZW90NCIsImF1ZCI6InYiLCJleHAiOjE3OTQ3MTQ3ODksImtpZCI6IjlzMVBuWHBqcGJTUHZXRzAyVlpqMWpITVB2OUhxalRHSXhsZURjYmcwMDQwMjgiLCJjdXN0b20iOnsidXNlcl9pZCI6Ii0ifSwicGxheWJhY2tfcmVzdHJpY3Rpb25faWQiOiJ0SHduOUlIWkdSOVZ5OTFaREQwMnR1a3gwMGxPMXFUYU81UHhHTFp0bk5GTG8iLCJwcm9ncmFtX3N0YXJ0X3RpbWUiOjE3OTQ2NTcxODh9.TCe1VvR1bvgEAXWL46s4xyE1c_pxztmJDlxvksXtqH_wHRepbYxShnLfpoxTAbzl0ExMCSIsbOIdioi-spG_5nMMenFEvrlv6tuC3uQ9yVGb1VbHjwbl1nVin889MV5carlAh6MNhHX7jDEcUygS2ylqmEPmf8SWnLbhdJTpu_00SyfBQ3h_Wjhd-Ibq0SiKSMyalGw9bdUBSCCxIo96r3BT0u6HhllRPVj7J_p-Q1Ufu5fqzlJRgaOueAVUxEyMoBZO37hnhgVXB_rHc8EMfnGt5647LFCE2yW8ba9eXPlHU4-q7DJrZQT7sKD6PS-sf2AFO7fusJ2GU_W0mq8f8A",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "gyYmb2002vV9aQv2lODZzWNSAKnQ8UCv15nsyPiieot4"
+      }
+    ]
+  },
+  {
+    "id": "a2a080de-b8b7-4344-88c4-9e10bd41a1e6",
+    "name": "KSG 1 - TSV Niederstotzingen, KSG 2 - SKV Grüne Au Ebingen",
+    "slug": "ksg-1-tsv-niederstotzingen-ksg-2-skv-gruene-au-ebingen",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Sportkegeln Classic",
+    "profile_name": "KSG Mengen-Sigmaringen",
+    "profile_slug": "ksgmengensigmaringen",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T11:00:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/2/a/0/8/a/3/d/efaf/415e/afe2/251644509c7d/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/QQPToiCnwZh59RtQDJTTBJxi9tKO401etW8E9Vwer01aI.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJRUVBUb2lDbndaaDU5UnRRREpUVEJKeGk5dEtPNDAxZXRXOEU5VndlcjAxYUkiLCJhdWQiOiJ2IiwiZXhwIjoxNzk0NzE0Nzg5LCJraWQiOiI5czFQblhwanBiU1B2V0cwMlZaajFqSE1QdjlIcWpUR0l4bGVEY2JnMDA0MDI4IiwiY3VzdG9tIjp7InVzZXJfaWQiOiItIn0sInBsYXliYWNrX3Jlc3RyaWN0aW9uX2lkIjoidEh3bjlJSFpHUjlWeTkxWkREMDJ0dWt4MDBsTzFxVGFPNVB4R0xadG5ORkxvIiwicHJvZ3JhbV9zdGFydF90aW1lIjoxNzk0NjU3MTg4fQ.m4do45u74uwCF0FIjYgFODSeH2bL4Nw2nVa7sQ5H2ZqEDFa-j23r_s19ywFu78eCZn8BOUFGYCf7cIb7TntVJJ-fhxprpUXZHPoYYLu7ccRpX9EBONKDqRi-y-4ihkf5PGBPEIbpiZX-_2i5WC-5BtKhgU5A9-K32cTS4ZuzHqwRC6sLV7UMIwafg01RgMZO5ODG959ERMPQKxL85y0VivdU4Ql3_5klHOkg-etRU2Q1Hm77Krr0ao0CGIrSnTpY42cz_80LC9U4bMj4wUYu8l5fgyTv27fnVdO8zrqFuDPqWPCrJfuLmLGiolh4nCRI_eapU63qPgomzUt0uHGYAg",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "QQPToiCnwZh59RtQDJTTBJxi9tKO401etW8E9Vwer01aI"
+      }
+    ]
+  },
+  {
+    "id": "a3371715-fb66-4b62-8ca4-8443f6dd87d0",
+    "name": "SK Langenfeld/Solingen 1 vs  GW Rösrath 1",
+    "slug": "sk-langenfeld-solingen-1-vs-gw-roesrath-1-0",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Bowling",
+    "profile_name": "SK Langenfeld 1962 e.V.",
+    "profile_slug": "sportkeglerlangenfeld1962",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T14:45:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/3/7/1/6/f/b/63b0/488a/8c5c/06d28ac4c371/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/DhA200BA00VP4ySvStJwfPPazP9vuxyPjPuSlEiTVw0200A.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJEaEEyMDBCQTAwVlA0eVN2U3RKd2ZQUGF6UDl2dXh5UGpQdVNsRWlUVncwMjAwQSIsImF1ZCI6InYiLCJleHAiOjE3OTQ3MTQ3ODksImtpZCI6IjlzMVBuWHBqcGJTUHZXRzAyVlpqMWpITVB2OUhxalRHSXhsZURjYmcwMDQwMjgiLCJjdXN0b20iOnsidXNlcl9pZCI6Ii0ifSwicGxheWJhY2tfcmVzdHJpY3Rpb25faWQiOiJ0SHduOUlIWkdSOVZ5OTFaREQwMnR1a3gwMGxPMXFUYU81UHhHTFp0bk5GTG8iLCJwcm9ncmFtX3N0YXJ0X3RpbWUiOjE3OTQ2Njc1MDB9.GbZhUDwYFIRSUlO3Tet4J5ccp3pEnE1fyzebG5Qg53jfnSnt14-_ISysleWL9TTx5ORJdCqBYBHlpAwDtU73V-x-cRrX8EPAus3Fbk7OWUjm_LW7IWtLrbbIgEyiqULR8Wjs1ykHWtFNt3isjHgB6yBFG16ifJuWHrJ_mt8d9Yfd4qGgm3O-lIbJeKIIVO-BvTthK5QEovTwWyg7LKqrFDgu-lxxV07B_QXESXdjM1R6cWUNfqMxK5cAg8YIDeXWjxdcRWhAX3rHbVpkfK5IGVK9wk7z-OEe1yvtZ112epz-VXZmjtVsEtpHpWbxtJuVhJVTFW2Bw1m17fo8BFymYA",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "DhA200BA00VP4ySvStJwfPPazP9vuxyPjPuSlEiTVw0200A"
+      }
+    ]
+  },
+  {
+    "id": "a338539e-0f6a-4ef7-9d88-60f705b730f4",
+    "name": "2. Bundesliga Mitte 120 Männer: SKC Nibelungen Lorsch - Bahnfrei Damm",
+    "slug": "2-bundesliga-mitte-120-maenner-skc-nibelungen-lorsch-bahnfrei-damm",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Bowling",
+    "profile_name": "SKC Nibelungen Lorsch",
+    "profile_slug": "skc-nibelungen-lorsch",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T08:50:08.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/3/8/5/1/8/3/7c3f/456d/ab4f/fe655ac5acea/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/a8Wd1To3tfMoXtZi58JyOmG13B2PsWyVhtueyu0100soc.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhOFdkMVRvM3RmTW9YdFppNThKeU9tRzEzQjJQc1d5Vmh0dWV5dTAxMDBzb2MiLCJhdWQiOiJ2IiwiZXhwIjoxNzk0NzE0Nzg5LCJraWQiOiI5czFQblhwanBiU1B2V0cwMlZaajFqSE1QdjlIcWpUR0l4bGVEY2JnMDA0MDI4IiwiY3VzdG9tIjp7InVzZXJfaWQiOiItIn0sInBsYXliYWNrX3Jlc3RyaWN0aW9uX2lkIjoidEh3bjlJSFpHUjlWeTkxWkREMDJ0dWt4MDBsTzFxVGFPNVB4R0xadG5ORkxvIiwicHJvZ3JhbV9zdGFydF90aW1lIjoxNzk0NjU3MTg4fQ.cLy_VEnfVRMwIzI4iFHyVF2bqbPsXfNbhK0OLlPVvn-grOv5KXEuf2Rs9ATXjN_973hRufiC-7xtjUgFdHetSPtZ9n7gH3pPb2WQZavK4i-b53HKL1sDaxyQdit322dsciZg5_H7FHq0v3xJhCe1Ztki8SMoo4Vs-2d8fpkPva6pJAEZZssJHF1e3yVDspEuH6i2BR4FrrEXFG9flKuxs6NDKY-K-99_1_v2ZzwomSrM2DLprs4jmaZryGIeE1YcgDZL5CwG_1cGuHV5_Vn2XeQoXBYaHD9MzOtIS-J41ZOur0KP_ew1AIcHvPhjV333eOYTFfmURikuoDAsbWacIw",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "a8Wd1To3tfMoXtZi58JyOmG13B2PsWyVhtueyu0100soc"
+      }
+    ]
+  },
+  {
+    "id": "a337cce8-e20c-49c2-9eb7-ffb7b01fe31e",
+    "name": "Gruppenphase Snooker Damen | Deutsche Billard-Meisterschaften 2026",
+    "slug": "gruppenphase-snooker-damen-deutsche-billard-meisterschaften-2026-0",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Billiards",
+    "profile_name": "Deutsche Billard-Union e. V.",
+    "profile_slug": "deutsche-billard-union",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T08:00:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/3/7/c/c/c/a/f425/4921/b9d0/f579c8475dd5/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/6IaqgWXfGtfReNYa2ba6VC377y1IVRi02ihDywvDVHWM.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2SWFxZ1dYZkd0ZlJlTllhMmJhNlZDMzc3eTFJVlJpMDJpaER5d3ZEVkhXTSIsImF1ZCI6InYiLCJleHAiOjE3OTQ3MTQ3ODksImtpZCI6IjlzMVBuWHBqcGJTUHZXRzAyVlpqMWpITVB2OUhxalRHSXhsZURjYmcwMDQwMjgiLCJjdXN0b20iOnsidXNlcl9pZCI6Ii0ifSwicGxheWJhY2tfcmVzdHJpY3Rpb25faWQiOiJ0SHduOUlIWkdSOVZ5OTFaREQwMnR1a3gwMGxPMXFUYU81UHhHTFp0bk5GTG8iLCJwcm9ncmFtX3N0YXJ0X3RpbWUiOjE3OTQ2NTcxODh9.kc4OqVEdyb5LxRLpgWfPNMn3pRgHfF7lmskE8ciWhucUBTLedwhDxMDsbEC92V9HXx5WrMIOWKZG-MenbVBblDndWnJHtVyu6DxHO7PmaPA6FSfqjJ3t_dKqgf8OVnivpksE3soutLqHsIhUM5zkput_OyhNh7pPa5MdurbcPgD6aGwfN6wE071zKFtGNHGVsp_toVzWV98UXItMVpzCKTXv-awT2PnsA4FBs8IsyKEe1CrdmyjdSB7iWijQR_uQnI9RZLq41lCxZc-q_Ye4IiboB8bu8jBvyld8PQF9Vi79cm4wTaDos8l1wrzB_0hJ3nBjKaLUq5T0Sj4IxwJ65Q",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "6IaqgWXfGtfReNYa2ba6VC377y1IVRi02ihDywvDVHWM"
+      }
+    ]
+  },
+  {
+    "id": "a3356933-dac5-44e3-b665-56d33ce0f854",
+    "name": "Gerolsteiner GPS 1000 Hamburg 2026 – Day 1",
+    "slug": "gerolsteiner-gps-1000-hamburg-14-15-11-2026-tag-1",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Padel",
+    "profile_name": "Deutscher Padel Verband",
+    "profile_slug": "padel-tv",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T10:20:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/3/5/6/8/2/d/430f/4ec3/b4e0/1f50b0f3467f/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/EAtBSgYwOvLMwqO8CzwBCKKuV6kQzDE3rvhxVafY71U.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJFQXRCU2dZd092TE13cU84Q3p3QkNLS3VWNmtRekRFM3J2aHhWYWZZNzFVIiwiYXVkIjoidiIsImV4cCI6MTc5NDcxNDc4OSwia2lkIjoiOXMxUG5YcGpwYlNQdldHMDJWWmoxakhNUHY5SHFqVEdJeGxlRGNiZzAwNDAyOCIsImN1c3RvbSI6eyJ1c2VyX2lkIjoiLSJ9LCJwbGF5YmFja19yZXN0cmljdGlvbl9pZCI6InRId245SUhaR1I5Vnk5MVpERDAydHVreDAwbE8xcVRhTzVQeEdMWnRuTkZMbyIsInByb2dyYW1fc3RhcnRfdGltZSI6MTc5NDY1NzE4OH0.dYJO5jQoZtMgCpXfGIjM-grPO8Keo6ltXcBgUBmSsB4ggtPrIgAx9U32Xi0uJvJkZYfKv8O2d8snVouMSn6mvTpsd5V5eEN2PAMgsUl4eUMcbRrDWUfZCyz5tB49fgB2spjXcpORrTp4-E1oiM_vVCCiiK0Ca8pJv3ox8OQhXWSYIgSCdLFV2aM8zqFctnHjotAcHu6LgVahFHkab74z-z2YVMcv12WhjXhuOByoHH8HBxoah52DiXf9e830qSlPUIF1xw2050e5g0YIMKLAEKWLNiVEpOESL1KIeNkwTAsCi_KefKtgpLYzoKACnKEOZKR63naUdsQUjaAA67THsw",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "EAtBSgYwOvLMwqO8CzwBCKKuV6kQzDE3rvhxVafY71U"
+      }
+    ]
+  },
+  {
+    "id": "a3393102-0a73-4a83-a5d1-aadc27c87572",
+    "name": "SK Eifelland Gilzem 2 - KSC Hüttersdorf 2",
+    "slug": "sk-eifelland-gilzem-2-ksc-huettersdorf-2",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Sports bowling shear",
+    "profile_name": "SK Eifelland Gilzem",
+    "profile_slug": "skeifellandgilzem5833",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T12:55:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/3/9/3/0/e/a/6850/4b7d/a950/67ea2a7240a3/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/sglokOcao5pSTmnxQ00PWP265yKTIMyglqrklt4FNu7A.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzZ2xva09jYW81cFNUbW54UTAwUFdQMjY1eUtUSU15Z2xxcmtsdDRGTnU3QSIsImF1ZCI6InYiLCJleHAiOjE3OTQ3MTQ3ODksImtpZCI6IjlzMVBuWHBqcGJTUHZXRzAyVlpqMWpITVB2OUhxalRHSXhsZURjYmcwMDQwMjgiLCJjdXN0b20iOnsidXNlcl9pZCI6Ii0ifSwicGxheWJhY2tfcmVzdHJpY3Rpb25faWQiOiJ0SHduOUlIWkdSOVZ5OTFaREQwMnR1a3gwMGxPMXFUYU81UHhHTFp0bk5GTG8iLCJwcm9ncmFtX3N0YXJ0X3RpbWUiOjE3OTQ2NjA5MDB9.vlSQRc-GEEUkw2tN_KhRWnFA3N11Bl3GiA_euv_ZBu7xPChSrlVyom0dPGBlJS461DHby0TAnG5npXs5la0_YBsoAFCV-i1pbMCqxw29FRcMHJU5ExOPiNHl_J6HYrAcGitCQi2YMTBJm18bFZempWE0_FyjH6vmNsbhXArAvydD0nyaV0p8OaEgvKJr0CEltGjifTNInOrEzOwNwQVG5nBHyPKbskVEqNPsGFeFAZwyVFH36CAmhuz8YJCtd3qQcDnlnjaw__GAiI5TEIROqFoIiIwfVuc8G5EKb4kvkcU9IF_BhhLBhMcUnikF2dJF1rs6nclGbCKaAIkH0Ind9Q",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "sglokOcao5pSTmnxQ00PWP265yKTIMyglqrklt4FNu7A"
+      }
+    ]
+  },
+  {
+    "id": "a337cdf0-1f24-44d8-89de-0eb200f8c471",
+    "name": "Dreiband Herren bis Viertelfinale | Deutsche Billard-Meisterschaften 2026",
+    "slug": "dreiband-herren-bis-viertelfinale-deutsche-billard-meisterschaften-2026",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Billiards",
+    "profile_name": "Deutsche Billard-Union e. V.",
+    "profile_slug": "deutsche-billard-union",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T08:00:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/3/7/c/d/d/1/64dd/4edf/b6c5/78b193e0e2a8/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/6O4IXQbKkNkUEFwgN541X2z43qu7Z1dK1P73XpxiB14.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2TzRJWFFiS2tOa1VFRndnTjU0MVgyejQzcXU3WjFkSzFQNzNYcHhpQjE0IiwiYXVkIjoidiIsImV4cCI6MTc5NDcxNDc4OSwia2lkIjoiOXMxUG5YcGpwYlNQdldHMDJWWmoxakhNUHY5SHFqVEdJeGxlRGNiZzAwNDAyOCIsImN1c3RvbSI6eyJ1c2VyX2lkIjoiLSJ9LCJwbGF5YmFja19yZXN0cmljdGlvbl9pZCI6InRId245SUhaR1I5Vnk5MVpERDAydHVreDAwbE8xcVRhTzVQeEdMWnRuTkZMbyIsInByb2dyYW1fc3RhcnRfdGltZSI6MTc5NDY1NzE4OH0.qJ3j9le4-PxGE2nTiwhK9j2XHLiMHIblJ2kWQFzDenVezAYB2YNDP23eK-aN8flLuNFNQ1bDOEQNW6ipqxDfXM2pJfxgSAW5bB4c4vA9RWUC7aiEErxx06kbCw8HKrSPvFG1o3vP6vi0bBJVW7YQZ1QcTVBjwGP4bDBe9qDR2aZ9Kk4AqgzRHUqeUNboq-UIRqovT3HBgKx2UHU0pBEQNWZ7gxHcbZqHpBJLWSF6MauhEoYC5EyYpSgJ04Z-CWM-QH_MLZ-6oF7T39XPs1HhaYoBGtjHd-xaEUA8ZQ7kdkn5CjyS5y_W0vesA4gAAovrAuuzWcN3LvjLdQAg6FU8QQ",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "6O4IXQbKkNkUEFwgN541X2z43qu7Z1dK1P73XpxiB14"
+      }
+    ]
+  },
+  {
+    "id": "a336c477-ae76-475c-95f4-941d14da0dca",
+    "name": "OL Nordwürttemberg Männer: TV Unterlenningen-SV Mettingen",
+    "slug": "ol-nordwuerttemberg-maenner-tv-unterlenningen-sv-mettingen",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Bowling",
+    "profile_name": "TV Unterlenningen 1898 e.V. - Sportkegeln",
+    "profile_slug": "tvunterlenningen1898ev",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T12:55:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/3/6/c/4/5/5/c085/4079/a4a2/e6585fc059f5/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/N8ivxiURIEGbAe7py6STqGuQyJ14kZk35plHg6S00faE.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJOOGl2eGlVUklFR2JBZTdweTZTVHFHdVF5SjE0a1prMzVwbEhnNlMwMGZhRSIsImF1ZCI6InYiLCJleHAiOjE3OTQ3MTQ3ODksImtpZCI6IjlzMVBuWHBqcGJTUHZXRzAyVlpqMWpITVB2OUhxalRHSXhsZURjYmcwMDQwMjgiLCJjdXN0b20iOnsidXNlcl9pZCI6Ii0ifSwicGxheWJhY2tfcmVzdHJpY3Rpb25faWQiOiJ0SHduOUlIWkdSOVZ5OTFaREQwMnR1a3gwMGxPMXFUYU81UHhHTFp0bk5GTG8iLCJwcm9ncmFtX3N0YXJ0X3RpbWUiOjE3OTQ2NjEyNjl9.v9VG3KBZiBq-M9rkikM1ipD_gQN-SneV3cBAxb-lRnHXoT_xDO2JXvmabzs4u6ChO8ieZTkYwKaSsSMluZkXadmPN4wRobxHAvJw5Vajd8xQ-sLoqGR22FBa0bKzoP2AdyAWXl0NJ8dI_918D9V5rHPB-lYhYjg1z-dvmfkjk_l0vFsE4FAUqQuRVbKqQ7DaaWJX6CA5Ypc2KF6OVtcOZtww7cRfIBiXcyBkXi3arZgo5sAEpTycewKAUsKneKhBryNHqRV6TlOcGpRsB5V03F5BpmAVEdbMnKcsK6Y92SUOPSt91TfyCP65LMj6JTErmHLsyVds9_gdWyV1GjREww",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "N8ivxiURIEGbAe7py6STqGuQyJ14kZk35plHg6S00faE"
+      }
+    ]
+  },
+  {
+    "id": "a338de16-538c-454e-8b26-95d7b3f86b4c",
+    "name": "Spieltag 7",
+    "slug": "spieltag-7",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Bowling",
+    "profile_name": "KSK Hrvatska Schwenningen /Schramberg",
+    "profile_slug": "kskhrvatska1991",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T11:15:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/3/8/d/d/f/6/18ff/4324/be08/5a81b5eedb20/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/HhOkf02uUNb3kwvxQ01IG6SITZ82XFHWTRNsyRmfMTo8k.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJIaE9rZjAydVVOYjNrd3Z4UTAxSUc2U0lUWjgyWEZIV1RSTnN5Um1mTVRvOGsiLCJhdWQiOiJ2IiwiZXhwIjoxNzk0NzE0Nzg5LCJraWQiOiI5czFQblhwanBiU1B2V0cwMlZaajFqSE1QdjlIcWpUR0l4bGVEY2JnMDA0MDI4IiwiY3VzdG9tIjp7InVzZXJfaWQiOiItIn0sInBsYXliYWNrX3Jlc3RyaWN0aW9uX2lkIjoidEh3bjlJSFpHUjlWeTkxWkREMDJ0dWt4MDBsTzFxVGFPNVB4R0xadG5ORkxvIiwicHJvZ3JhbV9zdGFydF90aW1lIjoxNzk0NjU3MTg4fQ.CvCuRQF765cgl7X7S6ilGzDykodG3GSPtIaIl0drCM3sIbRStoly012gSe758qd6tk38yr1W7Psr4Wg86JwVeIgbxFk3nRTcTZkHvhEFRXAUQUGecxXr12sgi1T2UMT29EZ9qN95afUj9KIpHuI1op6YF00VQV1-llwj3LzxkftoXsz4OBEn_sFLK1fCZ1XVUMn5ZQ4mFfn2r9ZQ0THFxFo2sYBLmRw17PVT9B0D8kuP4W1IE0yj3Z1_f42ZdFa-Qzh3Pg_KN9tCtUWa3TMfacvdBMMtONsrZJa0BG-F7Z8iYb69OlNHYXoFexFHxllJHCqMiG2oO_bcv9LvtQ_6ZQ",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "HhOkf02uUNb3kwvxQ01IG6SITZ82XFHWTRNsyRmfMTo8k"
+      }
+    ]
+  },
+  {
+    "id": "a3391132-ee82-465d-a51d-d079816300da",
+    "name": "Verbandsliga 120: ESV Villingen 1 - RS Olympia VS 1",
+    "slug": "verbandsliga-120-esv-villingen-1-rs-olympia-vs-1",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Bowling",
+    "profile_name": "ESV Villingen",
+    "profile_slug": "esvvillingen",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T11:26:02.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/3/9/1/1/1/f/0211/4998/a7ab/abda7b2b596c/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/9UNSxLAiA00lCX8DOIEGvV8RvEilaZQLToZqTDJqWRQc.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5VU5TeExBaUEwMGxDWDhET0lFR3ZWOFJ2RWlsYVpRTFRvWnFUREpxV1JRYyIsImF1ZCI6InYiLCJleHAiOjE3OTQ3MTQ3ODksImtpZCI6IjlzMVBuWHBqcGJTUHZXRzAyVlpqMWpITVB2OUhxalRHSXhsZURjYmcwMDQwMjgiLCJjdXN0b20iOnsidXNlcl9pZCI6Ii0ifSwicGxheWJhY2tfcmVzdHJpY3Rpb25faWQiOiJ0SHduOUlIWkdSOVZ5OTFaREQwMnR1a3gwMGxPMXFUYU81UHhHTFp0bk5GTG8iLCJwcm9ncmFtX3N0YXJ0X3RpbWUiOjE3OTQ2NTcxODh9.Qyawqzb6V7X0MJj_RQ88PP1Bt6t3RFphhK0UlpM3Ck9rQ0ceWEt2rYwWss87BXEGnAbvkSC42WSGEBB7xrnMvnU0K17A5Rqeuvsj-SZTvbpcsvWs8bBbsHkXRk2zYecSIWwdd0LgB6c_C1t7SIHh9hDjFuuOTSTjQ4EU8vx46QaQ4RHkBCEfPxRlmft2kns2nW8PjISoTEvOgis1yT0utoDkI8icjWS5_WBmi0GJEF0pJAjQwmVvmKn-_imrcSPk9gaYlTrFyvhFOx0inZyxfEpVpX-Z3xfEyDQPaOR2lG6hgRPhdU9-gyrRbDiCK6oASxtfrrRECCuNSlFNdrQejQ",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "9UNSxLAiA00lCX8DOIEGvV8RvEilaZQLToZqTDJqWRQc"
+      }
+    ]
+  },
+  {
+    "id": "a30cc915-6653-48ea-920a-22327274fb09",
+    "name": "1. Rollhockey Bundesliga - SK Germania Herringen vs RHC Recklinghausen",
+    "slug": "1-rollhockey-bundesliga-sk-germania-herringen-0",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Roller hockey",
+    "profile_name": "SK Germania Herringen",
+    "profile_slug": "skgherringen",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T14:45:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/0/c/c/9/0/1/3d86/43c8/a768/3be904e64a73/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/UGr1LIxVN9BUFStfrfdseDMVEiWWmYELw02fBcvEuZm8.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJVR3IxTEl4Vk45QlVGU3RmcmZkc2VETVZFaVdXbVlFTHcwMmZCY3ZFdVptOCIsImF1ZCI6InYiLCJleHAiOjE3OTQ3MTQ3ODksImtpZCI6IjlzMVBuWHBqcGJTUHZXRzAyVlpqMWpITVB2OUhxalRHSXhsZURjYmcwMDQwMjgiLCJjdXN0b20iOnsidXNlcl9pZCI6Ii0ifSwicGxheWJhY2tfcmVzdHJpY3Rpb25faWQiOiJ0SHduOUlIWkdSOVZ5OTFaREQwMnR1a3gwMGxPMXFUYU81UHhHTFp0bk5GTG8iLCJwcm9ncmFtX3N0YXJ0X3RpbWUiOjE3OTQ2Njc3ODZ9.fIqjULGRT8IaiImvtcNu7EvtTudvtef2EBk4yPC9jtYXjjxAL2UiTn1HPkcuFftWQsfieX7BpefsExdCgptNNXRKXn6nJ5OdbY3ml9SCZ_c7CRph4hBKj4smbocuGgmPMf1ifisjAOe0s0rZi2JCusgvBrLXo-lBmOQbZauZfm6UVL5JEnUyBKvJJFwubRVZySR8FASYJif0KvudQMxRjFM75eEBZy9qzyJXAFi7HunI6r13PiNwYLJLOi7o_qLIR01IEI6j3AjztoTHoUaZ35OZAHBboeE5WFHcWpGIjv1yPQMa7nFO8siaSPJ9HUDFkqh1mFR41kdGtbwWk87QKg",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "UGr1LIxVN9BUFStfrfdseDMVEiWWmYELw02fBcvEuZm8"
+      }
+    ]
+  },
+  {
+    "id": "a338cfbf-37b1-4a29-bb06-5a584f45aff5",
+    "name": "07. Spieltag - 14.11.26",
+    "slug": "07-spieltag-14-11-26",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Bowling",
+    "profile_name": "Kegelverein 1975 Neulußheim e.V.",
+    "profile_slug": "kv75neulussheim",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T09:55:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/3/8/c/f/9/f/1e1d/488e/b666/5fab94fb8ab6/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/02xWddjwbB419TrUKV3NR3vuCedNU3E01sFvoYx7uK6Ew.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwMnhXZGRqd2JCNDE5VHJVS1YzTlIzdnVDZWROVTNFMDFzRnZvWXg3dUs2RXciLCJhdWQiOiJ2IiwiZXhwIjoxNzk0NzE0Nzg5LCJraWQiOiI5czFQblhwanBiU1B2V0cwMlZaajFqSE1QdjlIcWpUR0l4bGVEY2JnMDA0MDI4IiwiY3VzdG9tIjp7InVzZXJfaWQiOiItIn0sInBsYXliYWNrX3Jlc3RyaWN0aW9uX2lkIjoidEh3bjlJSFpHUjlWeTkxWkREMDJ0dWt4MDBsTzFxVGFPNVB4R0xadG5ORkxvIiwicHJvZ3JhbV9zdGFydF90aW1lIjoxNzk0NjU3MTg4fQ.hqF35uvga-3gI6vc1MLoh1aSWkHi7riO6qmgFMIQzY6Ox3VdzFN0K-nx3P5k1xqhNsYYdsjTRAXiy_0RftDjQhCde6x3wek44j1JUtfypm5_pOl38snMYT4Lm6ZRvMXzQw00miyYcLlbbnXyyleEwg8AUqu3zT-3c52gWMufkC5UYEl4fisjeICsGwD9nltGlNYpUzlsNHQz5mWnv-sgfdBpWOBSLyxwbVWz-uVPObBeckt75ThUcZIYehTB69zpnMyqS8LBdz9kmBVwAASjBvBx3wyY1mJ9QYF8bPTpwHJg4tfKK8-zY-1Bv8vlacoRDpyosXzlnOdPB4OSz-Qn-A",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "02xWddjwbB419TrUKV3NR3vuCedNU3E01sFvoYx7uK6Ew"
+      }
+    ]
+  },
+  {
+    "id": "a3388fb2-f52e-4582-bf09-aba0192ed818",
+    "name": "2. Bundesliga Süd: KSC Önsbach - SF Friedrichshafen",
+    "slug": "2-bundesliga-sued-ksc-oensbach-sf-friedrichshafen-0",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Sportkegeln Classic",
+    "profile_name": "KSC Önsbach e.V.",
+    "profile_slug": "kscoensbach",
+    "duration_in_seconds": 2230,
+    "content_start_date": "2026-11-14T10:30:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/3/8/8/f/a/0/b625/4489/876e/f891a0c0f05c/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/gl5D2b0002NjOY2gqWEBwY2yC8rxAnW1la5y5HDm5MCOY.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJnbDVEMmIwMDAyTmpPWTJncVdFQndZMnlDOHJ4QW5XMWxhNXk1SERtNU1DT1kiLCJhdWQiOiJ2IiwiZXhwIjoxNzk0NzE0Nzg5LCJraWQiOiI5czFQblhwanBiU1B2V0cwMlZaajFqSE1QdjlIcWpUR0l4bGVEY2JnMDA0MDI4IiwiY3VzdG9tIjp7InVzZXJfaWQiOiItIn0sInBsYXliYWNrX3Jlc3RyaWN0aW9uX2lkIjoidEh3bjlJSFpHUjlWeTkxWkREMDJ0dWt4MDBsTzFxVGFPNVB4R0xadG5ORkxvIiwicHJvZ3JhbV9zdGFydF90aW1lIjoxNzk0NjU3MTg4fQ.Dgoa8XRRqu4JL21LodlKX_ymISs7BRbZ98N_NGLC7CKz8QBgCuRIaMm2D6TM5v0M9Xw5f5T0LnZUzmwzSuN0jRBQz24PsiYouibTUGr_BV0vaPrfRSFiUALF5hquSKS_SFqGOt8eSufPQTDNCbojc0nNhOzKXxxYghOYfNeNCXsouJ_hZ7HXBzcp2MT5pkUrXyzflYLNAwnXn3wGiWu0kO2M2DuX88NdZUuXozaInXxQ9VOzx23_27kSBLoVcTW-WXBc5pLg3b_EC4qKBhRqzrprMEUuC19bp1_Pze12NKlcgweHzPSUvxRnYQjAwM08iLP1npwEnrVas6t5wQVa4w",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "gl5D2b0002NjOY2gqWEBwY2yC8rxAnW1la5y5HDm5MCOY"
+      },
+      {
+        "hls": "https://stream.mux.com/01SgKBjghS56KsumzhwLC00j8CJubIlnet96MltU01oQ0000.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwMVNnS0JqZ2hTNTZLc3Vtemh3TEMwMGo4Q0p1YklsbmV0OTZNbHRVMDFvUTAwMDAiLCJhdWQiOiJ2IiwiZXhwIjoxNzk0NzE0Nzg5LCJraWQiOiI5czFQblhwanBiU1B2V0cwMlZaajFqSE1QdjlIcWpUR0l4bGVEY2JnMDA0MDI4IiwiY3VzdG9tIjp7InVzZXJfaWQiOiItIn0sInBsYXliYWNrX3Jlc3RyaWN0aW9uX2lkIjoidEh3bjlJSFpHUjlWeTkxWkREMDJ0dWt4MDBsTzFxVGFPNVB4R0xadG5ORkxvIiwicHJvZ3JhbV9zdGFydF90aW1lIjoxNzk0NjUyMTcwfQ.vaiUuXNOq-N3XA2K-Kag6MiddCyV1jif4w8UAWY_sq-z9ZvIFOVzIPgs69CBaQQdP0lAOKVKx9H6l9AilJqn3ofjq62KuT7B9r2R5b_q84CUZgEBxfaqBimnvdJU_BOvSijR-CcRlWtyJ1Zh055Oa6XPDrGcL0KkQFUoHmFeBsbR7w7znsivWOMYxn-wcD0MJxP1yaiuSBHfidUQi3K52C3sNZCvCpkngRkTQgYRKqXJjDFagc4WTIZ-oonEzi7kWwrxLmUOboppPzIhfsc8lH-8Wsz3ek2d7n2Q1arF3bKPvpJV7gV7AGy9krhr1rjz-NHvXIBC99unymErR9RSkg",
+        "title": "Teil 1",
+        "type": "VIDEO",
+        "playback_id": "01SgKBjghS56KsumzhwLC00j8CJubIlnet96MltU01oQ0000"
+      },
+      {
+        "hls": "https://stream.mux.com/k1dDGyHUHMY81i128IPkCnBNmcqGO9e1YnfPgtFVFTg.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJrMWRER3lIVUhNWTgxaTEyOElQa0NuQk5tY3FHTzllMVluZlBndEZWRlRnIiwiYXVkIjoidiIsImV4cCI6MTc5NDcxNDc4OSwia2lkIjoiOXMxUG5YcGpwYlNQdldHMDJWWmoxakhNUHY5SHFqVEdJeGxlRGNiZzAwNDAyOCIsImN1c3RvbSI6eyJ1c2VyX2lkIjoiLSJ9LCJwbGF5YmFja19yZXN0cmljdGlvbl9pZCI6InRId245SUhaR1I5Vnk5MVpERDAydHVreDAwbE8xcVRhTzVQeEdMWnRuTkZMbyIsInByb2dyYW1fc3RhcnRfdGltZSI6MTc5NDY1MjE3MH0.jJcVllg_exixUFbWpXKdeH70QH1G7ftoOUwlaaokZMnILmgt05_z_RvGeZlJJZo5g6AbfI7U0aGNPT5VgcmhNo5eeIJurcgPCx9-ADDSR67fClfQcPdKobIrock-16eKxNQGE4Auv9rgq58M5lOJP43fIJD04leRa1xRJAbgGtIzxSfZtxqVHdi3hhfAbghNVwZO81exG360D912mLXtf7JzJ8OUB4WML811jEnvd0i6x0zj3pGtOfVAPIsZ2tnDym7OFuwStji5TyvD-Rdfp1myxRKFmuEGjY0kpHjth7upKDV2veMflgfDKYyP0leR4M3gnaJ5YPBH3kKoPvxAtA",
+        "title": "Teil 2",
+        "type": "VIDEO",
+        "playback_id": "k1dDGyHUHMY81i128IPkCnBNmcqGO9e1YnfPgtFVFTg"
+      }
+    ]
+  },
+  {
+    "id": "a338de78-a715-4154-8b74-cca7321d69f2",
+    "name": "2. Bundesliga Ost Männer 7. Spieltag: SG Mehltheuer - BW Loburg",
+    "slug": "2-bundesliga-ost-maenner-7-spieltag-sg-mehltheuer-bw-loburg",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Bowling",
+    "profile_name": "SG Grün-Weiß Mehltheuer e.V.",
+    "profile_slug": "sg-gruen-weiss-mehltheuer",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T12:45:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/3/8/d/e/3/f/e54b/40eb/bec0/75d4f37f8d75/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/V266uP00wCM01VWgEClo3CM2tsJNsFY01smu8aZ024aBUB00.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJWMjY2dVAwMHdDTTAxVldnRUNsbzNDTTJ0c0pOc0ZZMDFzbXU4YVowMjRhQlVCMDAiLCJhdWQiOiJ2IiwiZXhwIjoxNzk0NzE0Nzg5LCJraWQiOiI5czFQblhwanBiU1B2V0cwMlZaajFqSE1QdjlIcWpUR0l4bGVEY2JnMDA0MDI4IiwiY3VzdG9tIjp7InVzZXJfaWQiOiItIn0sInBsYXliYWNrX3Jlc3RyaWN0aW9uX2lkIjoidEh3bjlJSFpHUjlWeTkxWkREMDJ0dWt4MDBsTzFxVGFPNVB4R0xadG5ORkxvIiwicHJvZ3JhbV9zdGFydF90aW1lIjoxNzk0NjYwMzAwfQ.BTIzacFA0lxUlGEknFtUrXr6GNeBX6vqEmW0ZF4dE_KcHrXN9coF4bw91hvITd7T053veqE53Per63gQX4XpKSAS7qmaBok728imq7BGUlbOjAEi3R_k3AU9Ig1DH5QTkKu8xPV40ok4dfK0Ilkqd6yfgVM47FPZOL4l1BwbQHNvB2Q4yoq0egyV1R86TrVGVRIW8uDC1_4vO8Mkg-4kJS2iEP8dDxKnORW--ofhzfQN4Z3pz_oR1ucqXDAH9fwuehw9StYcp-1bjz76AUb48DYYpqbuvffbbgSEeN8Te73fiJWXfiRM87zndLTG4A6nQnv35KTQlIlSD406Jbu93w",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "V266uP00wCM01VWgEClo3CM2tsJNsFY01smu8aZ024aBUB00"
+      }
+    ]
+  },
+  {
+    "id": "a338dc0e-62ce-460f-bda1-3d5988119498",
+    "name": "2. Regionalliga: Science City Jena 3 vs. ONLINEPRINTERS Neustadt a.d. Aisch",
+    "slug": "2-regionalliga-science-city-jena-3-vs-onlineprinters-neustadt-a-d-aisch",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Basketball",
+    "profile_name": "Science City Jena",
+    "profile_slug": "sc-jena",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T14:45:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/3/8/d/b/a/9/d78e/4114/adea/13628692d27e/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/BElrnVQphm8oihSqVl4IAoqAmjdadbKEO6J02dkrBxsY.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJCRWxyblZRcGhtOG9paFNxVmw0SUFvcUFtamRhZGJLRU82SjAyZGtyQnhzWSIsImF1ZCI6InYiLCJleHAiOjE3OTQ3MTQ3ODksImtpZCI6IjlzMVBuWHBqcGJTUHZXRzAyVlpqMWpITVB2OUhxalRHSXhsZURjYmcwMDQwMjgiLCJjdXN0b20iOnsidXNlcl9pZCI6Ii0ifSwicGxheWJhY2tfcmVzdHJpY3Rpb25faWQiOiJ0SHduOUlIWkdSOVZ5OTFaREQwMnR1a3gwMGxPMXFUYU81UHhHTFp0bk5GTG8iLCJwcm9ncmFtX3N0YXJ0X3RpbWUiOjE3OTQ2Njc1MDB9.AEQ8vNQ-GCrxndLzkJbxWggGHFq7u5owOf_Lz52MoQ0h6C7xjE5TbpwtmJb7PCy3Jb8atuj_MJWn7Dua_WCXVWwVrMWCYG_eTmddUlOV8BKgeY7VL3-Y295UFSHG8LAulW-DQXsm2zUuodlFCdIZYTIk_YtbghcIXu2yUyPO5MCA6kJMs4mIWNpli1pRSOMGQQ7FcTcthMYXxJN6teV9MvzHs8bRGHx75ZSiyqYcd047qN5CwqJ4YMUnZMKXXhRkCncSufa-W12etAqHTA_EVQzM__Oanv70qO6UupxE1Ox_uiqR9SF-CPbnUmW6-zBB-O22YZXM9-YlT1imLAPhWA",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "BElrnVQphm8oihSqVl4IAoqAmjdadbKEO6J02dkrBxsY"
+      }
+    ]
+  },
+  {
+    "id": "a2f0f7c6-30d4-491b-9573-4074699c9990",
+    "name": "Nordost Landesliga PBC Schwerte 87 5 - 1. PBV Werne 80 2 Tisch 2",
+    "slug": "nordost-landesliga-pbc-schwerte-87-5-1-pbv-werne-80-2-tisch-2",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Billiards",
+    "profile_name": "PBC Schwerte 87",
+    "profile_slug": "pbc-schwerte-87",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T11:00:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/2/f/0/f/6/7/0/5f7d/4101/b455/e151f2c456b9/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/bK7PHei9i015wLUmbr339slKH4V48QY5ybjIRDSJek7Y.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiSzdQSGVpOWkwMTV3TFVtYnIzMzlzbEtINFY0OFFZNXliaklSRFNKZWs3WSIsImF1ZCI6InYiLCJleHAiOjE3OTQ3MTQ3ODksImtpZCI6IjlzMVBuWHBqcGJTUHZXRzAyVlpqMWpITVB2OUhxalRHSXhsZURjYmcwMDQwMjgiLCJjdXN0b20iOnsidXNlcl9pZCI6Ii0ifSwicGxheWJhY2tfcmVzdHJpY3Rpb25faWQiOiJ0SHduOUlIWkdSOVZ5OTFaREQwMnR1a3gwMGxPMXFUYU81UHhHTFp0bk5GTG8iLCJwcm9ncmFtX3N0YXJ0X3RpbWUiOjE3OTQ2NTcxODh9.jafJIs1fxawz_twbEyPyutEd92v9GVUwn44pUIzjtsxLxmT0XkpbYqJHvxKR_y6pk-0V8dxtFqQzaP0NZaLw77q13Zobgf_utaBAZxCbOFgMcC9E5ZOzzjuSUXPBDhl1mbxWuTCobL26YpAJudlPGFABHb7WKFE52E5vgLzgffoddi8XUaXA2Q-JCuCxyYW0aYJeySNKKLaEozSVRDFxPaowdBrHiR4kaiTW8txKKQ7WnNqTc5c0UyqSgrcknA-VK6BH8sROtz53S5fc88fDvknZ5jJgEuIbncV88KedgopIafXU1x3LAnXz7fkVZ28rlebIKJB4am6al7bodDFkqg",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "bK7PHei9i015wLUmbr339slKH4V48QY5ybjIRDSJek7Y"
+      }
+    ]
+  },
+  {
+    "id": "a331aabf-13cb-4811-9c60-e55ddf480027",
+    "name": "2.Bundesliga Mitte: SKK Eschlkam 1979 vs. SC Regensburg",
+    "slug": "2-bundesliga-mitte-skk-eschlkam-1979-vs-sc-regensburg-0",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Sportkegeln Classic",
+    "profile_name": "SKK Eschlkam 1979",
+    "profile_slug": "skkeschlkam1979",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T11:21:15.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/3/1/a/a/0/7/b2b4/49b0/862e/d52b19503c00/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/cKbrhJluCz02d02dbekSbUEj82SzgcJN6Hx01JhRKDbOqw.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjS2JyaEpsdUN6MDJkMDJkYmVrU2JVRWo4MlN6Z2NKTjZIeDAxSmhSS0RiT3F3IiwiYXVkIjoidiIsImV4cCI6MTc5NDcxNDc4OSwia2lkIjoiOXMxUG5YcGpwYlNQdldHMDJWWmoxakhNUHY5SHFqVEdJeGxlRGNiZzAwNDAyOCIsImN1c3RvbSI6eyJ1c2VyX2lkIjoiLSJ9LCJwbGF5YmFja19yZXN0cmljdGlvbl9pZCI6InRId245SUhaR1I5Vnk5MVpERDAydHVreDAwbE8xcVRhTzVQeEdMWnRuTkZMbyIsInByb2dyYW1fc3RhcnRfdGltZSI6MTc5NDY1NzE4OH0.Dx0jNbxkbsTd_VmTHBV8HuuHC-F7Q4yl1mGuBsYcaACvvQa8NJOImNsCPrg9Jiblv69OPn3qJGxqRaGKQqTWfolD2iq7inNJDgM3HgKQbrHQjPpD9pdzSiFSGFb2h3K1EFZzq9a9Kq61vMxc0IvPcWKt3AWnJzcJJUDHtWIx7lkAD_Bs2O-BBL955LAjo1iky1qRH25ZOml_pg-cgb_H_hTkWGKdqlS8GhQwn3ysUHhZoRoasG0XXFSKRxSjynfR6u6-C3ZL_vgF-bKoQc-nfy2Kiq0d2T-zcW_ZBDkC8cdFUvf8JcZR7a_D7Rm0ZW_hoLSEzHGQ0OzxJKF-b0SJrg",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "cKbrhJluCz02d02dbekSbUEj82SzgcJN6Hx01JhRKDbOqw"
+      }
+    ]
+  },
+  {
+    "id": "a314e83b-deee-4717-96b9-98316a0a97c6",
+    "name": "Rollhockey DRIV 1/8 Pokal Herren - IGR Remscheid vs. RESG Walsum",
+    "slug": "driv-1-8-pokal-herren-igr-remscheid-vs-resg-walsum",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Roller hockey",
+    "profile_name": "IGR Remscheid",
+    "profile_slug": "igrremscheid",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T13:55:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/1/4/e/8/0/e/e8b5/4237/a1b4/4c8508071687/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/letflvwozbLOgNmV8a7jFww3016Vm7Jyx024hR00LqFLaU.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJsZXRmbHZ3b3piTE9nTm1WOGE3akZ3dzMwMTZWbTdKeXgwMjRoUjAwTHFGTGFVIiwiYXVkIjoidiIsImV4cCI6MTc5NDcxNDc4OSwia2lkIjoiOXMxUG5YcGpwYlNQdldHMDJWWmoxakhNUHY5SHFqVEdJeGxlRGNiZzAwNDAyOCIsImN1c3RvbSI6eyJ1c2VyX2lkIjoiLSJ9LCJwbGF5YmFja19yZXN0cmljdGlvbl9pZCI6InRId245SUhaR1I5Vnk5MVpERDAydHVreDAwbE8xcVRhTzVQeEdMWnRuTkZMbyIsInByb2dyYW1fc3RhcnRfdGltZSI6MTc5NDY2NDUwMH0.ZnUq--ZXiyTnI47WMO0554QBV76d-AhNQbreCrB54vWTfFihPHsaIcxy42mRGD7rDmvlvTKwzdwdlDnNgCoNCgwf85M2isCA1lzB6kMvqUKbEBi0sDC2tlYDgjjs9ydVM4FOc0HHjRgzQjDgFfHDGXxdefa1xJ_8eOF_dHciuqB_SmJgQXleNntdMU68F7LBjaK64jTYN4YYKcva2D41Xqsdu69jljwWDO5_sF9SerxvsjtJ5aO1uWtc3vDU3jlLa2FjaQs40fEsDRyFQ_XLQiwFbr0ktSextQIxvUKCO38Z6N_qjqOeq9NN4ywBWQUz87y2DynwuBnMoJ4YKCV1YA",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "letflvwozbLOgNmV8a7jFww3016Vm7Jyx024hR00LqFLaU"
+      }
+    ]
+  },
+  {
+    "id": "a3196eb4-64dd-4c7d-a765-9cd5f85ae0db",
+    "name": "9. Spieltag KSC Daun - Weiersbach 2026/2027",
+    "slug": "9-spieltag-ksc-daun-weiersbach-2026-2027",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Sports bowling shear",
+    "profile_name": "KSC Daun-Weiersbach",
+    "profile_slug": "kscdaun-weiersbach",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T12:00:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/1/9/6/e/7/9/9c51/4d6c/9e75/5e86f3524fe0/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/801JaZ602vo7CfAF7MEuYrFqFX01R4o4I2YMQIWnLx8IV8.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4MDFKYVo2MDJ2bzdDZkFGN01FdVlyRnFGWDAxUjRvNEkyWU1RSVduTHg4SVY4IiwiYXVkIjoidiIsImV4cCI6MTc5NDcxNDc4OSwia2lkIjoiOXMxUG5YcGpwYlNQdldHMDJWWmoxakhNUHY5SHFqVEdJeGxlRGNiZzAwNDAyOCIsImN1c3RvbSI6eyJ1c2VyX2lkIjoiLSJ9LCJwbGF5YmFja19yZXN0cmljdGlvbl9pZCI6InRId245SUhaR1I5Vnk5MVpERDAydHVreDAwbE8xcVRhTzVQeEdMWnRuTkZMbyIsInByb2dyYW1fc3RhcnRfdGltZSI6MTc5NDY1ODcxNn0.N0hFVCMcVAWNWwcySZttbdAtub7ug21xSGMRuYN7UQh9SRWx5TcucPAyVepuZ6kUYqHdQY8GTR6lOCLrUBOD1xugzmwx_jHLKVZR2BFBctJYDLpxepXfjKvSevmq4Z0qDMj1qd_Hi6XqfaEMfd1f4VkOZjkgSkLjlsSQeUk-RpDGbNEtydkbWAEcRZynXEnBRrPdddgE2qiolw4_u2_E3qkdF7Y8BnkR9nhODBYIP5tFqXlviP8V2NbBDzSqm6WabkKeDdvfHamEaxfMSfLV1q5jutV-Bn39xsvV-ggT9Z67Syz4NrGfsbR3u4iYe984ChV3mDnmEM0X5bRu4bLjfw",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "801JaZ602vo7CfAF7MEuYrFqFX01R4o4I2YMQIWnLx8IV8"
+      }
+    ]
+  },
+  {
+    "id": "a33935b0-f52f-42a3-9611-591261642fc0",
+    "name": "efloorball.de-Regionalliga Hessen Griedel/Taunst. - Espenau",
+    "slug": "efloorball-de-regionalliga-hessen-griedel-taunst-espenau",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Floorball",
+    "profile_name": "TSV 1899 Griedel e.V.",
+    "profile_slug": "tsv1899griedel",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T14:55:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/3/9/3/4/b/e/b1a1/4f5d/a1b3/8bff07535f8c/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/GcFbTHakBOFDHommUuc2TQzV35EnYlQw9Yw84IXZpA4.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJHY0ZiVEhha0JPRkRIb21tVXVjMlRRelYzNUVuWWxRdzlZdzg0SVhacEE0IiwiYXVkIjoidiIsImV4cCI6MTc5NDcxNDc4OSwia2lkIjoiOXMxUG5YcGpwYlNQdldHMDJWWmoxakhNUHY5SHFqVEdJeGxlRGNiZzAwNDAyOCIsImN1c3RvbSI6eyJ1c2VyX2lkIjoiLSJ9LCJwbGF5YmFja19yZXN0cmljdGlvbl9pZCI6InRId245SUhaR1I5Vnk5MVpERDAydHVreDAwbE8xcVRhTzVQeEdMWnRuTkZMbyIsInByb2dyYW1fc3RhcnRfdGltZSI6MTc5NDY2ODEwMH0.fvEk23uMXfqf4YBTd14bwcjDnUGytd_XkVYKQiHaMa7IL-tR7Jpxf6a_c1Gu5e-85-HiwIBBgvp1mkz20-U21IOWAOCXNwyHosCQiWBEult4MLl_FEsqLfTWhKq3GBbhbj4xlwt9vFenZd1kUalvfsoIUuTjSeHQP9StY7b10F4bkZcYt9vMPyPNDg3UarzLxaP8XutIQNIFjI4tzaMLLj4naWHk9qYr4MIvK6ZhxzMMoWBR9_uyx1jl5rYqlif-Q5FqRTQMKYCQZWme-bl00ZXBj_Lnqz3ux4f4kY0yo9rixGl3EtEBtvtmbNyDMtgBihapXDrzpdwRYEYfsTjOYQ",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "GcFbTHakBOFDHommUuc2TQzV35EnYlQw9Yw84IXZpA4"
+      }
+    ]
+  },
+  {
+    "id": "a336b9b1-3159-4a19-b9d8-db2f690328e0",
+    "name": "Volleyball RL NO Frauen 2026/27 Berliner VV vs. Marzahner VC",
+    "slug": "volleyball-rl-no-frauen-2026-27-berliner-vv-vs-marzahner-vc",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Volleyball",
+    "profile_name": "Berliner Volleyballverein Vorwärts 1965",
+    "profile_slug": "berlinervolleyballvereinvorwaerts1965",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T13:45:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/3/6/b/9/6/6/28de/4739/85eb/7a135e21a2c8/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/Cz6QLWGHcrUjBrfD9WATrNlbdyXiMhPKzh0101galSUD4.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJDejZRTFdHSGNyVWpCcmZEOVdBVHJObGJkeVhpTWhQS3poMDEwMWdhbFNVRDQiLCJhdWQiOiJ2IiwiZXhwIjoxNzk0NzE0Nzg5LCJraWQiOiI5czFQblhwanBiU1B2V0cwMlZaajFqSE1QdjlIcWpUR0l4bGVEY2JnMDA0MDI4IiwiY3VzdG9tIjp7InVzZXJfaWQiOiItIn0sInBsYXliYWNrX3Jlc3RyaWN0aW9uX2lkIjoidEh3bjlJSFpHUjlWeTkxWkREMDJ0dWt4MDBsTzFxVGFPNVB4R0xadG5ORkxvIiwicHJvZ3JhbV9zdGFydF90aW1lIjoxNzk0NjYzOTAwfQ.S68kO9z0CfDvaBuIZXPVA8taLyd4V-v7ClvrGKq23FinVLn0feFuyynff1EckW2BKVxuGXkHNvtVYiokbfJTulQqrfECZpWTXw470IH0t1htstntunnycxG9fBxZB0zya-QkwN1J4wxC3CxCV_4UfxVnPX2Hu1mPKfxO-t5UZ35GlwkHgmOSpDEf1369gYWBNZ-KXLAuNOb8m9M_zL6gVuhknLDHrIEbCuypeMTPr4Ay3e-YHXgmRYxod8mXEdc5W1heE-ui7F67qMhaYoWPIU9vQo2F2dH59VvD5Z1zWis8OZuO83E5p-25imBVpNivhUORAAmAdTXECa0t5Xqbwg",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "Cz6QLWGHcrUjBrfD9WATrNlbdyXiMhPKzh0101galSUD4"
+      }
+    ]
+  },
+  {
+    "id": "a338a07e-de5b-4cce-8fd1-4065abd8514b",
+    "name": "1. Rollhockey Bundesliga  Damen - RSC Cronenberg vs. SC Bison Calenberg",
+    "slug": "1-rollhockey-bundesliga-damen-rsc-cronenberg-vs-sc-bison-calenberg",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Roller hockey",
+    "profile_name": "RSC Cronenberg",
+    "profile_slug": "rsccronenberg",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T14:12:05.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/3/8/a/0/4/b/88a0/4cd7/8487/4642b9296f09/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/MxS00QhTt02dMDVlxjGCdiAwSE6XH4a43uwGPa0215500WE.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJNeFMwMFFoVHQwMmRNRFZseGpHQ2RpQXdTRTZYSDRhNDN1d0dQYTAyMTU1MDBXRSIsImF1ZCI6InYiLCJleHAiOjE3OTQ3MTQ3ODksImtpZCI6IjlzMVBuWHBqcGJTUHZXRzAyVlpqMWpITVB2OUhxalRHSXhsZURjYmcwMDQwMjgiLCJjdXN0b20iOnsidXNlcl9pZCI6Ii0ifSwicGxheWJhY2tfcmVzdHJpY3Rpb25faWQiOiJ0SHduOUlIWkdSOVZ5OTFaREQwMnR1a3gwMGxPMXFUYU81UHhHTFp0bk5GTG8iLCJwcm9ncmFtX3N0YXJ0X3RpbWUiOjE3OTQ2NjU1NDJ9.jclIVGtRCcUPZP7MvTOqcpzxcZyPjkprk1zc_meC3E5nero9HkWSI0oDlRPXiD1K4c2bJSqCYx0B8JQB0cnv2a-s9uS_kkp3aFQX5Or5obAGv-AwkVT5mCxO2LE4fNqhTTMKxeqmJ-oj2sf-csq9pXU7jItRuAvNUEk65TXgQkqlBBwt0VdJR9Vx0pqSNwKelMdtvvO_N2KEM7I_p8tUKEcamO-S_AEPwoRJBWKTGvJz_GgRl6TUVHH5xP0Y9QUsVm49BGE-HriwC3SSaHbpPN94VxAlOxvL41GQsFzpv0h0j99EAqgodqzwQ5BEG3FEqhirrbJsD4prYUn-l8-t2Q",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "MxS00QhTt02dMDVlxjGCdiAwSE6XH4a43uwGPa0215500WE"
+      }
+    ]
+  },
+  {
+    "id": "a338c5c0-afde-47c8-973d-17b605e851f8",
+    "name": "7. Spieltag SG Aulendorf",
+    "slug": "7-spieltag",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Bowling",
+    "profile_name": "SG Aulendorf Abt. Kegeln",
+    "profile_slug": "sgaulendorf",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T08:25:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/3/8/c/5/3/5/e094/48e3/be2c/d5e2ae6bdf7a/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/rT02RZ2zE72DnQO1lv5mzuAy9E4bX1gqJI3TVMg8EiJM.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJyVDAyUloyekU3MkRuUU8xbHY1bXp1QXk5RTRiWDFncUpJM1RWTWc4RWlKTSIsImF1ZCI6InYiLCJleHAiOjE3OTQ3MTQ3ODksImtpZCI6IjlzMVBuWHBqcGJTUHZXRzAyVlpqMWpITVB2OUhxalRHSXhsZURjYmcwMDQwMjgiLCJjdXN0b20iOnsidXNlcl9pZCI6Ii0ifSwicGxheWJhY2tfcmVzdHJpY3Rpb25faWQiOiJ0SHduOUlIWkdSOVZ5OTFaREQwMnR1a3gwMGxPMXFUYU81UHhHTFp0bk5GTG8iLCJwcm9ncmFtX3N0YXJ0X3RpbWUiOjE3OTQ2NTcxODh9.ZRN-jdHwGO4EH2HXVvZLYJKLnv-Q0p6dvKCry224TfJoBtgi6jo0qO1M2IQao2cfrHfWZGQ_6p6UdDvgXcfVYjuDH4hoo_r1Aw5iBhtVM8i3wxXuH0mtdgqwzljtmJdxgZ-UaR5qtXJunmSYHd9NusssG4Zv74whNcudzzv-oiUedpCOoEUlD8QM2L5gQxGbeVf6WPKx9vXFzwppac7qbMyyz895BP9_crGBjMSD-___dZvGIExX820nh_o7Zd14r3IfucaVMWtM-eFlw7bJiM4qPTESzNduTkrDb9dd5iqo98lDegneXCDxO5tTr9OuNOpioXceHlNMcGNB1xKODA",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "rT02RZ2zE72DnQO1lv5mzuAy9E4bX1gqJI3TVMg8EiJM"
+      }
+    ]
+  },
+  {
+    "id": "a2f0f786-75d8-4f9c-8b26-ccb61e144cc0",
+    "name": "Nordost Landesliga PBC Schwerte 87 5 - 1. PBV Werne 80 2 Tisch 4",
+    "slug": "nordost-landesliga-pbc-schwerte-87-5-1-pbv-werne-80-2-tisch-4",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Billiards",
+    "profile_name": "PBC Schwerte 87",
+    "profile_slug": "pbc-schwerte-87",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T11:00:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/2/f/0/f/6/8/3/c9d2/4cb1/b644/15a2755ddeb0/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/NeseDoas6K9VNokzirwmlWYtL5UQeg49Inx00UHSsNBE.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJOZXNlRG9hczZLOVZOb2t6aXJ3bWxXWXRMNVVRZWc0OUlueDAwVUhTc05CRSIsImF1ZCI6InYiLCJleHAiOjE3OTQ3MTQ3ODksImtpZCI6IjlzMVBuWHBqcGJTUHZXRzAyVlpqMWpITVB2OUhxalRHSXhsZURjYmcwMDQwMjgiLCJjdXN0b20iOnsidXNlcl9pZCI6Ii0ifSwicGxheWJhY2tfcmVzdHJpY3Rpb25faWQiOiJ0SHduOUlIWkdSOVZ5OTFaREQwMnR1a3gwMGxPMXFUYU81UHhHTFp0bk5GTG8iLCJwcm9ncmFtX3N0YXJ0X3RpbWUiOjE3OTQ2NTcxODl9.NPq7lUyHeVcjTQ7H_HYxCINgUgopudsUBHZNEMw_9VoBQbx3l1ffZ6SGEBGEuAJWMuGgcj1Svl-Lk-dUx8tkXycZLbsAcxV66QDJpoGlZKiaVvJCN0qDT5NmhfXU8DIHfrMQQwPB9xVFeI1wwKDSk_lhhRbHbjPWlp0qRQ9l2EMmolSao7fy57jsGdm-eNDHnWmkrgD9Vfv0Ica-sO1t9IBLYtSwvt8h2BqWTSau6fVQfDsPUTrBE7LH_idSkSHiC0k0xmWbsghP7BW2pDyfbkWBSoBVmLjFJWuKUicyAEjVb0a4BF2dQZspNB9Kuv3aqxH9RJdPgFSn9YoUWfivzA",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "NeseDoas6K9VNokzirwmlWYtL5UQeg49Inx00UHSsNBE"
+      }
+    ]
+  },
+  {
+    "id": "a332e736-c63c-4719-92e8-88dbe83ea01b",
+    "name": "Saturday LIVE | Round 5 - Italy | 2026 Champions of the Future Academy Program",
+    "slug": "saturday-live-round-5-italy-2026-champions-of-the-future-academy-program",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Freesports",
+    "profile_name": "World of Freesports",
+    "profile_slug": "worldoffreesports",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T10:15:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/3/2/e/6/1/c/fa30/4f76/8256/9abd30afed08/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/GW0101oq6t1O5qMxs66Ic9dq0215HaZNnrCrXskNuc102zE.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJHVzAxMDFvcTZ0MU81cU14czY2SWM5ZHEwMjE1SGFaTm5yQ3JYc2tOdWMxMDJ6RSIsImF1ZCI6InYiLCJleHAiOjE3OTQ3MTQ3ODksImtpZCI6IjlzMVBuWHBqcGJTUHZXRzAyVlpqMWpITVB2OUhxalRHSXhsZURjYmcwMDQwMjgiLCJjdXN0b20iOnsidXNlcl9pZCI6Ii0ifSwicGxheWJhY2tfcmVzdHJpY3Rpb25faWQiOiJ0SHduOUlIWkdSOVZ5OTFaREQwMnR1a3gwMGxPMXFUYU81UHhHTFp0bk5GTG8iLCJwcm9ncmFtX3N0YXJ0X3RpbWUiOjE3OTQ2NTcxODh9.dAXy2f_xAmoJxPli21SnSLk-oCniynNwE1_Tvec1vA5efv21k8XCCRFqwcvy0aEhQAnfwtXrJkqmN0hA2JneHSBAThYkH4QXVbL8VthNDFJlbj-cR6CMk_13KmC55l8uyB_bY-e74MgfgLTa8n382oY2SZHc7IT2z3A3fPg-OVg-vUdFA8X6c9YKCNE0l43S_TDhIP4k5GgvzAliDjxrXVhX4xLJ2V462M1nFnRl4N9SYyS6TkII7HRFXwq52OBiVE_1sExSzUCV16Bj8fqA9xO-UCo1UkqDqFla9cs7c-HVhqXFBtDrw5DZE6rehwNfwR61eP2Guk8VXuBoFz0loQ",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "GW0101oq6t1O5qMxs66Ic9dq0215HaZNnrCrXskNuc102zE"
+      }
+    ]
+  },
+  {
+    "id": "a2df0a0c-c151-4d93-a211-32d947c3ea91",
+    "name": "DSB 1. Bundesliga Luftpistole Nord - Lindwedel",
+    "slug": "dsb-1-bundesliga-luftpistole-nord-lindwedel",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Target shooting",
+    "profile_name": "Sportschiessen LIVE",
+    "profile_slug": "sport-live",
+    "duration_in_seconds": 8498,
+    "content_start_date": "2026-11-14T13:25:48.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/2/d/f/1/2/3/2/16f6/44d2/a5d1/5f6843b9ee61/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/mvi7dKUTseCkvPRWcWFA8agATkaWSF01rOXDSZQ7hFQE.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtdmk3ZEtVVHNlQ2t2UFJXY1dGQThhZ0FUa2FXU0YwMXJPWERTWlE3aEZRRSIsImF1ZCI6InYiLCJleHAiOjE3OTQ3MTQ3ODksImtpZCI6IjlzMVBuWHBqcGJTUHZXRzAyVlpqMWpITVB2OUhxalRHSXhsZURjYmcwMDQwMjgiLCJjdXN0b20iOnsidXNlcl9pZCI6Ii0ifSwicGxheWJhY2tfcmVzdHJpY3Rpb25faWQiOiJ0SHduOUlIWkdSOVZ5OTFaREQwMnR1a3gwMGxPMXFUYU81UHhHTFp0bk5GTG8iLCJwcm9ncmFtX3N0YXJ0X3RpbWUiOjE3OTQ2NzEyMzZ9.SVJa8bnm8I5kb3aEA5L3mbgGaFP3nERBiSfDywuSP3RWvPDScCS1rf1haeq9WYEA4kyLll4VYqiNDl9s7pic77HkEAd-XMca0w90FkovK3etCUCyUwrkVfH5Slq0T343-8bncfyAlkglWGgdNqjsB_AdSnEQo7UdXhuCwMeYWsQz_DzO__wAYz7Ff54YuhN3HDulhMTsjYvAwMfiw6lm8HGB0RLrHjv3qL-f48p2VpUWbqwjyRCoZ3Ul8oIqSnbgej1yoqQJeLJuAllIisLel8uhFQFcp2fUh89gNpH5oO7ApNro3XCLJFufCNiicOTHBMgjM1Kacyg0oYR8N3291A",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "mvi7dKUTseCkvPRWcWFA8agATkaWSF01rOXDSZQ7hFQE"
+      },
+      {
+        "hls": "https://stream.mux.com/B7NPd902uKLbjObERmeEGPZ02YpitccTDx72bgyyYjepg.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJCN05QZDkwMnVLTGJqT2JFUm1lRUdQWjAyWXBpdGNjVER4NzJiZ3l5WWplcGciLCJhdWQiOiJ2IiwiZXhwIjoxNzk0NzE0Nzg5LCJraWQiOiI5czFQblhwanBiU1B2V0cwMlZaajFqSE1QdjlIcWpUR0l4bGVEY2JnMDA0MDI4IiwiY3VzdG9tIjp7InVzZXJfaWQiOiItIn0sInBsYXliYWNrX3Jlc3RyaWN0aW9uX2lkIjoidEh3bjlJSFpHUjlWeTkxWkREMDJ0dWt4MDBsTzFxVGFPNVB4R0xadG5ORkxvIiwicHJvZ3JhbV9zdGFydF90aW1lIjoxNzk0NjYyNzE4fQ.EP78OcKxQ58_i1W2PyUFzaT5t0d4cIzhneOjkC9LminHMQXXm8PKyyFinVjsuIIBxHP7SNc_loel_k9155OLt1XHO6KjRKtFUmI6plJaIZR0FMIoccVY6q-mxwCVgmYdXT-fP4zGTJreLUCP1iqVNfUK7rwGp9BefluZWr788aPCw6K46XN7zi7gMjYpza8_sv-YzNz9LE7WaT053xUVJRaXpCHTLlFmuxaIL6Uk0qHMDKh3alPPsGdkKukrO1NF5a1MKpz--XuWQlANOrJ57WCPdFigcEuBgwX0Ra2-LBrvBU9lWq3nsDmBojUloXTBT-5FrIq1EuFhxR1LN_Z4Lg",
+        "title": "Teil 1",
+        "type": "VIDEO",
+        "playback_id": "B7NPd902uKLbjObERmeEGPZ02YpitccTDx72bgyyYjepg"
+      }
+    ]
+  },
+  {
+    "id": "a2aa0fd0-bf20-4116-b621-80e518bdf5b6",
+    "name": "1. Bundesliga 120 Männer: TSV Denkendorf - SKC Victoria Bamberg",
+    "slug": "1-bundesliga-120-maenner-tsv-denkendorf-skc-victoria-bamberg",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Bowling",
+    "profile_name": "TSV Denkendorf",
+    "profile_slug": "tsv-denkendorf",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T10:56:05.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/2/a/a/0/f/1/7/91ee/4fd9/a691/25d147af7803/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/psnlvlA011CTm202Co7TG7behuY8jXzxi8eWy7SKWj25c.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJwc25sdmxBMDExQ1RtMjAyQ283VEc3YmVodVk4alh6eGk4ZVd5N1NLV2oyNWMiLCJhdWQiOiJ2IiwiZXhwIjoxNzk0NzE0Nzg5LCJraWQiOiI5czFQblhwanBiU1B2V0cwMlZaajFqSE1QdjlIcWpUR0l4bGVEY2JnMDA0MDI4IiwiY3VzdG9tIjp7InVzZXJfaWQiOiItIn0sInBsYXliYWNrX3Jlc3RyaWN0aW9uX2lkIjoidEh3bjlJSFpHUjlWeTkxWkREMDJ0dWt4MDBsTzFxVGFPNVB4R0xadG5ORkxvIiwicHJvZ3JhbV9zdGFydF90aW1lIjoxNzk0NjU3MTg5fQ.QjIvCWCsY16tVhF_1qtEHZGFnG-QyvrDCPXsfkJxfkSks8BKj4nGDem9j4OgLVwgO-uRf1TEw_Cgg3rJvm4epVmyRajGKaFEoEnLIa6OfTr_DpAgFdL5o0S0OYlHbArkMBjBmhQZCZpOnGrGyQDrZIFEUuESClJiKqXgxp29TomHjmoL0iedwgHsBuhUa-mKs4kjSVz_jgoQLwmTfQ3nItHv4VByM0reVlswuRpI5GklWSU5wtKVREtWJl3fDsILXpqtkbYRy5x11pUFFwwJcvQM1oMSrUufI4WzUnwzBdWF4a9_1pANwOEltrQn9R8YT7aDCzk88walTrWQKSDfFw",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "psnlvlA011CTm202Co7TG7behuY8jXzxi8eWy7SKWj25c"
+      }
+    ]
+  },
+  {
+    "id": "a332a3b2-3444-4da3-8914-263eb6732c79",
+    "name": "SC Reckenfeld 1 vs. VOK Osnabrück 1 - 2. Bundesliga Nord Kegeln (Schere)",
+    "slug": "sc-reckenfeld-1-vs-vok-osnabrueck-1-2-bundesliga-nord-kegeln-schere",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Sports bowling shear",
+    "profile_name": "SC Reckenfeld 1928 e.V.",
+    "profile_slug": "screckenfeld1928ev",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T12:55:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/3/2/a/3/7/3/db7a/4a10/b957/89f6a8d9b213/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/kZeTpCZjxfnjffO3q4YEFgwW8xXqhJouHz84ylQ500pg.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJrWmVUcENaanhmbmpmZk8zcTRZRUZnd1c4eFhxaEpvdUh6ODR5bFE1MDBwZyIsImF1ZCI6InYiLCJleHAiOjE3OTQ3MTQ3ODksImtpZCI6IjlzMVBuWHBqcGJTUHZXRzAyVlpqMWpITVB2OUhxalRHSXhsZURjYmcwMDQwMjgiLCJjdXN0b20iOnsidXNlcl9pZCI6Ii0ifSwicGxheWJhY2tfcmVzdHJpY3Rpb25faWQiOiJ0SHduOUlIWkdSOVZ5OTFaREQwMnR1a3gwMGxPMXFUYU81UHhHTFp0bk5GTG8iLCJwcm9ncmFtX3N0YXJ0X3RpbWUiOjE3OTQ2NjA5MDB9.joIzEKV34hRLmZKIEZATPbUmPF3mAggyBpwhY8Qo8DnhmJOV5t4f5xxoFJQ8Y1Q0WK4bQ-fYUJFjx7nwhXsf3Fh3h1F0jvLNT-3wsdTKsapLFHGJPREgivIxaciQWCTBcQJxc_OZ0DcnSa6gIhUHjddJIAc-Rif91q8IzqLrTttE7ltUJubL40V4g-xEGSH3u-wa1L8UXbvxuZJ-2A-VrJN2NImDMiD7Id1SvkkRbL_K79I3_LZZrYW4pfWAlUxz0HUVdOpoYYC3sU5_pIfUqEFol9qybw0xcdfgSatfybE8wqyGLfT-HBVM-KkCC8w_hHiTBFAGJJZ5gC6v3sJdsA",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "kZeTpCZjxfnjffO3q4YEFgwW8xXqhJouHz84ylQ500pg"
+      }
+    ]
+  },
+  {
+    "id": "a2ee9284-741f-4593-a747-fbac6b6766f1",
+    "name": "Heimspieltag SKV Trier",
+    "slug": "heimspieltag-skv-trier-0",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Sports bowling shear",
+    "profile_name": "SKV Trier 1957 e.V",
+    "profile_slug": "skvtrier",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T11:35:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/3/6/b/d/e/f/da57/45fe/9116/fa381219ed55/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/ISNp02g22UQWFSMsCNqyF5XtNlircTaQ93UAjayIawWI.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJJU05wMDJnMjJVUVdGU01zQ05xeUY1WHRObGlyY1RhUTkzVUFqYXlJYXdXSSIsImF1ZCI6InYiLCJleHAiOjE3OTQ3MTQ3ODksImtpZCI6IjlzMVBuWHBqcGJTUHZXRzAyVlpqMWpITVB2OUhxalRHSXhsZURjYmcwMDQwMjgiLCJjdXN0b20iOnsidXNlcl9pZCI6Ii0ifSwicGxheWJhY2tfcmVzdHJpY3Rpb25faWQiOiJ0SHduOUlIWkdSOVZ5OTFaREQwMnR1a3gwMGxPMXFUYU81UHhHTFp0bk5GTG8iLCJwcm9ncmFtX3N0YXJ0X3RpbWUiOjE3OTQ2NTcxODl9.hQMu-IxzufcfKA7Dr-9nKn9Nb5ze-SXp1kOwDbml7wLNa0yGA6Jwmi30ZSkchZ7OFhVrWJ3qPJOGFm5FXMwaZumv3_vUrU7RgB4I3eCLrxh-5LcyOmUKRzkSyiiUElKWx_1Bcv4ZU0s50A_2oaxy_s1wAwqR1Es-iOWI3CW7BRjo-2hg-Wv9ALmh59PAKkvdwczR-h37pysi_yORDRbmmYGp2df7PiSUUzxFODGhkuSVhTh55O7z5ySG1stXdkU5vDGo7-60SqquyBrqE3X4oTz_IftiGzLluVGfcq2vPl8AhQAAT9gsvsXEOmXdxgURf-wHsZCsmHW9QH5yvu9-uA",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "ISNp02g22UQWFSMsCNqyF5XtNlircTaQ93UAjayIawWI"
+      }
+    ]
+  },
+  {
+    "id": "a3338226-0c86-453a-87c2-eaaf7dbdb486",
+    "name": "1. Verbandsliga Männer Hohnstädter SV - SV Leipzig 1910",
+    "slug": "1-verbandsliga-maenner-hohnstaedter-sv-sv-leipzig-1910",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Sportkegeln Classic",
+    "profile_name": "Hohnstädter SV - Kegeln",
+    "profile_slug": "hohnstaedtersvkegeln548",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T13:00:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/3/3/8/1/e/5/c5d7/4d29/b831/aac6682d242b/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/wYHBWQnaxGebEmShc402lpMLqONwxq61g01brekfofgaA.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ3WUhCV1FuYXhHZWJFbVNoYzQwMmxwTUxxT053eHE2MWcwMWJyZWtmb2ZnYUEiLCJhdWQiOiJ2IiwiZXhwIjoxNzk0NzE0Nzg5LCJraWQiOiI5czFQblhwanBiU1B2V0cwMlZaajFqSE1QdjlIcWpUR0l4bGVEY2JnMDA0MDI4IiwiY3VzdG9tIjp7InVzZXJfaWQiOiItIn0sInBsYXliYWNrX3Jlc3RyaWN0aW9uX2lkIjoidEh3bjlJSFpHUjlWeTkxWkREMDJ0dWt4MDBsTzFxVGFPNVB4R0xadG5ORkxvIiwicHJvZ3JhbV9zdGFydF90aW1lIjoxNzk0NjYxMjAwfQ.QUsoabIpcUnESkNgQP8L-ZuVrmt0HQ55IEt0F1uyJ8KG-_m2yBmyZgUkwXfYs5bWLowN8mMtTTnxwNWUxEWZBKa53tWFg7WhLuD-Q5ed4niWEl3-5GZWAIiF6agCTCfT-_siaZbjPY81XkDQiF4iDVyyy0pbv3nTAeQDlqs9en6SRgqOodtet5s7480iYobgG_hY1x4GqIh78b-OSim7xstaak-tas7e9K0niiFX8JQ1q8XnWCe0bpQ4NNnSIAEaQd_ijXI9rTh0hgVRILkm14TmGbGHbu9jSTjV6LDgHSkRMgD8ujYaqikyIrVNR7YBrW9vHRSTXvTHWUlJkiQegw",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "wYHBWQnaxGebEmShc402lpMLqONwxq61g01brekfofgaA"
+      }
+    ]
+  },
+  {
+    "id": "a2fb59bd-3e2c-46e7-9c39-9ce8a740c336",
+    "name": "2. Bundesliga Ost 120 Männer: BSV GW Friedrichshain - KSV Freital",
+    "slug": "2-bundesliga-ost-120-maenner-bsv-gw-friedrichshain-ksv-freital",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Sportkegeln Classic",
+    "profile_name": "BSV Grün Weiß Friedrichshain",
+    "profile_slug": "kegelgesocks",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T11:55:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/2/f/b/5/9/1/0/f983/4e15/b191/34a34914ddca/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/qqm5NT02DHaFFuCaSpDMEZN27qdQtbGmBaFiAsOj3xqs.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJxcW01TlQwMkRIYUZGdUNhU3BETUVaTjI3cWRRdGJHbUJhRmlBc09qM3hxcyIsImF1ZCI6InYiLCJleHAiOjE3OTQ3MTQ3ODksImtpZCI6IjlzMVBuWHBqcGJTUHZXRzAyVlpqMWpITVB2OUhxalRHSXhsZURjYmcwMDQwMjgiLCJjdXN0b20iOnsidXNlcl9pZCI6Ii0ifSwicGxheWJhY2tfcmVzdHJpY3Rpb25faWQiOiJ0SHduOUlIWkdSOVZ5OTFaREQwMnR1a3gwMGxPMXFUYU81UHhHTFp0bk5GTG8iLCJwcm9ncmFtX3N0YXJ0X3RpbWUiOjE3OTQ2NTczMDB9.KNVLhoOUMfrE3XiHM7S7r3pKWmu2qdCQNZvnuuCM-ab4EkPGr_JXmRLb-wZyKYWf4vzSRpXwKlRiH2mQi3G_WUnYkGSQCWMvYwJqAgIXIvQD_viQhrBBC7hmg0LKYB9nFIsOscx6gMhRfMZ7VDezw05sUY4r-WhAYmkjSbxv1fIlqIPcfdofJHD1tJEOayBKByfLNYLFgOtF3-SKUm2fKULxByhVfrpSevvlUQeaMt6kZZs2ZAvhleIWCBg3xOx-ryXo0LvFp455xxZ7D6-YIwjNBvWZcZ9VS6ySar2_zAK_LEHsw_EMsC6NwceJyyTK0eT9aliERkc4ed6SVt4toA",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "qqm5NT02DHaFFuCaSpDMEZN27qdQtbGmBaFiAsOj3xqs"
+      }
+    ]
+  },
+  {
+    "id": "a31778ee-5983-4c80-93d4-cf08aa89c03b",
+    "name": "TuS Steißlingen vs. HSG Owen-Lenn",
+    "slug": "tus-steisslingen-vs-hsg-owen-lenn",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Handball",
+    "profile_name": "TuS Steißlingen U19w",
+    "profile_slug": "tus-steisslingen-u19w",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T14:40:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/1/7/7/8/c/f/75f8/4ed8/b73c/075ad4b7fd78/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/sn00zrB5KqNYT01SDL3zUafYAxIyDr9tNZUa8EpEAN5ak.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzbjAwenJCNUtxTllUMDFTREwzelVhZllBeEl5RHI5dE5aVWE4RXBFQU41YWsiLCJhdWQiOiJ2IiwiZXhwIjoxNzk0NzE0Nzg5LCJraWQiOiI5czFQblhwanBiU1B2V0cwMlZaajFqSE1QdjlIcWpUR0l4bGVEY2JnMDA0MDI4IiwiY3VzdG9tIjp7InVzZXJfaWQiOiItIn0sInBsYXliYWNrX3Jlc3RyaWN0aW9uX2lkIjoidEh3bjlJSFpHUjlWeTkxWkREMDJ0dWt4MDBsTzFxVGFPNVB4R0xadG5ORkxvIiwicHJvZ3JhbV9zdGFydF90aW1lIjoxNzk0NjY3NjI1fQ.f5ooYgTFqCzxThpDDfyWh-a6tPQPTqkV5tZuOKuU99LMX8_jG86sDJYUdrzoLmpFl-PJgUsiJpCX1hA8rWB4sOl08-mpO_bW8W77SHlq32xA76-UzV22CPpIN7V6oqN-QWNIWkQjaJ97BtoApC-Bg61wgPzJMJFWio7Ar3oVoRtIV-B5P91irrVHlUx5THWqFai8i1eDDE9YNtgwQEKJxtx6xDEC8VZ9WaMF4UYhsqI0uVzgyI1JUJzED1DOJaqtuJh1HXjml2FM__n3Ck12wH99UHlYCkaWAMIYpl2HWKSafNEK-xnQAWsV-n9gqbr58eRcYKSswo0etnqBmVgjhQ",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "sn00zrB5KqNYT01SDL3zUafYAxIyDr9tNZUa8EpEAN5ak"
+      }
+    ]
+  },
+  {
+    "id": "a31ed9f1-bfcc-4236-a87c-d4b1ad3a357f",
+    "name": "5. Dietemann Pokal - Sportakrobatik",
+    "slug": "5-dietemann-pokal-sportakrobatik",
+    "type": "LIVESTREAM",
+    "currently_live": true,
+    "sport": "Sports acrobatics",
+    "profile_name": "Hessischer Sportakrobatik Verband e.V.",
+    "profile_slug": "hsav",
+    "duration_in_seconds": 0,
+    "content_start_date": "2026-11-14T08:30:00.000000Z",
+    "logo_url": "https://img-cdn.do.sporteurope.tv/images/a/3/1/e/d/9/e/1/176d/4bf6/a772/261337599109/320x180.webp",
+    "stream_urls": [
+      {
+        "hls": "https://stream.mux.com/rfaeLYnoXzpyV6twAq3LQ6Nz01QKNpeXvNWNEFev00doA.m3u8?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJyZmFlTFlub1h6cHlWNnR3QXEzTFE2TnowMVFLTnBlWHZOV05FRmV2MDBkb0EiLCJhdWQiOiJ2IiwiZXhwIjoxNzk0NzE0Nzg5LCJraWQiOiI5czFQblhwanBiU1B2V0cwMlZaajFqSE1QdjlIcWpUR0l4bGVEY2JnMDA0MDI4IiwiY3VzdG9tIjp7InVzZXJfaWQiOiItIn0sInBsYXliYWNrX3Jlc3RyaWN0aW9uX2lkIjoidEh3bjlJSFpHUjlWeTkxWkREMDJ0dWt4MDBsTzFxVGFPNVB4R0xadG5ORkxvIiwicHJvZ3JhbV9zdGFydF90aW1lIjoxNzk0NjU3MTg5fQ.t3WYDmhDfR1HB6aSnMhUQW6z1Zw-u3mBHDJiddI5ClhMCCBcMwuyIs8u9TLwPflotQzxT0Fjbea7WYZ8AWE6UKiW_5RyOO8CM4cCS-C2XwQ8JfZ7metk8-gO2Ig8w75Hw5M9Gl38mdK700W3ydN8XL9IQisSgaiDwZb0R0oSbEvDFoURSDUuws5s0PCDY2TQXhSfxO6zc0ScdT-F7ScsGQzjHhPcg70yCCmjCIGnUJxL70nOL9qSupokmvCan40yVZpa-QK9gsJ7DgnpYXkucbnctkkONpYDeBHUe9TQqqrn3gvnF9dCcj76F1HTe92L3zP6kOYHuxw0e9vEozEwgQ",
+        "title": "Live",
+        "type": "LIVESTREAM",
+        "playback_id": "rfaeLYnoXzpyV6twAq3LQ6Nz01QKNpeXvNWNEFev00doA"
+      }
+    ]
+  }
+]
