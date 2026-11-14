@@ -13,7 +13,7 @@ from datetime import datetime, timezone, timedelta
 from urllib.parse import urlparse
 from curl_cffi import requests as cffi_requests
 
-# ─── CONFIG (sama dengan script asli) ───────────────────
+# ─── CONFIG ─────────────────────────────────────────────
 WEB_BASE = "https://www.camel1.tv"
 API_BASE = "https://api.cameltv.live"
 PROXY_BASE = "https://live123.bhns.workers.dev"
@@ -52,7 +52,6 @@ def _val(label, value):
     print(f"  │  {label}: {value}")
 
 def _raw_json(data, indent=4):
-    """Print JSON terpotong agar tidak terlalu panjang."""
     s = json.dumps(data, indent=indent, ensure_ascii=False)
     if len(s) > 1500:
         s = s[:1500] + "\n  │  ... (truncated)"
@@ -92,10 +91,11 @@ def debug_login():
     r = SESSION.post(url, headers=h, data=body)
     _val("Status Code:", r.status_code)
     _val("Response Headers:", dict(r.headers))
-    _val("Response Body:")
-    _raw_json(r.json())
 
     data = r.json()
+    print(f"  │  Response Body:")
+    _raw_json(data)
+
     if data.get("success") or data.get("code") == 0:
         d = data.get("detail", {})
         uid = d.get("key", "")
@@ -103,7 +103,8 @@ def debug_login():
         _val("✅ uid (key):", uid)
         _val("   value:", val)
         return uid
-    _val("❌ Login gagal", data)
+
+    _val("❌ Login gagal:", str(data))
     return None
 
 
@@ -117,7 +118,6 @@ def debug_fetch_matches():
     _val("Status Code:", r.status_code)
     _val("HTML length:", len(r.text))
 
-    # Cari segment RSC
     unescaped = r.text.replace('\\"', '"').replace('\\\\', '\\')
     start = unescaped.find('[{"competition"')
     _val("RSC segment found at index:", start)
@@ -126,18 +126,22 @@ def debug_fetch_matches():
         _val("❌ RSC segment tidak ditemukan!", "")
         return []
 
-    # Ekstrak bracket (simplified untuk debug)
     depth, i, in_str, esc, end = 0, start, False, False, -1
     while i < len(unescaped):
         c = unescaped[i]
-        if esc: esc = False; i += 1; continue
-        if c == '\\' and in_str: esc = True; i += 1; continue
-        if c == '"': in_str = not in_str
+        if esc:
+            esc = False; i += 1; continue
+        if c == '\\' and in_str:
+            esc = True; i += 1; continue
+        if c == '"':
+            in_str = not in_str
         elif not in_str:
-            if c == '[': depth += 1
+            if c == '[':
+                depth += 1
             elif c == ']':
                 depth -= 1
-                if depth == 0: end = i; break
+                if depth == 0:
+                    end = i; break
         i += 1
 
     if end == -1:
@@ -199,13 +203,11 @@ def debug_get_stream_url(match_id, uid):
             print(f"  │  │  Response JSON:")
             _raw_json(data)
 
-            # Cek success
             success = data.get("success") or data.get("code") == 0 or data.get("status") == 200
             if not success:
                 print(f"  │  │  ⏭ Skip (not success)")
                 continue
 
-            # Ekstrak stream URL
             detail = data.get("detail", data.get("data", data.get("result", {})))
             stream_url = _extract_debug(detail)
 
@@ -219,12 +221,11 @@ def debug_get_stream_url(match_id, uid):
         except Exception as e:
             print(f"  │  │  ❌ Error: {e}")
 
-    _val("❌ Tidak ada stream URL ditemukan untuk match_id:", match_id)
+    _val("❌ Tidak ada stream URL untuk match_id:", match_id)
     return None
 
 
 def _extract_debug(detail):
-    """Ekstrak stream URL dengan logging detail."""
     if isinstance(detail, list):
         streams = detail
     elif isinstance(detail, dict):
@@ -254,13 +255,12 @@ def _extract_debug(detail):
 # ─── STEP 4: GET TOKEN (AUTH) ──────────────────────────
 def debug_get_token(stream_url, uid):
     _hr("STEP 4: GET TOKEN — di mana AUTH (txSecret) dibuat")
-    _step(4, f"Mengambil token untuk stream")
+    _step(4, "Mengambil token untuk stream")
 
-    # Ekstrak stream_name
     stream_name = stream_url.rstrip(".m3u8").split("/")[-1]
     _val("stream_url (input):", stream_url)
     _val("stream_name (ekstrak):", stream_name)
-    _val("   (logika: stream_url.rstrip('.m3u8').split('/')[-1])")
+    _val("   logika:", "stream_url.rstrip('.m3u8').split('/')[-1]")
 
     url = f"{API_BASE}/camel-service/ee/sports_live/token?streamName={stream_name}"
     print(f"\n  │  GET {url}")
@@ -269,7 +269,7 @@ def debug_get_token(stream_url, uid):
     try:
         r = SESSION.get(url, headers=_headers(uid))
         _val("Status Code:", r.status_code)
-        _val("Response JSON:")
+        print(f"  │  Response JSON:")
         _raw_json(r.json())
 
         data = r.json()
@@ -278,12 +278,12 @@ def debug_get_token(stream_url, uid):
             tx_time = d.get("txTime", "")
             tx_secret = d.get("txSecret", "")
             _val("✅ txTime:", tx_time)
-            _val("   txSecret (RAW dari API):", tx_secret)
+            _val("   txSecret (RAW):", tx_secret)
             return tx_time, tx_secret
     except Exception as e:
         _val("❌ Error:", str(e))
 
-    _val("⚠ Token tidak ditemukan, akan fallback ke HARDCODE_AUTH", "")
+    _val("⚠ Fallback ke HARDCODE_AUTH", "")
     return None, None
 
 
@@ -297,7 +297,6 @@ def debug_build_final_url(stream_url, tx_time, tx_secret):
     _val("tx_secret (raw):", tx_secret)
 
     if tx_time and tx_secret:
-        # INI DI MANA AUTH DIBUAT
         tx_secret_url = hashlib.md5(tx_secret.encode()).hexdigest()
         print(f"\n  │  ┌─ 🔐 AUTH CREATION:")
         print(f"  │  │  tx_secret (raw)  = {tx_secret}")
@@ -327,7 +326,7 @@ def debug_to_proxy_url(final_url):
     parsed = urlparse(final_url)
     _val("parsed.path:", parsed.path)
     _val("parsed.netloc:", parsed.netloc)
-    _val("parsed.query (existing):", parsed.query)
+    _val("parsed.query:", parsed.query)
 
     query = parsed.query
     if query:
@@ -360,7 +359,7 @@ def debug_validate(proxy_url):
         _val("Status Code:", r.status_code)
         _val("Content-Type:", r.headers.get("content-type", "?"))
         _val("Content-Length:", len(r.content))
-        _val("First 500 bytes:")
+        print(f"  │  First 500 bytes:")
         content = r.content[:500].decode("utf-8", errors="replace")
         for line in content.split("\n")[:15]:
             print(f"  │    {line}")
@@ -419,6 +418,7 @@ def main():
 
     # ─── RINGKASAN ──────────────────────────────────────
     _hr("📋 RINGKASAN CHAIN URL")
+    md5_val = hashlib.md5(tx_secret.encode()).hexdigest() if tx_secret else "N/A"
     print(f"""
   ┌─────────────────────────────────────────────────────────────────┐
   │ 1. API Stream Endpoint                                         │
@@ -429,7 +429,7 @@ def main():
   │    → txSecret = {tx_secret or 'N/A'}│
   ├─────────────────────────────────────────────────────────────────┤
   │ 3. AUTH CONSTRUCTION                                           │
-  │    → md5(txSecret) = {hashlib.md5(tx_secret.encode()).hexdigest() if tx_secret else 'N/A'}│
+  │    → md5(txSecret) = {md5_val}│
   │    → final_url   = stream_url?txSecret=...&txTime=...&lat=9000│
   ├─────────────────────────────────────────────────────────────────┤
   │ 4. PROXY WRAPPING                                              │
