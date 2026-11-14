@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """
 Scrape daddylive.app → playlist.m3u (IPTV)
-Source: /player/tv*.json → events → channels → embed_N
-Options: direct embed URL OR Playwright (extract m3u8)
+JSON structure:
+  { "Top Cat": { "Sub Cat": [ {time, event, channels:[{channel_name, embed_N}]} ] } }
+Embed URLs: https://matchora.pro/embed/channel/XXXX → resolve m3u8 via Playwright
+
 Requirements:
-  pip install requests beautifulsoup4 playwright
+  pip install requests playwright
   playwright install chromium --with-deps
 """
 
@@ -12,8 +14,7 @@ import re
 import json
 import asyncio
 import requests
-from bs4 import BeautifulSoup
-from urllib.parse import urljoin
+from urllib.parse import urlparse
 from playwright.async_api import async_playwright
 
 # ─────────────────────────────────────────────
@@ -26,32 +27,30 @@ HEADERS = {
                   "Chrome/125.0.0.0 Safari/537.36"
 }
 CONCURRENCY = 5
-TIMEOUT = 20_000
+TIMEOUT = 25_000
 OUTPUT = "playlist.m3u"
 
 # Semua endpoint JSON
 JSON_KEYS = [f"tv{i}" for i in range(1, 20)]
 
-# Headers untuk stream (opsional, via #EXTVLCOPT)
+# Headers untuk stream
 STREAM_HEADERS = {
     "user-agent": "Mozilla/5.0 (Linux; Android 10; K) "
                   "AppleWebKit/537.36 (KHTML, like Gecko) "
                   "Chrome/157.0.0.0 Mobile Safari/537.36",
-    "origin": BASE_URL,
-    "referer": BASE_URL + "/",
+    "origin": "https://matchora.pro",
+    "referer": "https://matchora.pro/",
 }
 
-# Mode: "embed" = pakai URL embed langsung (cepat, tanpa browser)
-#       "m3u8"  = resolve ke m3u8 via Playwright (lambat, lebih akurat)
-MODE = "embed"  # ← ubah ke "m3u8" kalau mau
+# Max embed per event yang akan di-try (hemat waktu)
+MAX_EMBEDS_PER_EVENT = 3
 # ─────────────────────────────────────────────
 
 
 # ─────────────────────────────────────────────
-# STEP 1: FETCH SEMUA JSON
+# STEP 1: FETCH JSON
 # ─────────────────────────────────────────────
 def fetch_all_json() -> dict:
-    """Fetch semua /player/tv*.json dan kembalikan dict gabungan."""
     print("→ Fetching JSON sources...")
     all_data = {}
     for key in JSON_KEYS:
@@ -62,50 +61,48 @@ def fetch_all_json() -> dict:
                 data = r.json()
                 if data:
                     all_data[key] = data
-                    print(f"  ✓ {key}: {count_events(data)} events")
+                    n = count_events(data)
+                    print(f"  ✓ {key}: {n} events")
         except Exception as e:
             print(f"  ✗ {key}: {e}")
     return all_data
 
 
 def count_events(data) -> int:
-    """Hitung total event di dalam JSON."""
     n = 0
-    for _top_cat, sub_cats in data.items():
+    for _top, sub_cats in data.items():
         if not isinstance(sub_cats, dict):
             continue
-        for _sub_cat, blocks in sub_cats.items():
-            if not isinstance(blocks, list):
-                continue
-            for block in blocks:
-                if isinstance(block, dict) and isinstance(block.get("events"), list):
-                    n += len(block["events"])
+        for _sub, items in sub_cats.items():
+            if isinstance(items, list):
+                n += len(items)
     return n
 
 
 # ─────────────────────────────────────────────
-# STEP 2: PARSE EVENTS → CHANNELS → EMBED URLs
+# STEP 2: PARSE EVENTS
 # ─────────────────────────────────────────────
-def extract_embed_urls(ch: dict) -> list[str]:
-    """Ambil semua embed_N dari channel object."""
-    urls = []
-    for k in sorted(ch.keys()):
-        if re.match(r"^embed_\d+$", k) and ch[k]:
-            urls.append(ch[k])
-    return urls
+def extract_category(event_name: str) -> str:
+    """
+    'Ice Hockey : Chicago Blackhawks vs Winnipeg Jets (NHL)'
+    → 'Ice Hockey'
+    """
+    if " :" in event_name:
+        return event_name.split(" :")[0].strip()
+    return "Other"
+
+
+def extract_clean_name(event_name: str) -> str:
+    """
+    'Ice Hockey : Chicago Blackhawks vs Winnipeg Jets (NHL)'
+    → 'Chicago Blackhawks vs Winnipeg Jets (NHL)'
+    """
+    if " :" in event_name:
+        return event_name.split(" :")[1].strip()
+    return event_name.strip()
 
 
 def parse_all_events(all_data: dict) -> list[dict]:
-    """
-    Parse semua JSON → list of:
-    {
-        "name": "Team A vs Team B",
-        "category": "Soccer",
-        "time": "14:00",
-        "source": "tv2",
-        "embeds": ["https://...embed/xxx", ...],
-    }
-    """
     events = []
     seen = set()
 
@@ -113,64 +110,60 @@ def parse_all_events(all_data: dict) -> list[dict]:
         for top_cat, sub_cats in data.items():
             if not isinstance(sub_cats, dict):
                 continue
-            for sub_cat, blocks in sub_cats.items():
-                if not isinstance(blocks, list):
+            for sub_cat, items in sub_cats.items():
+                if not isinstance(items, list):
                     continue
-                for block in blocks:
-                    if not isinstance(block, dict):
+                for ev in items:
+                    if not isinstance(ev, dict):
                         continue
-                    category = (block.get("category") or block.get("Category") or sub_cat).strip()
-                    for ev in (block.get("events") or []):
-                        if not isinstance(ev, dict):
+                    event_name = (ev.get("event") or "").strip()
+                    if not event_name:
+                        continue
+
+                    dedup_key = f"{event_name}|{src_key}"
+                    if dedup_key in seen:
+                        continue
+                    seen.add(dedup_key)
+
+                    # Kumpulkan embed URLs
+                    embeds = []
+                    for ch in (ev.get("channels") or []):
+                        if not isinstance(ch, dict):
                             continue
-                        event_name = (ev.get("event") or "").strip()
-                        if not event_name:
-                            continue
+                        for k in sorted(ch.keys()):
+                            if re.match(r"^embed_\d+$", k) and ch[k]:
+                                embeds.append(ch[k])
 
-                        # Dedup berdasarkan nama event + source
-                        dedup_key = f"{event_name}|{src_key}"
-                        if dedup_key in seen:
-                            continue
-                        seen.add(dedup_key)
+                    if not embeds:
+                        continue
 
-                        # Kumpulkan semua embed URLs dari semua channels
-                        embeds = []
-                        for ch in (ev.get("channels") or []):
-                            if not isinstance(ch, dict):
-                                continue
-                            embeds.extend(extract_embed_urls(ch))
+                    events.append({
+                        "name": extract_clean_name(event_name),
+                        "full_name": event_name,
+                        "category": extract_category(event_name),
+                        "time": ev.get("time", "Live"),
+                        "source": src_key,
+                        "embeds": embeds,
+                    })
 
-                        if not embeds:
-                            continue
-
-                        events.append({
-                            "name": event_name,
-                            "category": category,
-                            "time": ev.get("time", ""),
-                            "source": src_key,
-                            "embeds": embeds,
-                        })
-
-    print(f"  ✓ Total: {len(events)} events dengan stream\n")
+    print(f"  ✓ Total: {len(events)} events\n")
     return events
 
 
 # ─────────────────────────────────────────────
-# STEP 3: RESOLVE M3U8 (Playwright) — optional
+# STEP 3: RESOLVE M3U8 VIA PLAYWRIGHT
 # ─────────────────────────────────────────────
 async def resolve_m3u8(page, embed_url: str) -> str | None:
     """
-    Kunjungi halaman embed, intercept request .m3u8 / .ts
-    Return: m3u8 URL atau None
+    Kunjungi https://matchora.pro/embed/channel/XXXX
+    Intercept request .m3u8 dari video player.
     """
     m3u8_url = None
 
     def on_request(request):
         nonlocal m3u8_url
-        url = request.url
-        if (".m3u8" in url or ".ts" in url) and not m3u8_url:
-            if ".m3u8" in url:
-                m3u8_url = url
+        if ".m3u8" in request.url and not m3u8_url:
+            m3u8_url = request.url
 
     page.on("request", on_request)
     try:
@@ -189,7 +182,10 @@ async def resolve_m3u8(page, embed_url: str) -> str | None:
         content = await page.content()
         m = re.search(r'["\']([^"\']*?\.m3u8[^"\']*)["\']', content)
         if m:
-            return m.group(1)
+            url = m.group(1).strip()
+            if url.startswith("//"):
+                url = "https:" + url
+            return url
     except Exception:
         pass
     return None
@@ -198,81 +194,65 @@ async def resolve_m3u8(page, embed_url: str) -> str | None:
 # ─────────────────────────────────────────────
 # STEP 4: BUILD PLAYLIST
 # ─────────────────────────────────────────────
-def build_extvlcopt_lines(event: dict, stream_url: str) -> list[str]:
-    """Generate baris #EXTVLCOPT."""
-    lines = []
-    lines.append(f'#EXTVLCOPT:http-referrer={BASE_URL}/')
-    lines.append(f'#EXTVLCOPT:http-user-agent={STREAM_HEADERS["user-agent"]}')
-    lines.append(f'#EXTVLCOPT:http-headers=Origin: {BASE_URL}')
-    return lines
-
-
 async def build_playlist(events: list[dict]):
-    lines = ["#EXTM3U"]
-    ok = 0
+    semaphore = asyncio.Semaphore(CONCURRENCY)
+    results = []
+    failed = []
 
-    if MODE == "embed":
-        # ── MODE EMBED: langsung pakai URL embed (cepat) ──
-        for i, ev in enumerate(events, 1):
-            # Pakai embed pertama sebagai stream utama
-            stream_url = ev["embeds"][0]
-            logo = f"{BASE_URL}/images/hdtv.png"
+    async with async_playwright() as p:
+        browser = await p.chromium.launch(headless=True)
+        pages = [await browser.new_page() for _ in range(CONCURRENCY)]
 
-            lines.append(
-                f'#EXTINF:-1 tvg-id="{ev["name"]}"'
-                f' tvg-logo="{logo}"'
-                f' group-title="{ev["category"]}",{ev["name"]}'
-            )
-            lines.extend(build_extvlcopt_lines(ev, stream_url))
-            lines.append(stream_url)
-            ok += 1
-            print(f"  [{i}/{len(events)}] ✓ {ev['name']} ({len(ev['embeds'])} embeds)")
-
-    else:
-        # ── MODE M3U8: resolve via Playwright (lambat) ──
-        semaphore = asyncio.Semaphore(CONCURRENCY)
-
-        async with async_playwright() as p:
-            browser = await p.chromium.launch(headless=True)
-            pages = [await browser.new_page() for _ in range(CONCURRENCY)]
-
-            async def process(ev, idx):
-                nonlocal ok
-                async with semaphore:
-                    page = pages[idx % CONCURRENCY]
-                    # Coba embed pertama, kalau gagal coba yang lain
-                    m3u8 = None
-                    for embed_url in ev["embeds"]:
-                        m3u8 = await resolve_m3u8(page, embed_url)
-                        if m3u8:
-                            break
-
+        async def process(ev: dict, idx: int):
+            async with semaphore:
+                page = pages[idx % CONCURRENCY]
+                # Coba max N embed sampai dapat m3u8
+                m3u8 = None
+                for embed_url in ev["embeds"][:MAX_EMBEDS_PER_EVENT]:
+                    m3u8 = await resolve_m3u8(page, embed_url)
                     if m3u8:
-                        logo = f"{BASE_URL}/images/hdtv.png"
-                        lines.append(
-                            f'#EXTINF:-1 tvg-id="{ev["name"]}"'
-                            f' tvg-logo="{logo}"'
-                            f' group-title="{ev["category"]}",{ev["name"]}'
-                        )
-                        lines.extend(build_extvlcopt_lines(ev, m3u8))
-                        lines.append(m3u8)
-                        ok += 1
-                        print(f"  [{idx+1}/{len(events)}] ✓ {ev['name']}")
-                    else:
-                        print(f"  [{idx+1}/{len(events)}] ✗ {ev['name']}")
+                        break
 
-            tasks = [process(ev, i) for i, ev in enumerate(events)]
-            await asyncio.gather(*tasks)
-            await browser.close()
+                if m3u8:
+                    results.append({**ev, "m3u8": m3u8})
+                    print(f"  [{idx+1}/{len(events)}] ✓ {ev['name']}")
+                else:
+                    failed.append(ev["name"])
+                    print(f"  [{idx+1}/{len(events)}] ✗ {ev['name']}")
 
-    # ── Tulis file ──
+        tasks = [process(ev, i) for i, ev in enumerate(events)]
+        await asyncio.gather(*tasks)
+        await browser.close()
+
+    # ── Tulis playlist ──
+    lines = ["#EXTM3U"]
+    for ev in results:
+        # Ambil origin dari m3u8 URL untuk referrer
+        stream_origin = urlparse(ev["m3u8"]).netloc
+        referrer = f"https://{stream_origin}/"
+
+        lines.append(
+            f'#EXTINF:-1 tvg-id="{ev["name"]}"'
+            f' group-title="{ev["category"]}",{ev["full_name"]}'
+        )
+        lines.append(f'#EXTVLCOPT:http-referrer={referrer}')
+        lines.append(f'#EXTVLCOPT:http-user-agent={STREAM_HEADERS["user-agent"]}')
+        lines.append(f'#EXTVLCOPT:http-headers=Origin: https://{stream_origin}')
+        lines.append(ev["m3u8"])
+
     with open(OUTPUT, "w", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
 
+    # ── Ringkasan ──
     print(f"\n{'='*50}")
-    print(f"  ✅ Berhasil : {ok}/{len(events)}")
+    print(f"  ✅ Berhasil : {len(results)}/{len(events)}")
+    if failed:
+        print(f"  ❌ Gagal    : {len(failed)}")
+        for name in failed[:10]:
+            print(f"     - {name}")
+        if len(failed) > 10:
+            print(f"     ... dan {len(failed)-10} lainnya")
     print(f"  📄 File     : {OUTPUT}")
-    print(f"  📡 Mode     : {MODE}")
     print(f"{'='*50}")
 
 
@@ -290,5 +270,4 @@ if __name__ == "__main__":
         print("❌ Tidak ada event dengan embed URL.")
         exit(1)
 
-    print(f"→ Mode: {MODE.upper()}")
     asyncio.run(build_playlist(events))   
