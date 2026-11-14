@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
-
 import re
 import json
 import asyncio
 import requests
 from urllib.parse import urlparse, parse_qs, unquote
 from playwright.async_api import async_playwright
+from playwright_stealth import stealth_async
 
 # ─────────────────────────────────────────────
 # KONFIGURASI
@@ -23,6 +23,11 @@ OUTPUT = "playlist.m3u"
 
 JSON_KEYS = [f"tv{i}" for i in range(1, 20)]
 MAX_EMBEDS_PER_EVENT = 3
+
+# UA yang dikirim ke halaman embed (bukan HeadlessChrome)
+BROWSER_UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+              "AppleWebKit/537.36 (KHTML, like Gecko) "
+              "Chrome/159.0.0.0 Safari/537.36")
 
 # Header yang tidak perlu ditulis ke playlist
 SKIP_HEADERS = {"accept-encoding", "host", "content-length", "connection"}
@@ -246,7 +251,6 @@ async def resolve_m3u8(page, embed_url: str) -> dict | None:
 # STEP 4: BUILD PLAYLIST
 # ─────────────────────────────────────────────
 def write_header_lines(lines: list[str], headers: dict):
-    """Tulis semua header sebagai #EXTVLCOPT."""
     for key, value in headers.items():
         lk = key.lower()
         if lk in SKIP_HEADERS:
@@ -265,8 +269,23 @@ async def build_playlist(events: list[dict]):
     failed = []
 
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True)
-        pages = [await browser.new_page() for _ in range(CONCURRENCY)]
+        browser = await p.chromium.launch(
+            headless=True,
+            args=["--disable-blink-features=AutomationControlled"],
+        )
+
+        # Context dengan UA asli (bukan HeadlessChrome)
+        context = await browser.new_context(
+            user_agent=BROWSER_UA,
+            viewport={"width": 1920, "height": 1080},
+            locale="en-US",
+        )
+
+        pages = []
+        for _ in range(CONCURRENCY):
+            page = await context.new_page()
+            await stealth_async(page)  # ← hide fingerprint headless
+            pages.append(page)
 
         async def process(ev: dict, idx: int):
             nonlocal results, failed
