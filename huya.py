@@ -157,7 +157,7 @@ def build_extvlcopt_lines(ch: dict) -> list[str]:
     lines = []
 
     # Opsi khusus VLC (lebih prioritas)
-    lines.append(f'#EXTVLCOPT:http-referrer={ch["url"]}')
+    lines.append(f'#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net')
     lines.append(f'#EXTVLCOPT:http-user-agent={STREAM_HEADERS["user-agent"]}')
 
     # Header lain via http-headers
