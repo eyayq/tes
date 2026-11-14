@@ -1,11 +1,7 @@
 """
 sporteurope_iptv.py — IPTV M3U: LIVE + UPCOMING + PAST
-Group-title:
-  - Live:      nama sport (Badminton, Tennis, dll)
-  - Upcoming:  "Upcoming"
-  - Past:      "Past"
-Prefix nama:
-  - [LIVE] / [UPCOMING] / [PAST]
+Group-title prioritas: Badminton, Basketball, Football, Billiards, Padel di atas
+Upcoming URL: fallback
 """
 
 import json
@@ -24,6 +20,12 @@ LANG = "en"
 MAX_WORKERS = 50
 OUTPUT_FILE = "playlist.m3u"
 WIB = timezone(timedelta(hours=7))
+
+# Fallback URL untuk upcoming
+UPCOMING_FALLBACK_URL = "https://b.bhns.workers.dev/?url=http://0.now1.tv:80/CC///CC.php"
+
+# Urutan prioritas group-title
+PRIORITY_SPORTS = ["Badminton", "Basketball", "Football", "Billiards", "Padel"]
 
 USER_AGENT = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Mobile Safari/537.36"
 ORIGIN = "https://sporteurope.tv"
@@ -89,6 +91,14 @@ def get_m3u8(stream_urls):
     return None
 
 
+def sport_sort_key(sport_name):
+    """Sort key: priority sports first, then alphabetical."""
+    try:
+        return (0, PRIORITY_SPORTS.index(sport_name))
+    except ValueError:
+        return (1, sport_name.lower())
+
+
 # ─── API: LIVE ──────────────────────────────────────────
 
 def get_live_asset_ids():
@@ -98,7 +108,6 @@ def get_live_asset_ids():
 
 
 def get_player_asset(asset_id):
-    """Fetch M3U8 + metadata untuk 1 asset."""
     url = f"{API_BASE}/api/web-player/personal/assets/{asset_id}"
     r = SESSION.get(url, headers=_headers_player())
     if r.status_code != 200:
@@ -138,7 +147,7 @@ def get_player_asset(asset_id):
     }
 
 
-# ─── API: UPCOMING (next-livestreams per sport) ────────
+# ─── API: UPCOMING ──────────────────────────────────────
 
 def get_header_tags():
     url = f"{API_BASE}/api/web/public/header-tags?lang={LANG}"
@@ -148,7 +157,6 @@ def get_header_tags():
 
 
 def get_next_livestreams(sport_id, page=1, per_page=20):
-    """GET /api/web/public/tags/{sport_id}/next-livestreams"""
     url = f"{API_BASE}/api/web/public/tags/{sport_id}/next-livestreams?page={page}&per_page={per_page}&lang={LANG}"
     r = SESSION.get(url, headers=_headers())
     if r.status_code != 200:
@@ -162,12 +170,9 @@ def get_next_livestreams(sport_id, page=1, per_page=20):
             "name": a.get("name", ""),
             "slug": a.get("slug", ""),
             "start_date": a.get("content_start_date", ""),
-            "end_date": a.get("content_end_date"),
             "currently_live": a.get("currently_live", False),
-            "type": a.get("type", ""),
             "sport": a.get("display_tags", [{}])[0].get("name", "Other") if a.get("display_tags") else "Other",
             "profile_slug": a.get("profile", {}).get("slug", ""),
-            "profile_name": a.get("profile", {}).get("name", ""),
             "image_id": a.get("image_id", ""),
         })
 
@@ -176,14 +181,13 @@ def get_next_livestreams(sport_id, page=1, per_page=20):
 
 
 def get_all_upcoming():
-    """Fetch semua upcoming dari semua sport."""
     sports = get_header_tags()
     upcoming = []
     seen_ids = set()
 
     for sport in sports:
         try:
-            assets, last_page = get_next_livestreams(sport["id"], page=1, per_page=20)
+            assets, _ = get_next_livestreams(sport["id"], page=1, per_page=20)
             for a in assets:
                 if a["id"] not in seen_ids and not a["currently_live"]:
                     seen_ids.add(a["id"])
@@ -196,10 +200,9 @@ def get_all_upcoming():
     return upcoming
 
 
-# ─── API: PAST (dari tag page) ─────────────────────────
+# ─── API: PAST ──────────────────────────────────────────
 
 def get_tag_assets(sport_id, page=1, per_page=20):
-    """GET /api/web/public/tags/{sport_id} — return assets (past + upcoming + live)."""
     url = f"{API_BASE}/api/web/public/tags/{sport_id}?page={page}&per_page={per_page}&lang={LANG}"
     r = SESSION.get(url, headers=_headers())
     if r.status_code != 200:
@@ -217,10 +220,8 @@ def get_tag_assets(sport_id, page=1, per_page=20):
                     "start_date": a.get("content_start_date", ""),
                     "end_date": a.get("content_end_date"),
                     "currently_live": a.get("currently_live", False),
-                    "type": a.get("type", ""),
                     "sport": a.get("display_tags", [{}])[0].get("name", "Other") if a.get("display_tags") else "Other",
                     "profile_slug": a.get("profile", {}).get("slug", ""),
-                    "profile_name": a.get("profile", {}).get("name", ""),
                     "image_id": a.get("image_id", ""),
                 })
 
@@ -229,7 +230,6 @@ def get_tag_assets(sport_id, page=1, per_page=20):
 
 
 def get_all_past():
-    """Fetch past assets (was_live=True, currently_live=False, end_date sudah lewat)."""
     sports = get_header_tags()
     now = datetime.now(timezone.utc)
     past = []
@@ -237,11 +237,10 @@ def get_all_past():
 
     for sport in sports:
         try:
-            assets, last_page = get_tag_assets(sport["id"], page=1, per_page=20)
+            assets, _ = get_tag_assets(sport["id"], page=1, per_page=20)
             for a in assets:
                 if a["id"] in seen_ids:
                     continue
-                # Past: sudah selesai (end_date ada dan sudah lewat) ATAU was_live tapi tidak live
                 is_past = False
                 if a.get("end_date"):
                     try:
@@ -274,7 +273,9 @@ def get_all_past():
 def generate_m3u(live_results, upcoming_results, past_results):
     lines = ["#EXTM3U"]
 
-    # 1. LIVE (di atas, group = sport)
+    # ── LIVE: sort by priority sports first ──
+    live_results.sort(key=lambda x: sport_sort_key(x["sport"]))
+
     for r in live_results:
         if not r["m3u8"]:
             continue
@@ -285,16 +286,20 @@ def generate_m3u(live_results, upcoming_results, past_results):
         lines.append(f'#EXTINF:0,tvg-name="{title}" tvg-logo="{logo}" group-title="{group}",{title}')
         lines.append(r["m3u8"])
 
-    # 2. UPCOMING (group = "Upcoming")
+    # ── UPCOMING: group = "Upcoming", URL = fallback ──
+    upcoming_results.sort(key=lambda x: x.get("start_date", ""))
+
     for r in upcoming_results:
         time_str = to_wib(r["start_date"])
         title = f"[UPCOMING] {r['name']} [{time_str}]" if time_str else f"[UPCOMING] {r['name']}"
         group = "Upcoming"
         logo = image_id_to_url(r.get("image_id", ""), "320x180")
         lines.append(f'#EXTINF:0,tvg-name="{title}" tvg-logo="{logo}" group-title="{group}",{title}')
-        lines.append(f"{WEB_BASE}/videos/{r['profile_slug']}/{r['slug']}")
+        lines.append(UPCOMING_FALLBACK_URL)
 
-    # 3. PAST (group = "Past")
+    # ── PAST: group = "Past" ──
+    past_results.sort(key=lambda x: x.get("start_date", ""), reverse=True)
+
     for r in past_results:
         time_str = to_wib(r["start_date"])
         title = f"[PAST] {r['name']} [{time_str}]" if time_str else f"[PAST] {r['name']}"
@@ -359,13 +364,14 @@ def main():
     print(f"  📅 UPCOMING: {len(upcoming)}")
     print(f"  📁 PAST:     {len(past)}")
     print(f"  TOTAL:       {len(live_results) + len(upcoming) + len(past)}")
-    print(f"")
-    print(f"  Live by sport: {json.dumps(live_sports)}")
+    print(f"\n  Live by sport:")
+    for s in sorted(live_sports.keys(), key=sport_sort_key):
+        print(f"    {s}: {live_sports[s]}")
     print(f"{'═' * 60}")
 
     # Preview
     lines = m3u.strip().split("\n")
-    print(f"\n  PREVIEW (first 6 entries):")
+    print(f"\n  PREVIEW (first 6):")
     print(f"  {'─' * 56}")
     count = 0
     i = 1
