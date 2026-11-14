@@ -11,7 +11,7 @@ from curl_cffi import requests as cffi_requests
 # ─── CONFIG ─────────────────────────────────────────────
 WEB_BASE = "https://www.camel1.tv"
 API_BASE = "https://api.cameltv.live"
-OUTPUT_M3U = "a/camelia.gif"
+OUTPUT_M3U = "playlist.m3u"
 MAX_WORKERS = 200
 RETRIES = 3
 RETRY_DELAY = 2
