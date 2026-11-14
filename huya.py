@@ -132,17 +132,13 @@ async def build_playlist(channels: list[dict], output: str = "playlist.m3u"):
 
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=True)
-
-        # Buat N page sesuai concurrency
         pages = [await browser.new_page() for _ in range(CONCURRENCY)]
 
-        # Bagi channel ke tiap page
         tasks = []
         for i, ch in enumerate(channels):
             page = pages[i % CONCURRENCY]
             tasks.append(fetch_channel(page, ch, semaphore))
 
-        # Jalankan semua concurrent
         done = 0
         for coro in asyncio.as_completed(tasks):
             result = await coro
@@ -163,18 +159,14 @@ async def build_playlist(channels: list[dict], output: str = "playlist.m3u"):
             f'#EXTINF:-1 tvg-id="{ch["name"]}"'
             f'{logo_attr} group-title="{ch["group"]}",{ch["name"]}'
         )
+        # ← Tambahkan ini:
+        lines.append(f'#EXTVLCOPT:http-origin=https://malaysia-tv.net')
+        lines.append(f'#EXTVLCOPT:http-referrer={ch["url"]}')
+        lines.append(f'#EXTVLCOPT:http-user-agent={HEADERS["User-Agent"]}')
         lines.append(ch["m3u8"])
 
     with open(output, "w", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
 
     print(f"\n✅ Selesai! {len(results)}/{len(channels)} channel berhasil.")
-    print(f"   File: {output}")
-
-
-if __name__ == "__main__":
-    channels = scrape_channels()
-    if channels:
-        asyncio.run(build_playlist(channels))
-    else:
-        print("Tidak ada channel ditemukan.")   
+    print(f"   File: {output}")   
