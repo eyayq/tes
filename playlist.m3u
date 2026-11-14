@@ -1,1025 +1,166 @@
 #EXTM3U
-#EXTINF:-1 tvg-id="Tennis+ Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/Tennis-Plus-Live-Streaming-HD-Free.webp" group-title="Sports",Tennis+ Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://epg.provider.plex.tv/library/parts/5e20b730f2f8d5003d739db7-63ec0b739866d8d2120ac759.m3u8?includeAllStreams=1&#038;x-plex-product=Plex+Mediaverse&#038;x-plex-token=AKC28PzSgrNrrnx7eD_P&#038;auto=0
-#EXTINF:-1 tvg-id="Miramax Movies Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/MIRAMAX-MOVIES-Live-Streaming-HD-Free.webp" group-title="International",Miramax Movies Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://linear-798.frequency.stream/mt/plex/798/hls/master/playlist.m3u8
-#EXTINF:-1 tvg-id="Pickle TV Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/Pickle-TV-Live-Streaming-HD-Free.webp" group-title="Sports",Pickle TV Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://epg.provider.plex.tv/library/parts/5e20b730f2f8d5003d739db7-63ec0b739866d8d2120ac759.m3u8?includeAllStreams=1&#038;x-plex-product=Plex+Mediaverse&#038;x-plex-token=AKC28PzSgrNrrnx7eD_P&#038;auto=0
-#EXTINF:-1 tvg-id="Cricket Gold Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/CRICKET-GOLD-Live-Streaming-HD-Free.webp" group-title="Sports",Cricket Gold Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://epg.provider.plex.tv/library/parts/5e20b730f2f8d5003d739db7-65e0c8c6d899afe817b9d224.m3u8?includeAllStreams=1&#038;x-plex-product=Plex+Mediaverse&#038;x-plex-token=AKC28PzSgrNrrnx7eD_P&#038;auto=0
-#EXTINF:-1 tvg-id="ION Television Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/iON-Television-NEWS-Live-Streaming-HD-Free.webp" group-title="International",ION Television Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://linear-798.frequency.stream/mt/plex/798/hls/master/playlist.m3u8
-#EXTINF:-1 tvg-id="Nosey TV Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/NOSEY-TV-Live-Streaming-HD-Free.webp" group-title="International",Nosey TV Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://epg.provider.plex.tv/library/parts/5e20b730f2f8d5003d739db7-5f0ff262d71dcb00449ec015.m3u8?includeAllStreams=1&#038;x-plex-product=Plex+Mediaverse&#038;x-plex-token=AKC28PzSgrNrrnx7eD_P&#038;auto=0
-#EXTINF:-1 tvg-id="FailArmy Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/FAILARMY-TV-Live-Streaming-HD-Free.webp" group-title="International",FailArmy Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://epg.provider.plex.tv/library/parts/5e20b730f2f8d5003d739db7-5f0ff262d71dcb00449ec015.m3u8?includeAllStreams=1&#038;x-plex-product=Plex+Mediaverse&#038;x-plex-token=AKC28PzSgrNrrnx7eD_P&#038;auto=0
-#EXTINF:-1 tvg-id="BBC News Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/BBC-NEWS-Live-Streaming-HD-Free.webp" group-title="International",BBC News Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://vs-hls-push-ww-live.akamaized.net/x=4/i=urn:bbc:pips:service:bbc_news_channel_hd/mobile_wifi_main_hd_abr_v2.m3u8
-#EXTINF:-1 tvg-id="Sabah FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Sabah-FM-Live.webp" group-title="Malaysian TV",Sabah FM Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/EivksgFSVrWwhJzu7qc6dr51s79NWXNoc56SyW2jmErL.m3u8?expires=1794692953&token=kVtCbio14yNYuXVzG4q_BQUmLsx4jY_GNzTnxNwOPXM
-#EXTINF:-1 tvg-id="Al Jazeera Arabic Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/AL-Jazeera-Arabic-HD-Live.webp" group-title="Malaysian TV",Al Jazeera Arabic Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/31qHhb7eEptKUvdFoZYeiJ2km3E6nCDtnhVj2hyFnibN8tcCRZBMhUDhB6EfWxDc6m.m3u8?expires=1794692953&token=XLfcM4oXgpfQDySfQF1qc6jOULP7N29G-GEsWiTaW9w
-#EXTINF:-1 tvg-id="Eight FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Eight-FM-Live.webp" group-title="Malaysian TV",Eight FM Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/2uyC8DK9BJLKJH5VhjXmwvDr5RskHSvc1X7nijC3u8ii.m3u8?expires=1794692956&token=-PJ222DjGcIxoK66p5fvH-YvuUA-KkW0_n5ec1anw2M
-#EXTINF:-1 tvg-id="beIN Sports Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/BEin-Sports-Live-Streaming-Malaysia-HD-Channel.webp" group-title="Sports",beIN Sports Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://rmtv.akamaized.net/hls/live/2043154/rmtv-en-web/bitrate_1.m3u8
-#EXTINF:-1 tvg-id="Pitaara Movies Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/Pitara-Movies-Live-Streaming-HD-Free.webp" group-title="International",Pitaara Movies Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://vg-pitaaratvyupp.akamaized.net/ptnr-yupptv/v1/manifest/611d79b11b77e2f571934fd80ca1413453772ac7/vglive-sk-433350/881adefe-4b73-4876-9772-1334127e9a75/0.m3u8
-#EXTINF:-1 tvg-id="MySports Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/MySports-Live.webp" group-title="Malaysian TV",MySports Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/4dGqw64VaYYf7h4VaboaL6LHmNAXz93ZzJFSK7tx3A2Y.m3u8?expires=1794692957&token=adS87pCHh_lXdu-fKzaNer7LaxkUgCUBdFuvoFANz98
-#EXTINF:-1 tvg-id="Drama Sangat Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/09/Drama-Sangat-Malaysia-Live-Streaming.webp" group-title="Malaysian TV",Drama Sangat Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/4wkTJB6FQY5TYb5phy8CQ9h44wq77KDnnzRGRgJTwEyv.m3u8?expires=1794692954&token=uuJJ3AiePVlTvpAJQ972_QgY7f7dfrcilm8j4jrFXEk
-#EXTINF:-1 tvg-id="MPL Malaysia Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/MPL-Malaysia-Live.webp" group-title="Malaysian TV",MPL Malaysia Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/5y8F68vYyTracEmHj7UFooY4X4aRto7hHgzcQDqkh6gL.m3u8?expires=1794692954&token=qLr9luNHYzdSBf6kkGJy5l2lck8RA32KQFJzD_kgUwQ
-#EXTINF:-1 tvg-id="Berita RTM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/Berita-RTM-Live-Streaming-TV-HD.webp" group-title="Malaysian TV",Berita RTM Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/Dic2ryCWJX1G5SwtqBmhmAn3NXSgK16Ck6ErXNKJ6rg3.m3u8?expires=1794692957&token=51RUMFTvK4f05gd6f-RgkN0gpdvgVM6n4JLSkIubImo
-#EXTINF:-1 tvg-id="Sabah V FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/SabahV-FM-Live.webp" group-title="Malaysian TV",Sabah V FM Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/AegDco8J7HHRTnzyHjq8iK6yviikhTv9WAHJX52bRkdQ.m3u8?expires=1794692958&token=FOhNlr_JprKnwHrh6hKAUJmm0H7beLVXRrRaxVsr-RQ
-#EXTINF:-1 tvg-id="Manis FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Manis-FM-Live.webp" group-title="Malaysian TV",Manis FM Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/CCVBVzkucxekKEevQnBtd7gZ1xH1DcCyMYYidZnXiixR.m3u8?expires=1794692959&token=VLv3aZHLKt4wdbadbRZJpgwxU5Zz5kq8WPAORQzmSNU
-#EXTINF:-1 tvg-id="CNA Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/CNA-Live.webp" group-title="Malaysian TV",CNA Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/DzyhABniG1262TyB6eHDT3K5ovLv2pqQDNEXsekr7axy.m3u8?expires=1794692960&token=ELz2aEKKYW1nK2TqeI3GWxcxmEFEzjsUPIDdHlpwGws
-#EXTINF:-1 tvg-id="TV1 Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/TV1-Live-Streaming-HD-Now.webp" group-title="Malaysian TV",TV1 Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/CpfuFTFqcaKT1LnpjWzNcPBp7Z8RXnz8i63NiK3Csu16.m3u8?expires=1794692960&token=4l66AK_vpabhV8KQ4JeF9sUdLfz5D_R2Pr_c-6Xvaz8
-#EXTINF:-1 tvg-id="Euronews Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/EURO-NEWS-Live-Streaming-HD-Free.webp" group-title="International",Euronews Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/9U2wbrUo98oGRXUwzHGPKvZXgEMaXWzTQnqXNckczA8e.m3u8?expires=1794692962&token=-CSFRx53h9JjwqEnU28yJMVxEl0ksukLVsJ_An3z_E4
-#EXTINF:-1 tvg-id="Kool FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Kool-FM-Live.webp" group-title="Malaysian TV",Kool FM Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/85sx4RQDpVnsJQUM3ZPgGxyujZFBd4YtUky7MdwGnak8.m3u8?expires=1794692962&token=Gf9gyWgr9fhNbtKG40O2SizffX2Lv0ax5z5cwZFxOks
-#EXTINF:-1 tvg-id="The Indonesia Channel Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/The-Indonesia-Channel-Live.webp" group-title="Malaysian TV",The Indonesia Channel Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/7Tm22SqqoKjDKRYkQk4nVY1FZ6jkMYGQ2t9r4pDxqvsAEaTuidWtf7MiJ3wSRyMcMa.m3u8?expires=1794692963&token=Uhmj12f8IkT89gbX4Zz1SfXz0pul8o_22SXQ5TyRDJ8
-#EXTINF:-1 tvg-id="Suria FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Suria-FM-Live.webp" group-title="Malaysian TV",Suria FM Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/EYHALmAVopGng8myX8ZNRBH4QE3VAXDgdCDyK4KR7UzH.m3u8?expires=1794692966&token=LHbWiUpQCb5BtmUn18c6xv42_QLjyFNl6FO3awkkNu8
-#EXTINF:-1 tvg-id="Sarawak FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Sarawak-FM-Live.webp" group-title="Malaysian TV",Sarawak FM Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/8qMp8HW48zPSy2MboSivQkTN8SUiyVEZ2HQT2jJBZ1xc.m3u8?expires=1794692965&token=JSoD5xHVv2MoIfOHnWHpYRsAjFkC1U84qij14kGwb7g
-#EXTINF:-1 tvg-id="PPA KL Cup Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/PPA-KL-CUP-Live.webp" group-title="Malaysian TV",PPA KL Cup Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/9KbyYkovZrtQ4dz1fi7FEUmZHaAfqp7GK7cnpVSuqvHy.m3u8?expires=1794692972&token=W_8x2MyiO4D7NT-BN25J6z_VZP4zhUpvKXmY0V9GaeI
-#EXTINF:-1 tvg-id="FIFA+ Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/11/FIFA-Plus-Live-Streaming.webp" group-title="Malaysian TV",FIFA+ Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/5rZ2ynCRigZM3NYt8GEh9zmBp4cpQnFFXH7oejBDAp9h.m3u8?expires=1794692973&token=LK2Ws42Y8aIptPRMPxp_JCrvtNvY5yS8e96j1TFSIOo
-#EXTINF:-1 tvg-id="Nasional FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Nasional-FM-Live.webp" group-title="Malaysian TV",Nasional FM Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/XgXhT2KSe862yEZ1dfo54izaTPF9XGZc531PddgcHYD.m3u8?expires=1794692968&token=-1-IqcRcLmKEfzvOP0WCxEH8HFO-3FZMbUWBLrmK9iI
-#EXTINF:-1 tvg-id="Free Movies Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Free-Movies-Live.webp" group-title="Malaysian TV",Free Movies Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/7FwvuMACF9aHAVFx5AkezNkAVBLbmQmnB4VfmCCs9n8X.m3u8?expires=1794692966&token=yhl1YWERt_Kf3C0-RXfG8cIEJm8HZ9g926SSaiSAsS0
-#EXTINF:-1 tvg-id="Bernama Radio Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/BERNAMA-Radio-Live.webp" group-title="Malaysian TV",Bernama Radio Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/8aw7eudWZ9nZJdrA4j59g8UDnuJnFJdbd9wNWQ5GaCH2.m3u8?expires=1794692970&token=1CjfWUjTsz9prAZwZNjzWe3lSTE5L6BRtiNeUWTNRdg
-#EXTINF:-1 tvg-id="Bernama TV Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/Bernama-TV-Live-Streaming-HD.webp" group-title="Malaysian TV",Bernama TV Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/8aw7eudWZ9nZJdrA4j59g8M5wW3ne9DNH1XomVoj1FxE.m3u8?expires=1794692964&token=uDDe_0QYnBoNnIchO_WGuwlVNSzHWchlfBW5UJpACtA
-#EXTINF:-1 tvg-id="TaiwanPlus Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/TaiwanPlus-Live.webp" group-title="Malaysian TV",TaiwanPlus Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/7s2VCVXsNhLf9mqvNDBJhBoUVX2BsE2iB9ZFGnQxRMFG.m3u8?expires=1794692968&token=-ACIik4LU0qZIVGPpwj0idDVHUtFXwaA_yK2YtEUph8
-#EXTINF:-1 tvg-id="Fly FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Fly-FM-Live.webp" group-title="Malaysian TV",Fly FM Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/2oZpZG8TPTpWyxkN5eN3zQexyGnZcZ1P7vdyXq5a4jN1.m3u8?expires=1794692970&token=7TiTX3kEcPbklHF2Cc1NtRrV3FuCjeDvenWPPJK5Agk
-#EXTINF:-1 tvg-id="Selangor TV Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/Selangor-TV-Live-Streaming-Free-HD.webp" group-title="Malaysian TV",Selangor TV Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/DkWBMnvzxJptEHmhvfm5aJwq8W4z1QegPmonrfMC87yh.m3u8?expires=1794692976&token=JnmjylUdf5cAVxtUKYJf_u_C77VfgizUGpC9Bj_rxik
-#EXTINF:-1 tvg-id="Okey TV Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/Okey-TV-Live-Streaming-Free-HD.webp" group-title="Malaysian TV",Okey TV Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/DQMUXfd8q9hFDzCfAqNy64AQGn7owijaJi2j67disTcM.m3u8?expires=1794692970&token=c-oAxR28S2SARM9jH0sSsAWAMkefEtF_eYQKSRIVZxM
-#EXTINF:-1 tvg-id="Didik TV Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/Didik-TV-Live-Streaming-HD-Now.webp" group-title="Malaysian TV",Didik TV Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/CAiG8K5LEdzyCDPvpiNiPTspJBAEYE4USrZ2UFsdLpy9.m3u8?expires=1794692966&token=GWnMVrySNIpchYOzeepIURv_ZHjKpZSgQwGYbmShaSE
-#EXTINF:-1 tvg-id="Rakita FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Rakita-FM-Live.webp" group-title="Malaysian TV",Rakita FM Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/DGo3J4Mk4rSdt1t2MX7f3KUSEZBbWeBfejZ3U2cdGy6r.m3u8?expires=1794692977&token=RhB4vcE_4cN0xHcFL9oS5jOL0ehnpp2ReTfcZrHtCk4
-#EXTINF:-1 tvg-id="TraXX FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/TraXX-FM-Live.webp" group-title="Malaysian TV",TraXX FM Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/GQr9pSKJP676sSTPVuYFqBi9ktmgU3FAgufAJtsw6Rek.m3u8?expires=1794692974&token=MRP81mJ9066fZUJCBMdZDurxwsPOcHt8z8layz5y4_A
-#EXTINF:-1 tvg-id="Wai FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Wai-FM-Live.webp" group-title="Malaysian TV",Wai FM Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/HsqY8mvyR2tWiYFtrACfNAdbiUS6T4XfRYiY5ondgo73.m3u8?expires=1794692976&token=WsHLSI992PGt0Ka5Eo1J6dWQpCZkOXFdAsgk51Xcw1U
-#EXTINF:-1 tvg-id="Best FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Best-FM-Live.webp" group-title="Malaysian TV",Best FM Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/CpfuFTFqcaKT1LnpjWzNcPBp7Z8RXnz8i63NiK3Csu16.m3u8?expires=1794692960&token=4l66AK_vpabhV8KQ4JeF9sUdLfz5D_R2Pr_c-6Xvaz8
-#EXTINF:-1 tvg-id="Asyik FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Asyik-FM-Live.webp" group-title="Malaysian TV",Asyik FM Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/4wkTJB6FQY5TYb5phy8CQ9h44wq77KDnnzRGRgJTwEyv.m3u8?expires=1794692954&token=uuJJ3AiePVlTvpAJQ972_QgY7f7dfrcilm8j4jrFXEk
-#EXTINF:-1 tvg-id="RT International Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/RT-International-Live.webp" group-title="Malaysian TV",RT International Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/4WL6fbd5pizR5pUg2oBgGzuy4sw9qfkqQzfvmz1xDWWV8TEAJcpLbTPAoGLfAwdxHR.m3u8?expires=1794692975&token=oOXgO4ICgs0AN9l1R1SmQVhlNbSmQoXKMuWkabzEfjA
-#EXTINF:-1 tvg-id="Minnal FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Minnal-FM-Live.webp" group-title="Malaysian TV",Minnal FM Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/5UTQAMhLVRA76TDGVocZ49kU9Y92jE3NwNsTxYFPaDW8.m3u8?expires=1794692980&token=CObrBxvejmRgaJY6zRq4vqvxm0Pdp_UqAJ-OoOQRWYw
-#EXTINF:-1 tvg-id="DW Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/DW-Live.webp" group-title="Malaysian TV",DW Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/6HkwaBGcJQMTAqfmnqAVaGJYC82YhLbu4wvpx2ZqF3pf.m3u8?expires=1794692979&token=49q7nOe15a1Dj-tQ1iszUwz7yY34cxwKzXM8gX7HJHo
-#EXTINF:-1 tvg-id="TV9 Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/TV9-Live-Streaming-HD-Now.webp" group-title="Malaysian TV",TV9 Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/9U2wbrUo98oGRXUwzHGPKvZXgEMaXWzTQnqXNckczA8e.m3u8?expires=1794692962&token=-CSFRx53h9JjwqEnU28yJMVxEl0ksukLVsJ_An3z_E4
-#EXTINF:-1 tvg-id="USIM TV Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/USIMTV-Live.webp" group-title="Malaysian TV",USIM TV Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/GyT3iVhXwwJMnhcdoD1NMM9kNpTHjdaHzWKv1RFfSZLP.m3u8?expires=1794692980&token=UJ0uR0vrMwzgSrIgP8hhc_y4b_oqLvadibEIPyfV5pM
-#EXTINF:-1 tvg-id="Ai FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Ai-FM-Live.webp" group-title="Malaysian TV",Ai FM Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/DcaoPSbXEy5kfHieQ7HzJCFw7V7dWUDZLVpxW7AciY7D.m3u8?expires=1794692985&token=2oOOsDeAnlzs4WyMffoby9moxzhtX-G10BzCOdBsBes
-#EXTINF:-1 tvg-id="Radio Klasik Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Radio-Klasik-Live.webp" group-title="Malaysian TV",Radio Klasik Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/J4oQtN7VQUxsNfNJYV3W9d8e3P3ZnWvCuTL6iThwRdYH.m3u8?expires=1794692992&token=oMJ3X5a1vVyX_eUxlZp3vpKkSF1M5SKduxONVzOZpgg
-#EXTINF:-1 tvg-id="TV2 Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/TV2-Malaysia-Live-Streaming-HD-Now.webp" group-title="Malaysian TV",TV2 Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/6gvxGkHHQ1mtt9QWbXcyW9bzkAZEvyq1kXdqNHEv28BL.m3u8?expires=1794692984&token=QwIC8J8kYHf9iI1LU2lKvO5cRxDZG7BMccf64rqagZM
-#EXTINF:-1 tvg-id="Hot FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Hot-FM-Live.webp" group-title="Malaysian TV",Hot FM Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/EbSFLDb8htu1YmMcd5YhjkboVVo1x5qh1hdYi5q2CF2n.m3u8?expires=1794692983&token=tuWI7UklXq22e1JPdoZh6r5mrk3DQENSK7krEn2tyuQ
-#EXTINF:-1 tvg-id="TV IKIM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/tvIKIM-Live-Streaming-Free-HD.webp" group-title="Malaysian TV",TV IKIM Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/3riAzUHoBPS2rMhfTEWcisYYGZowpmEJsFEBPExSa9BX.m3u8?expires=1794692981&token=QNeZ8IaQyvPy_9P37ALjjumY6NX8mfrxM30uZloMDQ0
-#EXTINF:-1 tvg-id="Arirang Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Arirang-Live.webp" group-title="Malaysian TV",Arirang Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/Anf8Cb8EMSrKQpVZBCDYCtFBcyyDp2iqyeKFMY1B9vPc.m3u8?expires=1794692984&token=cv8PLOjSbfSpL0Z9WHB7QB9Egz6fsgPzgCF95GI_LoY
-#EXTINF:-1 tvg-id="Borneo TV Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/BORNEO-TV-Live.webp" group-title="Malaysian TV",Borneo TV Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/5KQZyxsjKUGnsuoGFbr5hfsycjrA3Mk7yLsYnf3qVJCE.m3u8?expires=1794692987&token=gOpwcm-ezhq7cWr3Yz1SfWmgJ86se5TSK3zTNfpBPfQ
-#EXTINF:-1 tvg-id="NHK World Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/NHK-WORLD-Live.webp" group-title="Malaysian TV",NHK World Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/AbhQmeWN6egukpj6xZ7cVrUCubCSghJ6qAV6A9LeWvbQ.m3u8?expires=1794692990&token=gurwJNi_3BzNxFoqEDghW6JRE2GPcVgqslVFtpe60l0
-#EXTINF:-1 tvg-id="Al Hijrah Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/Al-Hijrah-TV-Live-Streaming-HD-Now.webp" group-title="Malaysian TV",Al Hijrah Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/EbYCrPFsbJcfbFGUdnnv9PEABLYw8Xj9W3EgqLPiv8Wm.m3u8?expires=1794692991&token=2DB3_6ie0a_0ac7dGNAprFaWbp9gvY7BQ0ZE5ayvtqw
-#EXTINF:-1 tvg-id="TV3 Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/TV3-Live-Streaming-HD-Now-3.webp" group-title="Malaysian TV",TV3 Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/HsqY8mvyR2tWiYFtrACfNAdbiUS6T4XfRYiY5ondgo73.m3u8?expires=1794692976&token=WsHLSI992PGt0Ka5Eo1J6dWQpCZkOXFdAsgk51Xcw1U
-#EXTINF:-1 tvg-id="Al Jazeera English Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/AL-Jazeera-English-HD-Live.webp" group-title="Malaysian TV",Al Jazeera English Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/31qHhb7eEptKUvdFoZYeiHzVpuFLzUHYUZpic4qUdUeMtPpmSRQgABBmonthuSK6yH.m3u8?expires=1794692993&token=_KyC5N-4h_sr0O8HTGdU9gKiw9AHe2K3WpHrWWYuv3s
-#EXTINF:-1 tvg-id="IKIM FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/IkimFM-Live.webp" group-title="Malaysian TV",IKIM FM Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/CDWYwVJ7GKmsDUTojnfxDhTTrT2MZQFJgCj3JUCwsCRE.m3u8?expires=1794692989&token=fybP07dZBfU-44b5YkSRqB5jab6gBbDVILLHE2JJ7hg
-#EXTINF:-1 tvg-id="TV Sarawak Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/TV-Sarawak-Live-Streaming-Siaran-HD-Now.webp" group-title="Malaysian TV",TV Sarawak Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/Ej3fj6r5K4N6oHN4k5dntRjBPp1SBiXyMyEGdrQYZ3vF.m3u8?expires=1794692996&token=Fc8Au2KipUnSv2ujPMRuodZM6SEUeKlLhozzKEamqRA
-#EXTINF:-1 tvg-id="8TV Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/04/8TV-Live-Malaysia-TV-Streaming-HD-Free.webp" group-title="Malaysian TV",8TV Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/8pQTNs9MHm8GJxtGbMGANaFsfetEtr1Qb8g5geHFvk2b.m3u8?expires=1794692988&token=nz9nibmDHwQNQERSCVSF_ygN0jhnMuu_8b39qylzoNw
-#EXTINF:-1 tvg-id="Sukan RTM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/Sukan-RTM-Live-Streaming-TV-HD.webp" group-title="Malaysian TV",Sukan RTM Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/4tyP3EoCC4M6SkNPNS9eyqVghqqjANGvk4rFy1xEWMwK.m3u8?expires=1794693000&token=dRRT5-VoUceBMkTgtoh3NP1meSh6OliLqTZLoa8lP30
-#EXTINF:-1 tvg-id="Molek FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Molek-FM-Live.webp" group-title="Malaysian TV",Molek FM Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/3LDJRtFXCR3WEeLpjyYz7tRVYXpFAoL5xZwAKKGokoLf.m3u8?expires=1794692999&token=C0hvmMpPKOq0nVqnIiRQv6ZfX0T6xM2kfPVXNaMpJdU
-#EXTINF:-1 tvg-id="Siara TV Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Siara-TV-Live.webp" group-title="Malaysian TV",Siara TV Live
-#EXTVLCOPT:inputstream.adaptive.stream_headers=origin=https://malaysia-tv.net
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Android"
-#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?1
-#EXTVLCOPT:http-headers=accept: */*
-#EXTVLCOPT:http-headers=sec-gpc: 1
-#EXTVLCOPT:http-headers=origin: https://malaysia-tv.net
-#EXTVLCOPT:http-headers=sec-fetch-site: cross-site
-#EXTVLCOPT:http-headers=sec-fetch-mode: cors
-#EXTVLCOPT:http-headers=sec-fetch-dest: empty
-#EXTVLCOPT:http-headers=accept-encoding: gzip, deflate, br, zstd
-#EXTVLCOPT:http-headers=accept-language: id-ID,id;q=0.7
-#EXTVLCOPT:http-headers=priority: u=1, i
-https://2bfd741e.b-cdn.net/streamer/69KyW2byLhG2WKhDsHYQ3BB78TWM5mdgmcNv347BfsRJ.m3u8?expires=1794693000&token=C2PiIK9vyWI9HuAQBz-nv7Jh85asPFWFha3_XXjak-k
+#EXTINF:-1 tvg-id="Fleetwood Town vs Tranmere Rovers" group-title="Football",Football : Fleetwood Town vs Tranmere Rovers
+#EXTVLCOPT:http-referrer=https://fancoodee.pages.dev/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://fancoodee.pages.dev
+https://fancoodee.pages.dev/?src=https://mini.allinonereborn.site/fcw/player_world.html?url=https%3A%2F%2Fallinonereborn2.online%2Ffctest%2Fplaylists%2Fmatch_4250002%2Funknown.m3u8
+#EXTINF:-1 tvg-id="Ukraine at Northern Ireland" group-title="UEFA Nations League",UEFA Nations League : Ukraine at Northern Ireland
+#EXTVLCOPT:http-referrer=https://hls.meth-streams-hd.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://hls.meth-streams-hd.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401861169/index.m3u8?_=1794693122840
+#EXTINF:-1 tvg-id="Republic of Ireland at Austria" group-title="UEFA Nations League",UEFA Nations League : Republic of Ireland at Austria
+#EXTVLCOPT:http-referrer=https://hls.meth-streams-hd.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://hls.meth-streams-hd.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401861170/index.m3u8?_=1794693122939
+#EXTINF:-1 tvg-id="Denmark at Portugal" group-title="UEFA Nations League",UEFA Nations League : Denmark at Portugal
+#EXTVLCOPT:http-referrer=https://hls.meth-streams-hd.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://hls.meth-streams-hd.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401861167/index.m3u8?_=1794693122829
+#EXTINF:-1 tvg-id="Poland at Romania" group-title="UEFA Nations League",UEFA Nations League : Poland at Romania
+#EXTVLCOPT:http-referrer=https://hls.meth-streams-hd.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://hls.meth-streams-hd.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401861168/index.m3u8?_=1794693122955
+#EXTINF:-1 tvg-id="UFC 334: Gane vs. Hokit" group-title="UFC",UFC : UFC 334: Gane vs. Hokit
+#EXTVLCOPT:http-referrer=https://hls.meth-streams-hd.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://hls.meth-streams-hd.cfd
+https://hls.meth-streams-hd.cfd/live/evt-1794648921892/index.m3u8?_=1794693128238
+#EXTINF:-1 tvg-id="Winnipeg Jets at Chicago Blackhawks" group-title="NHL",NHL : Winnipeg Jets at Chicago Blackhawks
+#EXTVLCOPT:http-referrer=https://hls.meth-streams-hd.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://hls.meth-streams-hd.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401861169/index.m3u8?_=1794693122840&_=1794693127784
+#EXTINF:-1 tvg-id="East Carolina Pirates at Charlotte 49ers" group-title="NCAAF",NCAAF : East Carolina Pirates at Charlotte 49ers
+#EXTVLCOPT:http-referrer=https://hls.meth-streams-hd.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://hls.meth-streams-hd.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401862825/index.m3u8?_=1794693128368
+#EXTINF:-1 tvg-id="Bosnia-Herzegovina at Sweden" group-title="UEFA Nations League",UEFA Nations League : Bosnia-Herzegovina at Sweden
+#EXTVLCOPT:http-referrer=https://hls.meth-streams-hd.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://hls.meth-streams-hd.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401861166/index.m3u8?_=1794693128125
+#EXTINF:-1 tvg-id="UAB Blazers at Temple Owls" group-title="NCAAF",NCAAF : UAB Blazers at Temple Owls
+#EXTVLCOPT:http-referrer=https://hls.meth-streams-hd.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://hls.meth-streams-hd.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401862829/index.m3u8?_=1794693130364
+#EXTINF:-1 tvg-id="Arkansas State Red Wolves at Coastal Carolina Chanticleers" group-title="NCAAF",NCAAF : Arkansas State Red Wolves at Coastal Carolina Chanticleers
+#EXTVLCOPT:http-referrer=https://hls.meth-streams-hd.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://hls.meth-streams-hd.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401869937/index.m3u8?_=1794693132790
+#EXTINF:-1 tvg-id="Kansas State Wildcats at TCU Horned Frogs" group-title="NCAAF",NCAAF : Kansas State Wildcats at TCU Horned Frogs
+#EXTVLCOPT:http-referrer=https://hls.meth-streams-hd.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://hls.meth-streams-hd.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401856862/index.m3u8?_=1794693133124
+#EXTINF:-1 tvg-id="Tennessee Volunteers at Texas A&M Aggies" group-title="NCAAF",NCAAF : Tennessee Volunteers at Texas A&M Aggies
+#EXTVLCOPT:http-referrer=https://hls.meth-streams-hd.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://hls.meth-streams-hd.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401856888/index.m3u8?_=1794693133306
+#EXTINF:-1 tvg-id="Kennesaw State Owls at Sam Houston Bearkats" group-title="NCAAF",NCAAF : Kennesaw State Owls at Sam Houston Bearkats
+#EXTVLCOPT:http-referrer=https://hls.meth-streams-hd.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://hls.meth-streams-hd.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401870769/index.m3u8?_=1794693133168
+#EXTINF:-1 tvg-id="New Mexico State Aggies at Missouri State Bears" group-title="NCAAF",NCAAF : New Mexico State Aggies at Missouri State Bears
+#EXTVLCOPT:http-referrer=https://hls.meth-streams-hd.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://hls.meth-streams-hd.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401870796/index.m3u8?_=1794693134589
+#EXTINF:-1 tvg-id="Missouri Tigers at Georgia Bulldogs" group-title="NCAAF",NCAAF : Missouri Tigers at Georgia Bulldogs
+#EXTVLCOPT:http-referrer=https://hls.meth-streams-hd.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://hls.meth-streams-hd.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401856883/index.m3u8?_=1794693137638
+#EXTINF:-1 tvg-id="USC Trojans at Indiana Hoosiers" group-title="NCAAF",NCAAF : USC Trojans at Indiana Hoosiers
+#EXTVLCOPT:http-referrer=https://hls.meth-streams-hd.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://hls.meth-streams-hd.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401858518/index.m3u8?_=1794693138138
+#EXTINF:-1 tvg-id="Boston College Eagles at Notre Dame Fighting Irish" group-title="NCAAF",NCAAF : Boston College Eagles at Notre Dame Fighting Irish
+#EXTVLCOPT:http-referrer=https://hls.meth-streams-hd.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://hls.meth-streams-hd.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401858294/index.m3u8?_=1794693138082
+#EXTINF:-1 tvg-id="Michigan Wolverines at Oregon Ducks" group-title="NCAAF",NCAAF : Michigan Wolverines at Oregon Ducks
+#EXTVLCOPT:http-referrer=https://hls.meth-streams-hd.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://hls.meth-streams-hd.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401858523/index.m3u8?_=1794693140797
+#EXTINF:-1 tvg-id="Florida International Panthers at Delaware Blue Hens" group-title="NCAAF",NCAAF : Florida International Panthers at Delaware Blue Hens
+#EXTVLCOPT:http-referrer=https://hls.meth-streams-hd.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://hls.meth-streams-hd.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401871060/index.m3u8?_=1794693137475
+#EXTINF:-1 tvg-id="California Golden Bears at Virginia Cavaliers" group-title="NCAAF",NCAAF : California Golden Bears at Virginia Cavaliers
+#EXTVLCOPT:http-referrer=https://hls.meth-streams-hd.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://hls.meth-streams-hd.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401871060/index.m3u8?_=1794693137475&_=1794693141681
+#EXTINF:-1 tvg-id="Nevada Wolf Pack at Northern Illinois Huskies" group-title="NCAAF",NCAAF : Nevada Wolf Pack at Northern Illinois Huskies
+#EXTVLCOPT:http-referrer=https://hls.meth-streams-hd.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://hls.meth-streams-hd.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401864536/index.m3u8?_=1794693142624
+#EXTINF:-1 tvg-id="Kansas Jayhawks at West Virginia Mountaineers" group-title="NCAAF",NCAAF : Kansas Jayhawks at West Virginia Mountaineers
+#EXTVLCOPT:http-referrer=https://hls.meth-streams-hd.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://hls.meth-streams-hd.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401856861/index.m3u8?_=1794693146402
+#EXTINF:-1 tvg-id="Middle Tennessee Blue Raiders at Liberty Flames" group-title="NCAAF",NCAAF : Middle Tennessee Blue Raiders at Liberty Flames
+#EXTVLCOPT:http-referrer=https://hls.meth-streams-hd.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://hls.meth-streams-hd.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401871061/index.m3u8?_=1794693146486
+#EXTINF:-1 tvg-id="Jacksonville State Gamecocks at Western Kentucky Hilltoppers" group-title="NCAAF",NCAAF : Jacksonville State Gamecocks at Western Kentucky Hilltoppers
+#EXTVLCOPT:http-referrer=https://hls.meth-streams-hd.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://hls.meth-streams-hd.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401858518/index.m3u8?_=1794693138138&_=1794693144844
+#EXTINF:-1 tvg-id="Fresno State Bulldogs at Texas State Bobcats" group-title="NCAAF",NCAAF : Fresno State Bulldogs at Texas State Bobcats
+#EXTVLCOPT:http-referrer=https://hls.meth-streams-hd.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://hls.meth-streams-hd.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401860916/index.m3u8?_=1794693148337
+#EXTINF:-1 tvg-id="Georgia Southern Eagles at Georgia State Panthers" group-title="NCAAF",NCAAF : Georgia Southern Eagles at Georgia State Panthers
+#EXTVLCOPT:http-referrer=https://hls.meth-streams-hd.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://hls.meth-streams-hd.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401869952/index.m3u8?_=1794693142672
+#EXTINF:-1 tvg-id="Ole Miss Rebels at Oklahoma Sooners" group-title="NCAAF",NCAAF : Ole Miss Rebels at Oklahoma Sooners
+#EXTVLCOPT:http-referrer=https://hls.meth-streams-hd.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://hls.meth-streams-hd.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401856887/index.m3u8?_=1794693151025
+#EXTINF:-1 tvg-id="Auburn Tigers at Mississippi State Bulldogs" group-title="NCAAF",NCAAF : Auburn Tigers at Mississippi State Bulldogs
+#EXTVLCOPT:http-referrer=https://hls.meth-streams-hd.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://hls.meth-streams-hd.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401856886/index.m3u8?_=1794693151229
+#EXTINF:-1 tvg-id="Tulane Green Wave at Rice Owls" group-title="NCAAF",NCAAF : Tulane Green Wave at Rice Owls
+#EXTVLCOPT:http-referrer=https://hls.meth-streams-hd.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://hls.meth-streams-hd.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401862828/index.m3u8?_=1794693151255
+#EXTINF:-1 tvg-id="Southern Miss Golden Eagles at Louisiana Tech Bulldogs" group-title="NCAAF",NCAAF : Southern Miss Golden Eagles at Louisiana Tech Bulldogs
+#EXTVLCOPT:http-referrer=https://hls.meth-streams-hd.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://hls.meth-streams-hd.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401871099/index.m3u8?_=1794693155105
+#EXTINF:-1 tvg-id="Ireland Rugby vs Fiji Rugby (Nations Championship)" group-title="Rugby",Rugby : Ireland Rugby vs Fiji Rugby (Nations Championship)
+#EXTVLCOPT:http-referrer=https://hls.meth-streams-hd.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://hls.meth-streams-hd.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401856886/index.m3u8?_=1794693151229&_=1794693155434
+#EXTINF:-1 tvg-id="UFC 334 Gane vs Hokit (UFC)" group-title="Fighting",Fighting : UFC 334 Gane vs Hokit (UFC)
+#EXTVLCOPT:http-referrer=https://hls.meth-streams-hd.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://hls.meth-streams-hd.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401862828/index.m3u8?_=1794693151255&_=1794693155458
