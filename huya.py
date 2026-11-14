@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 """
 Scrape malaysia-tv.net → playlist.m3u (IPTV)
-Versi: Playwright (handle JS-rendered m3u8)
+Versi: Playwright + concurrent pages
 Requirements:
   pip install requests beautifulsoup4 playwright
-  playwright install chromium
+  playwright install chromium --with-deps
 """
 
 import re
-import time
 import asyncio
 import requests
 from bs4 import BeautifulSoup
@@ -21,8 +20,8 @@ HEADERS = {
                   "AppleWebKit/537.36 (KHTML, like Gecko) "
                   "Chrome/125.0.0.0 Safari/537.36"
 }
-DELAY = 1.0
-TIMEOUT = 20_000  # ms per halaman
+CONCURRENCY = 7  # jumlah page concurrent (naikkan kalau RAM cukup)
+TIMEOUT = 20_000
 
 GROUP_MAP = {
     "g-my": "Malaysian TV",
@@ -32,7 +31,6 @@ GROUP_MAP = {
 
 
 def extract_m3u8_static(page_source: str) -> str | None:
-    """Coba regex dulu (cepat) sebelum fallback ke browser."""
     patterns = [
         r'["\']([^"\']*?\.m3u8[^"\']*)["\']',
         r'(?:src|data-src|data-source|file)\s*[:=]\s*["\']([^"\']*?\.m3u8[^"\']*)["\']',
@@ -50,7 +48,6 @@ def extract_m3u8_static(page_source: str) -> str | None:
 
 
 def scrape_channels() -> list[dict]:
-    """Ambil daftar channel dari halaman utama (static, cukup requests)."""
     print("→ Mengambil daftar channel dari halaman utama...")
     r = requests.get(BASE_URL, headers=HEADERS, timeout=15)
     soup = BeautifulSoup(r.text, "html.parser")
@@ -83,11 +80,26 @@ def scrape_channels() -> list[dict]:
     return channels
 
 
+async def fetch_channel(page, ch: dict, semaphore: asyncio.Semaphore) -> dict | None:
+    """Fetch satu channel (concurrent)."""
+    async with semaphore:
+        # Step 1: regex cepat
+        try:
+            r = requests.get(ch["url"], headers=HEADERS, timeout=15)
+            m3u8_url = extract_m3u8_static(r.text)
+        except Exception:
+            m3u8_url = None
+
+        # Step 2: browser kalau regex gagal
+        if not m3u8_url:
+            m3u8_url = await get_m3u8_browser(page, ch["url"])
+
+        if m3u8_url:
+            return {**ch, "m3u8": m3u8_url}
+        return None
+
+
 async def get_m3u8_browser(page, channel_url: str) -> str | None:
-    """
-    Load halaman di headless browser, intercept request .m3u8.
-    Return URL m3u8 atau None.
-    """
     m3u8_url = None
 
     def on_request(request):
@@ -96,10 +108,8 @@ async def get_m3u8_browser(page, channel_url: str) -> str | None:
             m3u8_url = request.url
 
     page.on("request", on_request)
-
     try:
         await page.goto(channel_url, wait_until="networkidle", timeout=TIMEOUT)
-        # Kasih waktu ekstra untuk hls.js load
         await asyncio.sleep(2)
     except Exception:
         pass
@@ -109,9 +119,7 @@ async def get_m3u8_browser(page, channel_url: str) -> str | None:
     if m3u8_url:
         return m3u8_url
 
-    # Fallback: cek DOM setelah JS render
     try:
-        # Cari di <video src="...">, data attributes, atau script inline
         content = await page.content()
         return extract_m3u8_static(content)
     except Exception:
@@ -119,47 +127,48 @@ async def get_m3u8_browser(page, channel_url: str) -> str | None:
 
 
 async def build_playlist(channels: list[dict], output: str = "playlist.m3u"):
-    lines = ["#EXTM3U"]
-    ok = 0
+    semaphore = asyncio.Semaphore(CONCURRENCY)
+    results: list[dict | None] = []
 
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=True)
-        page = await browser.new_page()
 
-        for i, ch in enumerate(channels, 1):
-            print(f"  [{i}/{len(channels)}] {ch['name']} ...", end=" ")
+        # Buat N page sesuai concurrency
+        pages = [await browser.new_page() for _ in range(CONCURRENCY)]
 
-            # Step 1: coba regex cepat (tanpa browser)
-            try:
-                r = requests.get(ch["url"], headers=HEADERS, timeout=15)
-                m3u8_url = extract_m3u8_static(r.text)
-            except Exception:
-                m3u8_url = None
+        # Bagi channel ke tiap page
+        tasks = []
+        for i, ch in enumerate(channels):
+            page = pages[i % CONCURRENCY]
+            tasks.append(fetch_channel(page, ch, semaphore))
 
-            # Step 2: kalau gagal, pakai browser
-            if not m3u8_url:
-                m3u8_url = await get_m3u8_browser(page, ch["url"])
-
-            if m3u8_url:
-                logo_attr = f' tvg-logo="{ch["logo"]}"' if ch["logo"] else ""
-                lines.append(
-                    f'#EXTINF:-1 tvg-id="{ch["name"]}"'
-                    f'{logo_attr} group-title="{ch["group"]}",{ch["name"]}'
-                )
-                lines.append(m3u8_url)
-                ok += 1
-                print(f"✓ {m3u8_url[:70]}")
+        # Jalankan semua concurrent
+        done = 0
+        for coro in asyncio.as_completed(tasks):
+            result = await coro
+            done += 1
+            if result:
+                results.append(result)
+                print(f"  [{done}/{len(channels)}] ✓ {result['name']}")
             else:
-                print("✗ (tidak ada m3u8)")
-
-            await asyncio.sleep(DELAY)
+                print(f"  [{done}/{len(channels)}] ✗")
 
         await browser.close()
+
+    # Tulis playlist
+    lines = ["#EXTM3U"]
+    for ch in results:
+        logo_attr = f' tvg-logo="{ch["logo"]}"' if ch["logo"] else ""
+        lines.append(
+            f'#EXTINF:-1 tvg-id="{ch["name"]}"'
+            f'{logo_attr} group-title="{ch["group"]}",{ch["name"]}'
+        )
+        lines.append(ch["m3u8"])
 
     with open(output, "w", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
 
-    print(f"\n✅ Selesai! {ok}/{len(channels)} channel berhasil.")
+    print(f"\n✅ Selesai! {len(results)}/{len(channels)} channel berhasil.")
     print(f"   File: {output}")
 
 
