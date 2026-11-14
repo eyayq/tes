@@ -31,7 +31,7 @@ jobs:
 
       - name: ✓
         run: pip install -r requirements.txt
-             playwright install --with-deps chromium   
+             playwright install chromium --with-deps   
 
       - name: ✓
         run: xvfb-run python huya.py --debug
