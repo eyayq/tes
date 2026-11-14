@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 """
 Scrape daddylive.app → playlist.m3u (IPTV)
-- Fetch /player/tv*.json
-- Parse events → embed URLs (matchora.pro)
-- Resolve m3u8 via Playwright (handle wrapper URLs)
-- Output: tvg-logo, group-title, #EXTVLCOPT (referrer, UA, origin)
+- Referer = URL halaman embed (iframe player) yang di-scrape
+- Origin  = origin dari halaman embed
 
 Requirements:
   pip install requests playwright
@@ -33,11 +31,9 @@ OUTPUT = "playlist.m3u"
 
 JSON_KEYS = [f"tv{i}" for i in range(1, 20)]
 
-STREAM_HEADERS = {
-    "user-agent": "Mozilla/5.0 (Linux; Android 10; K) "
-                  "AppleWebKit/537.36 (KHTML, like Gecko) "
-                  "Chrome/157.0.0.0 Mobile Safari/537.36",
-}
+STREAM_UA = ("Mozilla/5.0 (Linux; Android 10; K) "
+             "AppleWebKit/537.36 (KHTML, like Gecko) "
+             "Chrome/157.0.0.0 Mobile Safari/537.36")
 
 MAX_EMBEDS_PER_EVENT = 3
 # ─────────────────────────────────────────────
@@ -138,24 +134,18 @@ def parse_all_events(all_data: dict) -> list[dict]:
 
 
 # ─────────────────────────────────────────────
-# STEP 3: RESOLVE M3U8 (Playwright)
+# STEP 3: RESOLVE M3U8
 # ─────────────────────────────────────────────
 def extract_m3u8_from_wrapper(url: str) -> str | None:
-    """
-    Ekstrak m3u8 dari wrapper URL:
-    https://fancoodee.pages.dev/?src=https://...player.html?url=https%3A%2F%2F...%2Funknown.m3u8
-    """
     parsed = urlparse(url)
     qs = parse_qs(parsed.query)
     for key in ("url", "src", "file", "source", "stream", "playlist"):
         if key in qs:
             val = unquote(qs[key][0])
             if ".m3u8" in val:
-                # Kalau val sendiri masih wrapper, rekursi
                 if ".html" in val or "?url=" in val or "?src=" in val:
                     return extract_m3u8_from_wrapper(val)
                 return val
-    # Regex fallback
     m = re.search(r'(https?://[^&"\']+\.m3u8[^&"\']*)', unquote(url))
     if m:
         return m.group(1)
@@ -173,12 +163,10 @@ async def resolve_m3u8(page, embed_url: str) -> str | None:
         parsed = urlparse(url)
         path = parsed.path
 
-        # ✅ Direct m3u8
         if path.endswith(".m3u8"):
             m3u8_url = url
             return
 
-        # ❌ Wrapper → ekstrak
         if ".m3u8" in url and not path.endswith(".m3u8"):
             extracted = extract_m3u8_from_wrapper(url)
             if extracted:
@@ -197,7 +185,6 @@ async def resolve_m3u8(page, embed_url: str) -> str | None:
     if m3u8_url:
         return m3u8_url
 
-    # Fallback: regex di DOM
     try:
         content = await page.content()
         for m in re.finditer(r'["\']([^"\']*?\.m3u8[^"\']*)["\']', content):
@@ -229,9 +216,9 @@ async def build_playlist(events: list[dict]):
             async with semaphore:
                 page = pages[idx % CONCURRENCY]
                 m3u8 = None
+                successful_embed = None  # ← simpan URL embed yang berhasil
 
                 for embed_url in ev["embeds"][:MAX_EMBEDS_PER_EVENT]:
-                    # Reset page ke blank (cegah m3u8 bocor antar event)
                     try:
                         await page.goto("about:blank", timeout=5000)
                     except Exception:
@@ -239,10 +226,11 @@ async def build_playlist(events: list[dict]):
 
                     m3u8 = await resolve_m3u8(page, embed_url)
                     if m3u8:
+                        successful_embed = embed_url  # ← ini yang dipakai
                         break
 
                 if m3u8:
-                    results.append({**ev, "m3u8": m3u8})
+                    results.append({**ev, "m3u8": m3u8, "embed_page": successful_embed})
                     print(f"  [{idx+1}/{len(events)}] ✓ {ev['name']}")
                 else:
                     failed.append(ev["name"])
@@ -255,16 +243,21 @@ async def build_playlist(events: list[dict]):
     # ── Tulis playlist ──
     lines = ["#EXTM3U"]
     for ev in results:
-        stream_origin = urlparse(ev["m3u8"]).netloc
-        referrer = f"https://{stream_origin}/"
+        # ← Referer = URL halaman embed (iframe player)
+        embed_page = ev.get("embed_page", "")
+        referrer = embed_page if embed_page else f"{BASE_URL}/"
+
+        # ← Origin = origin dari halaman embed
+        embed_origin = urlparse(embed_page).netloc if embed_page else ""
+        origin_header = f"https://{embed_origin}" if embed_origin else BASE_URL
 
         lines.append(
             f'#EXTINF:-1 tvg-id="{ev["name"]}"'
             f' group-title="{ev["category"]}",{ev["full_name"]}'
         )
         lines.append(f'#EXTVLCOPT:http-referrer={referrer}')
-        lines.append(f'#EXTVLCOPT:http-user-agent={STREAM_HEADERS["user-agent"]}')
-        lines.append(f'#EXTVLCOPT:http-headers=Origin: https://{stream_origin}')
+        lines.append(f'#EXTVLCOPT:http-user-agent={STREAM_UA}')
+        lines.append(f'#EXTVLCOPT:http-headers=Origin: {origin_header}')
         lines.append(ev["m3u8"])
 
     with open(OUTPUT, "w", encoding="utf-8") as f:
