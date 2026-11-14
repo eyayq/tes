@@ -1,136 +1,131 @@
 #EXTM3U
+#EXTINF:-1 tvg-id="Tennessee Volunteers at Texas A&M Aggies" group-title="NCAAF",NCAAF : Tennessee Volunteers at Texas A&M Aggies
+#EXTVLCOPT:http-referrer=https://play.aurasportsplayer.cfd/event/espn-401856888
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://play.aurasportsplayer.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401856888/index.m3u8?_=1794698940629
+#EXTINF:-1 tvg-id="UFC 334: Gane vs. Hokit" group-title="UFC",UFC : UFC 334: Gane vs. Hokit
+#EXTVLCOPT:http-referrer=https://play.aurasportsplayer.cfd/event/evt-1794648921892
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://play.aurasportsplayer.cfd
+https://hls.meth-streams-hd.cfd/live/evt-1794648921892/index.m3u8?_=1794698940687
+#EXTINF:-1 tvg-id="New Mexico State Aggies at Missouri State Bears" group-title="NCAAF",NCAAF : New Mexico State Aggies at Missouri State Bears
+#EXTVLCOPT:http-referrer=https://play.aurasportsplayer.cfd/event/espn-401870796
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://play.aurasportsplayer.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401870796/index.m3u8?_=1794698940663
+#EXTINF:-1 tvg-id="Winnipeg Jets at Chicago Blackhawks" group-title="NHL",NHL : Winnipeg Jets at Chicago Blackhawks
+#EXTVLCOPT:http-referrer=https://play.aurasportsplayer.cfd/event/espn-401892708
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://play.aurasportsplayer.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401892708/index.m3u8?_=1794698940757
 #EXTINF:-1 tvg-id="Fleetwood Town vs Tranmere Rovers" group-title="Football",Football : Fleetwood Town vs Tranmere Rovers
 #EXTVLCOPT:http-referrer=https://bintv-sources.pages.dev/?id=aHR0cHM6Ly9mYW5jb29kZWUucGFnZXMuZGV2Lz9zcmM9aHR0cHM6Ly9taW5pLmFsbGlub25lcmVib3JuLnNpdGUvZmN3L3BsYXllcl93b3JsZC5odG1sP3VybD1odHRwcyUzQSUyRiUyRmFsbGlub25lcmVib3JuMi5vbmxpbmUlMkZmY3Rlc3QlMkZwbGF5bGlzdHMlMkZtYXRjaF80MjUwMDAyJTJGdW5rbm93bi5tM3U4
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-headers=Origin: https://bintv-sources.pages.dev
 https://allinonereborn2.online/fctest/playlists/match_4250002/unknown.m3u8
-#EXTINF:-1 tvg-id="Kansas State Wildcats at TCU Horned Frogs" group-title="NCAAF",NCAAF : Kansas State Wildcats at TCU Horned Frogs
-#EXTVLCOPT:http-referrer=https://play.aurasportsplayer.cfd/event/espn-401856862
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=Origin: https://play.aurasportsplayer.cfd
-https://hls.meth-streams-hd.cfd/live/espn-401856862/index.m3u8?_=1794696550717
-#EXTINF:-1 tvg-id="Winnipeg Jets at Chicago Blackhawks" group-title="NHL",NHL : Winnipeg Jets at Chicago Blackhawks
-#EXTVLCOPT:http-referrer=https://play.aurasportsplayer.cfd/event/espn-401892708
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=Origin: https://play.aurasportsplayer.cfd
-https://hls.meth-streams-hd.cfd/live/espn-401892708/index.m3u8?_=1794696550868
-#EXTINF:-1 tvg-id="UFC 334: Gane vs. Hokit" group-title="UFC",UFC : UFC 334: Gane vs. Hokit
-#EXTVLCOPT:http-referrer=https://play.aurasportsplayer.cfd/event/evt-1794648921892
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=Origin: https://play.aurasportsplayer.cfd
-https://hls.meth-streams-hd.cfd/live/evt-1794648921892/index.m3u8?_=1794696550936
-#EXTINF:-1 tvg-id="Kennesaw State Owls at Sam Houston Bearkats" group-title="NCAAF",NCAAF : Kennesaw State Owls at Sam Houston Bearkats
-#EXTVLCOPT:http-referrer=https://play.aurasportsplayer.cfd/event/espn-401870769
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=Origin: https://play.aurasportsplayer.cfd
-https://hls.meth-streams-hd.cfd/live/espn-401870769/index.m3u8?_=1794696550739
-#EXTINF:-1 tvg-id="Florida International Panthers at Delaware Blue Hens" group-title="NCAAF",NCAAF : Florida International Panthers at Delaware Blue Hens
-#EXTVLCOPT:http-referrer=https://play.aurasportsplayer.cfd/event/espn-401871060
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=Origin: https://play.aurasportsplayer.cfd
-https://hls.meth-streams-hd.cfd/live/espn-401871060/index.m3u8?_=1794696556114
 #EXTINF:-1 tvg-id="Missouri Tigers at Georgia Bulldogs" group-title="NCAAF",NCAAF : Missouri Tigers at Georgia Bulldogs
 #EXTVLCOPT:http-referrer=https://play.aurasportsplayer.cfd/event/espn-401856883
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-headers=Origin: https://play.aurasportsplayer.cfd
-https://hls.meth-streams-hd.cfd/live/espn-401856883/index.m3u8?_=1794696556304
-#EXTINF:-1 tvg-id="Tennessee Volunteers at Texas A&M Aggies" group-title="NCAAF",NCAAF : Tennessee Volunteers at Texas A&M Aggies
-#EXTVLCOPT:http-referrer=https://play.aurasportsplayer.cfd/event/espn-401856888
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=Origin: https://play.aurasportsplayer.cfd
-https://hls.meth-streams-hd.cfd/live/espn-401856888/index.m3u8?_=1794696556270
-#EXTINF:-1 tvg-id="New Mexico State Aggies at Missouri State Bears" group-title="NCAAF",NCAAF : New Mexico State Aggies at Missouri State Bears
-#EXTVLCOPT:http-referrer=https://play.aurasportsplayer.cfd/event/espn-401870796
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=Origin: https://play.aurasportsplayer.cfd
-https://hls.meth-streams-hd.cfd/live/espn-401870796/index.m3u8?_=1794696555864
-#EXTINF:-1 tvg-id="Boston College Eagles at Notre Dame Fighting Irish" group-title="NCAAF",NCAAF : Boston College Eagles at Notre Dame Fighting Irish
-#EXTVLCOPT:http-referrer=https://play.aurasportsplayer.cfd/event/espn-401858294
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=Origin: https://play.aurasportsplayer.cfd
-https://hls.meth-streams-hd.cfd/live/espn-401858294/index.m3u8?_=1794696556611
-#EXTINF:-1 tvg-id="Michigan Wolverines at Oregon Ducks" group-title="NCAAF",NCAAF : Michigan Wolverines at Oregon Ducks
-#EXTVLCOPT:http-referrer=https://play.aurasportsplayer.cfd/event/espn-401858523
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=Origin: https://play.aurasportsplayer.cfd
-https://hls.meth-streams-hd.cfd/live/espn-401858523/index.m3u8?_=1794696560981
+https://hls.meth-streams-hd.cfd/live/espn-401856883/index.m3u8?_=1794698947138
 #EXTINF:-1 tvg-id="USC Trojans at Indiana Hoosiers" group-title="NCAAF",NCAAF : USC Trojans at Indiana Hoosiers
 #EXTVLCOPT:http-referrer=https://play.aurasportsplayer.cfd/event/espn-401858518
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-headers=Origin: https://play.aurasportsplayer.cfd
-https://hls.meth-streams-hd.cfd/live/espn-401858518/index.m3u8?_=1794696560757
-#EXTINF:-1 tvg-id="Nevada Wolf Pack at Northern Illinois Huskies" group-title="NCAAF",NCAAF : Nevada Wolf Pack at Northern Illinois Huskies
-#EXTVLCOPT:http-referrer=https://play.aurasportsplayer.cfd/event/espn-401864536
+https://hls.meth-streams-hd.cfd/live/espn-401858518/index.m3u8?_=1794698947284
+#EXTINF:-1 tvg-id="Florida International Panthers at Delaware Blue Hens" group-title="NCAAF",NCAAF : Florida International Panthers at Delaware Blue Hens
+#EXTVLCOPT:http-referrer=https://play.aurasportsplayer.cfd/event/espn-401871060
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-headers=Origin: https://play.aurasportsplayer.cfd
-https://hls.meth-streams-hd.cfd/live/espn-401864536/index.m3u8?_=1794696561786
+https://hls.meth-streams-hd.cfd/live/espn-401871060/index.m3u8?_=1794698947548
+#EXTINF:-1 tvg-id="Michigan Wolverines at Oregon Ducks" group-title="NCAAF",NCAAF : Michigan Wolverines at Oregon Ducks
+#EXTVLCOPT:http-referrer=https://play.aurasportsplayer.cfd/event/espn-401858523
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://play.aurasportsplayer.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401858523/index.m3u8?_=1794698949431
+#EXTINF:-1 tvg-id="Boston College Eagles at Notre Dame Fighting Irish" group-title="NCAAF",NCAAF : Boston College Eagles at Notre Dame Fighting Irish
+#EXTVLCOPT:http-referrer=https://play.aurasportsplayer.cfd/event/espn-401858294
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://play.aurasportsplayer.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401858294/index.m3u8?_=1794698947208
 #EXTINF:-1 tvg-id="California Golden Bears at Virginia Cavaliers" group-title="NCAAF",NCAAF : California Golden Bears at Virginia Cavaliers
 #EXTVLCOPT:http-referrer=https://play.aurasportsplayer.cfd/event/espn-401858295
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-headers=Origin: https://play.aurasportsplayer.cfd
-https://hls.meth-streams-hd.cfd/live/espn-401858295/index.m3u8?_=1794696561579
+https://hls.meth-streams-hd.cfd/live/espn-401858295/index.m3u8?_=1794698952240
+#EXTINF:-1 tvg-id="Nevada Wolf Pack at Northern Illinois Huskies" group-title="NCAAF",NCAAF : Nevada Wolf Pack at Northern Illinois Huskies
+#EXTVLCOPT:http-referrer=https://play.aurasportsplayer.cfd/event/espn-401864536
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://play.aurasportsplayer.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401864536/index.m3u8?_=1794698952613
 #EXTINF:-1 tvg-id="Georgia Southern Eagles at Georgia State Panthers" group-title="NCAAF",NCAAF : Georgia Southern Eagles at Georgia State Panthers
 #EXTVLCOPT:http-referrer=https://play.aurasportsplayer.cfd/event/espn-401869952
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-headers=Origin: https://play.aurasportsplayer.cfd
-https://hls.meth-streams-hd.cfd/live/espn-401869952/index.m3u8?_=1794696563524
-#EXTINF:-1 tvg-id="Jacksonville State Gamecocks at Western Kentucky Hilltoppers" group-title="NCAAF",NCAAF : Jacksonville State Gamecocks at Western Kentucky Hilltoppers
-#EXTVLCOPT:http-referrer=https://play.aurasportsplayer.cfd/event/espn-401870752
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=Origin: https://play.aurasportsplayer.cfd
-https://hls.meth-streams-hd.cfd/live/espn-401870752/index.m3u8?_=1794696565497
-#EXTINF:-1 tvg-id="Kansas Jayhawks at West Virginia Mountaineers" group-title="NCAAF",NCAAF : Kansas Jayhawks at West Virginia Mountaineers
-#EXTVLCOPT:http-referrer=https://play.aurasportsplayer.cfd/event/espn-401856861
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=Origin: https://play.aurasportsplayer.cfd
-https://hls.meth-streams-hd.cfd/live/espn-401856861/index.m3u8?_=1794696566113
+https://hls.meth-streams-hd.cfd/live/espn-401869952/index.m3u8?_=1794698954664
 #EXTINF:-1 tvg-id="Middle Tennessee Blue Raiders at Liberty Flames" group-title="NCAAF",NCAAF : Middle Tennessee Blue Raiders at Liberty Flames
 #EXTVLCOPT:http-referrer=https://play.aurasportsplayer.cfd/event/espn-401871061
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-headers=Origin: https://play.aurasportsplayer.cfd
-https://hls.meth-streams-hd.cfd/live/espn-401871061/index.m3u8?_=1794696565563
+https://hls.meth-streams-hd.cfd/live/espn-401871061/index.m3u8?_=1794698954725
+#EXTINF:-1 tvg-id="Jacksonville State Gamecocks at Western Kentucky Hilltoppers" group-title="NCAAF",NCAAF : Jacksonville State Gamecocks at Western Kentucky Hilltoppers
+#EXTVLCOPT:http-referrer=https://play.aurasportsplayer.cfd/event/espn-401870752
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://play.aurasportsplayer.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401870752/index.m3u8?_=1794698954629
+#EXTINF:-1 tvg-id="Kansas Jayhawks at West Virginia Mountaineers" group-title="NCAAF",NCAAF : Kansas Jayhawks at West Virginia Mountaineers
+#EXTVLCOPT:http-referrer=https://play.aurasportsplayer.cfd/event/espn-401856861
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://play.aurasportsplayer.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401856861/index.m3u8?_=1794698957298
 #EXTINF:-1 tvg-id="Fresno State Bulldogs at Texas State Bobcats" group-title="NCAAF",NCAAF : Fresno State Bulldogs at Texas State Bobcats
 #EXTVLCOPT:http-referrer=https://play.aurasportsplayer.cfd/event/espn-401860916
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-headers=Origin: https://play.aurasportsplayer.cfd
-https://hls.meth-streams-hd.cfd/live/espn-401860916/index.m3u8?_=1794696566250
+https://hls.meth-streams-hd.cfd/live/espn-401860916/index.m3u8?_=1794698957775
 #EXTINF:-1 tvg-id="Ole Miss Rebels at Oklahoma Sooners" group-title="NCAAF",NCAAF : Ole Miss Rebels at Oklahoma Sooners
 #EXTVLCOPT:http-referrer=https://play.aurasportsplayer.cfd/event/espn-401856887
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-headers=Origin: https://play.aurasportsplayer.cfd
-https://hls.meth-streams-hd.cfd/live/espn-401856887/index.m3u8?_=1794696568125
+https://hls.meth-streams-hd.cfd/live/espn-401856887/index.m3u8?_=1794698959738
 #EXTINF:-1 tvg-id="Auburn Tigers at Mississippi State Bulldogs" group-title="NCAAF",NCAAF : Auburn Tigers at Mississippi State Bulldogs
 #EXTVLCOPT:http-referrer=https://play.aurasportsplayer.cfd/event/espn-401856886
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-headers=Origin: https://play.aurasportsplayer.cfd
-https://hls.meth-streams-hd.cfd/live/espn-401856886/index.m3u8?_=1794696570250
+https://hls.meth-streams-hd.cfd/live/espn-401856886/index.m3u8?_=1794698960345
 #EXTINF:-1 tvg-id="Tulane Green Wave at Rice Owls" group-title="NCAAF",NCAAF : Tulane Green Wave at Rice Owls
 #EXTVLCOPT:http-referrer=https://play.aurasportsplayer.cfd/event/espn-401862828
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-headers=Origin: https://play.aurasportsplayer.cfd
-https://hls.meth-streams-hd.cfd/live/espn-401862828/index.m3u8?_=1794696570570
+https://hls.meth-streams-hd.cfd/live/espn-401862828/index.m3u8?_=1794698960419
 #EXTINF:-1 tvg-id="Southern Miss Golden Eagles at Louisiana Tech Bulldogs" group-title="NCAAF",NCAAF : Southern Miss Golden Eagles at Louisiana Tech Bulldogs
 #EXTVLCOPT:http-referrer=https://play.aurasportsplayer.cfd/event/espn-401871099
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-headers=Origin: https://play.aurasportsplayer.cfd
-https://hls.meth-streams-hd.cfd/live/espn-401871099/index.m3u8?_=1794696571636
+https://hls.meth-streams-hd.cfd/live/espn-401871099/index.m3u8?_=1794698962227
 #EXTINF:-1 tvg-id="Arizona State Sun Devils at UCF Knights" group-title="NCAAF",NCAAF : Arizona State Sun Devils at UCF Knights
 #EXTVLCOPT:http-referrer=https://play.aurasportsplayer.cfd/event/espn-401856857
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-headers=Origin: https://play.aurasportsplayer.cfd
-https://hls.meth-streams-hd.cfd/live/espn-401856857/index.m3u8?_=1794696571724
+https://hls.meth-streams-hd.cfd/live/espn-401856857/index.m3u8?_=1794698963072
 #EXTINF:-1 tvg-id="Washington Huskies at Michigan State Spartans" group-title="NCAAF",NCAAF : Washington Huskies at Michigan State Spartans
 #EXTVLCOPT:http-referrer=https://play.aurasportsplayer.cfd/event/espn-401858521
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-headers=Origin: https://play.aurasportsplayer.cfd
-https://hls.meth-streams-hd.cfd/live/espn-401858521/index.m3u8?_=1794696572419
-#EXTINF:-1 tvg-id="App State Mountaineers at Marshall Thundering Herd" group-title="NCAAF",NCAAF : App State Mountaineers at Marshall Thundering Herd
-#EXTVLCOPT:http-referrer=https://play.aurasportsplayer.cfd/event/espn-401869928
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-headers=Origin: https://play.aurasportsplayer.cfd
-https://hls.meth-streams-hd.cfd/live/espn-401869928/index.m3u8?_=1794696575233
+https://hls.meth-streams-hd.cfd/live/espn-401858521/index.m3u8?_=1794698964675
 #EXTINF:-1 tvg-id="Oregon State Beavers at Boise State Broncos" group-title="NCAAF",NCAAF : Oregon State Beavers at Boise State Broncos
 #EXTVLCOPT:http-referrer=https://play.aurasportsplayer.cfd/event/espn-401860914
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-headers=Origin: https://play.aurasportsplayer.cfd
-https://hls.meth-streams-hd.cfd/live/espn-401860914/index.m3u8?_=1794696574970
+https://hls.meth-streams-hd.cfd/live/espn-401860914/index.m3u8?_=1794698965298
+#EXTINF:-1 tvg-id="App State Mountaineers at Marshall Thundering Herd" group-title="NCAAF",NCAAF : App State Mountaineers at Marshall Thundering Herd
+#EXTVLCOPT:http-referrer=https://play.aurasportsplayer.cfd/event/espn-401869928
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://play.aurasportsplayer.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401869928/index.m3u8?_=1794698965363
+#EXTINF:-1 tvg-id="Florida Gators at Kentucky Wildcats" group-title="NCAAF",NCAAF : Florida Gators at Kentucky Wildcats
+#EXTVLCOPT:http-referrer=https://play.aurasportsplayer.cfd/event/espn-401856884
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-headers=Origin: https://play.aurasportsplayer.cfd
+https://hls.meth-streams-hd.cfd/live/espn-401856884/index.m3u8?_=1794698967460
