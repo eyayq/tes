@@ -1,13 +1,5 @@
 #!/usr/bin/env python3
-"""
-Scrape daddylive.app → playlist.m3u (IPTV)
-- Referer = URL halaman embed (iframe player) yang di-scrape
-- Origin  = origin dari halaman embed
 
-Requirements:
-  pip install requests playwright
-  playwright install chromium --with-deps
-"""
 
 import re
 import json
@@ -30,12 +22,10 @@ TIMEOUT = 25_000
 OUTPUT = "playlist.m3u"
 
 JSON_KEYS = [f"tv{i}" for i in range(1, 20)]
-
-STREAM_UA = ("Mozilla/5.0 (Linux; Android 10; K) "
-             "AppleWebKit/537.36 (KHTML, like Gecko) "
-             "Chrome/157.0.0.0 Mobile Safari/537.36")
-
 MAX_EMBEDS_PER_EVENT = 3
+
+# Header yang tidak perlu ditulis ke playlist
+SKIP_HEADERS = {"accept-encoding", "host", "content-length", "connection"}
 # ─────────────────────────────────────────────
 
 
@@ -134,7 +124,7 @@ def parse_all_events(all_data: dict) -> list[dict]:
 
 
 # ─────────────────────────────────────────────
-# STEP 3: RESOLVE M3U8
+# STEP 3: RESOLVE M3U8 + INTERCEPT HEADERS
 # ─────────────────────────────────────────────
 def extract_m3u8_from_wrapper(url: str) -> str | None:
     parsed = urlparse(url)
@@ -152,11 +142,15 @@ def extract_m3u8_from_wrapper(url: str) -> str | None:
     return None
 
 
-async def resolve_m3u8(page, embed_url: str) -> str | None:
+async def resolve_m3u8(page, embed_url: str) -> dict | None:
+    """
+    Return: {"m3u8": str, "headers": dict} atau None
+    """
     m3u8_url = None
+    m3u8_headers = {}
 
     def on_request(request):
-        nonlocal m3u8_url
+        nonlocal m3u8_url, m3u8_headers
         if m3u8_url:
             return
         url = request.url
@@ -165,17 +159,26 @@ async def resolve_m3u8(page, embed_url: str) -> str | None:
 
         if path.endswith(".m3u8"):
             m3u8_url = url
+            m3u8_headers = dict(request.headers)
             return
 
         if ".m3u8" in url and not path.endswith(".m3u8"):
             extracted = extract_m3u8_from_wrapper(url)
             if extracted:
                 m3u8_url = extracted
+                m3u8_headers = dict(request.headers)
                 return
 
     page.on("request", on_request)
     try:
-        await page.goto(embed_url, wait_until="networkidle", timeout=TIMEOUT)
+        await page.goto(embed_url, wait_until="domcontentloaded", timeout=TIMEOUT)
+        try:
+            await page.wait_for_request(
+                lambda r: ".m3u8" in r.url,
+                timeout=10_000
+            )
+        except Exception:
+            pass
         await asyncio.sleep(3)
     except Exception:
         pass
@@ -183,8 +186,47 @@ async def resolve_m3u8(page, embed_url: str) -> str | None:
         page.remove_listener("request", on_request)
 
     if m3u8_url:
-        return m3u8_url
+        return {"m3u8": m3u8_url, "headers": m3u8_headers}
 
+    # Fallback 1: <video> element
+    try:
+        video_src = await page.evaluate("""
+            () => {
+                const v = document.querySelector('video');
+                if (v && v.src) return v.src;
+                if (v && v.currentSrc) return v.currentSrc;
+                return null;
+            }
+        """)
+        if video_src and ".m3u8" in video_src:
+            return {"m3u8": video_src, "headers": {}}
+    except Exception:
+        pass
+
+    # Fallback 2: JS variables / script tags
+    try:
+        js_m3u8 = await page.evaluate("""
+            () => {
+                if (window.streamUrl) return window.streamUrl;
+                if (window.videoUrl) return window.videoUrl;
+                if (window.playerUrl) return window.playerUrl;
+                const scripts = document.querySelectorAll('script');
+                for (const s of scripts) {
+                    const text = s.textContent || '';
+                    const m = text.match(/["']([^"']*\\.m3u8[^"']*)["']/);
+                    if (m) return m[1];
+                }
+                return null;
+            }
+        """)
+        if js_m3u8 and ".m3u8" in js_m3u8:
+            if js_m3u8.startswith("//"):
+                js_m3u8 = "https:" + js_m3u8
+            return {"m3u8": js_m3u8, "headers": {}}
+    except Exception:
+        pass
+
+    # Fallback 3: regex di HTML
     try:
         content = await page.content()
         for m in re.finditer(r'["\']([^"\']*?\.m3u8[^"\']*)["\']', content):
@@ -193,15 +235,30 @@ async def resolve_m3u8(page, embed_url: str) -> str | None:
                 candidate = "https:" + candidate
             p = urlparse(candidate)
             if p.path.endswith(".m3u8") or not p.path.endswith(".html"):
-                return candidate
+                return {"m3u8": candidate, "headers": {}}
     except Exception:
         pass
+
     return None
 
 
 # ─────────────────────────────────────────────
 # STEP 4: BUILD PLAYLIST
 # ─────────────────────────────────────────────
+def write_header_lines(lines: list[str], headers: dict):
+    """Tulis semua header sebagai #EXTVLCOPT."""
+    for key, value in headers.items():
+        lk = key.lower()
+        if lk in SKIP_HEADERS:
+            continue
+        if lk == "referer":
+            lines.append(f'#EXTVLCOPT:http-referrer={value}')
+        elif lk == "user-agent":
+            lines.append(f'#EXTVLCOPT:http-user-agent={value}')
+        else:
+            lines.append(f'#EXTVLCOPT:http-headers={key}: {value}')
+
+
 async def build_playlist(events: list[dict]):
     semaphore = asyncio.Semaphore(CONCURRENCY)
     results = []
@@ -215,8 +272,7 @@ async def build_playlist(events: list[dict]):
             nonlocal results, failed
             async with semaphore:
                 page = pages[idx % CONCURRENCY]
-                m3u8 = None
-                successful_embed = None  # ← simpan URL embed yang berhasil
+                resolved = None
 
                 for embed_url in ev["embeds"][:MAX_EMBEDS_PER_EVENT]:
                     try:
@@ -224,13 +280,12 @@ async def build_playlist(events: list[dict]):
                     except Exception:
                         pass
 
-                    m3u8 = await resolve_m3u8(page, embed_url)
-                    if m3u8:
-                        successful_embed = embed_url  # ← ini yang dipakai
+                    resolved = await resolve_m3u8(page, embed_url)
+                    if resolved:
                         break
 
-                if m3u8:
-                    results.append({**ev, "m3u8": m3u8, "embed_page": successful_embed})
+                if resolved:
+                    results.append({**ev, **resolved})
                     print(f"  [{idx+1}/{len(events)}] ✓ {ev['name']}")
                 else:
                     failed.append(ev["name"])
@@ -243,21 +298,11 @@ async def build_playlist(events: list[dict]):
     # ── Tulis playlist ──
     lines = ["#EXTM3U"]
     for ev in results:
-        # ← Referer = URL halaman embed (iframe player)
-        embed_page = ev.get("embed_page", "")
-        referrer = embed_page if embed_page else f"{BASE_URL}/"
-
-        # ← Origin = origin dari halaman embed
-        embed_origin = urlparse(embed_page).netloc if embed_page else ""
-        origin_header = f"https://{embed_origin}" if embed_origin else BASE_URL
-
         lines.append(
             f'#EXTINF:-1 tvg-id="{ev["name"]}"'
             f' group-title="{ev["category"]}",{ev["full_name"]}'
         )
-        lines.append(f'#EXTVLCOPT:http-referrer={referrer}')
-        lines.append(f'#EXTVLCOPT:http-user-agent={STREAM_UA}')
-        lines.append(f'#EXTVLCOPT:http-headers=Origin: {origin_header}')
+        write_header_lines(lines, ev.get("headers", {}))
         lines.append(ev["m3u8"])
 
     with open(OUTPUT, "w", encoding="utf-8") as f:
