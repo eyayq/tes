@@ -9,7 +9,7 @@ from urllib.parse import quote
 from curl_cffi import requests as cffi_requests
 
 # ─── CONFIG ─────────────────────────────────────────────
-API_PROXY  = "https://px.bhns.workers.dev/?url=https://www.camel1.tv"   # Proxy API & Website
+API_PROXY  = "https://px.bhns.workers.dev/?url=https://api.cameltv.live"   # Proxy API & Website
 PROXY_BASE = "https://px.bhns.workers.dev/?url="   # Proxy Upstream (m3u8)
 SECRET     = "ganti-dengan-secret-panjang"
 
