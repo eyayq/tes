@@ -1,3 +1,4 @@
+
 import json
 import uuid
 import hashlib
@@ -5,24 +6,29 @@ import time
 import logging
 from datetime import datetime, timezone, timedelta
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from urllib.parse import quote
+from urllib.parse import urlparse
 from curl_cffi import requests as cffi_requests
 
 # ─── CONFIG ─────────────────────────────────────────────
-API_PROXY  = "https://px.bhns.workers.dev/?url=https://api.cameltv.live"   # Proxy API & Website
-PROXY_BASE = "https://px.bhns.workers.dev/?url="   # Proxy Upstream (m3u8)
-SECRET     = "ganti-dengan-secret-panjang"
+WEB_BASE = "https://px.bhns.workers.dev/?url=https://www.camel1.tv"
+API_BASE = "https://px.bhns.workers.dev/?url=https://api.cameltv.live"
+OUTPUT_M3U = "a/camelia.gif"
+MAX_WORKERS = 200          # ← DITURUNKAN dari 500 (anti rate-limit)
+RETRIES = 3               # ← JENIS BARU: retry per match
+RETRY_DELAY = 2           # ← JENIS BARU: jeda antar retry (detik)
 
-OUTPUT_M3U  = "playlist.m3u"
-MAX_WORKERS = 5
-RETRIES     = 3
-RETRY_DELAY = 2
+PROXY_BASE = "https://px.bhns.workers.dev/?bro="
+HARDCODE_AUTH = "aad639d3a1b66cb8c384364342600a6b"
 
-APP_CODE    = "D04B29D6B957CD44DC5F9894189380B8"
+APP_CODE = "D04B29D6B957CD44DC5F9894189380B8"
+DEVICE_ID = str(uuid.uuid4())
+NODE = "camel"
+REGION = "XM"
+
 GROUP_TITLE = "live camelia vip [tes]"
-USER_AGENT  = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36"
-REFERER     = "https://www.camel1.tv/"
-ORIGIN      = "https://www.camel1.tv"
+USER_AGENT = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36"
+REFERER = "https://www.camel1.tv/"
+ORIGIN = "https://www.camel1.tv"
 
 WIB = timezone(timedelta(hours=7))
 STATUS_MAP = {1: "NS", 2: "LIVE", 3: "UPC", 4: "FT", 5: "HT"}
@@ -33,61 +39,47 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 log = logging.getLogger("camel")
 
 
-# ─── PROXY HELPERS ──────────────────────────────────────
+def _headers(uid=None):
+    h = {
+        "user-agent": USER_AGENT,
+        "accept": "application/json, text/plain, */*",
+        "origin": ORIGIN,
+        "referer": REFERER,
+        "deviceid": DEVICE_ID,
+        "device": "WEB",
+        "appversion": "20.0.0.0",
+        "node": NODE,
+        "region": REGION,
+        "accept-language": "en",
+    }
+    if uid:
+        h["uid"] = uid
+    return h
 
-def _api_proxy(api, **params):
-    """Bangun URL untuk proxy API/website (index.php)."""
-    qs = f"auth={SECRET}&api={api}"
-    for k, v in params.items():
-        qs += f"&{k}={quote(str(v), safe='')}"
-    return f"{API_PROXY}?{qs}"
+
+def to_proxy_url(cdn_url):
+    parsed = urlparse(cdn_url)
+    query = parsed.query
+    if query:
+        query += f"&auth={HARDCODE_AUTH}&d={parsed.netloc}"
+    else:
+        query = f"auth={HARDCODE_AUTH}&d={parsed.netloc}"
+    return f"{PROXY_BASE}/{parsed.path.lstrip('/')}?{query}"
 
 
-def _upstream_proxy(stream_url):
-    """Wrap stream URL ke proxy upstream (proxy.php) — m3u8 rewrite."""
-    return f"{PROXY_BASE}?u={quote(stream_url, safe='')}"
-
-
-# ─── API VIA PROXY ──────────────────────────────────────
+# ─── API ────────────────────────────────────────────────
 
 def anonymous_login():
-    r = SESSION.get(_api_proxy("login"))
-    if r.status_code != 200:
-        return None, None
+    url = f"{API_BASE}/account-service/login/anonymous/web?appCode={APP_CODE}"
+    h = _headers()
+    h["content-type"] = "application/x-www-form-urlencoded"
+    r = SESSION.post(url, headers=h, data=json.dumps({"appCode": APP_CODE}))
     data = r.json()
-    return data.get("uid"), data.get("token")
-
-
-def fetch_matches_html():
-    r = SESSION.get(_api_proxy("matches"))
-    if r.status_code != 200:
-        return ""
-    return r.text
-
-
-def get_stream_url(match_id, uid):
-    for attempt in range(RETRIES):
-        r = SESSION.get(_api_proxy("stream", match_id=match_id, uid=uid))
-        if r.status_code == 200:
-            data = r.json()
-            url = data.get("stream_url")
-            if url:
-                return url
-        if attempt < RETRIES - 1:
-            time.sleep(RETRY_DELAY * (attempt + 1))
-    return None
-
-
-def get_token(stream_url, uid):
-    stream_name = stream_url.rstrip(".m3u8").split("/")[-1]
-    r = SESSION.get(_api_proxy("token", stream_name=stream_name, uid=uid))
-    if r.status_code == 200:
-        data = r.json()
-        return data.get("tx_time"), data.get("tx_secret")
+    if data.get("success") or data.get("code") == 0:
+        d = data.get("detail", {})
+        return d.get("key", ""), d.get("value", "")
     return None, None
 
-
-# ─── PARSE RSC ──────────────────────────────────────────
 
 def extract_matches_rsc(html):
     unescaped = html.replace('\\"', '"').replace('\\\\', '\\')
@@ -156,20 +148,101 @@ def extract_matches_rsc(html):
     return matches
 
 
-# ─── BUILD URL ──────────────────────────────────────────
+# ─── PERBAIKAN UTAMA: get_stream_url lebih robust ───────
+
+def _extract_stream_from_response(data):
+    """Ekstrak stream URL dari berbagai kemungkinan struktur response API."""
+    # Cek beberapa kemungkinan lokasi data
+    detail = data.get("detail", data.get("data", data.get("result", {})))
+
+    # Jika detail sendiri adalah list
+    if isinstance(detail, list):
+        streams = detail
+    elif isinstance(detail, dict):
+        # Coba berbagai key
+        streams = (detail.get("streams")
+                   or detail.get("streamList")
+                   or detail.get("list")
+                   or [])
+        # Kalau detail punya streamUrl langsung
+        if not streams:
+            if detail.get("streamUrlM3u8"):
+                return detail["streamUrlM3u8"].replace("http://", "https://")
+            if detail.get("streamUrl"):
+                return detail["streamUrl"].replace("http://", "https://")
+    else:
+        return None
+
+    if not streams:
+        return None
+
+    # Cari URL dari setiap item
+    for s in streams:
+        if not isinstance(s, dict):
+            continue
+        # Prioritas: streamUrlM3u8 > streamUrl > url > playUrl
+        for key in ("streamUrlM3u8", "streamUrl", "url", "playUrl", "m3u8Url", "hlsUrl"):
+            val = s.get(key, "")
+            if val and val.startswith("http"):
+                return val.replace("http://", "https://")
+    return None
+
+
+def get_stream_url(match_id, uid):
+    """Coba beberapa endpoint dengan retry."""
+    endpoints = [
+        f"{API_BASE}/camel-service/ee/sports_live/football/stream?matchId={match_id}",
+        f"{API_BASE}/camel-service/ee/sports_live/loadAnchorsByMatchId?matchId={match_id}&sportType=football",
+        f"{API_BASE}/camel-service/ee/sports_live/getStreamByMatchId?matchId={match_id}",
+    ]
+
+    for attempt in range(RETRIES):
+        for ep in endpoints:
+            try:
+                r = SESSION.get(ep, headers=_headers(uid))
+                if r.status_code != 200:
+                    continue
+                data = r.json()
+                if not (data.get("success") or data.get("code") == 0 or data.get("status") == 200):
+                    continue
+
+                stream_url = _extract_stream_from_response(data)
+                if stream_url:
+                    return stream_url
+
+            except Exception as e:
+                log.debug(f"  Attempt {attempt+1} {ep}: {e}")
+                continue
+
+        # Jeda sebelum retry
+        if attempt < RETRIES - 1:
+            time.sleep(RETRY_DELAY * (attempt + 1))
+
+    return None
+
+
+def get_token(stream_url, uid):
+    stream_name = stream_url.rstrip(".m3u8").split("/")[-1]
+    try:
+        url = f"{API_BASE}/camel-service/ee/sports_live/token?streamName={stream_name}"
+        r = SESSION.get(url, headers=_headers(uid))
+        data = r.json()
+        if data.get("status") == 200 or data.get("code") == 0:
+            d = data.get("data", data.get("detail", {}))
+            tx_time = d.get("txTime", "")
+            tx_secret = d.get("txSecret", "")
+            if tx_time and tx_secret:
+                return tx_time, tx_secret
+    except:
+        pass
+    return None, None
+
 
 def build_final_url(stream_url, tx_time, tx_secret):
-    """
-    1. Tambah txSecret/txTime jika ada
-    2. Wrap ke proxy upstream (proxy.php) — m3u8 di-rewrite, segment langsung ke CDN
-    """
     if tx_time and tx_secret:
         tx_secret_url = hashlib.md5(tx_secret.encode()).hexdigest()
-        full_url = f"{stream_url}?txSecret={tx_secret_url}&txTime={tx_time}&lat=9000"
-    else:
-        full_url = stream_url
-
-    return _upstream_proxy(full_url)
+        return f"{stream_url}?txSecret={tx_secret_url}&txTime={tx_time}&lat=9000"
+    return f"{stream_url}?auth={HARDCODE_AUTH}"
 
 
 def get_stream_for_match(match, uid):
@@ -178,14 +251,15 @@ def get_stream_for_match(match, uid):
 
     stream_url = get_stream_url(match_id, uid)
     if not stream_url:
-        log.info(f"  ❌ No stream: {label}")
+        log.info(f"  ❌ No stream: {label} (id={match_id}, has_stream={match['has_stream']})")
         return match, None
 
     tx_time, tx_secret = get_token(stream_url, uid)
     final_url = build_final_url(stream_url, tx_time, tx_secret)
+    proxy_url = to_proxy_url(final_url)
 
     log.info(f"  ✅ {label}")
-    return match, final_url
+    return match, proxy_url
 
 
 # ─── M3U ────────────────────────────────────────────────
@@ -218,11 +292,10 @@ def generate_m3u(streams):
 
 def main():
     print("=" * 70)
-    print(f"  Camel TV — M3U Generator")
+    print("  ✓")
     print(f"  {datetime.now(WIB).strftime('%Y-%m-%d %H:%M WIB')}")
-    print(f"  Workers: {MAX_WORKERS} | Retries: {RETRIES}")
-    print(f"  API Proxy:  {API_PROXY}")
-    print(f"  Upstream:   {PROXY_BASE}")
+    print(f"  ✓")
+    print(f"  ✓:{MAX_WORKERS} | ✓:{RETRIES}")
     print("=" * 70)
 
     print("\n🔑 Login...")
@@ -232,36 +305,40 @@ def main():
         return
     print(f"  uid = {uid}")
 
-    print("\n📡 Fetching matches...")
-    html = fetch_matches_html()
-    matches = extract_matches_rsc(html)
+    print("\n📡 Fetching...")
+    r = SESSION.get(f"{WEB_BASE}/")
+    matches = extract_matches_rsc(r.text)
     print(f"  ✅ {len(matches)} matches")
 
     for m in matches:
         print(f"     [{m['status']}] {m['home']} vs {m['away']} | id={m['id']} | has_stream={m['has_stream']}")
 
+    # ─── PERBAIKAN: filter dengan has_stream + status ───
+    # Hanya coba match yang memang punya stream (has_stream=1) ATAU sedang LIVE/UPC
     streamable = [m for m in matches
                   if m["status_id"] in (1, 2, 3, 4)
                   and (m["has_stream"] in (1, True) or m["status_id"] in (2, 3))]
-    print(f"  📺 {len(streamable)} streamable")
+    print(f"  📺 {len(streamable)}")
 
     if not streamable:
         print("  ⚠ Tidak ada.")
         return
 
-    print(f"\n🔧 Fetching streams ({MAX_WORKERS} workers, {RETRIES} retries)...")
+    print(f"\n🔧 ({MAX_WORKERS} {RETRIES} )...")
     results = []
     failed = []
 
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
         futures = {pool.submit(get_stream_for_match, m, uid): m for m in streamable}
-        for fut in as_completed(futures):
+        for i, fut in enumerate(as_completed(futures)):
             match, stream_url = fut.result()
+            label = f"{match['home']} vs {match['away']} [{match['status']}]"
             if stream_url:
                 results.append({**match, "stream_url": stream_url})
             else:
                 failed.append(match)
 
+    # ─── PERBAIKAN: Second pass untuk yang gagal ───
     if failed:
         print(f"\n🔄 Retry {len(failed)} failed (delay 5s)...")
         time.sleep(5)
@@ -279,12 +356,27 @@ def main():
         m3u = generate_m3u(results)
         with open(OUTPUT_M3U, "w", encoding="utf-8") as f:
             f.write(m3u)
-        print(f"\n✅ {OUTPUT_M3U} — {len(results)} streams")
+        print(f"\n✅ {OUTPUT_M3U} {len(results)}")
         print(f"   Failed: {len(failed)}")
-        print("\n" + m3u[:1500])
+        print(m3u[:1000])
     else:
         print("\n❌ 0 streams.")
 
 
 if __name__ == "__main__":
     main()   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
