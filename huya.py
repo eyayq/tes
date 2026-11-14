@@ -9,8 +9,8 @@ from urllib.parse import urlparse
 from curl_cffi import requests as cffi_requests
 
 # ─── CONFIG ─────────────────────────────────────────────
-WEB_BASE = "https://b.bhns.workers.dev/?url=https://www.camel1.tv"
-API_BASE = "https://b.bhns.workers.dev/?url=https://api.cameltv.live"
+WEB_BASE = "https://exsample.d-n-s.name/https.php?url=https://www.camel1.tv"
+API_BASE = "https://api.cameltv.live"
 OUTPUT_M3U = "playlist.m3u"
 MAX_WORKERS = 200
 RETRIES = 3
