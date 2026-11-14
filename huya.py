@@ -23,7 +23,7 @@ HEADERS = {
                   "AppleWebKit/537.36 (KHTML, like Gecko) "
                   "Chrome/125.0.0.0 Safari/537.36"
 }
-CONCURRENCY = 7       # jumlah page concurrent
+CONCURRENCY = 10       # jumlah page concurrent
 TIMEOUT = 20_000      # ms per halaman
 OUTPUT = "playlist.m3u"
 
@@ -183,8 +183,8 @@ async def build_playlist(channels: list[dict]):
             f'#EXTINF:-1 tvg-id="{ch["name"]}"'
             f'{logo_attr} group-title="{ch["group"]}",{ch["name"]}'
         )
-        lines.append(f'#EXTVLCOPT:http-origin=https://malaysia-tv.net/')
-        lines.append(f'#EXTVLCOPT:http-referrer={ch["url"]}')
+        lines.append(f'#EXTVLCOPT:http-origin=https://malaysia-tv.net')
+        lines.append(f'#EXTVLCOPT:http-referrer=https://malaysia-tv.net/')
         lines.append(f'#EXTVLCOPT:http-user-agent={HEADERS["User-Agent"]}')
         lines.append(ch["m3u8"])
 
