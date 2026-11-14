@@ -9,15 +9,15 @@ from urllib.parse import urlparse
 from curl_cffi import requests as cffi_requests
 
 # ─── CONFIG ─────────────────────────────────────────────
-WEB_BASE = "https://www.camel1.tv"
-API_BASE = "https://api.cameltv.live"
+WEB_BASE = "https://b.bhns.workers.dev/?url=https://www.camel1.tv"
+API_BASE = "https://b.bhns.workers.dev/?url=https://api.cameltv.live"
 OUTPUT_M3U = "playlist.m3u"
 MAX_WORKERS = 200
 RETRIES = 3
 RETRY_DELAY = 2
 
 PROXY_BASE = "https://live123.bhns.workers.dev"
-HARDCODE_AUTH = "aad639d3a1b66cb8c384364342600a6b"
+HARDCODE_AUTH = "bd1fad4321f25695de5142c0db0ed272"
 
 APP_CODE = "D04B29D6B957CD44DC5F9894189380B8"
 DEVICE_ID = str(uuid.uuid4())
