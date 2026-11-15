@@ -1,176 +1,457 @@
 #EXTM3U
-#EXTINF:-1 tvg-id="Winnipeg Jets at Chicago Blackhawks" group-title="NHL",NHL : Winnipeg Jets at Chicago Blackhawks
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Linux"
-#EXTVLCOPT:http-referrer=https://frame.embedme.cfd/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/159.0.8154.6 Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua: "HeadlessChrome";v="159", "Not/A)Brand";v="8", "Chromium";v="159"
-#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
-https://hls.meth-streams-hd.cfd/live/espn-401892708/index.m3u8?_=1794699759125
 #EXTINF:-1 tvg-id="UFC 334: Gane vs. Hokit" group-title="UFC",UFC : UFC 334: Gane vs. Hokit
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Linux"
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
 #EXTVLCOPT:http-referrer=https://frame.embedme.cfd/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/159.0.8154.6 Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua: "HeadlessChrome";v="159", "Not/A)Brand";v="8", "Chromium";v="159"
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
 #EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
-https://hls.meth-streams-hd.cfd/live/evt-1794648921892/index.m3u8?_=1794699759087
-#EXTINF:-1 tvg-id="New Mexico State Aggies at Missouri State Bears" group-title="NCAAF",NCAAF : New Mexico State Aggies at Missouri State Bears
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Linux"
+https://hls.meth-streams-hd.cfd/live/evt-1794648921892/index.m3u8?_=1794701416501
+#EXTINF:-1 tvg-id="Edmonton Oilers at Toronto Maple Leafs" group-title="NHL",NHL : Edmonton Oilers at Toronto Maple Leafs
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
 #EXTVLCOPT:http-referrer=https://frame.embedme.cfd/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/159.0.8154.6 Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua: "HeadlessChrome";v="159", "Not/A)Brand";v="8", "Chromium";v="159"
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
 #EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
-https://hls.meth-streams-hd.cfd/live/espn-401870796/index.m3u8?_=1794699759139
-#EXTINF:-1 tvg-id="Tennessee Volunteers at Texas A&M Aggies" group-title="NCAAF",NCAAF : Tennessee Volunteers at Texas A&M Aggies
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Linux"
+https://hls.meth-streams-hd.cfd/live/espn-401892710/index.m3u8?_=1794701416620
+#EXTINF:-1 tvg-id="Minnesota Wild at Boston Bruins" group-title="NHL",NHL : Minnesota Wild at Boston Bruins
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
 #EXTVLCOPT:http-referrer=https://frame.embedme.cfd/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/159.0.8154.6 Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua: "HeadlessChrome";v="159", "Not/A)Brand";v="8", "Chromium";v="159"
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
 #EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
-https://hls.meth-streams-hd.cfd/live/espn-401856888/index.m3u8?_=1794699759727
-#EXTINF:-1 tvg-id="Florida International Panthers at Delaware Blue Hens" group-title="NCAAF",NCAAF : Florida International Panthers at Delaware Blue Hens
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Linux"
+https://hls.meth-streams-hd.cfd/live/espn-401892709/index.m3u8?_=1794701417491
+#EXTINF:-1 tvg-id="Denver Nuggets at New Orleans Pelicans" group-title="NBA",NBA : Denver Nuggets at New Orleans Pelicans
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
 #EXTVLCOPT:http-referrer=https://frame.embedme.cfd/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/159.0.8154.6 Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua: "HeadlessChrome";v="159", "Not/A)Brand";v="8", "Chromium";v="159"
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
 #EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
-https://hls.meth-streams-hd.cfd/live/espn-401871060/index.m3u8?_=1794699762118
+https://hls.meth-streams-hd.cfd/live/espn-401909980/index.m3u8?_=1794701417226
+#EXTINF:-1 tvg-id="Colorado Avalanche at Montreal Canadiens" group-title="NHL",NHL : Colorado Avalanche at Montreal Canadiens
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
+#EXTVLCOPT:http-referrer=https://frame.embedme.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
+#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
+https://hls.meth-streams-hd.cfd/live/espn-401892711/index.m3u8?_=1794701419375
+#EXTINF:-1 tvg-id="Detroit Red Wings at Tampa Bay Lightning" group-title="NHL",NHL : Detroit Red Wings at Tampa Bay Lightning
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
+#EXTVLCOPT:http-referrer=https://frame.embedme.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
+#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
+https://hls.meth-streams-hd.cfd/live/espn-401892712/index.m3u8?_=1794701419193
+#EXTINF:-1 tvg-id="Ottawa Senators at Pittsburgh Penguins" group-title="NHL",NHL : Ottawa Senators at Pittsburgh Penguins
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
+#EXTVLCOPT:http-referrer=https://frame.embedme.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
+#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
+https://hls.meth-streams-hd.cfd/live/espn-401892713/index.m3u8?_=1794701419885
+#EXTINF:-1 tvg-id="New Jersey Devils at Washington Capitals" group-title="NHL",NHL : New Jersey Devils at Washington Capitals
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
+#EXTVLCOPT:http-referrer=https://frame.embedme.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
+#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
+https://hls.meth-streams-hd.cfd/live/espn-401892714/index.m3u8?_=1794701420050
+#EXTINF:-1 tvg-id="Philadelphia Flyers at Columbus Blue Jackets" group-title="NHL",NHL : Philadelphia Flyers at Columbus Blue Jackets
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
+#EXTVLCOPT:http-referrer=https://frame.embedme.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
+#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
+https://hls.meth-streams-hd.cfd/live/espn-401892715/index.m3u8?_=1794701419541
+#EXTINF:-1 tvg-id="Florida Panthers at St. Louis Blues" group-title="NHL",NHL : Florida Panthers at St. Louis Blues
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
+#EXTVLCOPT:http-referrer=https://frame.embedme.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
+#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
+https://hls.meth-streams-hd.cfd/live/espn-401892716/index.m3u8?_=1794701422137
 #EXTINF:-1 tvg-id="Missouri Tigers at Georgia Bulldogs" group-title="NCAAF",NCAAF : Missouri Tigers at Georgia Bulldogs
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Linux"
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
 #EXTVLCOPT:http-referrer=https://frame.embedme.cfd/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/159.0.8154.6 Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua: "HeadlessChrome";v="159", "Not/A)Brand";v="8", "Chromium";v="159"
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
 #EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
-https://hls.meth-streams-hd.cfd/live/espn-401856883/index.m3u8?_=1794699761899
+https://hls.meth-streams-hd.cfd/live/espn-401856883/index.m3u8?_=1794701422420
 #EXTINF:-1 tvg-id="Boston College Eagles at Notre Dame Fighting Irish" group-title="NCAAF",NCAAF : Boston College Eagles at Notre Dame Fighting Irish
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Linux"
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
 #EXTVLCOPT:http-referrer=https://frame.embedme.cfd/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/159.0.8154.6 Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua: "HeadlessChrome";v="159", "Not/A)Brand";v="8", "Chromium";v="159"
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
 #EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
-https://hls.meth-streams-hd.cfd/live/espn-401858294/index.m3u8?_=1794699761903
+https://hls.meth-streams-hd.cfd/live/espn-401858294/index.m3u8?_=1794701422604
 #EXTINF:-1 tvg-id="USC Trojans at Indiana Hoosiers" group-title="NCAAF",NCAAF : USC Trojans at Indiana Hoosiers
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Linux"
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
 #EXTVLCOPT:http-referrer=https://frame.embedme.cfd/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/159.0.8154.6 Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua: "HeadlessChrome";v="159", "Not/A)Brand";v="8", "Chromium";v="159"
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
 #EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
-https://hls.meth-streams-hd.cfd/live/espn-401858518/index.m3u8?_=1794699761939
+https://hls.meth-streams-hd.cfd/live/espn-401858518/index.m3u8?_=1794701422904
 #EXTINF:-1 tvg-id="Michigan Wolverines at Oregon Ducks" group-title="NCAAF",NCAAF : Michigan Wolverines at Oregon Ducks
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Linux"
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
 #EXTVLCOPT:http-referrer=https://frame.embedme.cfd/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/159.0.8154.6 Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua: "HeadlessChrome";v="159", "Not/A)Brand";v="8", "Chromium";v="159"
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
 #EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
-https://hls.meth-streams-hd.cfd/live/espn-401858523/index.m3u8?_=1794699762597
+https://hls.meth-streams-hd.cfd/live/espn-401858523/index.m3u8?_=1794701423126
 #EXTINF:-1 tvg-id="California Golden Bears at Virginia Cavaliers" group-title="NCAAF",NCAAF : California Golden Bears at Virginia Cavaliers
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Linux"
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
 #EXTVLCOPT:http-referrer=https://frame.embedme.cfd/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/159.0.8154.6 Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua: "HeadlessChrome";v="159", "Not/A)Brand";v="8", "Chromium";v="159"
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
 #EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
-https://hls.meth-streams-hd.cfd/live/espn-401858295/index.m3u8?_=1794699765030
+https://hls.meth-streams-hd.cfd/live/espn-401858295/index.m3u8?_=1794701425749
 #EXTINF:-1 tvg-id="Nevada Wolf Pack at Northern Illinois Huskies" group-title="NCAAF",NCAAF : Nevada Wolf Pack at Northern Illinois Huskies
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Linux"
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
 #EXTVLCOPT:http-referrer=https://frame.embedme.cfd/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/159.0.8154.6 Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua: "HeadlessChrome";v="159", "Not/A)Brand";v="8", "Chromium";v="159"
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
 #EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
-https://hls.meth-streams-hd.cfd/live/espn-401864536/index.m3u8?_=1794699765209
+https://hls.meth-streams-hd.cfd/live/espn-401864536/index.m3u8?_=1794701426769
 #EXTINF:-1 tvg-id="Georgia Southern Eagles at Georgia State Panthers" group-title="NCAAF",NCAAF : Georgia Southern Eagles at Georgia State Panthers
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Linux"
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
 #EXTVLCOPT:http-referrer=https://frame.embedme.cfd/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/159.0.8154.6 Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua: "HeadlessChrome";v="159", "Not/A)Brand";v="8", "Chromium";v="159"
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
 #EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
-https://hls.meth-streams-hd.cfd/live/espn-401869952/index.m3u8?_=1794699765235
+https://hls.meth-streams-hd.cfd/live/espn-401869952/index.m3u8?_=1794701426449
 #EXTINF:-1 tvg-id="Jacksonville State Gamecocks at Western Kentucky Hilltoppers" group-title="NCAAF",NCAAF : Jacksonville State Gamecocks at Western Kentucky Hilltoppers
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Linux"
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
 #EXTVLCOPT:http-referrer=https://frame.embedme.cfd/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/159.0.8154.6 Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua: "HeadlessChrome";v="159", "Not/A)Brand";v="8", "Chromium";v="159"
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
 #EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
-https://hls.meth-streams-hd.cfd/live/espn-401870752/index.m3u8?_=1794699765284
+https://hls.meth-streams-hd.cfd/live/espn-401870752/index.m3u8?_=1794701426943
 #EXTINF:-1 tvg-id="Middle Tennessee Blue Raiders at Liberty Flames" group-title="NCAAF",NCAAF : Middle Tennessee Blue Raiders at Liberty Flames
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Linux"
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
 #EXTVLCOPT:http-referrer=https://frame.embedme.cfd/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/159.0.8154.6 Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua: "HeadlessChrome";v="159", "Not/A)Brand";v="8", "Chromium";v="159"
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
 #EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
-https://hls.meth-streams-hd.cfd/live/espn-401871061/index.m3u8?_=1794699766508
+https://hls.meth-streams-hd.cfd/live/espn-401871061/index.m3u8?_=1794701427150
 #EXTINF:-1 tvg-id="Kansas Jayhawks at West Virginia Mountaineers" group-title="NCAAF",NCAAF : Kansas Jayhawks at West Virginia Mountaineers
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Linux"
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
 #EXTVLCOPT:http-referrer=https://frame.embedme.cfd/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/159.0.8154.6 Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua: "HeadlessChrome";v="159", "Not/A)Brand";v="8", "Chromium";v="159"
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
 #EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
-https://hls.meth-streams-hd.cfd/live/espn-401856861/index.m3u8?_=1794699768392
+https://hls.meth-streams-hd.cfd/live/espn-401856861/index.m3u8?_=1794701428903
 #EXTINF:-1 tvg-id="Fresno State Bulldogs at Texas State Bobcats" group-title="NCAAF",NCAAF : Fresno State Bulldogs at Texas State Bobcats
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Linux"
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
 #EXTVLCOPT:http-referrer=https://frame.embedme.cfd/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/159.0.8154.6 Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua: "HeadlessChrome";v="159", "Not/A)Brand";v="8", "Chromium";v="159"
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
 #EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
-https://hls.meth-streams-hd.cfd/live/espn-401860916/index.m3u8?_=1794699768584
+https://hls.meth-streams-hd.cfd/live/espn-401860916/index.m3u8?_=1794701429773
 #EXTINF:-1 tvg-id="Ole Miss Rebels at Oklahoma Sooners" group-title="NCAAF",NCAAF : Ole Miss Rebels at Oklahoma Sooners
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Linux"
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
 #EXTVLCOPT:http-referrer=https://frame.embedme.cfd/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/159.0.8154.6 Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua: "HeadlessChrome";v="159", "Not/A)Brand";v="8", "Chromium";v="159"
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
 #EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
-https://hls.meth-streams-hd.cfd/live/espn-401856887/index.m3u8?_=1794699768586
+https://hls.meth-streams-hd.cfd/live/espn-401856887/index.m3u8?_=1794701429952
 #EXTINF:-1 tvg-id="Auburn Tigers at Mississippi State Bulldogs" group-title="NCAAF",NCAAF : Auburn Tigers at Mississippi State Bulldogs
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Linux"
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
 #EXTVLCOPT:http-referrer=https://frame.embedme.cfd/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/159.0.8154.6 Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua: "HeadlessChrome";v="159", "Not/A)Brand";v="8", "Chromium";v="159"
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
 #EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
-https://hls.meth-streams-hd.cfd/live/espn-401856886/index.m3u8?_=1794699768628
+https://hls.meth-streams-hd.cfd/live/espn-401856886/index.m3u8?_=1794701430148
 #EXTINF:-1 tvg-id="Tulane Green Wave at Rice Owls" group-title="NCAAF",NCAAF : Tulane Green Wave at Rice Owls
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Linux"
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
 #EXTVLCOPT:http-referrer=https://frame.embedme.cfd/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/159.0.8154.6 Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua: "HeadlessChrome";v="159", "Not/A)Brand";v="8", "Chromium";v="159"
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
 #EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
-https://hls.meth-streams-hd.cfd/live/espn-401862828/index.m3u8?_=1794699769353
+https://hls.meth-streams-hd.cfd/live/espn-401862828/index.m3u8?_=1794701430223
 #EXTINF:-1 tvg-id="Southern Miss Golden Eagles at Louisiana Tech Bulldogs" group-title="NCAAF",NCAAF : Southern Miss Golden Eagles at Louisiana Tech Bulldogs
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Linux"
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
 #EXTVLCOPT:http-referrer=https://frame.embedme.cfd/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/159.0.8154.6 Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua: "HeadlessChrome";v="159", "Not/A)Brand";v="8", "Chromium";v="159"
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
 #EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
-https://hls.meth-streams-hd.cfd/live/espn-401871099/index.m3u8?_=1794699771736
+https://hls.meth-streams-hd.cfd/live/espn-401871099/index.m3u8?_=1794701432303
 #EXTINF:-1 tvg-id="Arizona State Sun Devils at UCF Knights" group-title="NCAAF",NCAAF : Arizona State Sun Devils at UCF Knights
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Linux"
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
 #EXTVLCOPT:http-referrer=https://frame.embedme.cfd/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/159.0.8154.6 Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua: "HeadlessChrome";v="159", "Not/A)Brand";v="8", "Chromium";v="159"
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
 #EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
-https://hls.meth-streams-hd.cfd/live/espn-401856857/index.m3u8?_=1794699771928
+https://hls.meth-streams-hd.cfd/live/espn-401856857/index.m3u8?_=1794701433045
 #EXTINF:-1 tvg-id="Washington Huskies at Michigan State Spartans" group-title="NCAAF",NCAAF : Washington Huskies at Michigan State Spartans
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Linux"
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
 #EXTVLCOPT:http-referrer=https://frame.embedme.cfd/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/159.0.8154.6 Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua: "HeadlessChrome";v="159", "Not/A)Brand";v="8", "Chromium";v="159"
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
 #EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
-https://hls.meth-streams-hd.cfd/live/espn-401858521/index.m3u8?_=1794699771966
+https://hls.meth-streams-hd.cfd/live/espn-401858521/index.m3u8?_=1794701433523
 #EXTINF:-1 tvg-id="Oregon State Beavers at Boise State Broncos" group-title="NCAAF",NCAAF : Oregon State Beavers at Boise State Broncos
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Linux"
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
 #EXTVLCOPT:http-referrer=https://frame.embedme.cfd/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/159.0.8154.6 Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua: "HeadlessChrome";v="159", "Not/A)Brand";v="8", "Chromium";v="159"
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
 #EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
-https://hls.meth-streams-hd.cfd/live/espn-401860914/index.m3u8?_=1794699771981
+https://hls.meth-streams-hd.cfd/live/espn-401860914/index.m3u8?_=1794701433522
 #EXTINF:-1 tvg-id="App State Mountaineers at Marshall Thundering Herd" group-title="NCAAF",NCAAF : App State Mountaineers at Marshall Thundering Herd
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Linux"
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
 #EXTVLCOPT:http-referrer=https://frame.embedme.cfd/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/159.0.8154.6 Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua: "HeadlessChrome";v="159", "Not/A)Brand";v="8", "Chromium";v="159"
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
 #EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
-https://hls.meth-streams-hd.cfd/live/espn-401869928/index.m3u8?_=1794699772740
+https://hls.meth-streams-hd.cfd/live/espn-401869928/index.m3u8?_=1794701433896
 #EXTINF:-1 tvg-id="Florida Gators at Kentucky Wildcats" group-title="NCAAF",NCAAF : Florida Gators at Kentucky Wildcats
-#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Linux"
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
 #EXTVLCOPT:http-referrer=https://frame.embedme.cfd/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/159.0.8154.6 Safari/537.36
-#EXTVLCOPT:http-headers=sec-ch-ua: "HeadlessChrome";v="159", "Not/A)Brand";v="8", "Chromium";v="159"
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
 #EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
-https://hls.meth-streams-hd.cfd/live/espn-401856884/index.m3u8?_=1794699775093
+https://hls.meth-streams-hd.cfd/live/espn-401856884/index.m3u8?_=1794701435796
+#EXTINF:-1 tvg-id="Baylor Bears at BYU Cougars" group-title="NCAAF",NCAAF : Baylor Bears at BYU Cougars
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
+#EXTVLCOPT:http-referrer=https://frame.embedme.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
+#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
+https://hls.meth-streams-hd.cfd/live/espn-401856858/index.m3u8?_=1794701436649
+#EXTINF:-1 tvg-id="Louisville Cardinals at North Carolina Tar Heels" group-title="NCAAF",NCAAF : Louisville Cardinals at North Carolina Tar Heels
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
+#EXTVLCOPT:http-referrer=https://frame.embedme.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
+#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
+https://hls.meth-streams-hd.cfd/live/espn-401858298/index.m3u8?_=1794701436814
+#EXTINF:-1 tvg-id="Minnesota Golden Gophers at Penn State Nittany Lions" group-title="NCAAF",NCAAF : Minnesota Golden Gophers at Penn State Nittany Lions
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
+#EXTVLCOPT:http-referrer=https://frame.embedme.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
+#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
+https://hls.meth-streams-hd.cfd/live/espn-401858524/index.m3u8?_=1794701437389
+#EXTINF:-1 tvg-id="San José State Spartans at Air Force Falcons" group-title="NCAAF",NCAAF : San José State Spartans at Air Force Falcons
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
+#EXTVLCOPT:http-referrer=https://frame.embedme.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
+#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
+https://hls.meth-streams-hd.cfd/live/espn-401864538/index.m3u8?_=1794701437534
+#EXTINF:-1 tvg-id="Troy Trojans at South Alabama Jaguars" group-title="NCAAF",NCAAF : Troy Trojans at South Alabama Jaguars
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
+#EXTVLCOPT:http-referrer=https://frame.embedme.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
+#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
+https://hls.meth-streams-hd.cfd/live/espn-401871100/index.m3u8?_=1794701439095
+#EXTINF:-1 tvg-id="Florida Atlantic Owls at Tulsa Golden Hurricane" group-title="NCAAF",NCAAF : Florida Atlantic Owls at Tulsa Golden Hurricane
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
+#EXTVLCOPT:http-referrer=https://frame.embedme.cfd/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
+#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
+https://hls.meth-streams-hd.cfd/live/espn-401862826/index.m3u8?_=1794701439978
+#EXTINF:-1 tvg-id="UFC 334 Gane vs Hokit (UFC)" group-title="Fighting",Fighting : UFC 334 Gane vs Hokit (UFC)
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
+#EXTVLCOPT:http-referrer=https://matchora.pro/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
+#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
+https://e.biboguv.cyou/hls/2112752/index.m3u8?t=MjExMjc1MnwxNzk0NzAyMDQwfHx8fDQzMzJhZmQy.8jEFUVOrR7nl0foshKyWou5M0uD1ZOL-PB1qLHWfkrQ
+#EXTINF:-1 tvg-id="Toronto Maple Leafs vs Edmonton Oilers (NHL)" group-title="Ice Hockey",Ice Hockey : Toronto Maple Leafs vs Edmonton Oilers (NHL)
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
+#EXTVLCOPT:http-referrer=https://matchora.pro/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
+#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
+https://e.biboguv.cyou/hls/177353/index.m3u8?t=MTc3MzUzfDE3OTQ3MDIwNDB8fHx8NDMzMmFmZDI.a9t9YVAUYAh5fPtvVH4WnJrPnhBHRgu1xZeGQIyxH1Q
+#EXTINF:-1 tvg-id="New Orleans Pelicans vs Denver Nuggets (NBA)" group-title="Basketball",Basketball : New Orleans Pelicans vs Denver Nuggets (NBA)
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
+#EXTVLCOPT:http-referrer=https://matchora.pro/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
+#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
+https://e.biboguv.cyou/hls/1060883/index.m3u8?t=MTA2MDg4M3wxNzk0NzAyMDQzfHx8fDQzMzJhZmQy.Fy12-5fJ3jZ5cAK1CRisB6H3C9xzc094hkxlJYf9yFg
+#EXTINF:-1 tvg-id="Tampa Bay Lightning vs Detroit Red Wings (NHL)" group-title="Ice Hockey",Ice Hockey : Tampa Bay Lightning vs Detroit Red Wings (NHL)
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
+#EXTVLCOPT:http-referrer=https://matchora.pro/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
+#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
+https://e.biboguv.cyou/hls/836395/index.m3u8?t=ODM2Mzk1fDE3OTQ3MDIwNDN8fHx8NDMzMmFmZDI.QTmexB3Od_LpdSJx_0aNoUurmLEQylmAISOJBSGnN5g
+#EXTINF:-1 tvg-id="Cashmere Technical vs Wellington Olympic (New Zealand National League Championship)" group-title="Soccer",Soccer : Cashmere Technical vs Wellington Olympic (New Zealand National League Championship)
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
+#EXTVLCOPT:http-referrer=https://matchora.pro/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
+#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
+https://e.biboguv.cyou/hls/91900/index.m3u8?t=OTE5MDB8MTc5NDcwMjA0Nnx8fHw0MzMyYWZkMg.AL0G5ljyYzHJ5Z7lxDJl1ca1zrkUTDjcVqUmb5Ca23Y
+#EXTINF:-1 tvg-id="Washington Capitals vs New Jersey Devils (NHL)" group-title="Ice Hockey",Ice Hockey : Washington Capitals vs New Jersey Devils (NHL)
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
+#EXTVLCOPT:http-referrer=https://matchora.pro/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
+#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
+https://e.biboguv.cyou/hls/91900/index.m3u8?t=OTE5MDB8MTc5NDcwMjA0Nnx8fHw0MzMyYWZkMg.AL0G5ljyYzHJ5Z7lxDJl1ca1zrkUTDjcVqUmb5Ca23Y
+#EXTINF:-1 tvg-id="Kentucky vs Florida (NCAA Division 1 Football)" group-title="American Football",American Football : Kentucky vs Florida (NCAA Division 1 Football)
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
+#EXTVLCOPT:http-referrer=https://matchora.pro/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
+#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
+https://e.biboguv.cyou/hls/1921357/index.m3u8?t=MTkyMTM1N3wxNzk0NzAyMDUwfHx8fDQzMzJhZmQy.Tl2oFkAcieJGWbTudNacqzK7Xl8RzbbOdC8CKk-Qgqg
+#EXTINF:-1 tvg-id="St. Louis Blues vs Florida Panthers (NHL)" group-title="Ice Hockey",Ice Hockey : St. Louis Blues vs Florida Panthers (NHL)
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
+#EXTVLCOPT:http-referrer=https://matchora.pro/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
+#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
+https://e.biboguv.cyou/hls/1909744/index.m3u8?t=MTkwOTc0NHwxNzk0NzAyMDUwfHx8fDQzMzJhZmQy.n--B_0Aau5evLj0P8kzBAoeVzAIKMhHRO4bnbtZONUg
+#EXTINF:-1 tvg-id="Montreal Canadiens vs Colorado Avalanche (NHL)" group-title="Ice Hockey",Ice Hockey : Montreal Canadiens vs Colorado Avalanche (NHL)
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
+#EXTVLCOPT:http-referrer=https://matchora.pro/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
+#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
+https://e.biboguv.cyou/hls/177319/index.m3u8?t=MTc3MzE5fDE3OTQ3MDIwNTB8fHx8NDMzMmFmZDI.0TEeni6zbLbkQPRzdnBG8v65aALAlJelcGmEoaFEwLc
+#EXTINF:-1 tvg-id="Pittsburgh Penguins vs Ottawa Senators (NHL)" group-title="Ice Hockey",Ice Hockey : Pittsburgh Penguins vs Ottawa Senators (NHL)
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
+#EXTVLCOPT:http-referrer=https://matchora.pro/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
+#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
+https://e.biboguv.cyou/hls/836391/index.m3u8?t=ODM2MzkxfDE3OTQ3MDIwNTN8fHx8NDMzMmFmZDI.cCYugqrrbY0Lyuot2tRnh09zaGSCRMSNGPefJCUBq5I
+#EXTINF:-1 tvg-id="Columbus Blue Jackets vs Philadelphia Flyers (NHL)" group-title="Ice Hockey",Ice Hockey : Columbus Blue Jackets vs Philadelphia Flyers (NHL)
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
+#EXTVLCOPT:http-referrer=https://matchora.pro/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
+#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
+https://e.biboguv.cyou/hls/90939/index.m3u8?t=OTA5Mzl8MTc5NDcwMjA1M3x8fHw0MzMyYWZkMg.BOG-28nST8slgxHD8nSsJLJFWpTn-RdGm-f6H8FemuY
+#EXTINF:-1 tvg-id="Oklahoma vs Ole Miss (NCAA Division 1 Football)" group-title="American Football",American Football : Oklahoma vs Ole Miss (NCAA Division 1 Football)
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
+#EXTVLCOPT:http-referrer=https://matchora.pro/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
+#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
+https://e.biboguv.cyou/hls/45506/index.m3u8?t=NDU1MDZ8MTc5NDcwMjA1NHx8fHw0MzMyYWZkMg.6kOMLRm7BPrbhN97iIvg-HQUD4oLNJpGv2Bh3iBRmT8
+#EXTINF:-1 tvg-id="Boston Bruins vs Minnesota Wild (NHL)" group-title="Ice Hockey",Ice Hockey : Boston Bruins vs Minnesota Wild (NHL)
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
+#EXTVLCOPT:http-referrer=https://matchora.pro/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
+#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
+https://e.biboguv.cyou/hls/836391/index.m3u8?t=ODM2MzkxfDE3OTQ3MDIwNTN8fHx8NDMzMmFmZDI.cCYugqrrbY0Lyuot2tRnh09zaGSCRMSNGPefJCUBq5I
+#EXTINF:-1 tvg-id="Cage Warriors 213 London (Cage Warriors)" group-title="Fighting",Fighting : Cage Warriors 213 London (Cage Warriors)
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
+#EXTVLCOPT:http-referrer=https://matchora.pro/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
+#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
+https://e.biboguv.cyou/hls/1917605/index.m3u8?t=MTkxNzYwNXwxNzk0NzAyMDU2fHx8fDQzMzJhZmQy.wzRn6GQQC8to3Pq6pjPEj4U8THXtn4hPrlhXE_fn06U
+#EXTINF:-1 tvg-id="BYU vs Baylor (NCAA Division 1 Football)" group-title="American Football",American Football : BYU vs Baylor (NCAA Division 1 Football)
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
+#EXTVLCOPT:http-referrer=https://matchora.pro/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
+#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
+https://e.biboguv.cyou/hls/90959/index.m3u8?t=OTA5NTl8MTc5NDcwMjA1N3x8fHw0MzMyYWZkMg.ZvHgKzkX18lIWO39V3D8iOCcoEAWOMYGqTO_n2fVOu4
+#EXTINF:-1 tvg-id="Chapecoense vs Vasco da Gama (Brazilian Serie A)" group-title="Soccer",Soccer : Chapecoense vs Vasco da Gama (Brazilian Serie A)
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
+#EXTVLCOPT:http-referrer=https://matchora.pro/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
+#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
+https://e.biboguv.cyou/hls/107524/index.m3u8?t=MTA3NTI0fDE3OTQ3MDIwNTd8fHx8NDMzMmFmZDI.TFM5syZrRFBd_hFuSdLrfu_RA8zXJf1_SAPV6cNLSts
+#EXTINF:-1 tvg-id="Emirates Eagles vs Arabian Aces (Cricket)" group-title="Cricket",Cricket : Emirates Eagles vs Arabian Aces (Cricket)
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
+#EXTVLCOPT:http-referrer=https://matchora.pro/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
+#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
+https://e.pecufa.cyou/hls/1920842/index.m3u8?t=MTkyMDg0MnwxNzk0NzAyMDU4fHx8fDQzMzJhZmQy.T1KNakHa0J0a1tQEivdfH-D00ObHXKeLt4DXUxeVQNk
+#EXTINF:-1 tvg-id="Milwaukee Admirals vs Chicago Wolves (American AHL)" group-title="Ice Hockey",Ice Hockey : Milwaukee Admirals vs Chicago Wolves (American AHL)
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
+#EXTVLCOPT:http-referrer=https://matchora.pro/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
+#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
+https://e.biboguv.cyou/hls/993131/index.m3u8?t=OTkzMTMxfDE3OTQ3MDIwNjB8fHx8NDMzMmFmZDI.3jIbA6V8eatpPn1wok6TDUtgOCje_x3BKCk3imYdjl0
+#EXTINF:-1 tvg-id="St Vincent and the Grenadines vs Belize (CONCACAF Nations League)" group-title="Soccer",Soccer : St Vincent and the Grenadines vs Belize (CONCACAF Nations League)
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
+#EXTVLCOPT:http-referrer=https://matchora.pro/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
+#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
+https://e.biboguv.cyou/hls/1968452/index.m3u8?t=MTk2ODQ1MnwxNzk0NzAyMDYwfHx8fDQzMzJhZmQy.Tfx73BMQ_ucKPtMxJUdMwGj9zpnxlUShoKzU63gjufg
+#EXTINF:-1 tvg-id="UAE Bulls vs Yas Lions (Cricket)" group-title="Cricket",Cricket : UAE Bulls vs Yas Lions (Cricket)
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
+#EXTVLCOPT:http-referrer=https://matchora.pro/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
+#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
+https://e.biboguv.cyou/hls/993131/index.m3u8?t=OTkzMTMxfDE3OTQ3MDIwNjB8fHx8NDMzMmFmZDI.3jIbA6V8eatpPn1wok6TDUtgOCje_x3BKCk3imYdjl0
+#EXTINF:-1 tvg-id="Saginaw Spirit vs London Knights (Canadian OHL)" group-title="Ice Hockey",Ice Hockey : Saginaw Spirit vs London Knights (Canadian OHL)
+#EXTVLCOPT:http-headers=sec-ch-ua-platform: "Windows"
+#EXTVLCOPT:http-referrer=https://matchora.pro/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.0.0 Safari/537.36
+#EXTVLCOPT:http-headers=sec-ch-ua: "Not-A Brand";v="24", "Chromium";v="159", "Chrome";v="159"
+#EXTVLCOPT:http-headers=accept-language: en-US
+#EXTVLCOPT:http-headers=sec-ch-ua-mobile: ?0
+https://e.biboguv.cyou/hls/79477/index.m3u8?t=Nzk0Nzd8MTc5NDcwMjA2MHx8fHw0MzMyYWZkMg.Z409j-1ayGc4skTh2VEo3q14OSmuKs-AFMh2sUkvV2k
