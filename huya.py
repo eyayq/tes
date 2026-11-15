@@ -3,6 +3,7 @@ import json
 import re
 import time
 import base64
+from urllib.parse import quote
 
 # ─── KONFIGURASI ───
 PROXY_URL = "https://exsample.d-n-s.name/playlist.mpd"
@@ -16,7 +17,10 @@ REFERER = "https://www.cubmu.com/"
 
 
 def b64_to_hex(b64_str):
-    return base64.b64decode(b64_str).hex()
+    s = b64_str.strip()
+    s = s.replace('-', '+').replace('_', '/')
+    s += '=' * (-len(s) % 4)
+    return base64.b64decode(s).hex()
 
 
 def fetch_channels():
@@ -30,9 +34,9 @@ def fetch_channels():
 
 def fetch_channel_detail(slug):
     """Fetch channel detail via proxy."""
-    resp = requests.get(f"{API_PROXY}?api=channel&slug={slug}&auth={PROXY_SECRET}", timeout=20)
+    resp = requests.get(f"{API_PROXY}?api=channel&slug={quote(slug, safe='')}&auth={PROXY_SECRET}", timeout=20)
     if resp.status_code != 200:
-        return {"manifest": "", "device_id": "", "clearkey": {}}
+        return {"manifest": "", "device_id": "", "clearkey": {}, "drm_detail": {}}
     return resp.json()
 
 
@@ -75,7 +79,7 @@ def main():
                 info = fetch_channel_detail(slug)
             except Exception as e:
                 print(f"  ⚠️  [{i}-{j}] {ch['channel_name']} — {e}")
-                info = {"manifest": "", "device_id": "", "clearkey": {}}
+                info = {"manifest": "", "device_id": "", "clearkey": {}, "drm_detail": {}}
 
             all_channels.append({
                 "slug": slug,
@@ -96,6 +100,7 @@ def main():
     total = 0
     failed = 0
     clearkey_count = 0
+    widevine_count = 0
 
     with open(OUTPUT, "w", encoding="utf-8") as f:
         f.write("#EXTM3U\n")
@@ -106,33 +111,53 @@ def main():
             genre = ch["genre"]
             slug = ch["slug"]
             manifest = ch["manifest"]
-            clearkey = ch["clearkey"]
+            clearkey = ch.get("clearkey") or {}
+            drm_detail = ch.get("drm_detail") or {}
 
             if not manifest:
                 failed += 1
                 continue
 
+            # Deteksi DRM type
             is_clearkey = clearkey and clearkey.get("valid")
+            is_widevine = (not is_clearkey) and drm_detail.get("widevine_license_url")
+
             if is_clearkey:
                 clearkey_count += 1
+            elif is_widevine:
+                widevine_count += 1
 
             f.write(f'#EXTINF:0 tvg-name="{name}" tvg-id="{ch_num}" tvg-logo="{logo}" group-title="tv nasional prem",{name} [vip tes]\n')
             f.write(f'#EXTVLCOPT:http-user-agent={UA}\n')
             f.write(f'#EXTVLCOPT:http-origin={ORIGIN}\n')
             f.write(f'#EXTVLCOPT:http-referer={REFERER}\n')
-            f.write(f'#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey\n')
+            f.write('#KODIPROP:inputstream=inputstream.adaptive\n')
+            f.write('#KODIPROP:inputstream.adaptive.manifest_type=mpd\n')
+
             if is_clearkey:
                 kid_hex = b64_to_hex(clearkey["kid"])
                 key_hex = b64_to_hex(clearkey["k"])
+                f.write('#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey\n')
                 f.write(f'#KODIPROP:inputstream.adaptive.license_key={kid_hex}:{key_hex}\n')
-            f.write(f'{PROXY_URL}?slug={slug}\n\n')
+            elif is_widevine:
+                f.write('#KODIPROP:inputstream.adaptive.license_type=com.widevine\n')
+                f.write(f'#KODIPROP:inputstream.adaptive.license_url={drm_detail["widevine_license_url"]}\n')
+                f.write('#KODIPROP:inputstream.adaptive.license_content_type=application/octet-stream\n')
+
+            f.write(f'{PROXY_URL}?slug={quote(slug, safe="")}\n\n')
             total += 1
-            mark = "🔓" if is_clearkey else "🔒"
+            if is_clearkey:
+                mark = "🔓"
+            elif is_widevine:
+                mark = "🔒 W"
+            else:
+                mark = "🔒"
             print(f"  {mark} {name} (ch {ch_num})")
 
     print(f"\n{'='*55}")
     print(f"✅ Total: {total} channel, {failed} gagal")
     print(f"   🔓 ClearKey: {clearkey_count}")
+    print(f"   🔒 Widevine: {widevine_count}")
     print(f"   📄 File: {OUTPUT}")
     print(f"{'='*55}")
 
