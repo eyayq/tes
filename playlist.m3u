@@ -65,6 +65,9 @@ https://exsample.d-n-s.name/playlist.mpd?slug=363-tvone
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=mpd
+#KODIPROP:inputstream.adaptive.license_type=com.widevine
+#KODIPROP:inputstream.adaptive.license_url=https://api.cubmu.com/global/v1/widevine/license
+#KODIPROP:inputstream.adaptive.license_content_type=application/octet-stream
 https://exsample.d-n-s.name/playlist.mpd?slug=215-sctv
 
 #EXTINF:0 tvg-name="Indosiar" tvg-id="808" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/2b5324cd-4e2b-4bf3-9d83-eba44af6dd0f.png" group-title="tv nasional prem",Indosiar [vip tes]
@@ -73,6 +76,9 @@ https://exsample.d-n-s.name/playlist.mpd?slug=215-sctv
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=mpd
+#KODIPROP:inputstream.adaptive.license_type=com.widevine
+#KODIPROP:inputstream.adaptive.license_url=https://api.cubmu.com/global/v1/widevine/license
+#KODIPROP:inputstream.adaptive.license_content_type=application/octet-stream
 https://exsample.d-n-s.name/playlist.mpd?slug=216-indosiar
 
 #EXTINF:0 tvg-name="RCTI" tvg-id="809" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/15c10f90-4304-4410-a418-67891b5c185d.png" group-title="tv nasional prem",RCTI [vip tes]
@@ -341,6 +347,9 @@ https://exsample.d-n-s.name/playlist.mpd?slug=667-k
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=mpd
+#KODIPROP:inputstream.adaptive.license_type=com.widevine
+#KODIPROP:inputstream.adaptive.license_url=https://api.cubmu.com/global/v1/widevine/license
+#KODIPROP:inputstream.adaptive.license_content_type=application/octet-stream
 https://exsample.d-n-s.name/playlist.mpd?slug=236-nhk-world-premium
 
 #EXTINF:0 tvg-name="Channel Jowo" tvg-id="327" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/64efefa1-5f19-47e4-ac3d-7a871b590a23.jpg" group-title="tv nasional prem",Channel Jowo [vip tes]
@@ -439,6 +448,9 @@ https://exsample.d-n-s.name/playlist.mpd?slug=196-fashion-tv
 #EXTVLCOPT:http-referer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=mpd
+#KODIPROP:inputstream.adaptive.license_type=com.widevine
+#KODIPROP:inputstream.adaptive.license_url=https://api.cubmu.com/global/v1/widevine/license
+#KODIPROP:inputstream.adaptive.license_content_type=application/octet-stream
 https://exsample.d-n-s.name/playlist.mpd?slug=276-cooking-tv
 
 #EXTINF:0 tvg-name="Gaming TV" tvg-id="509" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/dcbc4bc6-19c3-4719-9ee7-587aa3edffea.jpg" group-title="tv nasional prem",Gaming TV [vip tes]
