@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
-
 import re
 import json
 import asyncio
 import requests
 from urllib.parse import urlparse, parse_qs, unquote
 from playwright.async_api import async_playwright
-from playwright_stealth import stealth_async
+from playwright_stealth import Stealth  # ← v2 API
 
 # ─────────────────────────────────────────────
 # KONFIGURASI
@@ -24,19 +23,14 @@ OUTPUT = "playlist.m3u"
 JSON_KEYS = [f"tv{i}" for i in range(1, 20)]
 MAX_EMBEDS_PER_EVENT = 3
 
-# UA yang dikirim ke halaman embed (bukan HeadlessChrome)
 BROWSER_UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
               "AppleWebKit/537.36 (KHTML, like Gecko) "
               "Chrome/159.0.0.0 Safari/537.36")
 
-# Header yang tidak perlu ditulis ke playlist
 SKIP_HEADERS = {"accept-encoding", "host", "content-length", "connection"}
 # ─────────────────────────────────────────────
 
 
-# ─────────────────────────────────────────────
-# STEP 1: FETCH JSON
-# ─────────────────────────────────────────────
 def fetch_all_json() -> dict:
     print("→ Fetching JSON sources...")
     all_data = {}
@@ -66,9 +60,6 @@ def count_events(data) -> int:
     return n
 
 
-# ─────────────────────────────────────────────
-# STEP 2: PARSE EVENTS
-# ─────────────────────────────────────────────
 def extract_category(event_name: str) -> str:
     if " :" in event_name:
         return event_name.split(" :")[0].strip()
@@ -128,9 +119,6 @@ def parse_all_events(all_data: dict) -> list[dict]:
     return events
 
 
-# ─────────────────────────────────────────────
-# STEP 3: RESOLVE M3U8 + INTERCEPT HEADERS
-# ─────────────────────────────────────────────
 def extract_m3u8_from_wrapper(url: str) -> str | None:
     parsed = urlparse(url)
     qs = parse_qs(parsed.query)
@@ -148,9 +136,6 @@ def extract_m3u8_from_wrapper(url: str) -> str | None:
 
 
 async def resolve_m3u8(page, embed_url: str) -> dict | None:
-    """
-    Return: {"m3u8": str, "headers": dict} atau None
-    """
     m3u8_url = None
     m3u8_headers = {}
 
@@ -193,7 +178,6 @@ async def resolve_m3u8(page, embed_url: str) -> dict | None:
     if m3u8_url:
         return {"m3u8": m3u8_url, "headers": m3u8_headers}
 
-    # Fallback 1: <video> element
     try:
         video_src = await page.evaluate("""
             () => {
@@ -208,7 +192,6 @@ async def resolve_m3u8(page, embed_url: str) -> dict | None:
     except Exception:
         pass
 
-    # Fallback 2: JS variables / script tags
     try:
         js_m3u8 = await page.evaluate("""
             () => {
@@ -231,7 +214,6 @@ async def resolve_m3u8(page, embed_url: str) -> dict | None:
     except Exception:
         pass
 
-    # Fallback 3: regex di HTML
     try:
         content = await page.content()
         for m in re.finditer(r'["\']([^"\']*?\.m3u8[^"\']*)["\']', content):
@@ -247,9 +229,6 @@ async def resolve_m3u8(page, embed_url: str) -> dict | None:
     return None
 
 
-# ─────────────────────────────────────────────
-# STEP 4: BUILD PLAYLIST
-# ─────────────────────────────────────────────
 def write_header_lines(lines: list[str], headers: dict):
     for key, value in headers.items():
         lk = key.lower()
@@ -268,13 +247,13 @@ async def build_playlist(events: list[dict]):
     results = []
     failed = []
 
-    async with async_playwright() as p:
+    # ← v2 API: Stealth().use_async() wrap async_playwright
+    async with Stealth().use_async(async_playwright()) as p:
         browser = await p.chromium.launch(
             headless=True,
             args=["--disable-blink-features=AutomationControlled"],
         )
 
-        # Context dengan UA asli (bukan HeadlessChrome)
         context = await browser.new_context(
             user_agent=BROWSER_UA,
             viewport={"width": 1920, "height": 1080},
@@ -284,7 +263,7 @@ async def build_playlist(events: list[dict]):
         pages = []
         for _ in range(CONCURRENCY):
             page = await context.new_page()
-            await stealth_async(page)  # ← hide fingerprint headless
+            # stealth otomatis — tidak perlu stealth_async(page)
             pages.append(page)
 
         async def process(ev: dict, idx: int):
@@ -327,7 +306,6 @@ async def build_playlist(events: list[dict]):
     with open(OUTPUT, "w", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
 
-    # ── Ringkasan ──
     print(f"\n{'='*50}")
     print(f"  ✅ Berhasil : {len(results)}/{len(events)}")
     if failed:
@@ -340,9 +318,6 @@ async def build_playlist(events: list[dict]):
     print(f"{'='*50}")
 
 
-# ─────────────────────────────────────────────
-# MAIN
-# ─────────────────────────────────────────────
 if __name__ == "__main__":
     all_data = fetch_all_json()
     if not all_data:
