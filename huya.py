@@ -3,22 +3,24 @@ import re
 import json
 import asyncio
 import requests
-from urllib.parse import urlparse, parse_qs, unquote
+from urllib.parse import urlparse, parse_qs, unquote, urlencode
 from playwright.async_api import async_playwright
-from playwright_stealth import Stealth  # ← v2 API
+from playwright_stealth import Stealth
 
 # ─────────────────────────────────────────────
 # KONFIGURASI
 # ─────────────────────────────────────────────
-BASE_URL = "https://daddylive.app"
+BASE_URL   = "https://daddylive.app"
+PROXY_BASE = "https://exsample.d-n-s.name"  # ← URL proxy PHP
+
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
                   "AppleWebKit/537.36 (KHTML, like Gecko) "
                   "Chrome/125.0.0.0 Safari/537.36"
 }
 CONCURRENCY = 5
-TIMEOUT = 25_000
-OUTPUT = "playlist.m3u"
+TIMEOUT     = 25_000
+OUTPUT      = "playlist.m3u"
 
 JSON_KEYS = [f"tv{i}" for i in range(1, 20)]
 MAX_EMBEDS_PER_EVENT = 3
@@ -31,6 +33,9 @@ SKIP_HEADERS = {"accept-encoding", "host", "content-length", "connection"}
 # ─────────────────────────────────────────────
 
 
+# ─────────────────────────────────────────────
+# STEP 1: FETCH JSON
+# ─────────────────────────────────────────────
 def fetch_all_json() -> dict:
     print("→ Fetching JSON sources...")
     all_data = {}
@@ -60,6 +65,9 @@ def count_events(data) -> int:
     return n
 
 
+# ─────────────────────────────────────────────
+# STEP 2: PARSE EVENTS
+# ─────────────────────────────────────────────
 def extract_category(event_name: str) -> str:
     if " :" in event_name:
         return event_name.split(" :")[0].strip()
@@ -119,6 +127,9 @@ def parse_all_events(all_data: dict) -> list[dict]:
     return events
 
 
+# ─────────────────────────────────────────────
+# STEP 3: RESOLVE M3U8 + INTERCEPT HEADERS
+# ─────────────────────────────────────────────
 def extract_m3u8_from_wrapper(url: str) -> str | None:
     parsed = urlparse(url)
     qs = parse_qs(parsed.query)
@@ -178,6 +189,7 @@ async def resolve_m3u8(page, embed_url: str) -> dict | None:
     if m3u8_url:
         return {"m3u8": m3u8_url, "headers": m3u8_headers}
 
+    # Fallback 1: <video> element
     try:
         video_src = await page.evaluate("""
             () => {
@@ -192,6 +204,7 @@ async def resolve_m3u8(page, embed_url: str) -> dict | None:
     except Exception:
         pass
 
+    # Fallback 2: JS variables
     try:
         js_m3u8 = await page.evaluate("""
             () => {
@@ -214,6 +227,7 @@ async def resolve_m3u8(page, embed_url: str) -> dict | None:
     except Exception:
         pass
 
+    # Fallback 3: regex di HTML
     try:
         content = await page.content()
         for m in re.finditer(r'["\']([^"\']*?\.m3u8[^"\']*)["\']', content):
@@ -229,6 +243,9 @@ async def resolve_m3u8(page, embed_url: str) -> dict | None:
     return None
 
 
+# ─────────────────────────────────────────────
+# STEP 4: BUILD PLAYLIST
+# ─────────────────────────────────────────────
 def write_header_lines(lines: list[str], headers: dict):
     for key, value in headers.items():
         lk = key.lower()
@@ -242,12 +259,23 @@ def write_header_lines(lines: list[str], headers: dict):
             lines.append(f'#EXTVLCOPT:http-headers={key}: {value}')
 
 
+def build_proxy_url(m3u8_url: str, headers: dict) -> str:
+    """Bangun URL m3u8.php dengan params."""
+    referrer = headers.get("referer", "")
+    origin   = headers.get("origin", "")
+    params   = f"url={urlencode(m3u8_url)}"
+    if referrer:
+        params += f"&referer={urlencode(referrer)}"
+    if origin:
+        params += f"&origin={urlencode(origin)}"
+    return f"{PROXY_BASE}/m3u8.php?{params}"
+
+
 async def build_playlist(events: list[dict]):
     semaphore = asyncio.Semaphore(CONCURRENCY)
     results = []
     failed = []
 
-    # ← v2 API: Stealth().use_async() wrap async_playwright
     async with Stealth().use_async(async_playwright()) as p:
         browser = await p.chromium.launch(
             headless=True,
@@ -263,7 +291,6 @@ async def build_playlist(events: list[dict]):
         pages = []
         for _ in range(CONCURRENCY):
             page = await context.new_page()
-            # stealth otomatis — tidak perlu stealth_async(page)
             pages.append(page)
 
         async def process(ev: dict, idx: int):
@@ -296,12 +323,15 @@ async def build_playlist(events: list[dict]):
     # ── Tulis playlist ──
     lines = ["#EXTM3U"]
     for ev in results:
+        headers = ev.get("headers", {})
+        proxy_url = build_proxy_url(ev["m3u8"], headers)
+
         lines.append(
             f'#EXTINF:-1 tvg-id="{ev["name"]}"'
             f' group-title="{ev["category"]}",{ev["full_name"]}'
         )
-        write_header_lines(lines, ev.get("headers", {}))
-        lines.append(ev["m3u8"])
+        write_header_lines(lines, headers)
+        lines.append(proxy_url)
 
     with open(OUTPUT, "w", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
@@ -315,9 +345,13 @@ async def build_playlist(events: list[dict]):
         if len(failed) > 10:
             print(f"     ... dan {len(failed)-10} lainnya")
     print(f"  📄 File     : {OUTPUT}")
+    print(f"  🌐 Proxy    : {PROXY_BASE}")
     print(f"{'='*50}")
 
 
+# ─────────────────────────────────────────────
+# MAIN
+# ─────────────────────────────────────────────
 if __name__ == "__main__":
     all_data = fetch_all_json()
     if not all_data:
