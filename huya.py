@@ -3,7 +3,6 @@ import json
 import re
 import time
 import base64
-from urllib.parse import quote
 
 # ─── KONFIGURASI ───
 PROXY_URL = "https://exsample.d-n-s.name/playlist.mpd"
@@ -17,10 +16,7 @@ REFERER = "https://www.cubmu.com/"
 
 
 def b64_to_hex(b64_str):
-    s = b64_str.strip()
-    s = s.replace('-', '+').replace('_', '/')
-    s += '=' * (-len(s) % 4)
-    return base64.b64decode(s).hex()
+    return base64.b64decode(b64_str).hex()
 
 
 def fetch_channels():
@@ -34,7 +30,7 @@ def fetch_channels():
 
 def fetch_channel_detail(slug):
     """Fetch channel detail via proxy."""
-    resp = requests.get(f"{API_PROXY}?api=channel&slug={quote(slug, safe='')}&auth={PROXY_SECRET}", timeout=20)
+    resp = requests.get(f"{API_PROXY}?api=channel&slug={slug}&auth={PROXY_SECRET}", timeout=20)
     if resp.status_code != 200:
         return {"manifest": "", "device_id": "", "clearkey": {}}
     return resp.json()
@@ -124,14 +120,12 @@ def main():
             f.write(f'#EXTVLCOPT:http-user-agent={UA}\n')
             f.write(f'#EXTVLCOPT:http-origin={ORIGIN}\n')
             f.write(f'#EXTVLCOPT:http-referer={REFERER}\n')
-            f.write('#KODIPROP:inputstream=inputstream.adaptive\n')
-            f.write('#KODIPROP:inputstream.adaptive.manifest_type=mpd\n')
+            f.write(f'#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey\n')
             if is_clearkey:
                 kid_hex = b64_to_hex(clearkey["kid"])
                 key_hex = b64_to_hex(clearkey["k"])
-                f.write(f'#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey\n')
                 f.write(f'#KODIPROP:inputstream.adaptive.license_key={kid_hex}:{key_hex}\n')
-            f.write(f'{PROXY_URL}?slug={quote(slug, safe="")}\n\n')
+            f.write(f'{PROXY_URL}?slug={slug}\n\n')
             total += 1
             mark = "🔓" if is_clearkey else "🔒"
             print(f"  {mark} {name} (ch {ch_num})")
