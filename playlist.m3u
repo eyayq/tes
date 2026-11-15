@@ -1,625 +1,625 @@
 #EXTM3U
 #EXTINF:0 tvg-name="Trans TV" tvg-id="800" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/3545b53b-8e35-4f44-953a-274720f77968.jpg" group-title="TV Nasional",Trans TV
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/VHJhbnNUVg/manifest.mpd?signature=YmI3NTYzMjkzZWM4NzNhOTA5MDhiMTBiZjZiYTA3ODI=&time=15276422544&device_id=Bd4vahmrJaHOy4QDH2bkVnX27wXLnGtZ5aVGqbt5TCuejQzO
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/VHJhbnNUVg/manifest.mpd?signature=YmI3NTYzMjkzZWM4NzNhOTA5MDhiMTBiZjZiYTA3ODI=&time=15276424461&device_id=MyzojXbT7GFS0Xy5VrsslTJc6_7WdVhoj4WdzSbbFebn
 #EXTINF:0 tvg-name="Trans 7" tvg-id="801" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/df7bddc8-675e-47e0-9e62-4c04afbf347a.jpg" group-title="TV Nasional",Trans 7
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/VFJBTlM3LW15/manifest.mpd?signature=OGMwOGQ4NWZmNmE2OWQ1YWY2NTg2MDhiOWZmODE4ZWM=&time=15276422545&device_id=xOvD1kmqV-mNtuWoiiz0FDOnKwWpU7ABeUXCBe3iXwlIcjFI
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/VFJBTlM3LW15/manifest.mpd?signature=OGMwOGQ4NWZmNmE2OWQ1YWY2NTg2MDhiOWZmODE4ZWM=&time=15276424462&device_id=gL2eAOuUTZObg9uwkXqgBRrhOt6PrQpFpwlTumW4ioAI
 #EXTINF:0 tvg-name="CNN Indonesia" tvg-id="803" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/34157c4e-9c56-4f08-8271-22524b5ad39e.jpg" group-title="TV Nasional",CNN Indonesia
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/Q05OaS1teQ/manifest.mpd?signature=ZmU2MDliZjhlMGQ0N2IyZDJhN2U3YzQ1ZDVmMzU3ODE=&time=15276422546&device_id=9cNnvi5fCeBHrOVhYuEXjilqDVYKHfSqY3NyD48CHFIivj3A
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/Q05OaS1teQ/manifest.mpd?signature=ZmU2MDliZjhlMGQ0N2IyZDJhN2U3YzQ1ZDVmMzU3ODE=&time=15276424463&device_id=7v6Ew5yAqPQPTX83k3Z7FKPbfpqniKZ34q1DaIOlWaUN
 #EXTINF:0 tvg-name="CNBC Indonesia" tvg-id="805" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/ea2f3817-add8-44b7-b222-664cacd221ca.jpg" group-title="TV Nasional",CNBC Indonesia
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/Q05CQy1JbmRvbmVzaWE/manifest.mpd?signature=MjkwMTI3MzU3MjlmZThmOWQ0YjZkYmQ2ODA2MzNlNTk=&time=15276422550&device_id=9cINE2dq7nsz1_ibDCu0k_VXdYAj9pykRmigajimNjydRwGb
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/Q05CQy1JbmRvbmVzaWE/manifest.mpd?signature=MjkwMTI3MzU3MjlmZThmOWQ0YjZkYmQ2ODA2MzNlNTk=&time=15276424465&device_id=8F0rHegjfY9Hkli8nb8ZDWq51vAXUy7TkuwPhnDBaVzv
 #EXTINF:0 tvg-name="Metro TV" tvg-id="802" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/cfc9d256-0421-447e-9aae-431db3de77c3.png" group-title="TV Nasional",Metro TV
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/TWV0cm9UVg/manifest.mpd?signature=NjYxYWQxZjc0NGQ2NDcxMjJiY2MwMWQ0Y2NmNDk5ZmQ=&time=15276422551&device_id=JQT_0g6fSO-0dQNhgPwLzlHfCihlX7ve-HlynNzVY2ay4JJu
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/TWV0cm9UVg/manifest.mpd?signature=NjYxYWQxZjc0NGQ2NDcxMjJiY2MwMWQ0Y2NmNDk5ZmQ=&time=15276424466&device_id=tKsQSDJ2vksd1qau3n6p1gTRU0sSzE7i2jJeObx6Nmla
 #EXTINF:0 tvg-name="TVOne" tvg-id="804" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/930c8097-dc6b-4161-b414-d7a70b0b8b98.png" group-title="TV Nasional",TVOne
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/VFZPTkU/manifest.mpd?signature=Nzc1YTAwMmI4YjVmZGRlMDk0OGI1ODI5YjE0MGYyN2M=&time=15276422552&device_id=J99G1hQfMixSVG7VvCjQtNs3DF2iB6OOOcXBdOxiqSLV2-b-
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/VFZPTkU/manifest.mpd?signature=Nzc1YTAwMmI4YjVmZGRlMDk0OGI1ODI5YjE0MGYyN2M=&time=15276424467&device_id=qtD-p_Md30K3q5xjKdkT4RTop9-WM4wsJj7BSrfDA9Fv
 #EXTINF:0 tvg-name="SCTV" tvg-id="807" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/3277a6c8-1294-418c-920b-575e598f0804.png" group-title="TV Nasional",SCTV
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-https://cdnjktbpid02.transvision.co.id/riutx01-66c5bb084cce1dc9e7a45aeaf52bf242/dashc/sctv/manifest.mpd?signature=NzFmYTBlZDlkZDAyMGRmNTlhOWMyOTFlNDNlMzM0YWM=&time=15276422553&device_id=_C6I3ggcPjNDLr7yxmPooFpWSjtd5pCtDb5J85jgfaagklBF
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
+https://cdnjktbpid02.transvision.co.id/riutx01-66c5bb084cce1dc9e7a45aeaf52bf242/dashc/sctv/manifest.mpd?signature=NzFmYTBlZDlkZDAyMGRmNTlhOWMyOTFlNDNlMzM0YWM=&time=15276424470&device_id=kJf2YOAb2vrzamWTDteRvYQ2WhquMmAFKUU72f6wiUcq
 #EXTINF:0 tvg-name="Indosiar" tvg-id="808" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/2b5324cd-4e2b-4bf3-9d83-eba44af6dd0f.png" group-title="TV Nasional",Indosiar
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-https://cdnjktbpid02.transvision.co.id/riutx01-66c5bb084cce1dc9e7a45aeaf52bf242/dashc/indosiar/manifest.mpd?signature=MTBkNmE0YmZiZmIwZDJlYmYzOTIzZWMyMjJhMWU5YTk=&time=15276422554&device_id=3eUSMimwkdcsBChoITu4fb0-6V_qphlPknz4wkx6XM6tSv94
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
+https://cdnjktbpid02.transvision.co.id/riutx01-66c5bb084cce1dc9e7a45aeaf52bf242/dashc/indosiar/manifest.mpd?signature=MTBkNmE0YmZiZmIwZDJlYmYzOTIzZWMyMjJhMWU5YTk=&time=15276424472&device_id=NYtdiSaWn5jUOiZh10OIir0q4p8uLqC4cKY0f9vbyFLw
 #EXTINF:0 tvg-name="RCTI" tvg-id="809" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/15c10f90-4304-4410-a418-67891b5c185d.png" group-title="TV Nasional",RCTI
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/UkNUSS1DaGFubmVs/manifest.mpd?signature=NGEwY2ZkN2I2YjQ4NDg5ODE2NTU4YmQ0YTFjNmFhMTg=&time=15276422555&device_id=7z9O7-ngii7FjFZbezO6J2MCafWScVrUrwrxb4n8shJjD2rF
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/UkNUSS1DaGFubmVs/manifest.mpd?signature=NGEwY2ZkN2I2YjQ4NDg5ODE2NTU4YmQ0YTFjNmFhMTg=&time=15276424473&device_id=QUPn_LV3ggdIeN3qRu3Ez3rEei8KWIMsJ7yKNqki2xZe
 #EXTINF:0 tvg-name="GTV" tvg-id="810" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/419ddbb6-dc83-4e1a-89e6-13c6c9422577.png" group-title="TV Nasional",GTV
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/R1RWLUNIQU5ORUw/manifest.mpd?signature=MmQyZjhiNmI0M2MzNzk0Y2IyMDAyMTgzY2ExYTQxNzI=&time=15276422556&device_id=0xgoPH7-Fvs1k0mhBZcTgs1J6pUvS4rKqbYNJtdoednqLAM1
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/R1RWLUNIQU5ORUw/manifest.mpd?signature=MmQyZjhiNmI0M2MzNzk0Y2IyMDAyMTgzY2ExYTQxNzI=&time=15276424474&device_id=E3oxe0m8o1A21ZApUoSvrWhZXSgoXyIYyTguBe9IJKiY
 #EXTINF:0 tvg-name="JakTV" tvg-id="812" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/912d53a1-8222-40e0-8e97-affb43129850.jpg" group-title="TV Nasional",JakTV
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/SmFrIHR2IENoYW5uZWw/manifest.mpd?signature=OTE4MDM3MDIwNTA3MGExNTRhMDAyNjBkNTdkM2EyYTM=&time=15276422557&device_id=C8jv14VAhPDjOPmy3pm98kIZxBBWycvue8vf34ANqhyYiLoG
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/SmFrIHR2IENoYW5uZWw/manifest.mpd?signature=OTE4MDM3MDIwNTA3MGExNTRhMDAyNjBkNTdkM2EyYTM=&time=15276424475&device_id=a2dXW5QyojPV_v4OyVW94ZxxCAaFGJZ234_N9gp-B-Y8
 #EXTINF:0 tvg-name="BTV" tvg-id="813" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/e1d6bd56-4209-4337-b0f7-553fb6fdec9a.png" group-title="TV Nasional",BTV
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/QlRWIENoYW5uZWw/manifest.mpd?signature=MjhlZTY2ZDllMjU3OTJjMzM0ZTMyOGIwNjRjMTg3MTI=&time=15276422561&device_id=Ro0E_-1S3sBNQXAM6IfphazVC4thHBtZBsa0a5x5sZe3fCLn
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/QlRWIENoYW5uZWw/manifest.mpd?signature=MjhlZTY2ZDllMjU3OTJjMzM0ZTMyOGIwNjRjMTg3MTI=&time=15276424476&device_id=unOeADimgRtV6mRq_V-0yEJfwuG9EpAF6jPtChHdiwVN
 #EXTINF:0 tvg-name="Kompas TV" tvg-id="814" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/f0771c7b-d473-4fa4-ad0f-cdffd4bc0ac5.jpg" group-title="TV Nasional",Kompas TV
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/S29tcGFzIFRW/manifest.mpd?signature=YWE3ZDQ4YTA5YzQzMzY4YmJiMGQwNDZmMjkxNjYzMDI=&time=15276422562&device_id=_9ZkIwjmGn79x3uxJhSAmTbXD74CIvZ9tBvBmMJ6IsNIc7u1
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/S29tcGFzIFRW/manifest.mpd?signature=YWE3ZDQ4YTA5YzQzMzY4YmJiMGQwNDZmMjkxNjYzMDI=&time=15276424477&device_id=vJ90iFgxwlkWBQ5q5sI7GBguuw5TDgt0XgHWO9HwtcPb
 #EXTINF:0 tvg-name="MDTV" tvg-id="815" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/b717b7b9-4dab-4e80-8221-9bd42d3f26f1.png" group-title="TV Nasional",MDTV
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/TURUVg/manifest.mpd?signature=MmZiOTY0NGUzZThjZjBhN2E1ODMyNmJhZTk0MzUwYTI=&time=15276422563&device_id=jAu71MmwZTZ941FYtJrUqjjQd0mCJLTGaKjKzNvCfcmYz8-_
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/TURUVg/manifest.mpd?signature=MmZiOTY0NGUzZThjZjBhN2E1ODMyNmJhZTk0MzUwYTI=&time=15276424500&device_id=BpcwXAKoEDPSSL5_ht63l_WH0neF0rl958XtUDCx9zfP
 #EXTINF:0 tvg-name="RTV" tvg-id="816" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/f4bd6cd9-d8a5-4f42-8dce-7f332ec55940.jpg" group-title="TV Nasional",RTV
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/cnR2IENobmw/manifest.mpd?signature=YjEzNDdhMjQ2MjYwZGY4NWZkYWFmODZkMGQ3NjNlMGM=&time=15276422564&device_id=hUJF2IZf4qKuFqNkCzn0KMEeTvYx21kr565x3L2q7cP4E6q1
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/cnR2IENobmw/manifest.mpd?signature=YjEzNDdhMjQ2MjYwZGY4NWZkYWFmODZkMGQ3NjNlMGM=&time=15276424502&device_id=exwA65KLJJIJrs3BB7NRDyMx42Eno0u3hkclOHIDD6Uf
 #EXTINF:0 tvg-name="MNC TV" tvg-id="817" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/788c4e9e-363d-47f7-9ef5-6ee1d9dd2619.png" group-title="TV Nasional",MNC TV
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/TU5DVFY/manifest.mpd?signature=NThjNDM5MzYwNGMxMDc4MGMyYjczYWJjNWNkODM4YTI=&time=15276422565&device_id=mL0tLi26Iqkblqn5uQmXX3r_P3IAfzMVoyq4IJsh_lBiS0dh
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/TU5DVFY/manifest.mpd?signature=NThjNDM5MzYwNGMxMDc4MGMyYjczYWJjNWNkODM4YTI=&time=15276424503&device_id=xgSeHrFSIuI-LBgKEqWJbuvYpz_Cwh32-YfGfJiAnfgj
 #EXTINF:0 tvg-name="TVRI" tvg-id="818" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/6e55c83f-b399-4884-8b57-273acb663344.png" group-title="TV Nasional",TVRI
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/VFZSSQ/manifest.mpd?signature=Yzc3ZjkwZGZjYjljNjEzN2NmMjJlYjcyOWJkMTRjYTE=&time=15276422566&device_id=2PinQDD72T5BWowLtUn8WnR38jAuHixHFyWh7yisAP0ArdeR
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/VFZSSQ/manifest.mpd?signature=Yzc3ZjkwZGZjYjljNjEzN2NmMjJlYjcyOWJkMTRjYTE=&time=15276424504&device_id=UXuXAvU9n80tFQLp7nPdNIyx4eDNggd2E8stOkCXrZLA
 #EXTINF:0 tvg-name="ANTV" tvg-id="819" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/804a0414-edd9-4e16-bd7e-1fbb593525ec.png" group-title="TV Nasional",ANTV
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/QU5UVg/manifest.mpd?signature=Y2E0ZDU3ZmYyMzY3ZDdmNWIwMTAyZDViNDdiMjg3OGQ=&time=15276422570&device_id=a3AX6QmVqc2148vym4kbQFb0CHxNsS3XmtXt0-k1U9mbAuPl
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/QU5UVg/manifest.mpd?signature=Y2E0ZDU3ZmYyMzY3ZDdmNWIwMTAyZDViNDdiMjg3OGQ=&time=15276424506&device_id=nQbNSvxD0kQ11o9S70h9WOOibhlXM-4oIwIpsllfupjZ
 #EXTINF:0 tvg-name="jtv" tvg-id="820" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/52d0d978-6550-4935-9899-aa78db628fff.png" group-title="TV Nasional",jtv
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/anR2LUNoYW5uZWw/manifest.mpd?signature=NjgxNzU2ZDViOGIwZTc2MTg1ZGIyMDI4NmNlNjRhMmE=&time=15276422571&device_id=WJfe-lukMAsU6Oc_AO6Zzx8KfPwk7XYgKDb82BEgAj_EKVV8
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/anR2LUNoYW5uZWw/manifest.mpd?signature=NjgxNzU2ZDViOGIwZTc2MTg1ZGIyMDI4NmNlNjRhMmE=&time=15276424507&device_id=iB7tkp3qjKg2L4kAXLZoBBYfZsYTH9-l-NKekdOIr5Ej
 #EXTINF:0 tvg-name="Berita Satu" tvg-id="806" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/c2f01ed0-b8ba-45ae-8b44-dc09e69aaaa9.png" group-title="TV Nasional",Berita Satu
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/QmVyaXRhIFNhdHU/manifest.mpd?signature=OTdhZGIwMGJkN2IzZTNmNmM5YWQwMzI5ZGU3ODcxZTA=&time=15276422572&device_id=yOVzjkqAt_q23UaY9JoAXXfenpm0ZqtUfAifdDEdOF-oJRPo
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/QmVyaXRhIFNhdHU/manifest.mpd?signature=OTdhZGIwMGJkN2IzZTNmNmM5YWQwMzI5ZGU3ODcxZTA=&time=15276424510&device_id=TaZ8pEE_aL8ZSBUb1eotvFWLWcMfhBaGrLQqHPmZAe15
 #EXTINF:0 tvg-name="Garuda TV" tvg-id="811" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/dc7d7072-39d4-4978-bc34-4e7654fe4469.jpg" group-title="TV Nasional",Garuda TV
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/R2FydWRhIFRW/manifest.mpd?signature=MmVhMTk1MmQyMGMxY2RkYWQyODIxODA0ZjJhNjY5Yzc=&time=15276422573&device_id=H_fQTAiV-z5mnZ-TbeRIg_3JbFg_Z9ZUnD70Nh6feFHo7u5F
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/R2FydWRhIFRW/manifest.mpd?signature=MmVhMTk1MmQyMGMxY2RkYWQyODIxODA0ZjJhNjY5Yzc=&time=15276424511&device_id=5ixkM-CDag5yTFhtDKJlkeCYIBeS7HtZf3ky7p26olYK
 #EXTINF:0 tvg-name="tvN MOVIES" tvg-id="113" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/64e51cec-e7a5-45d0-bacc-d9dd8ea64c7a.png" group-title="Film",tvN MOVIES
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktbpid02.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/VFZOIE1vdmllcw/manifest.mpd?signature=YjY2NjQwZTY4YTI3YjExZjg5MjY0NGQ2MmU3MDdhNWE=&time=15276422574&device_id=LJRVCfyVxq3T0Xr2wX9YMGLYSFD4w8sXubcNsYwkHisawz1F
+https://cdnjktbpid02.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/VFZOIE1vdmllcw/manifest.mpd?signature=YjY2NjQwZTY4YTI3YjExZjg5MjY0NGQ2MmU3MDdhNWE=&time=15276424512&device_id=-2XSJ3NSAPs8-BI3mAuyPZoTyEwX3-uw8H1FdPLi_FIv
 #EXTINF:0 tvg-name="Celestial Movies" tvg-id="141" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/f124427a-931e-47d1-ab50-1b29a7a3e406.jpg" group-title="Film",Celestial Movies
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/Q2VsZXN0aWFsIE1vdmllcw/manifest.mpd?signature=NjUwZTgyNTYzMzc2Mzk1MTUwMjcyN2Y0MDliNWVjYmQ=&time=15276422575&device_id=f5tqrd3TvgtiEAy-quyeh05hvrr_3RLctTToHsQhGSH2ESuG
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/Q2VsZXN0aWFsIE1vdmllcw/manifest.mpd?signature=NjUwZTgyNTYzMzc2Mzk1MTUwMjcyN2Y0MDliNWVjYmQ=&time=15276424513&device_id=iN_mibTjHG9i70-5tfm3yUMN-keDK-EmRj92m3K-iKHN
 #EXTINF:0 tvg-name="Bioskop Indonesia" tvg-id="144" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/e3276355-306c-4ed8-8f06-725bcc8247c1.png" group-title="Film",Bioskop Indonesia
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/Qmlvc2tvcCBJbmRvbmVzaWE/manifest.mpd?signature=N2Y1OGU1YzBmYzhlMTA5MjU4NDA4MmExZmRjODZmYzg=&time=15276422576&device_id=_Lslr9R0oKY3OR3v69vbxlzwo1A895u55L1pXJanwlY7N_XU
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/Qmlvc2tvcCBJbmRvbmVzaWE/manifest.mpd?signature=N2Y1OGU1YzBmYzhlMTA5MjU4NDA4MmExZmRjODZmYzg=&time=15276424514&device_id=8z2QySkwT0nWDxAwcpOSuTa2IVl9gLvul8-7hS2U40Vz
 #EXTINF:0 tvg-name="Thrill" tvg-id="161" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/6bec4b1b-262f-44e0-821f-a3897ce93251.jpg" group-title="Film",Thrill
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/VGhyaWxs/manifest.mpd?signature=NGU5NGY4ZjlhOWE2YWI3MTUxMmYwN2Q0OGQyMTJlOGI=&time=15276422577&device_id=LC_1pRFn3-EtN3zURObVPFoFnnMRCvwTTy76rTjjBCUX3x1m
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/VGhyaWxs/manifest.mpd?signature=NGU5NGY4ZjlhOWE2YWI3MTUxMmYwN2Q0OGQyMTJlOGI=&time=15276424515&device_id=8xADeTVh2w_zekIvPrg8cDIMEw_-3MBYBXQ7RHkMJJez
 #EXTINF:0 tvg-name="Movies News" tvg-id="162" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/8c6fb1a8-44f6-4d20-9093-fb4bb93bc5cd.jpg" group-title="Film",Movies News
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/TW92aWVzIE5ld3M/manifest.mpd?signature=ODBmMDU2MGU1ZmQ0MmRiMWI1ZDk0YTAxODI1NzZlZDU=&time=15276422601&device_id=_NpeAki3xLKHmLLNJAIGMpAtSt8jG3AmW3az-e8KwiV7SvAB
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/TW92aWVzIE5ld3M/manifest.mpd?signature=ODBmMDU2MGU1ZmQ0MmRiMWI1ZDk0YTAxODI1NzZlZDU=&time=15276424517&device_id=PDfpfY4yrNp4ydICqYAA14DwdmFts20PmDgLJy2mY-4Z
 #EXTINF:0 tvg-name="Cartoon TV Premium" tvg-id="220" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/6e735e2f-e7db-47ec-b13b-23d3a0342124.jpg" group-title="Anak",Cartoon TV Premium
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/Q2FydG9vbiBUViBQcmVtaXVt/manifest.mpd?signature=NzkxMzIwZjhiNzMzYmY1NWJkNjlhN2ExZTU1ZjM4YTE=&time=15276422602&device_id=Q4bmKPKK9V0qrZsv3E5kt8oqWWtqHNjr3QfidAZubhFCiarM
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/Q2FydG9vbiBUViBQcmVtaXVt/manifest.mpd?signature=NzkxMzIwZjhiNzMzYmY1NWJkNjlhN2ExZTU1ZjM4YTE=&time=15276424520&device_id=2hiqED4eHm4BpDNygBw-OXMkelc1XtRklaBeuYOSFJBp
 #EXTINF:0 tvg-name="Cartoon TV" tvg-id="221" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/9e422d53-5c00-49ea-8422-e2a3f1e03f70.jpg" group-title="Anak",Cartoon TV
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/Q2FydG9vbiBUVg/manifest.mpd?signature=MjdhNTk0ZmNlZjU3M2JkMjY2OGQzMGIxODEyMGRjNTE=&time=15276422603&device_id=wxFmuensv38ROr8EoMcEveLUtedVCN4IGhqomDJ41JiVcLP0
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/Q2FydG9vbiBUVg/manifest.mpd?signature=MjdhNTk0ZmNlZjU3M2JkMjY2OGQzMGIxODEyMGRjNTE=&time=15276424521&device_id=NV_tMe9yF6ChPdisebYwv8NSnRJx_qKjlqWM7dc-6gBJ
 #EXTINF:0 tvg-name="Dunia Anak" tvg-id="222" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/76e39ba2-62b9-4f96-90ae-3de803edb400.png" group-title="Anak",Dunia Anak
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/RHVuaWEgQW5haw/manifest.mpd?signature=OWZmYjQwZjdhMzRkZjY5MmRjNjZmOWM1MDZiN2JjOGM=&time=15276422604&device_id=1I9so14V8Uejd8z39m2pFJqJGJiTwEU6az-BVliKiSwq0A_W
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/RHVuaWEgQW5haw/manifest.mpd?signature=OWZmYjQwZjdhMzRkZjY5MmRjNjZmOWM1MDZiN2JjOGM=&time=15276424522&device_id=L4c2rhSNJY0HW6TmWxbRFy9stS8C2RHe7j9hQsBtmmoP
 #EXTINF:0 tvg-name="Cartoon TV Classic" tvg-id="223" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/87c43b67-b234-41a8-b188-ae6b498a40b4.jpg" group-title="Anak",Cartoon TV Classic
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/Q2FydG9vbiBUViBDbGFzc2ljcw/manifest.mpd?signature=NmI4Y2Q4MDFhMjBmZDZlMWM2NjQ2YzUyYjMwYTkwOWM=&time=15276422605&device_id=nnQTzszNcc7u492TskBtnOX6U5TegVVlHcKm_co-Me0dz1uT
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/Q2FydG9vbiBUViBDbGFzc2ljcw/manifest.mpd?signature=NmI4Y2Q4MDFhMjBmZDZlMWM2NjQ2YzUyYjMwYTkwOWM=&time=15276424523&device_id=AVd7iuX23tEssU_TWQF5xYmITVI5wHYWfhFRYS5na5Td
 #EXTINF:0 tvg-name="Knowledge+" tvg-id="260" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/96641a38-47bd-479c-8e6d-efa73e7f618d.jpg" group-title="Edukasi",Knowledge+
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/S25vd2xlZGdlKw/manifest.mpd?signature=OTVjZjIzNTI5ODhmNjYzZTE1YzBkNzdkNDIwZTFjMTc=&time=15276422607&device_id=XDcjc9opzAtqkfoLC6AC-rRl2_jfmuM9PaHnl7sbo0RhE-Ur
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/S25vd2xlZGdlKw/manifest.mpd?signature=OTVjZjIzNTI5ODhmNjYzZTE1YzBkNzdkNDIwZTFjMTc=&time=15276424524&device_id=QzMauuRJsefkVal-yygd0D2P2DBNUtGV-49wBtg6cXaw
 #EXTINF:0 tvg-name="CGTN Documentary" tvg-id="265" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/7cbb5733-87c4-43c5-afa8-ab01c2075132.jpg" group-title="Edukasi",CGTN Documentary
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktidc01.transvision.co.id/epyc-tx01/dash/Q0dUTiBEb2N1bWVudGFyeQ/manifest.mpd?signature=ZTNiOWFhNTJjMzMyMWYzMTUyMWZmM2IxODgyMWI3MzU=&time=15276422610&device_id=_QzHhDyZ1F50070oIMtr1T4qXlaecoGHYsHfrrsbrFYdl80L
+https://cdnjktidc01.transvision.co.id/epyc-tx01/dash/Q0dUTiBEb2N1bWVudGFyeQ/manifest.mpd?signature=ZTNiOWFhNTJjMzMyMWYzMTUyMWZmM2IxODgyMWI3MzU=&time=15276424525&device_id=I6qJyVu9251sIPCJm-uQRGUZOluzQG8Jgaq54_YdmCtZ
 #EXTINF:0 tvg-name="tvN" tvg-id="321" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/23df9297-2b0c-407a-8373-879263144ff0.png" group-title="Hiburan Asia",tvN
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktbpid02.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/dHZOQ2hhbm5lbA/manifest.mpd?signature=NjJlMzNlYTQ2NmNkZWUyNDBmY2FkYzRmNGViMmM5NDI=&time=15276422611&device_id=MDchxsDrsDAOhZZx5rHJnZ_F1CYDMrWdDyiOuMaITGNNubbh
+https://cdnjktbpid02.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/dHZOQ2hhbm5lbA/manifest.mpd?signature=NjJlMzNlYTQ2NmNkZWUyNDBmY2FkYzRmNGViMmM5NDI=&time=15276424527&device_id=cTCLXoO4yTFioaPQBME-CRLd5rajAoAHhuDoosS8RMpi
 #EXTINF:0 tvg-name="K+" tvg-id="322" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/4ff96e7e-b79f-47e0-8ebc-9b81398c49b8.jpg" group-title="Hiburan Asia",K+
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/a3BsdXNjaGFubmVs/manifest.mpd?signature=Yjk0NzhjMmE4YTg0MWI2NjIxYzJiNmU0ZjQyN2Y0ODY=&time=15276422612&device_id=GdgzkHPzj-ka36fzgkrx15ugAe5G5cp-19hCucW05Z0zO32w
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/a3BsdXNjaGFubmVs/manifest.mpd?signature=Yjk0NzhjMmE4YTg0MWI2NjIxYzJiNmU0ZjQyN2Y0ODY=&time=15276424530&device_id=MrKxB1-5EZMgU7XX45MAg3d64NzTrOiWq2oHIHFWsZeg
 #EXTINF:0 tvg-name="NHK World Premium" tvg-id="500" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/9edbe0b9-984f-4e57-8746-44007e64d4dd.png" group-title="Hiburan Asia",NHK World Premium
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-https://cdnjktbpid02.transvision.co.id/riutx01-3f9d9dd6012b7cdd7558fdd44b9a002b/dashx/TkhLIFdvcmxkIFByZW1pdW0/manifest.mpd?signature=MTZhNDIyZGU0NTY2YzQxN2FjZWJkNjI3NjEyN2Y1N2E=&time=15276422613&device_id=YKAxJt5VIwlkQ_nX71N5EWDt0qBffiP4gQO9FE5YGZ7X0Btf
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
+https://cdnjktbpid02.transvision.co.id/riutx01-3f9d9dd6012b7cdd7558fdd44b9a002b/dashx/TkhLIFdvcmxkIFByZW1pdW0/manifest.mpd?signature=MTZhNDIyZGU0NTY2YzQxN2FjZWJkNjI3NjEyN2Y1N2E=&time=15276424531&device_id=gYOJ3xCjYBGv0CbK76Y2Pr3X7B3M5E9z-JbNcSJ33cxm
 #EXTINF:0 tvg-name="Channel Jowo" tvg-id="327" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/64efefa1-5f19-47e4-ac3d-7a871b590a23.jpg" group-title="Hiburan",Channel Jowo
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/Q2hhbm5lbCBKb3dv/manifest.mpd?signature=MWM3OTY0N2ZiODE5NGViZDIwOGU4MmIzNTdkMmM1MzM=&time=15276422614&device_id=Q-jpXRgHfpYyAvsYBQZlFFZUstiV0p95Lvkv2TRvI0kqchhn
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/Q2hhbm5lbCBKb3dv/manifest.mpd?signature=MWM3OTY0N2ZiODE5NGViZDIwOGU4MmIzNTdkMmM1MzM=&time=15276424532&device_id=4y0dZT6LWTI_mk5Hq4ZIIzoENQDTiGGWkikPK2ek1nED
 #EXTINF:0 tvg-name="!nsert" tvg-id="330" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/7be43f18-a28f-4825-b888-2d1ed538c667.png" group-title="Hiburan",!nsert
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktbpid26.cubmu.com/epyctx01-aaf7e583a80211de0b2b2f9dcbed0bf9/dash/330-aW5zZXJ0LWNoLXNjdGUzNQ/live.mpd?signature=MzM1NmY5NzkyZDc3MGI5YmNkNmIzZmYwZmM4OWVhYjc=&time=15276422615&device_id=zg2_wqrDezNh_eq-DdSV1s3Fyxr7SHm50oxfPvMTycnlUbn5
+https://cdnjktbpid26.cubmu.com/epyctx01-aaf7e583a80211de0b2b2f9dcbed0bf9/dash/330-aW5zZXJ0LWNoLXNjdGUzNQ/live.mpd?signature=MzM1NmY5NzkyZDc3MGI5YmNkNmIzZmYwZmM4OWVhYjc=&time=15276424533&device_id=NBy481eAvxR4-dRpLd_bhQGfef9ZlLIFcypGQ8onQfds
 #EXTINF:0 tvg-name="Dunia Lain" tvg-id="344" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/02985354-4453-4792-a8dd-275517d88012.png" group-title="Hiburan",Dunia Lain
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktbpid26.cubmu.com/epyctx01-aaf7e583a80211de0b2b2f9dcbed0bf9/dash/230-Ymlvc2tvcC1pbmRvbmVzaWEtc2N0ZTM1/bioskop-indonesia/live.mpd?signature=NWVjYTFhM2EzNzNmOTMyMTk2OTlkNWVmNjkzNjg1ZjM=&time=15276422617&device_id=cQnKz5wmSK245og47IyjKwc_g18ASe5P3FIMnEhegOjLk7AJ
+https://cdnjktbpid26.cubmu.com/epyctx01-aaf7e583a80211de0b2b2f9dcbed0bf9/dash/230-Ymlvc2tvcC1pbmRvbmVzaWEtc2N0ZTM1/bioskop-indonesia/live.mpd?signature=NWVjYTFhM2EzNzNmOTMyMTk2OTlkNWVmNjkzNjg1ZjM=&time=15276424534&device_id=xWAvZ45KE05jK6teZBZgzHCtXw5vocOEdpmpu1cjiGI8
 #EXTINF:0 tvg-name="CCTV4" tvg-id="381" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/934d3d55-c1c5-4570-afc4-428e0bf0c86d.png" group-title="Hiburan",CCTV4
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/Q0NUViA0/manifest.mpd?signature=OTQ5YzhlOTI4YWUwM2M2YmE4NDNhM2VmNWJiYzczMjA=&time=15276422620&device_id=-hsXWSawOphYH6gHgSkf48Pd7slG4oryDtdwBVaRpAjwpVgW
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/Q0NUViA0/manifest.mpd?signature=OTQ5YzhlOTI4YWUwM2M2YmE4NDNhM2VmNWJiYzczMjA=&time=15276424535&device_id=MkbOVNWX6xXt_vLmLiFbZXRCFtT0k0xIHYPst-KYKWCm
 #EXTINF:0 tvg-name="TV5 Monde" tvg-id="391" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/fb33f9d0-75ea-409d-8898-9d8111c4211c.png" group-title="Hiburan",TV5 Monde
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/VFY1IE1vbmRl/manifest.mpd?signature=NDk3Yzk0NWFiNzRlOWY0NWEzMTE4NjY2ODVlMWUwZTU=&time=15276422621&device_id=yCzGMp80iKBQ-7U9zVVUAYHCVKuoKhA6zlmg8PKtUO2vlqPm
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/VFY1IE1vbmRl/manifest.mpd?signature=NDk3Yzk0NWFiNzRlOWY0NWEzMTE4NjY2ODVlMWUwZTU=&time=15276424536&device_id=0eqrBZ4lp9Xj4PCO31zT_mrJyuWxfj7lIQJ42_3UIMWC
 #EXTINF:0 tvg-name="One TV" tvg-id="395" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/1b5b6dab-c6e7-4109-8813-273c05910c53.jpg" group-title="Hiburan",One TV
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/T25lIFRW/manifest.mpd?signature=Nzc5NzI3ZjE1MDcwOWUzMzJkOTJiMmE5ODMyYTI5YTc=&time=15276422622&device_id=ezKqGcLaJxFXhciY_SIh8nedRJSOBLj6rrTvBnfsZ_C5PVdp
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/T25lIFRW/manifest.mpd?signature=Nzc5NzI3ZjE1MDcwOWUzMzJkOTJiMmE5ODMyYTI5YTc=&time=15276424537&device_id=Wo3jit-8XT5mVLXW-ifewDUXp3wfJww9wi_2K1DRzGoe
 #EXTINF:0 tvg-name="Travel TV" tvg-id="500" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/9a3142d7-c566-476f-b6f8-d0d7350b2733.jpg" group-title="Gaya Hidup",Travel TV
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/VHJhdmVsIFRW/manifest.mpd?signature=YWZhZTg1NTg0NzZiYWMxZWU5MWVjMGNkNmZhYjBkMzU=&time=15276422623&device_id=zFrkzgopcWmQ3P7w5y0oqKSRcbKPaynEbDJhynQMMforns6l
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/VHJhdmVsIFRW/manifest.mpd?signature=YWZhZTg1NTg0NzZiYWMxZWU5MWVjMGNkNmZhYjBkMzU=&time=15276424540&device_id=C-mgdRJT8q0W_LZGAsDwdWascBjE0qCTumu_hLNb5CEg
 #EXTINF:0 tvg-name="Eat N Go" tvg-id="501" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/96eaf2cb-49fd-4710-b3bf-1d3b6833a1d5.png" group-title="Gaya Hidup",Eat N Go
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktbpid26.cubmu.com/epyctx01-aaf7e583a80211de0b2b2f9dcbed0bf9/dash/208-ZWF0bmdvLXNjdGUzNQ/eat-go/live.mpd?signature=ZmEzOTlmNWQ2NGIzMDQxZjVhOTBlMDQ3YWI2MDFjZmM=&time=15276422624&device_id=i5n7kisA1WyU0ZwJEADJHm2aVrTjil0xqf5j2c4sUMiFs0jd
+https://cdnjktbpid26.cubmu.com/epyctx01-aaf7e583a80211de0b2b2f9dcbed0bf9/dash/208-ZWF0bmdvLXNjdGUzNQ/eat-go/live.mpd?signature=ZmEzOTlmNWQ2NGIzMDQxZjVhOTBlMDQ3YWI2MDFjZmM=&time=15276424542&device_id=rCOCc2l3jnvKOsygzmQc4y-eqdd2eWxdhXvbIqobvk6_
 #EXTINF:0 tvg-name="Fashion TV" tvg-id="505" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/edc764c8-f879-4c80-aa9e-b7ba8bff73f7.jpg" group-title="Gaya Hidup",Fashion TV
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/RmFzaGlvbiBUVg/manifest.mpd?signature=NDMwNjkxMDcxNzZhOWE3ZTc4OTU2YjIxZWVlOWRmZGY=&time=15276422626&device_id=IlPTWLoQVlZBer15RYegPuAe_NLv6hPwvcGonTxQkkdFc8ry
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/RmFzaGlvbiBUVg/manifest.mpd?signature=NDMwNjkxMDcxNzZhOWE3ZTc4OTU2YjIxZWVlOWRmZGY=&time=15276424543&device_id=iIUrAWOXFZ0abTU8f1Vy7gPaS1SNV5cjB3_-XnaGLjk0
 #EXTINF:0 tvg-name="Cooking TV" tvg-id="508" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/3afdd138-2f44-4825-9917-7615972095c1.jpg" group-title="Gaya Hidup",Cooking TV
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
-https://cdnjktcyber05.transvision.co.id/riutx01-66c5bb084cce1dc9e7a45aeaf52bf242/dashc/cooking-tv/manifest.mpd?signature=ZGY1NmRmYTE1MzI2Nzk5M2MwMWI2ODc3ODFjZDIwZGI=&time=15276422627&device_id=rvkZtn2xMQxjO1NIrgBkRrBYk1O9jAt4FcvbJp4bJgb6awTq
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
+https://cdnjktcyber05.transvision.co.id/riutx01-66c5bb084cce1dc9e7a45aeaf52bf242/dashc/cooking-tv/manifest.mpd?signature=ZGY1NmRmYTE1MzI2Nzk5M2MwMWI2ODc3ODFjZDIwZGI=&time=15276424544&device_id=hlawq5MLX_KZmsi0zx-n_FX_CRn6vk9m9epSUakB_SX8
 #EXTINF:0 tvg-name="Gaming TV" tvg-id="509" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/dcbc4bc6-19c3-4719-9ee7-587aa3edffea.jpg" group-title="Gaya Hidup",Gaming TV
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/R2FtaW5nIFRW/manifest.mpd?signature=ODE5NmRhY2E1NTA0NGVkNThiNjhmNzgzYzJiYjllODI=&time=15276422630&device_id=7aqqUbK1ISDXxFUYbvBTbfLh2zDE9QZN-7a5jxJVmIlto98K
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/R2FtaW5nIFRW/manifest.mpd?signature=ODE5NmRhY2E1NTA0NGVkNThiNjhmNzgzYzJiYjllODI=&time=15276424546&device_id=KZT4FN6_wBdCBlO8fpOi7wSmOM0CQbACBidzRuKuHfVA
 #EXTINF:0 tvg-name="DENS Food Channel" tvg-id="513" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/2dbb1a79-69ac-4b91-9e9a-1d42e79963b5.jpg" group-title="Gaya Hidup",DENS Food Channel
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/REVOUyBGb29kIENoYW5uZWw/manifest.mpd?signature=YTFjNzdmYjZmZDM2NmMyMDQ0OTVhZGMwNTdhODdiMzU=&time=15276422631&device_id=XTsPGQz50-2Sj6RxwCFDa6LcheO823Q0mty1ad2p3KFZ7BGh
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/REVOUyBGb29kIENoYW5uZWw/manifest.mpd?signature=YTFjNzdmYjZmZDM2NmMyMDQ0OTVhZGMwNTdhODdiMzU=&time=15276424547&device_id=gLabohNGksmcQsBrvLIYUtqYjTZ273XQaXRNHhWYN-o4
 #EXTINF:0 tvg-name="DENS Play Channel" tvg-id="514" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/2e8b912a-015c-41c4-97bf-ea248c0b35e0.jpg" group-title="Gaya Hidup",DENS Play Channel
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/REVOUyBQbGF5IENoYW5uZWw/manifest.mpd?signature=NWI2ZWRlNTFlZWM0NDcyMjIwNWYyMTJiYzZkMGFjYWQ=&time=15276422632&device_id=21YMhxx9XAYLNx7K05wMloxt2B7QZAIaOxoJuz4N5RXrzvdS
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/REVOUyBQbGF5IENoYW5uZWw/manifest.mpd?signature=NWI2ZWRlNTFlZWM0NDcyMjIwNWYyMTJiYzZkMGFjYWQ=&time=15276424550&device_id=C8H53f9Owxu0imxbgKgHQMTMa8fLAdaB0TfiZaJgaAi5
 #EXTINF:0 tvg-name="Superyacht TV" tvg-id="515" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/eaa4d0a4-af9f-4fc6-96a7-5d9427a9d41a.jpg" group-title="Gaya Hidup",Superyacht TV
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/U3VwZXJZYWNodCBUVg/manifest.mpd?signature=MDZlZDIxNDAwMjEzZDUzZDg2OWRiNjUwZmFkODIxNGQ=&time=15276422633&device_id=GyEfkSH3HA53kgwjwerxDcUwdPtNOop1tTUWm-c_heJPxY9M
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/U3VwZXJZYWNodCBUVg/manifest.mpd?signature=MDZlZDIxNDAwMjEzZDUzZDg2OWRiNjUwZmFkODIxNGQ=&time=15276424551&device_id=Zm4zMhq7Iaf8WCykbQcpTcdT354cJVjesVFEUH8BRUEd
 #EXTINF:0 tvg-name="DENS Show Bizz" tvg-id="517" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/a06f0dd7-751f-442a-98bc-e6cad4b4f18d.jpg" group-title="Gaya Hidup",DENS Show Bizz
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/REVOUyBTaG93Qml6/manifest.mpd?signature=ZjlmNGNhNWM4NGRmOGRiNTQ0ZjRjZmYxMTg1NzkyYTQ=&time=15276422634&device_id=0prFQXDjuVHOuTnzgPasXwXPt61mGtFNjtJcjXFXG3nrlz6h
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/REVOUyBTaG93Qml6/manifest.mpd?signature=ZjlmNGNhNWM4NGRmOGRiNTQ0ZjRjZmYxMTg1NzkyYTQ=&time=15276424552&device_id=ZI5p2QHFJMK0jRaoNQwX64QUJ5YBx7G2kaIK9aQynSJS
 #EXTINF:0 tvg-name="Musik Indonesia" tvg-id="560" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/5532f74e-07ee-4a70-b7d4-b5233778381d.png" group-title="Musik",Musik Indonesia
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/TXVzaWsgSW5kb25lc2lh/manifest.mpd?signature=YTgyYmNjOWQ1ZDliM2VjNGUwOWY5NzNjODg3MTY0YWE=&time=15276422636&device_id=lL-MURzKaZ6Gtxd8c-elW0BkX5uQ10PWNBIZzc4jFidaiENy
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/TXVzaWsgSW5kb25lc2lh/manifest.mpd?signature=YTgyYmNjOWQ1ZDliM2VjNGUwOWY5NzNjODg3MTY0YWE=&time=15276424553&device_id=zJSppKLDxGZNUEMtIdjahEF4RMXXnz_3IvoTg3v2U_Bl
 #EXTINF:0 tvg-name="Song TV" tvg-id="563" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/3974fd33-9c3a-44b2-acdb-66c90f9492e5.jpg" group-title="Musik",Song TV
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/U29uZyBUVg/manifest.mpd?signature=ODMzOWI1YzJhMGJkYzAwNDVlMmMzYjBkZDc0YWRiNTQ=&time=15276422640&device_id=9o3MQXrS8QTmj2QFQvfNceDlltjIZnvadsK-LhvUllw69dlu
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/U29uZyBUVg/manifest.mpd?signature=ODMzOWI1YzJhMGJkYzAwNDVlMmMzYjBkZDc0YWRiNTQ=&time=15276424554&device_id=NxCAhuhgOS1HLo0P2zwUM2JaEglU7IyJp7-IhT1Q9te0
 #EXTINF:0 tvg-name="ABC Australia" tvg-id="604" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/89301bb9-40dc-4239-8f7f-ea59ef3555c8.png" group-title="Berita & Bisnis",ABC Australia
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktidc01.transvision.co.id/epyc-tx01/dash/QUJDIEF1c3RyYWxpYQ/manifest.mpd?signature=OGQwYzY2YTMxNDEwMmRlYmM0N2IxMjQ5MDA3ZTA1Yzc=&time=15276422641&device_id=Wlgaot1UuapCwJwMx-_6JwtVJ2KR3tUpMLptVYWY_DwDxx2n
+https://cdnjktidc01.transvision.co.id/epyc-tx01/dash/QUJDIEF1c3RyYWxpYQ/manifest.mpd?signature=OGQwYzY2YTMxNDEwMmRlYmM0N2IxMjQ5MDA3ZTA1Yzc=&time=15276424555&device_id=gxYjVk86YsBs42mNcnCBc0KlnkGzsWH-iZIofS-LLBix
 #EXTINF:0 tvg-name="Channel NewsAsia" tvg-id="620" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/10dc34b0-674b-42fe-901f-d75a45de415a.png" group-title="Berita & Bisnis",Channel NewsAsia
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/Q2hhbm5lbCBOZXdzQXNpYQ/manifest.mpd?signature=N2Q4NDc4MjVhNzg0ZDA3NDIzZDkzZDExMTU4M2EzZWU=&time=15276422642&device_id=TXHZKjAzhylJG54riyWgryHrAXBccV44Ce0CAKdWyCNLG-dr
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/Q2hhbm5lbCBOZXdzQXNpYQ/manifest.mpd?signature=N2Q4NDc4MjVhNzg0ZDA3NDIzZDkzZDExMTU4M2EzZWU=&time=15276424556&device_id=Mqwz4PDONg44FaY1En4TXH2KLKT62wu8PGASC9BFsoCr
 #EXTINF:0 tvg-name="CNBC Asia" tvg-id="609" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/dc57da9a-b87b-4145-b2ac-fead00387d1e.jpg" group-title="Berita & Bisnis",CNBC Asia
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/Q05CQyBBc2lh/manifest.mpd?signature=OTY0ODhlYjIyMGQzYzJiMmIwYzNlZDRhMzViMzU5YjM=&time=15276422643&device_id=-OK1DPi-owptW69Nxw7iX93adwZNsemOicqgeXgjFSZTsVCL
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/Q05CQyBBc2lh/manifest.mpd?signature=OTY0ODhlYjIyMGQzYzJiMmIwYzNlZDRhMzViMzU5YjM=&time=15276424560&device_id=bk7IcC93rVU-P1B7Z71ovpvl9u8ruLWnGhc6ysFYoF9s
 #EXTINF:0 tvg-name="Al Jazeera" tvg-id="610" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/120d8d56-bd33-442d-b3c1-9c7581e5d18a.png" group-title="Berita & Bisnis",Al Jazeera
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/QWwgSmF6ZWVyYQ/manifest.mpd?signature=NjIyM2Y4Mjg2YTkwZWE3NTRhYmMzZGIwNTdjYTMwNjQ=&time=15276422644&device_id=kTRv94USIlXZ6B5c-lx1TTj3P3F6Tq2HU7ZyFlJGNEHWn9Rw
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/QWwgSmF6ZWVyYQ/manifest.mpd?signature=NjIyM2Y4Mjg2YTkwZWE3NTRhYmMzZGIwNTdjYTMwNjQ=&time=15276424561&device_id=NsttR9QTxrYAZEeUCcIus0QWJ5m_NK9sfIBWb9neGAK3
 #EXTINF:0 tvg-name="Euronews" tvg-id="612" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/2d1b5330-1fe8-4818-a9af-0216328d510a.png" group-title="Berita & Bisnis",Euronews
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/RXVyb25ld3M/manifest_cc.mpd?signature=OGIwMGU1Y2ZmMzVhNjY3ZjdkNzYwM2ViODY4MzkyNzA=&time=15276422645&device_id=E5T--D4ipFCs3EeN_Fq40GFxtsmxBuf6PssiyofyVX2v6QSU
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/RXVyb25ld3M/manifest_cc.mpd?signature=OGIwMGU1Y2ZmMzVhNjY3ZjdkNzYwM2ViODY4MzkyNzA=&time=15276424562&device_id=X8HKRCt3yoG1q39QqxAIOaxsE2G_1LJtgDdJTjfNXAIL
 #EXTINF:0 tvg-name="France 24" tvg-id="615" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/3888cfeb-554b-4ae9-81f6-2e44a707f2b1.png" group-title="Berita & Bisnis",France 24
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/RnJhbmNlIDI0/manifest.mpd?signature=Y2RmYzhhNWFiMDAyMjczYmRmZTliZDNmZDIwNTVhYjM=&time=15276422646&device_id=mRFiRmRLTJ2vObM0LMDi2H9rYKbYk4MTWsTkPI0zxxs6t-aZ
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/RnJhbmNlIDI0/manifest.mpd?signature=Y2RmYzhhNWFiMDAyMjczYmRmZTliZDNmZDIwNTVhYjM=&time=15276424563&device_id=PQgW3rh6e9g1I05i9-u9skGumGabqEJJ05_Xdhm2aOpT
 #EXTINF:0 tvg-name="CGTN" tvg-id="616" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/b222c8a2-83eb-40d4-a716-ead1379d7b9e.jpg" group-title="Berita & Bisnis",CGTN
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/Q0dUTiBDaGFubmVs/manifest.mpd?signature=MzBiNGI4YzY2YjdlNmRmOWMwODZhZjdlYTdjMTMyZWM=&time=15276422650&device_id=W5TX7w_xoTUJq6CUOVku-NWrmV9YEKgsBLRS3p0MAy6d2Kjl
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/Q0dUTiBDaGFubmVs/manifest.mpd?signature=MzBiNGI4YzY2YjdlNmRmOWMwODZhZjdlYTdjMTMyZWM=&time=15276424564&device_id=bH7rslNEVVkXx55Xgyw4qSI6Xk-sA-9AtgXUnOCsqwFD
 #EXTINF:0 tvg-name="Russia Today" tvg-id="617" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/423c22b4-75af-470c-92b9-0ce3406c8f75.jpg" group-title="Berita & Bisnis",Russia Today
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/UnVzc2lhIFRvZGF5/manifest.mpd?signature=YmNkNDc3MWNkYmY2MDBlNzUxOTQ3MDA2ZmFlOGI4OGI=&time=15276422651&device_id=wF71LOlU_zKa87tW9BdfoEObRu0hrSPThXKbbL5cbkduw213
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/UnVzc2lhIFRvZGF5/manifest.mpd?signature=YmNkNDc3MWNkYmY2MDBlNzUxOTQ3MDA2ZmFlOGI4OGI=&time=15276424565&device_id=ddcbh9JI_Uig-AGx7CHJ6WO6l3Gc_sARPdWM3QCdg6qh
 #EXTINF:0 tvg-name="Arirang" tvg-id="618" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/0d652a6e-a7c8-4561-8ea8-c9f37acfd9a4.png" group-title="Berita & Bisnis",Arirang
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/QXJpcmFuZw/manifest.mpd?signature=ZjMwMjIzOTAwZWM2NmM0NDhkNjA2MGM1Yzk4YWZkZjE=&time=15276422652&device_id=PmyMDiAjkWnWxpUpk5iNqR7Hi0mUmHfc9NP_cHoMQaz25S3U
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/QXJpcmFuZw/manifest.mpd?signature=ZjMwMjIzOTAwZWM2NmM0NDhkNjA2MGM1Yzk4YWZkZjE=&time=15276424566&device_id=QvgSu0ii-NKS5J8v9Sl1E6XK6BYCKWLlJmSVX9VtAkKv
 #EXTINF:0 tvg-name="Wion TV" tvg-id="619" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/7f7b868a-ce07-46c1-bd1d-fa1ec36dc8f1.png" group-title="Berita & Bisnis",Wion TV
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/V2lvbiBUVg/manifest.mpd?signature=OGUyYzUzYjMyY2Y0NjNlMmQ2Y2Y0NTMwZDc0OTVhNGI=&time=15276422653&device_id=QJi6eAjwPJlBsUyYhULd-rFcUkLzHnb_CnrmuMZIhcf7opl9
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/V2lvbiBUVg/manifest.mpd?signature=OGUyYzUzYjMyY2Y0NjNlMmQ2Y2Y0NTMwZDc0OTVhNGI=&time=15276424570&device_id=FwqzCHw3HFY8Gp6rsHm29UA4q_NjhSw8OwgY63kbDnTw
 #EXTINF:0 tvg-name="Al Quran Al Kareem" tvg-id="700" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/aa008aca-68fe-4efe-9918-2fd4c6b97884.png" group-title="Religi",Al Quran Al Kareem
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/YWxxdXJhbmFsa2FyZWVt/manifest.mpd?signature=ZDIxNWY1NWUxZWMyNGMxMjRlM2I1MGMwNzY1YjFlN2U=&time=15276422654&device_id=RzQuR5tJxS4Egg6EvwgymN2CVRmlVuf8IbBvgeXnsTgOKyUh
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/YWxxdXJhbmFsa2FyZWVt/manifest.mpd?signature=ZDIxNWY1NWUxZWMyNGMxMjRlM2I1MGMwNzY1YjFlN2U=&time=15276424571&device_id=a02lxRUzYbjmIZ-nzZpXTU4PI_MfQ_vAlWU79XGa8AcH
 #EXTINF:0 tvg-name="tvMU" tvg-id="701" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/1b908432-e3a7-4d39-ba32-1acc69966989.jpg" group-title="Religi",tvMU
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/dHYgTXUgQ2hhbm5lbA/manifest.mpd?signature=OTBkZDk0YzdkMWQwOTdjZjg2NDNjZWZjNmRmMDBhMDI=&time=15276422655&device_id=EAlVLwrL35kTF8-q9XkGbZfKA96_qbJy7SFzx_1uLESavLUO
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/dHYgTXUgQ2hhbm5lbA/manifest.mpd?signature=OTBkZDk0YzdkMWQwOTdjZjg2NDNjZWZjNmRmMDBhMDI=&time=15276424572&device_id=7Av69oxU89eBdgfVI__YZsedc5ESZvEmfI2TEIsoPC4E
 #EXTINF:0 tvg-name="TV9" tvg-id="702" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/8f63ea40-deea-4756-b93a-d19a9a3dbe2a.jpg" group-title="Religi",TV9
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/VFY5IENoYW5uZWw/manifest.mpd?signature=NzVmZTE3OTg2ZTU5MTY4ZDRmZmYwNmM2N2ZiMjg1ZmU=&time=15276422656&device_id=tw-b_c5w7UAwg03_I6elaQDgHHcyc6NsgkVIgM1OORFjUfZS
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/VFY5IENoYW5uZWw/manifest.mpd?signature=NzVmZTE3OTg2ZTU5MTY4ZDRmZmYwNmM2N2ZiMjg1ZmU=&time=15276424573&device_id=IkQVAD9DikLOrw7TVrdkDxMFRmck9W2SHPCN4rILQPHr
 #EXTINF:0 tvg-name="Nabawi TV" tvg-id="704" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/9e6c3b4e-129e-4fcb-963e-957098927079.jpg" group-title="Religi",Nabawi TV
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/TmFiYXdpIFRW/manifest.mpd?signature=Nzk4YjA4NTBiMzVhYzIxZTI4OTUzNzk4NTBlNWM1Mjc=&time=15276422660&device_id=EaqxycGMK36z-gxnSLJncpDKasa_5isbFUWq7Do_-oEbWapB
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/TmFiYXdpIFRW/manifest.mpd?signature=Nzk4YjA4NTBiMzVhYzIxZTI4OTUzNzk4NTBlNWM1Mjc=&time=15276424574&device_id=zYDCzChPROYnvJX7qXbus9xVclyAKRalmVEfU4kHQ2EB
 #EXTINF:0 tvg-name="DayStar" tvg-id="706" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/84b254cf-472f-47ab-9ddb-29d2114f180c.jpg" group-title="Religi",DayStar
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/RGF5c3RhciBDaG5s/manifest.mpd?signature=YzRmNzRjMTNjODBkM2UzODUwNzkwYzlkMjkwOWI0YTU=&time=15276422661&device_id=_jvssEuudHXEUt29p5TmWrak9OdMutH5bPq2H-WsmzERz_sO
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/RGF5c3RhciBDaG5s/manifest.mpd?signature=YzRmNzRjMTNjODBkM2UzODUwNzkwYzlkMjkwOWI0YTU=&time=15276424575&device_id=CpqRTQpEQCCJkYlf67btKdxU_swpQewhUSrkw34AfuJG
 #EXTINF:0 tvg-name="DAAI TV" tvg-id="708" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/706612c8-0d26-483e-b2fd-6baf2dec262b.jpg" group-title="Religi",DAAI TV
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/REFBSSBUVg/manifest.mpd?signature=YzA4Nzg0YTUzZmYxNDQ4ZDVhMGE3ZWU1MmE3N2ZlZjM=&time=15276422662&device_id=dSg8z0LTSF4-FvSQdqrVB_C4yyOnGnfydAI1_jziubYyyRpW
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/REFBSSBUVg/manifest.mpd?signature=YzA4Nzg0YTUzZmYxNDQ4ZDVhMGE3ZWU1MmE3N2ZlZjM=&time=15276424576&device_id=eQIJjOuvrNZ-KRHm0FI4WjweTmaCSO0bFosqo0HfZKD0
 #EXTINF:0 tvg-name="Hope Channel" tvg-id="777" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/56c72279-6125-4b52-8460-9fe65b7905fc.png" group-title="Religi",Hope Channel
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/SG9wZUNoYW5uZWw/manifest.mpd?signature=ODcwNjJmOWQwYzAwZWEwNDBhZjAzYTJiMjE3NWMyOTU=&time=15276422664&device_id=iGT_EIXPBd44GLYsAgl7UEaiWeqvsE1h82WUPqvk5NFsxgfW
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/SG9wZUNoYW5uZWw/manifest.mpd?signature=ODcwNjJmOWQwYzAwZWEwNDBhZjAzYTJiMjE3NWMyOTU=&time=15276424600&device_id=cJaRnOvKOwNPlv-YbYRIpRNocB_Ph2SirYtimO923NpK
 #EXTINF:0 tvg-name="Pijar TV" tvg-id="778" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/d721bd65-1913-45a9-925a-f13b1c831d52.jpg" group-title="Religi",Pijar TV
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/UGlqYXIgVFY/manifest.mpd?signature=ZTQ1ZmY2NTFhNGM1YmI3ZDc0YzE3NDVjNDQxNjM3MGI=&time=15276422665&device_id=XPJgUOI0pKf8fUkghsvix7WPwv8zW-i7xvsDkXEmXEx3BF6m
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/UGlqYXIgVFY/manifest.mpd?signature=ZTQ1ZmY2NTFhNGM1YmI3ZDc0YzE3NDVjNDQxNjM3MGI=&time=15276424601&device_id=-XTAVEDfd4RBflnfJoGDZyQ41WmsGYOliPPVJkaiiwZL
 #EXTINF:0 tvg-name="Khazanah" tvg-id="798" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/a445911e-df40-413d-b4d5-59cff4b342cc.png" group-title="Religi",Khazanah
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/S2hhemFuYWg/manifest.mpd?signature=NWUxNGNlZjIzOGU1MzY5ZTQwMmJiOGJkMTIwOTdkMDY=&time=15276422666&device_id=3t1UhP4rkqLqPGI5lQaxqwIE7fhPdzVfvogUCLKf_rRU_n1x
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/S2hhemFuYWg/manifest.mpd?signature=NWUxNGNlZjIzOGU1MzY5ZTQwMmJiOGJkMTIwOTdkMDY=&time=15276424602&device_id=vIIxBYMV7X24YmZhslIOVzRUISsslPtbAp-WOWorwHaR
 #EXTINF:0 tvg-name="TVRI Sport" tvg-id="900" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/0be1fcc1-0579-4332-ab7f-9f45e989fb85.png" group-title="Olahraga",TVRI Sport
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/VFZSSSBTcG9ydA/manifest.mpd?signature=ZTQzNmM0NWNlNzI1ZmNkMTIxODY1ZTYyMmUzYjc4MzQ=&time=15276422667&device_id=bDerrSY_BG3hhHbwwa628dmH0tO3I_XfsUC9N6c62vBeXh2F
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/VFZSSSBTcG9ydA/manifest.mpd?signature=ZTQzNmM0NWNlNzI1ZmNkMTIxODY1ZTYyMmUzYjc4MzQ=&time=15276424603&device_id=l9GSO1SCFNbMGyDTKd2CenihTSTm9PdAHVYLCzQnFRLB
 #EXTINF:0 tvg-name="Golf Plus ID" tvg-id="901" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/e5009dc7-2cae-4c8a-aa38-36bc224f7b8b.jpg" group-title="Olahraga",Golf Plus ID
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/R29sZi1DaGFubmVs/manifest.mpd?signature=Yjc5NGY5ZWM5MjVhZTlkMmY0N2I3ZjNjZTY4NzRlMjY=&time=15276422670&device_id=3vOik-Uzwwt1a1dq3gm_dn4deNzGU34KF57PhgAC4SZMSJSD
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/R29sZi1DaGFubmVs/manifest.mpd?signature=Yjc5NGY5ZWM5MjVhZTlkMmY0N2I3ZjNjZTY4NzRlMjY=&time=15276424604&device_id=89IFnrHhZcGEkmOtFNijHFyMka9po6g_2BZudlJv0gvH
 #EXTINF:0 tvg-name="Football TV" tvg-id="902" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/df2bdc3d-9bc6-43ca-a4e6-2002d47fdac1.jpg" group-title="Olahraga",Football TV
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/Rm9vdGJhbGwgVFY/manifest.mpd?signature=NTgyODEyNWI3YmQ0Nzg0ZWI3M2ExYzMxZTNmMDkzMDI=&time=15276422671&device_id=yqj7CjpBoNiQbSHh5-dLcEi_jik-thc0O_cblMqY2NLb8kB_
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/Rm9vdGJhbGwgVFY/manifest.mpd?signature=NTgyODEyNWI3YmQ0Nzg0ZWI3M2ExYzMxZTNmMDkzMDI=&time=15276424606&device_id=eLII2QJkssqVP1pzzGFivxSxx3dzx8JcpnRK76aOCp_j
 #EXTINF:0 tvg-name="Sports TV" tvg-id="903" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/f974ea07-54bf-4463-854a-fbbe51a70cc3.jpg" group-title="Olahraga",Sports TV
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/U3BvcnRzIFRW/manifest.mpd?signature=ODE0NjJkNWFkMDBjMzE2YmFmNGFhMjg1ZGVhYWNhMTM=&time=15276422672&device_id=4oRq-pg3eyqgMoVs9_yFZCdSMg-4YZzOVGZoC6TN2zHVTqAA
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/U3BvcnRzIFRW/manifest.mpd?signature=ODE0NjJkNWFkMDBjMzE2YmFmNGFhMjg1ZGVhYWNhMTM=&time=15276424607&device_id=sV2DNTvYC8jDc-rLljZUdCq_e_0fBz7lZg4QgWSOy6i6
 #EXTINF:0 tvg-name="Xtrem Sports" tvg-id="904" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/17f217c6-7009-45de-a54e-e7b15fa5f061.jpg" group-title="Olahraga",Xtrem Sports
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/WHRyZW0gU3BvcnRz/manifest.mpd?signature=ODljNWJmZjgzMWUxY2RmNjVhMTNjODE5NjA2ZDk5Yjk=&time=15276422674&device_id=TB-rbRvH0SIZhXh3CfKZoN2fW6W_J9xBlHt7wBfLmoPEx3i9
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/WHRyZW0gU3BvcnRz/manifest.mpd?signature=ODljNWJmZjgzMWUxY2RmNjVhMTNjODE5NjA2ZDk5Yjk=&time=15276424610&device_id=dnVrSO0mTWGC0mNWlbnjPqlB0QHee7feCOYG_IY_p7mA
 #EXTINF:0 tvg-name="Speed TV" tvg-id="908" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/8e4b7fc8-624a-4d99-ae7c-a75ed13ede9a.jpg" group-title="Olahraga",Speed TV
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/U3BlZWQgVFY/manifest.mpd?signature=Y2FkNDE1YzNjOThmMjllNzU0MmE1NmZlMTIwNTFkZmM=&time=15276422675&device_id=gX57yyK-bIWGtS7PT7NqWPVFWnclTTgi-mDSQ2vx48LmdCGx
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/U3BlZWQgVFY/manifest.mpd?signature=Y2FkNDE1YzNjOThmMjllNzU0MmE1NmZlMTIwNTFkZmM=&time=15276424611&device_id=ZHqtiDkCKpWygtAwluVCPh_kfNynVbbQDCNGYM3hEYva
 #EXTINF:0 tvg-name="Fight TV Premium" tvg-id="914" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/65030d16-c4fc-4c89-9b03-1b809797964f.jpg" group-title="Olahraga",Fight TV Premium
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/RmlnaHQgVFYgUHJlbWl1bQ/manifest.mpd?signature=MDBmMWRkZGQ1MWUwMDE0ZWQ4MGYxMDliMjE0NGRlYjE=&time=15276422676&device_id=b5KWdoShjkPz7PjIQU9VcLsKv9MD9I8N_-XvQAUl4rRHqhcp
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/RmlnaHQgVFYgUHJlbWl1bQ/manifest.mpd?signature=MDBmMWRkZGQ1MWUwMDE0ZWQ4MGYxMDliMjE0NGRlYjE=&time=15276424612&device_id=keLPMsWPsTKqiJf1VKtj8S9TN_3MJuiviznz-61cQ7t2
 #EXTINF:0 tvg-name="PSJ TV" tvg-id="916" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/310a7a17-0149-4623-b375-5fa1a47f2484.jpg" group-title="Olahraga",PSJ TV
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/UFNKIFRW/manifest.mpd?signature=MTJiMTcyZWE3Y2IyMGE0NGRjYzBjMjNlYWFmMmJkODg=&time=15276422677&device_id=9mVksFdMlIwGvGtEVuDREl_i49LhVQQi3sdxF_eP4pux243V
+https://cdnjktcyber05.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/UFNKIFRW/manifest.mpd?signature=MTJiMTcyZWE3Y2IyMGE0NGRjYzBjMjNlYWFmMmJkODg=&time=15276424613&device_id=CB_qq8TUNppsZYDaRn4T7-LkxPRubyXorgscRTp1FKNe
 #EXTINF:0 tvg-name="Liga Sentra ID" tvg-id="918" tvg-logo="https://servicebuss.transvision.co.id/hospitality/v1/files/channel_image/5439bd03-9d1a-4927-9600-6b1b89755efb.jpg" group-title="Olahraga",Liga Sentra ID
 #EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5
-#EXTVLCOPT:http-referer=https://www.cubmu.com/
+#EXTVLCOPT:http-referrer=https://www.cubmu.com/
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=6ffb9c53af284fd590217ede1eba765e:4abf1fd26e8c45a5b6bae60cf6ffc2b9
-https://cdnjktbpid02.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/bGl2ZV9ldmVudF9jaGFubmVsMQ/manifest.mpd?signature=OTIyMjcxOWJmYzM5MDQ1OWQzYjI4ODdhMDVmN2UyZDU=&time=15276422700&device_id=W-ZAtLmstZBrCrEHpAo7lGheQeyaIuikBmUxeoYxYGc6PWCS
+https://cdnjktbpid02.transvision.co.id/riutx01-8d60a02923af3b585decfb9bea4655d9/dash/bGl2ZV9ldmVudF9jaGFubmVsMQ/manifest.mpd?signature=OTIyMjcxOWJmYzM5MDQ1OWQzYjI4ODdhMDVmN2UyZDU=&time=15276424614&device_id=1eyK5Fm-yT7bjmORWDdBS4Qigbda7w3dcg8aID7BMJ7c
