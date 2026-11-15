@@ -140,9 +140,9 @@ def main():
                 f.write('#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey\n')
                 f.write(f'#KODIPROP:inputstream.adaptive.license_key={kid_hex}:{key_hex}\n')
             elif is_widevine:
-            f.write('#KODIPROP:inputstream.adaptive.license_type=com.widevine\n')
-            f.write(f'#KODIPROP:inputstream.adaptive.license_url={PROXY_URL}?license\n')
-            f.write('#KODIPROP:inputstream.adaptive.license_content_type=application/octet-stream\n')   
+                f.write('#KODIPROP:inputstream.adaptive.license_type=com.widevine\n')
+                f.write(f'#KODIPROP:inputstream.adaptive.license_url={PROXY_URL}?license\n')
+                f.write('#KODIPROP:inputstream.adaptive.license_content_type=application/octet-stream\n')   
     
             f.write(f'{PROXY_URL}?slug={quote(slug, safe="")}\n\n')
             total += 1
