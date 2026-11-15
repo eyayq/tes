@@ -3,7 +3,7 @@ import re
 import json
 import asyncio
 import requests
-from urllib.parse import urlparse, parse_qs, unquote, urlencode
+from urllib.parse import urlparse, parse_qs, unquote, quote
 from playwright.async_api import async_playwright
 from playwright_stealth import Stealth
 
@@ -11,14 +11,14 @@ from playwright_stealth import Stealth
 # KONFIGURASI
 # ─────────────────────────────────────────────
 BASE_URL   = "https://daddylive.app"
-PROXY_BASE = "https://exsample.d-n-s.name"  # ← URL proxy PHP
+PROXY_BASE = "https://exsample.d-n-s.name"
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
                   "AppleWebKit/537.36 (KHTML, like Gecko) "
                   "Chrome/125.0.0.0 Safari/537.36"
 }
-CONCURRENCY = 5
+CONCURRENCY = 10
 TIMEOUT     = 25_000
 OUTPUT      = "playlist.m3u"
 
@@ -44,29 +44,41 @@ def fetch_all_json() -> dict:
         try:
             r = requests.get(url, headers=HEADERS, timeout=15)
             if r.ok:
-                data = r.json()
+                text = r.text.strip()
+                if not text or not text.startswith("{"):
+                    print(f"  ✗ {key}: empty/non-JSON response")
+                    continue
+                data = json.loads(text)
                 if data:
                     all_data[key] = data
                     n = count_events(data)
                     print(f"  ✓ {key}: {n} events")
+        except json.JSONDecodeError:
+            print(f"  ✗ {key}: invalid JSON")
         except Exception as e:
             print(f"  ✗ {key}: {e}")
     return all_data
 
 
 def count_events(data) -> int:
+    """Hitung event — handle kedua format."""
     n = 0
-    for _top, sub_cats in data.items():
-        if not isinstance(sub_cats, dict):
-            continue
-        for _sub, items in sub_cats.items():
-            if isinstance(items, list):
-                n += len(items)
+    for _key, value in data.items():
+        # Format A: {topCat: {subCat: [events]}}
+        if isinstance(value, dict):
+            for _sub, items in value.items():
+                if isinstance(items, list):
+                    n += len(items)
+        # Format B: {dateKey: [{category, events: [...]}]}
+        elif isinstance(value, list):
+            for block in value:
+                if isinstance(block, dict) and isinstance(block.get("events"), list):
+                    n += len(block["events"])
     return n
 
 
 # ─────────────────────────────────────────────
-# STEP 2: PARSE EVENTS
+# STEP 2: PARSE EVENTS (handle 2 format)
 # ─────────────────────────────────────────────
 def extract_category(event_name: str) -> str:
     if " :" in event_name:
@@ -85,43 +97,80 @@ def parse_all_events(all_data: dict) -> list[dict]:
     seen = set()
 
     for src_key, data in all_data.items():
-        for top_cat, sub_cats in data.items():
-            if not isinstance(sub_cats, dict):
-                continue
-            for sub_cat, items in sub_cats.items():
-                if not isinstance(items, list):
-                    continue
-                for ev in items:
-                    if not isinstance(ev, dict):
-                        continue
-                    event_name = (ev.get("event") or "").strip()
-                    if not event_name:
-                        continue
+        for top_key, value in data.items():
 
-                    dedup_key = f"{event_name}|{src_key}"
-                    if dedup_key in seen:
+            # ── Format A: {topCat: {subCat: [eventObjects]}} ──
+            if isinstance(value, dict):
+                for sub_cat, items in value.items():
+                    if not isinstance(items, list):
                         continue
-                    seen.add(dedup_key)
-
-                    embeds = []
-                    for ch in (ev.get("channels") or []):
-                        if not isinstance(ch, dict):
+                    for ev in items:
+                        if not isinstance(ev, dict):
                             continue
-                        for k in sorted(ch.keys()):
-                            if re.match(r"^embed_\d+$", k) and ch[k]:
-                                embeds.append(ch[k])
+                        event_name = (ev.get("event") or "").strip()
+                        if not event_name:
+                            continue
+                        dedup_key = f"{event_name}|{src_key}"
+                        if dedup_key in seen:
+                            continue
+                        seen.add(dedup_key)
 
-                    if not embeds:
+                        embeds = []
+                        for ch in (ev.get("channels") or []):
+                            if not isinstance(ch, dict):
+                                continue
+                            for k in sorted(ch.keys()):
+                                if re.match(r"^embed_\d+$", k) and ch[k]:
+                                    embeds.append(ch[k])
+
+                        if not embeds:
+                            continue
+
+                        events.append({
+                            "name": extract_clean_name(event_name),
+                            "full_name": event_name,
+                            "category": extract_category(event_name),
+                            "time": ev.get("time", "Live"),
+                            "source": src_key,
+                            "embeds": embeds,
+                        })
+
+            # ── Format B: {dateKey: [{category, events: [...]}]} ──
+            elif isinstance(value, list):
+                for block in value:
+                    if not isinstance(block, dict):
                         continue
+                    category = (block.get("category") or block.get("Category") or "Other").strip()
+                    for ev in (block.get("events") or []):
+                        if not isinstance(ev, dict):
+                            continue
+                        event_name = (ev.get("event") or "").strip()
+                        if not event_name:
+                            continue
+                        dedup_key = f"{event_name}|{src_key}"
+                        if dedup_key in seen:
+                            continue
+                        seen.add(dedup_key)
 
-                    events.append({
-                        "name": extract_clean_name(event_name),
-                        "full_name": event_name,
-                        "category": extract_category(event_name),
-                        "time": ev.get("time", "Live"),
-                        "source": src_key,
-                        "embeds": embeds,
-                    })
+                        embeds = []
+                        for ch in (ev.get("channels") or []):
+                            if not isinstance(ch, dict):
+                                continue
+                            for k in sorted(ch.keys()):
+                                if re.match(r"^embed_\d+$", k) and ch[k]:
+                                    embeds.append(ch[k])
+
+                        if not embeds:
+                            continue
+
+                        events.append({
+                            "name": extract_clean_name(event_name),
+                            "full_name": event_name,
+                            "category": category,
+                            "time": ev.get("time", "Live"),
+                            "source": src_key,
+                            "embeds": embeds,
+                        })
 
     print(f"  ✓ Total: {len(events)} events\n")
     return events
@@ -251,6 +300,8 @@ def write_header_lines(lines: list[str], headers: dict):
         lk = key.lower()
         if lk in SKIP_HEADERS:
             continue
+        if not isinstance(value, str):
+            value = str(value)
         if lk == "referer":
             lines.append(f'#EXTVLCOPT:http-referrer={value}')
         elif lk == "user-agent":
@@ -260,14 +311,20 @@ def write_header_lines(lines: list[str], headers: dict):
 
 
 def build_proxy_url(m3u8_url: str, headers: dict) -> str:
-    """Bangun URL m3u8.php dengan params."""
+    """Bangun URL m3u8.php dengan params (pakai quote, bukan urlencode)."""
+    # Pastikan m3u8_url adalah string
+    if not isinstance(m3u8_url, str):
+        m3u8_url = str(m3u8_url)
+
     referrer = headers.get("referer", "")
     origin   = headers.get("origin", "")
-    params   = f"url={urlencode(m3u8_url)}"
+
+    params = f"url={quote(m3u8_url, safe='')}"
     if referrer:
-        params += f"&referer={urlencode(referrer)}"
+        params += f"&referer={quote(referrer, safe='')}"
     if origin:
-        params += f"&origin={urlencode(origin)}"
+        params += f"&origin={quote(origin, safe='')}"
+
     return f"{PROXY_BASE}/m3u8.php?{params}"
 
 
@@ -309,7 +366,7 @@ async def build_playlist(events: list[dict]):
                     if resolved:
                         break
 
-                if resolved:
+                if resolved and isinstance(resolved.get("m3u8"), str):
                     results.append({**ev, **resolved})
                     print(f"  [{idx+1}/{len(events)}] ✓ {ev['name']}")
                 else:
@@ -324,7 +381,14 @@ async def build_playlist(events: list[dict]):
     lines = ["#EXTM3U"]
     for ev in results:
         headers = ev.get("headers", {})
-        proxy_url = build_proxy_url(ev["m3u8"], headers)
+        if not isinstance(headers, dict):
+            headers = {}
+
+        try:
+            proxy_url = build_proxy_url(ev["m3u8"], headers)
+        except Exception as e:
+            print(f"  [!] Skip {ev['name']}: {e}")
+            continue
 
         lines.append(
             f'#EXTINF:-1 tvg-id="{ev["name"]}"'
