@@ -1,5 +1,4 @@
 
-
 import requests
 import json
 import re
@@ -16,7 +15,7 @@ ORIGIN = "https://www.cubmu.com"
 REFERER = "https://www.cubmu.com/"
 
 cookies = {
-    'device_fp': 'U2FsdGVkX1+ao0jXElG0/PjbS3TRy6FpRn3dUBvQMGccx3EnW2WJvAvz9/TN9ZlXpUvAikE1A/oGELB3jJ1VjvW9GvOZFf/ryHB7G9E+fGIt+7+8PSc7EaWxG2RIhgYoJ21p9J6phrJL0xQ6u3BrHjDqFG4rFH15NF3T0s/XsqBGLMb7nqpPQ4nltMhlyBHmOpF+k5+IjfLDbLZHXo7/bER3RtHJv+NMvFVsCiz7maNT0ij6FsZXF0+ExLE3VyJsileLVb0HILmLdz0XDVYW4xLknkFYa1MTyXZfy5yCOmk3yyNJYQs2K8zsrRrfcqL8la29tIbXImAquxnuo9PNPg==,
+    'device_fp': 'U2FsdGVkX1+ao0jXElG0/PjbS3TRy6FpRn3dUBvQMGccx3EnW2WJvAvz9/TN9ZlXpUvAikE1A/oGELB3jJ1VjvW9GvOZFf/ryHB7G9E+fGIt+7+8PSc7EaWxG2RIhgYoJ21p9J6phrJL0xQ6u3BrHjDqFG4rFH15NF3T0s/XsqBGLMb7nqpPQ4nltMhlyBHmOpF+k5+IjfLDbLZHXo7/bER3RtHJv+NMvFVsCiz7maNT0ij6FsZXF0+ExLE3VyJsileLVb0HILmLdz0XDVYW4xLknkFYa1MTyXZfy5yCOmk3yyNJYQs2K8zsrRrfcqL8la29tIbXImAquxnuo9PNPg==',
     'access_token': TOKEN,
     'refresh_token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXZpY2VfaWQiOiJ3ZWJfYnJvd3NlciIsImVtYWlsIjoibWFzdGVyX2FjY291bnRAdHJhbnN2aXNpb24uY28uaWQiLCJleHAiOjE3OTczNDc2MzksImhvdGVsX2lkIjpudWxsLCJob3RlbF9uYW1lIjpudWxsLCJpc19iMmIiOmZhbHNlLCJpc19kZXZpY2VfdW5wYWlyZWQiOmZhbHNlLCJpc190diI6ZmFsc2UsImlzcF9pZCI6IjYiLCJpc3BfbmFtZSI6IlRyYW5zdmlzaW9uIiwianRpIjoiYmZiMWUzNDctMzMwYy00Y2E2LTg3MTQtNTRiOWZiMTUyMTkzIiwicGFja2FnZV9saXN0IjpudWxsLCJwaG9uZSI6IjA4MTIwMDAxOTIwMSIsInJvbGVfaWQiOiI5IiwidXNlcl9pZCI6OTl9.LCuSMTAD8FsSLMzL5eGcGjztkKeKwgZB3Hp0DzKgxLY',
     'bitmovin_analytics_uuid': '4de777be-9165-444c-8913-330c299a03ae',
