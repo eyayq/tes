@@ -97,7 +97,7 @@ with open(OUTPUT, "w", encoding="utf-8") as f:
 
             # VLC headers
             f.write(f'#EXTVLCOPT:http-user-agent=Xstream XGO/1.22 (Linux;Android 9) ExoPlayerLib/2.10.5\n')
-            f.write(f'#EXTVLCOPT:http-referer={REFERER}\n')
+            f.write(f'#EXTVLCOPT:http-referrer={REFERER}\n')
 
             # CLEARKEY — decode base64 → hex
             if clearkey and clearkey.get("valid"):
