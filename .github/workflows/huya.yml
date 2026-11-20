@@ -36,7 +36,7 @@ jobs:
           playwright install chrome firefox   
 
       - name: ✓
-        run: xvfb-run python huya.py --debug
+        run: xvfb-run python huya.py
 
       - name: ✓
         run: |
