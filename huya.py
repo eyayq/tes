@@ -1,255 +1,108 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-
-import socket
-import threading
+import contextlib
 import time
-import sys
+import requests
+import os
 
-# from random import *
-import struct
-import argparse
-import re
-from urllib.request import Request, urlopen  # Python 3
-import queue as Queue
+DEFAULT_DOMAIN = "www.google.com"
 
 
-__author__ = "TheSpeedX"
-__version__ = "2.0"
-
-banner = """
-███████╗ ██████╗  ██████╗██╗  ██╗███████╗██████╗
-██╔════╝██╔═══██╗██╔════╝██║ ██╔╝██╔════╝██╔══██╗
-███████╗██║   ██║██║     █████╔╝ █████╗  ██████╔╝
-╚════██║██║   ██║██║     ██╔═██╗ ██╔══╝  ██╔══██╗
-███████║╚██████╔╝╚██████╗██║  ██╗███████╗██║  ██║
-╚══════╝ ╚═════╝  ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
-    Check Valid Working SOCKS Proxy
-"""
-socksProxies = Queue.Queue()
-checkQueue = Queue.Queue()
+def test_proxy(ip, domain=DEFAULT_DOMAIN):
+    proxies = {
+        "http": f"http://{ip}",
+        "https": f"http://{ip}",
+    }
+    with contextlib.suppress(requests.RequestException):
+        response = requests.get(f"http://{domain}", proxies=proxies, timeout=5)
+        if response.status_code >= 200 and response.status_code < 300:
+            return True
+    return False
 
 
-class ThreadChecker(threading.Thread):
-    def __init__(self, queue, timeout):
-        self.timeout = timeout
-        self.q = queue
-        threading.Thread.__init__(self)
+def test_ip_addresses(ip_file, output_file, domain=DEFAULT_DOMAIN):
+    with open(ip_file, "r") as file:
+        ip_addresses = file.read().splitlines()
 
-    def isSocks4(self, host, port, soc):
+    results = []
 
-        ipaddr = socket.inet_aton(host)
-        port_pack = struct.pack(">H", port)
-        packet4 = b"\x04\x01" + port_pack + ipaddr + b"\x00"
-        soc.sendall(packet4)
-        data = soc.recv(8)
-        if len(data) < 2:
-            # Null response
-            return False
-        if data[0] != int("0x00", 16):
-            # Bad data
-            return False
-        if data[1] != int("0x5A", 16):
-            # Server returned an error
-            return False
-        return True
+    for i, ip in enumerate(ip_addresses, start=1):
+        is_working = test_proxy(ip, domain=domain)
+        status = "Active" if is_working else "Inactive"
+        results.append((ip, status))
 
-    def isSocks5(self, host, port, soc):
-        soc.sendall(b"\x05\x01\x00")
-        data = soc.recv(2)
-        if len(data) < 2:
-            # Null response
-            return False
-        if data[0] != int("0x05", 16):
-            # Not socks5
-            return False
-        if data[1] != int("0x00", 16):
-            # Requires authentication
-            return False
-        return True
+        progress = i / len(ip_addresses) * 100
+        print(
+            f'\rTesting - Progress: {progress:.1f}% | {"." * (i % 4)}    ',
+            end="",
+            flush=True,
+        )
+        time.sleep(0.1)  # Add a slight delay to simulate animation
 
-    def getSocksVersion(self, proxy):
-        host, port = proxy.split(":")
-        try:
-            port = int(port)
-            if port < 0 or port > 65536:
-                print(f"Invalid: {proxy}")
-                return 0
-        except Exception:
-            print(f"Invalid: {proxy}")
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.settimeout(self.timeout)
-        try:
-            s.connect((host, port))
-            if self.isSocks4(host, port, s):
-                s.close()
-                return 4
-            elif self.isSocks5(host, port, s):
-                s.close()
-                return 5
-            else:
-                print(f"Not a SOCKS: {proxy}")
-                s.close()
-                return 0
-        except socket.timeout:
-            print(f"Timeout: {proxy}")
-            s.close()
-            return 0
-        except socket.error:
-            print(f"Connection refused: {proxy}")
-            s.close()
-            return 0
+    with open(output_file, "w") as file:
+        for ip, status in results:
+            file.write(f"{ip}\t{status}\n")
 
-    def run(self):
-        while True:
-            proxy = self.q.get()
-            version = self.getSocksVersion(proxy)
-            if version in [5, 4]:
-                print(f"Working: {proxy}")
-                socksProxies.put(proxy)
-            self.q.task_done()
+    print("\rTesting complete.                  ")
 
 
-class ThreadWriter(threading.Thread):
-    def __init__(self, queue, outputPath):
-        self.q = queue
-        self.outputPath = outputPath
-        threading.Thread.__init__(self)
-
-    def run(self):
-        while True:
-            toWrite = self.q.qsize()
-            with open(self.outputPath, "a+") as outputFile:
-                for _ in range(toWrite):
-                    proxy = self.q.get()
-                    outputFile.write(proxy + "\n")
-                    self.q.task_done()
-            time.sleep(10)
+def display_menu():
+    print("Select a file to test:")
+    print("1. http.txt")
+    print("2. https.txt")
 
 
-def info():
-    print(banner)
-    print(f"Author: {__author__} \t\t Version: {__version__}")
+def get_user_choice():
+    while True:
+        choice = input("Enter your choice (1 or 2): ")
+        if choice in ["1", "2"]:
+            return choice
+        print("Invalid choice. Please try again.")
 
 
-def Exit():
-    print(banner)
-    print("\tThanks For using socker !!!")
-    sys.exit()
+def get_input_filename(choice):
+    if choice == "1":
+        return "http.txt"
+    elif choice == "2":
+        return "https.txt"
 
 
-def get_timestamp():
-    return time.strftime("%Y%m%d_%H%M%S")
+def check_input_files():
+    http_file = "http.txt"
+    https_file = "https.txt"
+    if not os.path.exists(http_file) or not os.path.isfile(http_file):
+        print(f"Error: '{http_file}' file is missing or not found.")
+        return False
+    if not os.path.exists(https_file) or not os.path.isfile(https_file):
+        print(f"Error: '{https_file}' file is missing or not found.")
+        return False
+    return True
 
 
-def get_proxies(sources, is_url=False):
-    pattern = r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{2,5}"
-    data = ""
-    for source in sources:
-        try:
-            if is_url:
-                req = Request(
-                    source,
-                    headers={
-                        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36"
-                    },
-                )
-                response = urlopen(req)
-                data += response.read().decode("utf-8") + "\n"
-            else:
-                with open(source) as file:
-                    data += file.read() + "\n"
-            print(f"Processed: {source}")
-        except Exception:
-            print(f"Skipping, Error Occured: {source}")
-    return re.findall(pattern, data)
+def get_domain_choice():
+    domain_choice = input(
+        "Enter the domain on which you want to test the proxies (default: www.google.com): "
+    )
+    return domain_choice.strip() or DEFAULT_DOMAIN
 
 
-def start_socker(proxies, outputPath, threads, timeout):
-    print(f"Loaded {len(proxies)} proxies !!!")
-    for proxy in proxies:
-        checkQueue.put(proxy)
-    for _ in range(threads):
-        thread = ThreadChecker(checkQueue, timeout)
-        thread.setDaemon(True)
-        thread.start()
-        time.sleep(0.25)
-    wT = ThreadWriter(socksProxies, outputPath)
-    wT.setDaemon(True)
-    wT.start()
-    checkQueue.join()
-    socksProxies.join()
-    Exit()
+def main():
+    if not check_input_files():
+        return
 
+    display_menu()
+    choice = get_user_choice()
+    input_file = get_input_filename(choice)
+    output_file = "playlist.m3u"
 
-description = """socker - Check For Valid SOCKS Proxy
+    print("Testing in progress...")
+    time.sleep(1)  # Simulate a delay before starting the testing
 
-socker can utilize multiple sources like file, inbuilt apis, custom urls.
-File Mode:
-python3 socker.py -i proxys_to_be_checked.txt
-URL Mode:
-python3 socker.py -u proxlylist1.site -u proxlylist2.site
-Auto Mode:
-python3 socker.py -auto
+    domain = get_domain_choice()
+    print(f"Using domain: {domain}")
 
-These modes can also be used simultaneously to gather more proxies.
-python3 socker.py -i proxys_to_be_checked.txt -auto
+    test_ip_addresses(input_file, output_file, domain=domain)
 
-socker is not intented for malicious uses.
-"""
+    print("Testing complete. Results saved to", output_file)
 
-parser = argparse.ArgumentParser(
-    description=description,
-    epilog="Coded by SpeedX !!!",
-    formatter_class=argparse.RawTextHelpFormatter,
-)
-parser.add_argument(
-    "-o",
-    "--output",
-    default=f"live_proxies_{get_timestamp()}.txt",
-    help="Write Proxies to this file",
-)
-parser.add_argument(
-    "-th", "--thread", type=int, default=30, help="Number of concurrent threads to run"
-)
-parser.add_argument(
-    "-t",
-    "--timeout",
-    type=float,
-    default=5.0,
-    help="Maximum time to wait for response(seconds)",
-)
-parser.add_argument(
-    "-i", "--input", action="append", help="Input File containing proxy"
-)
-parser.add_argument(
-    "-auto", "--auto", action="store_true", help="Fetches proxy from Proxyscrape"
-)
-parser.add_argument("-u", "--url", action="append", help="Fetch proxy from custom URL")
-parser.add_argument(
-    "-v", "--version", action="store_true", help="show current TBomb version"
-)
 
 if __name__ == "__main__":
-    args = parser.parse_args()
-    info()
-    if args.version:
-        print("Author: ", __author__)
-        print("Version: ", __version__)
-    else:
-        proxies = []
-        proxy_api = [
-            "https://raw.githubusercontent.com/TheSpeedX/SOCKS-List/master/socks4.txt",
-            "https://raw.githubusercontent.com/TheSpeedX/SOCKS-List/master/socks5.txt",
-        ]
-        if args.input:
-            proxies.extend(get_proxies(args.input))
-        if args.auto:
-            proxies.extend(get_proxies(proxy_api, is_url=True))
-        if args.url:
-            proxies.extend(get_proxies(args.url, is_url=True))
-        if proxies:
-            start_socker(proxies, args.output, args.thread, args.timeout)
-        else:
-            print("No proxies found !!!")
-            Exit()
+    main()
