@@ -9,131 +9,126 @@ https://rmtv.akamaized.net/hls/live/2043154/rmtv-en-web/bitrate_1.m3u8
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/pitaara-movie-live/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
 https://vg-pitaaratvyupp.akamaized.net/ptnr-yupptv/v1/manifest/611d79b11b77e2f571934fd80ca1413453772ac7/vglive-sk-433350/881adefe-4b73-4876-9772-1334127e9a75/0.m3u8
-#EXTINF:-1 tvg-id="Radio Klasik Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Radio-Klasik-Live.webp" group-title="Malaysian TV",Radio Klasik Live
-#EXTVLCOPT:http-origin=https://malaysia-tv.net/radio-klasik/
-#EXTVLCOPT:http-referrer=https://malaysia-tv.net/radio-klasik/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/Ej3fj6r5K4N6oHN4k5dntRjBPp1SBiXyMyEGdrQYZ3vF.m3u8?expires=1795132100&token=p7srhmo7nBkM3Z9H2V38mFwExy3IdfO9_CEQ91CY9GA
 #EXTINF:-1 tvg-id="Al Jazeera English Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/AL-Jazeera-English-HD-Live.webp" group-title="Malaysian TV",Al Jazeera English Live
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/al-jazeera/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/al-jazeera/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/Ej3fj6r5K4N6oHN4k5dntRjBPp1SBiXyMyEGdrQYZ3vF.m3u8?expires=1795132100&token=p7srhmo7nBkM3Z9H2V38mFwExy3IdfO9_CEQ91CY9GA
+https://2bfd741e.b-cdn.net/streamer/Ej3fj6r5K4N6oHN4k5dntRjBPp1SBiXyMyEGdrQYZ3vF.m3u8?expires=1795149280&token=hdD73te6a_rlVdTCKzxltCLbvVAJrsn14KCKlTEer4Q
 #EXTINF:-1 tvg-id="TV Sarawak Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/TV-Sarawak-Live-Streaming-Siaran-HD-Now.webp" group-title="Malaysian TV",TV Sarawak Live
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/tv-sarawak-live/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/tv-sarawak-live/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/Ej3fj6r5K4N6oHN4k5dntRjBPp1SBiXyMyEGdrQYZ3vF.m3u8?expires=1795132100&token=p7srhmo7nBkM3Z9H2V38mFwExy3IdfO9_CEQ91CY9GA
-#EXTINF:-1 tvg-id="Sabah FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Sabah-FM-Live.webp" group-title="Malaysian TV",Sabah FM Live
-#EXTVLCOPT:http-origin=https://malaysia-tv.net/sabah-fm/
-#EXTVLCOPT:http-referrer=https://malaysia-tv.net/sabah-fm/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/EivksgFSVrWwhJzu7qc6dr51s79NWXNoc56SyW2jmErL.m3u8?expires=1795132107&token=5AP9NcHLzBQlRP2arzYoc1X_cMFZG8Xsgcu2L_dM9FA
+https://2bfd741e.b-cdn.net/streamer/Ej3fj6r5K4N6oHN4k5dntRjBPp1SBiXyMyEGdrQYZ3vF.m3u8?expires=1795149280&token=hdD73te6a_rlVdTCKzxltCLbvVAJrsn14KCKlTEer4Q
 #EXTINF:-1 tvg-id="Sukan RTM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/Sukan-RTM-Live-Streaming-TV-HD.webp" group-title="Malaysian TV",Sukan RTM Live
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/sukan-rtm/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/sukan-rtm/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/3LDJRtFXCR3WEeLpjyYz7tRVYXpFAoL5xZwAKKGokoLf.m3u8?expires=1795132102&token=mZLki-Qcy1Vi1SRlZFxz5NloiYWnCxoA7JQY20BJYIQ
+https://2bfd741e.b-cdn.net/streamer/3LDJRtFXCR3WEeLpjyYz7tRVYXpFAoL5xZwAKKGokoLf.m3u8?expires=1795149282&token=DUIpaFTrWjRiVl_hfKZl6gAyQo_MVgKAnUlhWxZI7C4
 #EXTINF:-1 tvg-id="Molek FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Molek-FM-Live.webp" group-title="Malaysian TV",Molek FM Live
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/molek-fm/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/molek-fm/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/3LDJRtFXCR3WEeLpjyYz7tRVYXpFAoL5xZwAKKGokoLf.m3u8?expires=1795132102&token=mZLki-Qcy1Vi1SRlZFxz5NloiYWnCxoA7JQY20BJYIQ
+https://2bfd741e.b-cdn.net/streamer/3LDJRtFXCR3WEeLpjyYz7tRVYXpFAoL5xZwAKKGokoLf.m3u8?expires=1795149282&token=DUIpaFTrWjRiVl_hfKZl6gAyQo_MVgKAnUlhWxZI7C4
 #EXTINF:-1 tvg-id="Siara TV Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Siara-TV-Live.webp" group-title="Malaysian TV",Siara TV Live
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/siara-tv/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/siara-tv/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/69KyW2byLhG2WKhDsHYQ3BB78TWM5mdgmcNv347BfsRJ.m3u8?expires=1795132105&token=Zuf_KGssqA0C_WRhZDEcNKtAb-SXSrjXGAQQAQvSfqs
+https://2bfd741e.b-cdn.net/streamer/3LDJRtFXCR3WEeLpjyYz7tRVYXpFAoL5xZwAKKGokoLf.m3u8?expires=1795149282&token=DUIpaFTrWjRiVl_hfKZl6gAyQo_MVgKAnUlhWxZI7C4
 #EXTINF:-1 tvg-id="Tennis+ Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/Tennis-Plus-Live-Streaming-HD-Free.webp" group-title="Sports",Tennis+ Live
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/tennis/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/tennis/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
 https://epg.provider.plex.tv/library/parts/5e20b730f2f8d5003d739db7-63ec0b739866d8d2120ac759.m3u8?includeAllStreams=1&#038;x-plex-product=Plex+Mediaverse&#038;x-plex-token=AKC28PzSgrNrrnx7eD_P&#038;auto=0
+#EXTINF:-1 tvg-id="Sabah FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Sabah-FM-Live.webp" group-title="Malaysian TV",Sabah FM Live
+#EXTVLCOPT:http-origin=https://malaysia-tv.net/sabah-fm/
+#EXTVLCOPT:http-referrer=https://malaysia-tv.net/sabah-fm/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
+https://2bfd741e.b-cdn.net/streamer/EivksgFSVrWwhJzu7qc6dr51s79NWXNoc56SyW2jmErL.m3u8?expires=1795149286&token=TgdEHUrZQGxEu7O10S62STacXcKmQPhl6xeNJHCmQZo
 #EXTINF:-1 tvg-id="TV1 Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/TV1-Live-Streaming-HD-Now.webp" group-title="Malaysian TV",TV1 Live
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/rtm-tv1-live/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/rtm-tv1-live/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/CpfuFTFqcaKT1LnpjWzNcPBp7Z8RXnz8i63NiK3Csu16.m3u8?expires=1795132106&token=ZGt_fz3_KEjhlSKbze8bRpWiLVgqQrQW2_zekGhY82w
-#EXTINF:-1 tvg-id="Berita RTM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/Berita-RTM-Live-Streaming-TV-HD.webp" group-title="Malaysian TV",Berita RTM Live
-#EXTVLCOPT:http-origin=https://malaysia-tv.net/berita-waliyah/
-#EXTVLCOPT:http-referrer=https://malaysia-tv.net/berita-waliyah/
+https://2bfd741e.b-cdn.net/streamer/CpfuFTFqcaKT1LnpjWzNcPBp7Z8RXnz8i63NiK3Csu16.m3u8?expires=1795149286&token=SepkL-4XU_3DSgRDIhXT6_d2GlbEzIbd3OPbmluxnz0
+#EXTINF:-1 tvg-id="Al Jazeera Arabic Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/AL-Jazeera-Arabic-HD-Live.webp" group-title="Malaysian TV",Al Jazeera Arabic Live
+#EXTVLCOPT:http-origin=https://malaysia-tv.net/al-jazeera-arabic-hd/
+#EXTVLCOPT:http-referrer=https://malaysia-tv.net/al-jazeera-arabic-hd/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/2uyC8DK9BJLKJH5VhjXmwvDr5RskHSvc1X7nijC3u8ii.m3u8?expires=1795132125&token=tvZZLvxonreKgCYg2YbeaM3IsSpHB4g5hWy9iFtfhyU
-#EXTINF:-1 tvg-id="FIFA+ Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/11/FIFA-Plus-Live-Streaming.webp" group-title="Malaysian TV",FIFA+ Live
-#EXTVLCOPT:http-origin=https://malaysia-tv.net/fifa-plus/
-#EXTVLCOPT:http-referrer=https://malaysia-tv.net/fifa-plus/
+https://2bfd741e.b-cdn.net/streamer/5y8F68vYyTracEmHj7UFooY4X4aRto7hHgzcQDqkh6gL.m3u8?expires=1795149292&token=rnFlMwfoUh34-__SgDBD5qCyVSwbA706rQCdC73SOZw
+#EXTINF:-1 tvg-id="MPL Malaysia Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/MPL-Malaysia-Live.webp" group-title="Malaysian TV",MPL Malaysia Live
+#EXTVLCOPT:http-origin=https://malaysia-tv.net/mpl-malaysia/
+#EXTVLCOPT:http-referrer=https://malaysia-tv.net/mpl-malaysia/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/2uyC8DK9BJLKJH5VhjXmwvDr5RskHSvc1X7nijC3u8ii.m3u8?expires=1795132125&token=tvZZLvxonreKgCYg2YbeaM3IsSpHB4g5hWy9iFtfhyU
-#EXTINF:-1 tvg-id="Eight FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Eight-FM-Live.webp" group-title="Malaysian TV",Eight FM Live
-#EXTVLCOPT:http-origin=https://malaysia-tv.net/eight-fm/
-#EXTVLCOPT:http-referrer=https://malaysia-tv.net/eight-fm/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/2uyC8DK9BJLKJH5VhjXmwvDr5RskHSvc1X7nijC3u8ii.m3u8?expires=1795132125&token=tvZZLvxonreKgCYg2YbeaM3IsSpHB4g5hWy9iFtfhyU
+https://2bfd741e.b-cdn.net/streamer/5y8F68vYyTracEmHj7UFooY4X4aRto7hHgzcQDqkh6gL.m3u8?expires=1795149292&token=rnFlMwfoUh34-__SgDBD5qCyVSwbA706rQCdC73SOZw
 #EXTINF:-1 tvg-id="Miramax Movies Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/MIRAMAX-MOVIES-Live-Streaming-HD-Free.webp" group-title="International",Miramax Movies Live
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/miramax-movie/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/miramax-movie/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
 https://linear-798.frequency.stream/mt/plex/798/hls/master/playlist.m3u8
-#EXTINF:-1 tvg-id="Al Jazeera Arabic Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/AL-Jazeera-Arabic-HD-Live.webp" group-title="Malaysian TV",Al Jazeera Arabic Live
-#EXTVLCOPT:http-origin=https://malaysia-tv.net/al-jazeera-arabic-hd/
-#EXTVLCOPT:http-referrer=https://malaysia-tv.net/al-jazeera-arabic-hd/
+#EXTINF:-1 tvg-id="Berita RTM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/Berita-RTM-Live-Streaming-TV-HD.webp" group-title="Malaysian TV",Berita RTM Live
+#EXTVLCOPT:http-origin=https://malaysia-tv.net/berita-waliyah/
+#EXTVLCOPT:http-referrer=https://malaysia-tv.net/berita-waliyah/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/31qHhb7eEptKUvdFoZYeiJ2km3E6nCDtnhVj2hyFnibN8tcCRZBMhUDhB6EfWxDc6m.m3u8?expires=1795132116&token=5wspQPyF-nDALltgWda0by5cOQ9bl0_Eh64ja8SDpm8
-#EXTINF:-1 tvg-id="MPL Malaysia Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/MPL-Malaysia-Live.webp" group-title="Malaysian TV",MPL Malaysia Live
-#EXTVLCOPT:http-origin=https://malaysia-tv.net/mpl-malaysia/
-#EXTVLCOPT:http-referrer=https://malaysia-tv.net/mpl-malaysia/
+https://2bfd741e.b-cdn.net/streamer/Dic2ryCWJX1G5SwtqBmhmAn3NXSgK16Ck6ErXNKJ6rg3.m3u8?expires=1795149294&token=xYVYgb4d8UUGbCYlqcxKc9Uo756PWuF2KWK1HNSaIKk
+#EXTINF:-1 tvg-id="FIFA+ Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/11/FIFA-Plus-Live-Streaming.webp" group-title="Malaysian TV",FIFA+ Live
+#EXTVLCOPT:http-origin=https://malaysia-tv.net/fifa-plus/
+#EXTVLCOPT:http-referrer=https://malaysia-tv.net/fifa-plus/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/5y8F68vYyTracEmHj7UFooY4X4aRto7hHgzcQDqkh6gL.m3u8?expires=1795132123&token=pJQ98mmpJ62br6OlDdUVFLr7egQIE7h7nSQLJEybEQU
+https://2bfd741e.b-cdn.net/streamer/Dic2ryCWJX1G5SwtqBmhmAMYX66N3zXdhtp2bB57EVaC.m3u8?expires=1795149294&token=gH3zovz89gp5bCKnk3I0NKZLPPRP0myUEPzV7ZeeEqo
+#EXTINF:-1 tvg-id="Eight FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Eight-FM-Live.webp" group-title="Malaysian TV",Eight FM Live
+#EXTVLCOPT:http-origin=https://malaysia-tv.net/eight-fm/
+#EXTVLCOPT:http-referrer=https://malaysia-tv.net/eight-fm/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
+https://2bfd741e.b-cdn.net/streamer/2uyC8DK9BJLKJH5VhjXmwvDr5RskHSvc1X7nijC3u8ii.m3u8?expires=1795149298&token=lJAbrAVd20kw_kZqxMHLMVfi1cGVvwHhOwRCYtcnNGM
 #EXTINF:-1 tvg-id="MySports Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/MySports-Live.webp" group-title="Malaysian TV",MySports Live
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/mysport/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/mysport/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/4dGqw64VaYYf7h4VaboaL6LHmNAXz93ZzJFSK7tx3A2Y.m3u8?expires=1795132135&token=MgP4Zh49r0Po7eGUvClodtA2VyCsFb9vGtL6msFZV2Y
+https://2bfd741e.b-cdn.net/streamer/4dGqw64VaYYf7h4VaboaL6LHmNAXz93ZzJFSK7tx3A2Y.m3u8?expires=1795149303&token=98OeoKErshcQO0FnUKo4uHJNtwKlKOpBDcG1l3QqqNY
 #EXTINF:-1 tvg-id="Pickle TV Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/Pickle-TV-Live-Streaming-HD-Free.webp" group-title="Sports",Pickle TV Live
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/pickle-tv/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/pickle-tv/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
 https://epg.provider.plex.tv/library/parts/5e20b730f2f8d5003d739db7-63ec0b739866d8d2120ac759.m3u8?includeAllStreams=1&#038;x-plex-product=Plex+Mediaverse&#038;x-plex-token=AKC28PzSgrNrrnx7eD_P&#038;auto=0
-#EXTINF:-1 tvg-id="Sabah V FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/SabahV-FM-Live.webp" group-title="Malaysian TV",Sabah V FM Live
-#EXTVLCOPT:http-origin=https://malaysia-tv.net/sabah-v-fm/
-#EXTVLCOPT:http-referrer=https://malaysia-tv.net/sabah-v-fm/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/DzyhABniG1262TyB6eHDT3K5ovLv2pqQDNEXsekr7axy.m3u8?expires=1795132137&token=Nx5lFx1cVkCQjvasUYFHlAyTgYPS40LYXQzkNl63pDM
-#EXTINF:-1 tvg-id="Manis FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Manis-FM-Live.webp" group-title="Malaysian TV",Manis FM Live
-#EXTVLCOPT:http-origin=https://malaysia-tv.net/manis-fm/
-#EXTVLCOPT:http-referrer=https://malaysia-tv.net/manis-fm/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/DzyhABniG1262TyB6eHDT3K5ovLv2pqQDNEXsekr7axy.m3u8?expires=1795132137&token=Nx5lFx1cVkCQjvasUYFHlAyTgYPS40LYXQzkNl63pDM
-#EXTINF:-1 tvg-id="CNA Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/CNA-Live.webp" group-title="Malaysian TV",CNA Live
-#EXTVLCOPT:http-origin=https://malaysia-tv.net/cna/
-#EXTVLCOPT:http-referrer=https://malaysia-tv.net/cna/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/DzyhABniG1262TyB6eHDT3K5ovLv2pqQDNEXsekr7axy.m3u8?expires=1795132137&token=Nx5lFx1cVkCQjvasUYFHlAyTgYPS40LYXQzkNl63pDM
 #EXTINF:-1 tvg-id="TV3 Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/TV3-Live-Streaming-HD-Now-3.webp" group-title="Malaysian TV",TV3 Live
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/tv3-live/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/tv3-live/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/6enj7a28wshMvNNzXzLrtmMDgVsnVpJC6cZGZf6g5yJt.m3u8?expires=1795132136&token=Vk9E5uUOsDLLbTuBSlD1d5c8wRuvFuTfwvW0h0juM4U
+https://2bfd741e.b-cdn.net/streamer/6enj7a28wshMvNNzXzLrtmMDgVsnVpJC6cZGZf6g5yJt.m3u8?expires=1795149305&token=qOKpjk6WvRleMhePcZd9LghIKL0d1V96aPm_wNNUXT4
+#EXTINF:-1 tvg-id="Sabah V FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/SabahV-FM-Live.webp" group-title="Malaysian TV",Sabah V FM Live
+#EXTVLCOPT:http-origin=https://malaysia-tv.net/sabah-v-fm/
+#EXTVLCOPT:http-referrer=https://malaysia-tv.net/sabah-v-fm/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
+https://2bfd741e.b-cdn.net/streamer/CCVBVzkucxekKEevQnBtd7gZ1xH1DcCyMYYidZnXiixR.m3u8?expires=1795149306&token=jeSHI2QXE995m_-s4M59yKQRgQ901CIGR3ha8ZpPvFQ
+#EXTINF:-1 tvg-id="Manis FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Manis-FM-Live.webp" group-title="Malaysian TV",Manis FM Live
+#EXTVLCOPT:http-origin=https://malaysia-tv.net/manis-fm/
+#EXTVLCOPT:http-referrer=https://malaysia-tv.net/manis-fm/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
+https://2bfd741e.b-cdn.net/streamer/CCVBVzkucxekKEevQnBtd7gZ1xH1DcCyMYYidZnXiixR.m3u8?expires=1795149306&token=jeSHI2QXE995m_-s4M59yKQRgQ901CIGR3ha8ZpPvFQ
+#EXTINF:-1 tvg-id="CNA Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/CNA-Live.webp" group-title="Malaysian TV",CNA Live
+#EXTVLCOPT:http-origin=https://malaysia-tv.net/cna/
+#EXTVLCOPT:http-referrer=https://malaysia-tv.net/cna/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
+https://2bfd741e.b-cdn.net/streamer/CCVBVzkucxekKEevQnBtd7gZ1xH1DcCyMYYidZnXiixR.m3u8?expires=1795149306&token=jeSHI2QXE995m_-s4M59yKQRgQ901CIGR3ha8ZpPvFQ
 #EXTINF:-1 tvg-id="Bernama TV Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/Bernama-TV-Live-Streaming-HD.webp" group-title="Malaysian TV",Bernama TV Live
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/bernama/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/bernama/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/8aw7eudWZ9nZJdrA4j59g8M5wW3ne9DNH1XomVoj1FxE.m3u8?expires=1795132146&token=tccAHoxCw8-vLeHpN_FxG4OdHw6G8I78BS-wrfHIStg
+https://2bfd741e.b-cdn.net/streamer/6zRGXhNeg6eCQHs8DgaZt3fjRDsA86kjs8mp9ptqVtit.m3u8?expires=1795149305&token=iYtDGAuaXG7QiI2TUHW2kfYjs-RBPGcxVhzA5qyzwGU
 #EXTINF:-1 tvg-id="Euronews Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/EURO-NEWS-Live-Streaming-HD-Free.webp" group-title="International",Euronews Live
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/euro-news-live/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/euro-news-live/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/7Tm22SqqoKjDKRYkQk4nVY1FZ6jkMYGQ2t9r4pDxqvsAEaTuidWtf7MiJ3wSRyMcMa.m3u8?expires=1795132151&token=sGRWelumPIQE2y9G9Hax2ozyn3JJiHcgjJAKjjTY28o
+https://2bfd741e.b-cdn.net/streamer/6zRGXhNeg6eCQHs8DgaZt3fjRDsA86kjs8mp9ptqVtit.m3u8?expires=1795149305&token=iYtDGAuaXG7QiI2TUHW2kfYjs-RBPGcxVhzA5qyzwGU
 #EXTINF:-1 tvg-id="Kool FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Kool-FM-Live.webp" group-title="Malaysian TV",Kool FM Live
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/kool-fm/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/kool-fm/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/7Tm22SqqoKjDKRYkQk4nVY1FZ6jkMYGQ2t9r4pDxqvsAEaTuidWtf7MiJ3wSRyMcMa.m3u8?expires=1795132151&token=sGRWelumPIQE2y9G9Hax2ozyn3JJiHcgjJAKjjTY28o
+https://2bfd741e.b-cdn.net/streamer/7Tm22SqqoKjDKRYkQk4nVY1FZ6jkMYGQ2t9r4pDxqvsAEaTuidWtf7MiJ3wSRyMcMa.m3u8?expires=1795149317&token=OPrgC2jUN07xysgzO4Hs9e8m3d056pCJKOxT8jN1T1w
 #EXTINF:-1 tvg-id="The Indonesia Channel Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/The-Indonesia-Channel-Live.webp" group-title="Malaysian TV",The Indonesia Channel Live
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/the-indonesia-channel/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/the-indonesia-channel/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/7Tm22SqqoKjDKRYkQk4nVY1FZ6jkMYGQ2t9r4pDxqvsAEaTuidWtf7MiJ3wSRyMcMa.m3u8?expires=1795132151&token=sGRWelumPIQE2y9G9Hax2ozyn3JJiHcgjJAKjjTY28o
+https://2bfd741e.b-cdn.net/streamer/7Tm22SqqoKjDKRYkQk4nVY1FZ6jkMYGQ2t9r4pDxqvsAEaTuidWtf7MiJ3wSRyMcMa.m3u8?expires=1795149317&token=OPrgC2jUN07xysgzO4Hs9e8m3d056pCJKOxT8jN1T1w
 #EXTINF:-1 tvg-id="Cricket Gold Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/CRICKET-GOLD-Live-Streaming-HD-Free.webp" group-title="Sports",Cricket Gold Live
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/cricket-live/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/cricket-live/
@@ -143,179 +138,179 @@ https://epg.provider.plex.tv/library/parts/5e20b730f2f8d5003d739db7-65e0c8c6d899
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/drama-sangat/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/drama-sangat/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/4wkTJB6FQY5TYb5phy8CQ9h44wq77KDnnzRGRgJTwEyv.m3u8?expires=1795132156&token=ZXGa-683XyvNofQAdeBte_bpeEaHKIRFMd3FrbfebHY
-#EXTINF:-1 tvg-id="Okey TV Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/Okey-TV-Live-Streaming-Free-HD.webp" group-title="Malaysian TV",Okey TV Live
-#EXTVLCOPT:http-origin=https://malaysia-tv.net/okey/
-#EXTVLCOPT:http-referrer=https://malaysia-tv.net/okey/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/4wkTJB6FQY5TYb5phy8CQ9Ah8R58j9HmDeQySVEscYV5.m3u8?expires=1795132156&token=M162MHdv4W0WBRvSEcBTvVu2Dg3gCrogmICid8lFOfs
+https://2bfd741e.b-cdn.net/streamer/4wkTJB6FQY5TYb5phy8CQ9h44wq77KDnnzRGRgJTwEyv.m3u8?expires=1795149317&token=fARxTjGG69YfJYDkrr-rI7zP5KTlDbkEQHghF1qajNA
 #EXTINF:-1 tvg-id="ION Television Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/iON-Television-NEWS-Live-Streaming-HD-Free.webp" group-title="International",ION Television Live
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/ion-ncis/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/ion-ncis/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
 https://linear-798.frequency.stream/mt/plex/798/hls/master/playlist.m3u8
-#EXTINF:-1 tvg-id="Sarawak FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Sarawak-FM-Live.webp" group-title="Malaysian TV",Sarawak FM Live
-#EXTVLCOPT:http-origin=https://malaysia-tv.net/sarawak-fm/
-#EXTVLCOPT:http-referrer=https://malaysia-tv.net/sarawak-fm/
+#EXTINF:-1 tvg-id="Okey TV Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/Okey-TV-Live-Streaming-Free-HD.webp" group-title="Malaysian TV",Okey TV Live
+#EXTVLCOPT:http-origin=https://malaysia-tv.net/okey/
+#EXTVLCOPT:http-referrer=https://malaysia-tv.net/okey/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/69KyW2byLhG2WKhDsHYQ3AwxBJqi9Ai1BRpefMUZ7zqc.m3u8?expires=1795132105&token=ZbO-Kp_lZIVNQGm4s1r88oSs5j5ZkoHeFspYIDMgkCE
-#EXTINF:-1 tvg-id="Suria FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Suria-FM-Live.webp" group-title="Malaysian TV",Suria FM Live
-#EXTVLCOPT:http-origin=https://malaysia-tv.net/suria-fm/
-#EXTVLCOPT:http-referrer=https://malaysia-tv.net/suria-fm/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/69KyW2byLhG2WKhDsHYQ3AwxBJqi9Ai1BRpefMUZ7zqc.m3u8?expires=1795132105&token=ZbO-Kp_lZIVNQGm4s1r88oSs5j5ZkoHeFspYIDMgkCE
-#EXTINF:-1 tvg-id="Free Movies Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Free-Movies-Live.webp" group-title="Malaysian TV",Free Movies Live
-#EXTVLCOPT:http-origin=https://malaysia-tv.net/free-movies/
-#EXTVLCOPT:http-referrer=https://malaysia-tv.net/free-movies/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/69KyW2byLhG2WKhDsHYQ3AwxBJqi9Ai1BRpefMUZ7zqc.m3u8?expires=1795132105&token=ZbO-Kp_lZIVNQGm4s1r88oSs5j5ZkoHeFspYIDMgkCE
+https://2bfd741e.b-cdn.net/streamer/4wkTJB6FQY5TYb5phy8CQ9TJrtbH92BWAdMExFK3zxMc.m3u8?expires=1795149317&token=b1yB0XBik3PuoSylYYHB5RLk3890o4IiqkEAyflvaM0
 #EXTINF:-1 tvg-id="Nasional FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Nasional-FM-Live.webp" group-title="Malaysian TV",Nasional FM Live
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/nasional-fm/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/nasional-fm/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/7s2VCVXsNhLf9mqvNDBJhBoUVX2BsE2iB9ZFGnQxRMFG.m3u8?expires=1795132178&token=e6ZcysuJAdAfB-rLe-G-M0rhmBAw9gsMqhRLjcNANRA
-#EXTINF:-1 tvg-id="TaiwanPlus Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/TaiwanPlus-Live.webp" group-title="Malaysian TV",TaiwanPlus Live
-#EXTVLCOPT:http-origin=https://malaysia-tv.net/taiwanplus/
-#EXTVLCOPT:http-referrer=https://malaysia-tv.net/taiwanplus/
+https://2bfd741e.b-cdn.net/streamer/4wkTJB6FQY5TYb5phy8CQ9TJrtbH92BWAdMExFK3zxMc.m3u8?expires=1795149317&token=b1yB0XBik3PuoSylYYHB5RLk3890o4IiqkEAyflvaM0
+#EXTINF:-1 tvg-id="Sarawak FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Sarawak-FM-Live.webp" group-title="Malaysian TV",Sarawak FM Live
+#EXTVLCOPT:http-origin=https://malaysia-tv.net/sarawak-fm/
+#EXTVLCOPT:http-referrer=https://malaysia-tv.net/sarawak-fm/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/7s2VCVXsNhLf9mqvNDBJhBoUVX2BsE2iB9ZFGnQxRMFG.m3u8?expires=1795132178&token=e6ZcysuJAdAfB-rLe-G-M0rhmBAw9gsMqhRLjcNANRA
+https://2bfd741e.b-cdn.net/streamer/69KyW2byLhG2WKhDsHYQ3AwxBJqi9Ai1BRpefMUZ7zqc.m3u8?expires=1795149283&token=QOP5f7-uM8b0cDFfAMU5FIDIRTJLpS-6hfE2MF457Tg
+#EXTINF:-1 tvg-id="Suria FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Suria-FM-Live.webp" group-title="Malaysian TV",Suria FM Live
+#EXTVLCOPT:http-origin=https://malaysia-tv.net/suria-fm/
+#EXTVLCOPT:http-referrer=https://malaysia-tv.net/suria-fm/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
+https://2bfd741e.b-cdn.net/streamer/69KyW2byLhG2WKhDsHYQ3AwxBJqi9Ai1BRpefMUZ7zqc.m3u8?expires=1795149283&token=QOP5f7-uM8b0cDFfAMU5FIDIRTJLpS-6hfE2MF457Tg
+#EXTINF:-1 tvg-id="Free Movies Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Free-Movies-Live.webp" group-title="Malaysian TV",Free Movies Live
+#EXTVLCOPT:http-origin=https://malaysia-tv.net/free-movies/
+#EXTVLCOPT:http-referrer=https://malaysia-tv.net/free-movies/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
+https://2bfd741e.b-cdn.net/streamer/69KyW2byLhG2WKhDsHYQ3AwxBJqi9Ai1BRpefMUZ7zqc.m3u8?expires=1795149283&token=QOP5f7-uM8b0cDFfAMU5FIDIRTJLpS-6hfE2MF457Tg
 #EXTINF:-1 tvg-id="Bernama Radio Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/BERNAMA-Radio-Live.webp" group-title="Malaysian TV",Bernama Radio Live
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/bernama-radio/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/bernama-radio/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/9KbyYkovZrtQ4dz1fi7FEUmZHaAfqp7GK7cnpVSuqvHy.m3u8?expires=1795132189&token=RJGhnSoeSpf-6mkvx1pBC0PTurgH-TLYn7kjf29xvgQ
+https://2bfd741e.b-cdn.net/streamer/8aw7eudWZ9nZJdrA4j59g8UDnuJnFJdbd9wNWQ5GaCH2.m3u8?expires=1795149337&token=azR5EeuPVNEFd3_VN_Z55r1qWrOBT4MqLjhmaeCQsbc
 #EXTINF:-1 tvg-id="Fly FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Fly-FM-Live.webp" group-title="Malaysian TV",Fly FM Live
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/fly-fm/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/fly-fm/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/9KbyYkovZrtQ4dz1fi7FEUmZHaAfqp7GK7cnpVSuqvHy.m3u8?expires=1795132189&token=RJGhnSoeSpf-6mkvx1pBC0PTurgH-TLYn7kjf29xvgQ
+https://2bfd741e.b-cdn.net/streamer/8aw7eudWZ9nZJdrA4j59g8UDnuJnFJdbd9wNWQ5GaCH2.m3u8?expires=1795149337&token=azR5EeuPVNEFd3_VN_Z55r1qWrOBT4MqLjhmaeCQsbc
 #EXTINF:-1 tvg-id="PPA KL Cup Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/PPA-KL-CUP-Live.webp" group-title="Malaysian TV",PPA KL Cup Live
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/ppa-kl-cup/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/ppa-kl-cup/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/9KbyYkovZrtQ4dz1fi7FEUmZHaAfqp7GK7cnpVSuqvHy.m3u8?expires=1795132189&token=RJGhnSoeSpf-6mkvx1pBC0PTurgH-TLYn7kjf29xvgQ
+https://2bfd741e.b-cdn.net/streamer/8aw7eudWZ9nZJdrA4j59g8UDnuJnFJdbd9wNWQ5GaCH2.m3u8?expires=1795149337&token=azR5EeuPVNEFd3_VN_Z55r1qWrOBT4MqLjhmaeCQsbc
 #EXTINF:-1 tvg-id="Nosey TV Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/NOSEY-TV-Live-Streaming-HD-Free.webp" group-title="International",Nosey TV Live
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/nosey-tv/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/nosey-tv/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
 https://epg.provider.plex.tv/library/parts/5e20b730f2f8d5003d739db7-5f0ff262d71dcb00449ec015.m3u8?includeAllStreams=1&#038;x-plex-product=Plex+Mediaverse&#038;x-plex-token=AKC28PzSgrNrrnx7eD_P&#038;auto=0
+#EXTINF:-1 tvg-id="TaiwanPlus Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/TaiwanPlus-Live.webp" group-title="Malaysian TV",TaiwanPlus Live
+#EXTVLCOPT:http-origin=https://malaysia-tv.net/taiwanplus/
+#EXTVLCOPT:http-referrer=https://malaysia-tv.net/taiwanplus/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
+https://2bfd741e.b-cdn.net/streamer/7s2VCVXsNhLf9mqvNDBJhBoUVX2BsE2iB9ZFGnQxRMFG.m3u8?expires=1795149336&token=MMgnkeoBvtwsZfp3JYaF7YJ8qozF3aexj70OO2qMRqY
 #EXTINF:-1 tvg-id="Didik TV Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/Didik-TV-Live-Streaming-HD-Now.webp" group-title="Malaysian TV",Didik TV Live
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/didik-tv-live/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/didik-tv-live/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/CAiG8K5LEdzyCDPvpiNiPTspJBAEYE4USrZ2UFsdLpy9.m3u8?expires=1795132188&token=8YDheXXVmWXMk9iWeCEFggZrNA29J4EaGnL35mLWBnU
+https://2bfd741e.b-cdn.net/streamer/CAiG8K5LEdzyCDPvpiNiPTspJBAEYE4USrZ2UFsdLpy9.m3u8?expires=1795149336&token=8tpOEFy3k1XXrN8CW7nKgrZ6PAnpAzGEYobiDg8Zn8c
 #EXTINF:-1 tvg-id="Selangor TV Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/Selangor-TV-Live-Streaming-Free-HD.webp" group-title="Malaysian TV",Selangor TV Live
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/selangor/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/selangor/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/DkWBMnvzxJptEHmhvfm5aJwq8W4z1QegPmonrfMC87yh.m3u8?expires=1795132190&token=mAmLUOTocdBxb7XC1N1EcIPnMG5LxWddyj9ajLlZ_wM
+https://2bfd741e.b-cdn.net/streamer/DkWBMnvzxJptEHmhvfm5aJwq8W4z1QegPmonrfMC87yh.m3u8?expires=1795149343&token=Arp7Qj5nWF_vnkwulL0X00bXhKnv9m3oMmwWSiWWMX4
 #EXTINF:-1 tvg-id="TraXX FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/TraXX-FM-Live.webp" group-title="Malaysian TV",TraXX FM Live
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/traxx-fm/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/traxx-fm/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/4WL6fbd5pizR5pUg2oBgGzuy4sw9qfkqQzfvmz1xDWWV8TEAJcpLbTPAoGLfAwdxHR.m3u8?expires=1795132194&token=ncVXiCnszrlqMD5pVvEloFhOkX4p9eVQAJ_lfF-7ik4
+https://2bfd741e.b-cdn.net/streamer/DkWBMnvzxJptEHmhvfm5aJwq8W4z1QegPmonrfMC87yh.m3u8?expires=1795149343&token=Arp7Qj5nWF_vnkwulL0X00bXhKnv9m3oMmwWSiWWMX4
 #EXTINF:-1 tvg-id="RT International Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/RT-International-Live.webp" group-title="Malaysian TV",RT International Live
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/rt-international/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/rt-international/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/4WL6fbd5pizR5pUg2oBgGzuy4sw9qfkqQzfvmz1xDWWV8TEAJcpLbTPAoGLfAwdxHR.m3u8?expires=1795132194&token=ncVXiCnszrlqMD5pVvEloFhOkX4p9eVQAJ_lfF-7ik4
+https://2bfd741e.b-cdn.net/streamer/DkWBMnvzxJptEHmhvfm5aJwq8W4z1QegPmonrfMC87yh.m3u8?expires=1795149343&token=Arp7Qj5nWF_vnkwulL0X00bXhKnv9m3oMmwWSiWWMX4
 #EXTINF:-1 tvg-id="TV9 Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/TV9-Live-Streaming-HD-Now.webp" group-title="Malaysian TV",TV9 Live
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/tv9-malaysia/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/tv9-malaysia/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/6CUB9HLbPFdQQ4TRGwvx8q7g1RUKomj4W1PGT2Ybxrf8.m3u8?expires=1795132195&token=gtgDuVGdsld5YmYSGTGGeyZ5RbbEDMvYSbxJPQq2Pmg
+https://2bfd741e.b-cdn.net/streamer/HsqY8mvyR2tWiYFtrACfNAdbiUS6T4XfRYiY5ondgo73.m3u8?expires=1795149348&token=H6miGJGsk3aS9uToN2U94jz7wgA71Ds88mAUprNUd6Q
+#EXTINF:-1 tvg-id="Wai FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Wai-FM-Live.webp" group-title="Malaysian TV",Wai FM Live
+#EXTVLCOPT:http-origin=https://malaysia-tv.net/wai-fm/
+#EXTVLCOPT:http-referrer=https://malaysia-tv.net/wai-fm/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
+https://2bfd741e.b-cdn.net/streamer/HsqY8mvyR2tWiYFtrACfNAdbiUS6T4XfRYiY5ondgo73.m3u8?expires=1795149348&token=H6miGJGsk3aS9uToN2U94jz7wgA71Ds88mAUprNUd6Q
 #EXTINF:-1 tvg-id="FailArmy Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/FAILARMY-TV-Live-Streaming-HD-Free.webp" group-title="International",FailArmy Live
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/failarmy-tv/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/failarmy-tv/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
 https://epg.provider.plex.tv/library/parts/5e20b730f2f8d5003d739db7-5f0ff262d71dcb00449ec015.m3u8?includeAllStreams=1&#038;x-plex-product=Plex+Mediaverse&#038;x-plex-token=AKC28PzSgrNrrnx7eD_P&#038;auto=0
-#EXTINF:-1 tvg-id="TV IKIM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/tvIKIM-Live-Streaming-Free-HD.webp" group-title="Malaysian TV",TV IKIM Live
-#EXTVLCOPT:http-origin=https://malaysia-tv.net/ikim-live/
-#EXTVLCOPT:http-referrer=https://malaysia-tv.net/ikim-live/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/3riAzUHoBPS2rMhfTEWcisYYGZowpmEJsFEBPExSa9BX.m3u8?expires=1795132213&token=HceKQpEhqnxJwGT1lg4bwZKxMSvEasI17G03l0oO8rk
-#EXTINF:-1 tvg-id="Minnal FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Minnal-FM-Live.webp" group-title="Malaysian TV",Minnal FM Live
-#EXTVLCOPT:http-origin=https://malaysia-tv.net/minnal-fm/
-#EXTVLCOPT:http-referrer=https://malaysia-tv.net/minnal-fm/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/5UTQAMhLVRA76TDGVocZ49kU9Y92jE3NwNsTxYFPaDW8.m3u8?expires=1795132216&token=ceYUYD66MrME0qDGhjbW9mRUGpegdszc5mbveETpPjk
-#EXTINF:-1 tvg-id="Wai FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Wai-FM-Live.webp" group-title="Malaysian TV",Wai FM Live
-#EXTVLCOPT:http-origin=https://malaysia-tv.net/wai-fm/
-#EXTVLCOPT:http-referrer=https://malaysia-tv.net/wai-fm/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/HsqY8mvyR2tWiYFtrACfNAdbiUS6T4XfRYiY5ondgo73.m3u8?expires=1795132206&token=dEbYgaXeNW-czZY7jNtZddZ3m4V1VP7HyrM1h_vsMCA
 #EXTINF:-1 tvg-id="Rakita FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Rakita-FM-Live.webp" group-title="Malaysian TV",Rakita FM Live
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/rakita-fm/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/rakita-fm/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/6HkwaBGcJQMTAqfmnqAVaGJYC82YhLbu4wvpx2ZqF3pf.m3u8?expires=1795132213&token=AanQLDrf3C7Me9XbisEF1uhCigFibwuCcwfwF1GGhME
+https://2bfd741e.b-cdn.net/streamer/6HkwaBGcJQMTAqfmnqAVaGJYC82YhLbu4wvpx2ZqF3pf.m3u8?expires=1795149355&token=PdfLXrtWtfQdBrCQEz7MVLNEOfQz-pdynLyCKdy9fk0
 #EXTINF:-1 tvg-id="DW Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/DW-Live.webp" group-title="Malaysian TV",DW Live
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/dw/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/dw/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/6HkwaBGcJQMTAqfmnqAVaGJYC82YhLbu4wvpx2ZqF3pf.m3u8?expires=1795132213&token=AanQLDrf3C7Me9XbisEF1uhCigFibwuCcwfwF1GGhME
+https://2bfd741e.b-cdn.net/streamer/6HkwaBGcJQMTAqfmnqAVaGJYC82YhLbu4wvpx2ZqF3pf.m3u8?expires=1795149355&token=PdfLXrtWtfQdBrCQEz7MVLNEOfQz-pdynLyCKdy9fk0
+#EXTINF:-1 tvg-id="TV IKIM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/tvIKIM-Live-Streaming-Free-HD.webp" group-title="Malaysian TV",TV IKIM Live
+#EXTVLCOPT:http-origin=https://malaysia-tv.net/ikim-live/
+#EXTVLCOPT:http-referrer=https://malaysia-tv.net/ikim-live/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
+https://2bfd741e.b-cdn.net/streamer/3riAzUHoBPS2rMhfTEWcisYYGZowpmEJsFEBPExSa9BX.m3u8?expires=1795149356&token=TAPPuGv_XYgqDG7y0XsV3u1yhZ097dZ7HCtk1J9kaHk
+#EXTINF:-1 tvg-id="Minnal FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Minnal-FM-Live.webp" group-title="Malaysian TV",Minnal FM Live
+#EXTVLCOPT:http-origin=https://malaysia-tv.net/minnal-fm/
+#EXTVLCOPT:http-referrer=https://malaysia-tv.net/minnal-fm/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
+https://2bfd741e.b-cdn.net/streamer/3riAzUHoBPS2rMhfTEWcisYYGZowpmEJsFEBPExSa9BX.m3u8?expires=1795149356&token=TAPPuGv_XYgqDG7y0XsV3u1yhZ097dZ7HCtk1J9kaHk
 #EXTINF:-1 tvg-id="USIM TV Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/USIMTV-Live.webp" group-title="Malaysian TV",USIM TV Live
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/usim-tv/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/usim-tv/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/GyT3iVhXwwJMnhcdoD1NMM9kNpTHjdaHzWKv1RFfSZLP.m3u8?expires=1795132225&token=CVZFOgtf2mKRh22v3-Fm6WESYF4HTqX3UddVWD-9scI
-#EXTINF:-1 tvg-id="TV2 Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/TV2-Malaysia-Live-Streaming-HD-Now.webp" group-title="Malaysian TV",TV2 Live
-#EXTVLCOPT:http-origin=https://malaysia-tv.net/tv2-live/
-#EXTVLCOPT:http-referrer=https://malaysia-tv.net/tv2-live/
+https://2bfd741e.b-cdn.net/streamer/3riAzUHoBPS2rMhfTEWcisYYGZowpmEJsFEBPExSa9BX.m3u8?expires=1795149356&token=TAPPuGv_XYgqDG7y0XsV3u1yhZ097dZ7HCtk1J9kaHk
+#EXTINF:-1 tvg-id="8TV Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/04/8TV-Live-Malaysia-TV-Streaming-HD-Free.webp" group-title="Malaysian TV",8TV Live
+#EXTVLCOPT:http-origin=https://malaysia-tv.net/8-tv/
+#EXTVLCOPT:http-referrer=https://malaysia-tv.net/8-tv/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/6gvxGkHHQ1mtt9QWbXcyW9bzkAZEvyq1kXdqNHEv28BL.m3u8?expires=1795132225&token=NbAFLS7Go_M9fvMnpiSPkPDY354UQmESCFSpVjxT_2U
-#EXTINF:-1 tvg-id="Asyik FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Asyik-FM-Live.webp" group-title="Malaysian TV",Asyik FM Live
-#EXTVLCOPT:http-origin=https://malaysia-tv.net/asyik-fm/
-#EXTVLCOPT:http-referrer=https://malaysia-tv.net/asyik-fm/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/6gvxGkHHQ1mtt9QWbXcyW9bzkAZEvyq1kXdqNHEv28BL.m3u8?expires=1795132225&token=NbAFLS7Go_M9fvMnpiSPkPDY354UQmESCFSpVjxT_2U
-#EXTINF:-1 tvg-id="Hot FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Hot-FM-Live.webp" group-title="Malaysian TV",Hot FM Live
-#EXTVLCOPT:http-origin=https://malaysia-tv.net/hot-fm/
-#EXTVLCOPT:http-referrer=https://malaysia-tv.net/hot-fm/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/6gvxGkHHQ1mtt9QWbXcyW9bzkAZEvyq1kXdqNHEv28BL.m3u8?expires=1795132225&token=NbAFLS7Go_M9fvMnpiSPkPDY354UQmESCFSpVjxT_2U
-#EXTINF:-1 tvg-id="Arirang Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Arirang-Live.webp" group-title="Malaysian TV",Arirang Live
-#EXTVLCOPT:http-origin=https://malaysia-tv.net/arirang/
-#EXTVLCOPT:http-referrer=https://malaysia-tv.net/arirang/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/6gvxGkHHQ1mtt9QWbXcyW9bzkAZEvyq1kXdqNHEv28BL.m3u8?expires=1795132225&token=NbAFLS7Go_M9fvMnpiSPkPDY354UQmESCFSpVjxT_2U
+https://2bfd741e.b-cdn.net/streamer/8pQTNs9MHm8GJxtGbMGANaFsfetEtr1Qb8g5geHFvk2b.m3u8?expires=1795149369&token=8yL2q50emecLJI6pWfqhJHjnrLzDL6nOIAKvyRoSkkk
 #EXTINF:-1 tvg-id="BBC News Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/BBC-NEWS-Live-Streaming-HD-Free.webp" group-title="International",BBC News Live
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/bbc-news-live/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/bbc-news-live/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
 https://vs-hls-push-ww-live.akamaized.net/x=4/i=urn:bbc:pips:service:bbc_news_channel_hd/mobile_wifi_main_hd_abr_v2.m3u8
-#EXTINF:-1 tvg-id="8TV Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/04/8TV-Live-Malaysia-TV-Streaming-HD-Free.webp" group-title="Malaysian TV",8TV Live
-#EXTVLCOPT:http-origin=https://malaysia-tv.net/8-tv/
-#EXTVLCOPT:http-referrer=https://malaysia-tv.net/8-tv/
+#EXTINF:-1 tvg-id="TV2 Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/TV2-Malaysia-Live-Streaming-HD-Now.webp" group-title="Malaysian TV",TV2 Live
+#EXTVLCOPT:http-origin=https://malaysia-tv.net/tv2-live/
+#EXTVLCOPT:http-referrer=https://malaysia-tv.net/tv2-live/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/8pQTNs9MHm8GJxtGbMGANaFsfetEtr1Qb8g5geHFvk2b.m3u8?expires=1795132235&token=Hc5iUshbSBXUjtSZgtFz0TAOBYDG3XkMEiR2K1l-qSc
+https://2bfd741e.b-cdn.net/streamer/uMQyML65GRNwCZ32LQWKP5jpXUvKe4TsuaJSM7zixcz.m3u8?expires=1795149365&token=PjO6JhkobSEyyCZNBq685zndwZ3v4RVkp_zU4ARg4dQ
+#EXTINF:-1 tvg-id="Asyik FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Asyik-FM-Live.webp" group-title="Malaysian TV",Asyik FM Live
+#EXTVLCOPT:http-origin=https://malaysia-tv.net/asyik-fm/
+#EXTVLCOPT:http-referrer=https://malaysia-tv.net/asyik-fm/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
+https://2bfd741e.b-cdn.net/streamer/uMQyML65GRNwCZ32LQWKP5jpXUvKe4TsuaJSM7zixcz.m3u8?expires=1795149365&token=PjO6JhkobSEyyCZNBq685zndwZ3v4RVkp_zU4ARg4dQ
+#EXTINF:-1 tvg-id="Hot FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Hot-FM-Live.webp" group-title="Malaysian TV",Hot FM Live
+#EXTVLCOPT:http-origin=https://malaysia-tv.net/hot-fm/
+#EXTVLCOPT:http-referrer=https://malaysia-tv.net/hot-fm/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
+https://2bfd741e.b-cdn.net/streamer/Anf8Cb8EMSrKQpVZBCDYCtFBcyyDp2iqyeKFMY1B9vPc.m3u8?expires=1795149369&token=HCOTHzmd9q9ZuBzYKZJvRV11S6eST1zNPpMKciG2SSM
+#EXTINF:-1 tvg-id="Arirang Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Arirang-Live.webp" group-title="Malaysian TV",Arirang Live
+#EXTVLCOPT:http-origin=https://malaysia-tv.net/arirang/
+#EXTVLCOPT:http-referrer=https://malaysia-tv.net/arirang/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
+https://2bfd741e.b-cdn.net/streamer/Anf8Cb8EMSrKQpVZBCDYCtFBcyyDp2iqyeKFMY1B9vPc.m3u8?expires=1795149369&token=HCOTHzmd9q9ZuBzYKZJvRV11S6eST1zNPpMKciG2SSM
 #EXTINF:-1 tvg-id="Ai FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Ai-FM-Live.webp" group-title="Malaysian TV",Ai FM Live
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/ai-fm/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/ai-fm/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/5KQZyxsjKUGnsuoGFbr5hfsycjrA3Mk7yLsYnf3qVJCE.m3u8?expires=1795132244&token=4eFTWX8o9UUDH7SLPeORgttQzjBBZKGZvqzBYfQqkKg
+https://2bfd741e.b-cdn.net/streamer/DcaoPSbXEy5kfHieQ7HzJCFw7V7dWUDZLVpxW7AciY7D.m3u8?expires=1795149381&token=HCx73tvzUWawTLpMdxfkFu3xBojwqHOhmedMoEMnxUg
 #EXTINF:-1 tvg-id="Borneo TV Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/BORNEO-TV-Live.webp" group-title="Malaysian TV",Borneo TV Live
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/borneo-tv/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/borneo-tv/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/5KQZyxsjKUGnsuoGFbr5hfsycjrA3Mk7yLsYnf3qVJCE.m3u8?expires=1795132244&token=4eFTWX8o9UUDH7SLPeORgttQzjBBZKGZvqzBYfQqkKg
+https://2bfd741e.b-cdn.net/streamer/5KQZyxsjKUGnsuoGFbr5hfsycjrA3Mk7yLsYnf3qVJCE.m3u8?expires=1795149385&token=p-nC3Jk7mF2anQgfSeOBAOM67fZ86PSJwq3qHrQlLng
 #EXTINF:-1 tvg-id="Al Hijrah Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2025/03/Al-Hijrah-TV-Live-Streaming-HD-Now.webp" group-title="Malaysian TV",Al Hijrah Live
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/al-hijrah/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/al-hijrah/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/H9TknxT3AGcJPRk3HUCpPYZidiNXYNobEbbaZuW3AF8h.m3u8?expires=1795132245&token=L0lbUJMIHWBoEvOUXQjB6GtAoKtSC-T-QMXUNrfKRp8
+https://2bfd741e.b-cdn.net/streamer/EbYCrPFsbJcfbFGUdnnv9PEABLYw8Xj9W3EgqLPiv8Wm.m3u8?expires=1795149386&token=gQqGA5mnEtDCAmRrzAmsSAi2yrCe0PU6isz8ByKhY8E
 #EXTINF:-1 tvg-id="Best FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/Best-FM-Live.webp" group-title="Malaysian TV",Best FM Live
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/best-fm/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/best-fm/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/H9TknxT3AGcJPRk3HUCpPYZidiNXYNobEbbaZuW3AF8h.m3u8?expires=1795132245&token=L0lbUJMIHWBoEvOUXQjB6GtAoKtSC-T-QMXUNrfKRp8
+https://2bfd741e.b-cdn.net/streamer/CDWYwVJ7GKmsDUTojnfxDhTTrT2MZQFJgCj3JUCwsCRE.m3u8?expires=1795149389&token=AS-8NgGCOh16eB7V5zIc2lYWCW_5to4bZb1-A0lGDgc
 #EXTINF:-1 tvg-id="IKIM FM Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/IkimFM-Live.webp" group-title="Malaysian TV",IKIM FM Live
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/ikim-fm/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/ikim-fm/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/AbhQmeWN6egukpj6xZ7cVrUCubCSghJ6qAV6A9LeWvbQ.m3u8?expires=1795132254&token=rcAiNwYkPvSGKrJRxbo3FsOBXk3M-8uS243zjt3URag
+https://2bfd741e.b-cdn.net/streamer/CDWYwVJ7GKmsDUTojnfxDhTTrT2MZQFJgCj3JUCwsCRE.m3u8?expires=1795149389&token=AS-8NgGCOh16eB7V5zIc2lYWCW_5to4bZb1-A0lGDgc
 #EXTINF:-1 tvg-id="NHK World Live" tvg-logo="https://malaysia-tv.net/wp-content/uploads/2026/09/NHK-WORLD-Live.webp" group-title="Malaysian TV",NHK World Live
 #EXTVLCOPT:http-origin=https://malaysia-tv.net/nhk-world/
 #EXTVLCOPT:http-referrer=https://malaysia-tv.net/nhk-world/
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-https://2bfd741e.b-cdn.net/streamer/AbhQmeWN6egukpj6xZ7cVrUCubCSghJ6qAV6A9LeWvbQ.m3u8?expires=1795132254&token=rcAiNwYkPvSGKrJRxbo3FsOBXk3M-8uS243zjt3URag
+https://2bfd741e.b-cdn.net/streamer/AbhQmeWN6egukpj6xZ7cVrUCubCSghJ6qAV6A9LeWvbQ.m3u8?expires=1795149394&token=FNxG-QN0mt1FJntUC2uSQgX11pu88blOQPs6M4ffA3M
