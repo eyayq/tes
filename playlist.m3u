@@ -1,41 +1,18 @@
 #EXTM3U
-#EXTINF:-1 tvg-logo="https://media.api-sports.io/football/teams/2518.png" group-title="Live",Terengganu vs DPMM FC Brunei [Super League (Malaysia)] (1-2) [89'] | 20:00 WIB 20/11/2026
-https://pl-gratosv-al.bhns.workers.dev/live/5r9k1i.5gkygx509kqv.net:8443/hls/hojj5703cm0v2.m3u8?s=KlxITJqJH7LV7X0GwYuJNA&e=1795208117&mid=live-terengganu-vs-dpmm-fc-brunei-live-stream-2026-11-20&origin=https%3A%2F%2Fwaterera.net
-#EXTINF:-1 tvg-logo="https://media.api-sports.io/football/teams/2581.png" group-title="Upcoming",FC Botosani vs FC Voluntari [Liga I (Romania)] (0-0) | 22:30 WIB 20/11/2026
-https://pl-gratosv-al.bhns.workers.dev/live/5r9k1i.5gkygx509kqv.net:8443/hls/2vrrwa6dke0c2.m3u8?s=fTXt2S94Se0Xucr23gmGdA&e=1795208117&mid=live-fc-botosani-vs-fc-voluntari-live-stream-2026-11-20&origin=https%3A%2F%2F1eeba4fd0286af7479cc80a62b2606ee.dynbush.net
-#EXTINF:-1 tvg-logo="https://media.api-sports.io/football/teams/2929.png" group-title="Upcoming",Al-Ahli Jeddah vs Al-Nassr [Pro League (Saudi-Arabia)] (0-0) | 00:30 WIB 21/11/2026
-https://pl-gratosv-al.bhns.workers.dev/live/5r9k1i.5gkygx509kqv.net:8443/hls/xzwwj6kynfkx5.m3u8?s=z0V-xnqkzU-TdsBmnQKtQQ&e=1795208117&mid=live-al-ahli-jeddah-vs-al-nassr-live-stream-2026-11-20&origin=https%3A%2F%2F1eeba4fd0286af7479cc80a62b2606ee.dynbush.net
-#EXTINF:-1 tvg-logo="https://media.api-sports.io/football/teams/2929.png" group-title="Upcoming",Al-Ahli Jeddah vs Al-Nassr [Pro League (Saudi-Arabia)] (0-0) | 00:30 WIB 21/11/2026
-https://pl-gratosv-al.bhns.workers.dev/live/5r9k1i.5gkygx509kqv.net:8443/hls/pq11l3p9wvhy.m3u8?s=Sk-Zvl36JKPeXfwbQVNSAw&e=1795208128&mid=live-al-ahli-jeddah-vs-al-nassr-live-stream-2026-11-20&origin=https%3A%2F%2Fwaterera.net
-#EXTINF:-1 tvg-logo="https://media.api-sports.io/football/teams/2929.png" group-title="Upcoming",Al-Ahli Jeddah vs Al-Nassr [Pro League (Saudi-Arabia)] (0-0) | 00:30 WIB 21/11/2026
-https://pl-gratosv-al.bhns.workers.dev/live/5r9k1i.5gkygx509kqv.net:8443/hls/hojj5703cm0v2.m3u8?s=ZiZqEcd7FRqLD1sTlKVIdw&e=1795208132&mid=live-al-ahli-jeddah-vs-al-nassr-live-stream-2026-11-20&origin=https%3A%2F%2Fwaterera.net
-#EXTINF:-1 tvg-logo="https://media.api-sports.io/football/teams/181.png" group-title="Upcoming",SV Darmstadt 98 vs 1. FC Heidenheim [2. Bundesliga (Germany)] (0-0) | 00:30 WIB 21/11/2026
-https://pl-gratosv-al.bhns.workers.dev/live/5r9k1i.5gkygx509kqv.net:8443/hls/acgg75tlvrxeh.m3u8?s=fVGrFjpZjapEozNDlFlUIQ&e=1795208117&mid=live-sv-darmstadt-98-vs-1-fc-heidenheim-live-stream-2026-11-20&origin=https%3A%2F%2F1eeba4fd0286af7479cc80a62b2606ee.dynbush.net
-#EXTINF:-1 tvg-logo="https://media.api-sports.io/football/teams/181.png" group-title="Upcoming",SV Darmstadt 98 vs 1. FC Heidenheim [2. Bundesliga (Germany)] (0-0) | 00:30 WIB 21/11/2026
-https://pl-gratosv-al.bhns.workers.dev/live/5r9k1i.5gkygx509kqv.net:8443/hls/yxttqyj4clmux.m3u8?s=GYvEJSL8c6eV-D96tn7wDg&e=1795208125&mid=live-sv-darmstadt-98-vs-1-fc-heidenheim-live-stream-2026-11-20&origin=https%3A%2F%2Fwaterera.net
-#EXTINF:-1 tvg-logo="https://media.api-sports.io/football/teams/188.png" group-title="Upcoming",Arminia Bielefeld vs 1. FC Magdeburg [2. Bundesliga (Germany)] (0-0) | 00:30 WIB 21/11/2026
-https://pl-gratosv-al.bhns.workers.dev/live/5r9k1i.5gkygx509kqv.net:8443/hls/cd88is8arjavh.m3u8?s=-HjXNv14DoRfXaMAC_H24g&e=1795208117&mid=live-arminia-bielefeld-vs-1-fc-magdeburg-live-stream-2026-11-20&origin=https%3A%2F%2F1eeba4fd0286af7479cc80a62b2606ee.dynbush.net
-#EXTINF:-1 tvg-logo="https://media.api-sports.io/football/teams/406.png" group-title="Upcoming",Aarhus vs Lyngby [Superliga (Denmark)] (0-0) | 01:00 WIB 21/11/2026
-https://pl-gratosv-al.bhns.workers.dev/live/5r9k1i.5gkygx509kqv.net:8443/hls/z700mrpx530rp.m3u8?s=6GwoG_FMgIDO6c-pDy13mA&e=1795208117&mid=live-aarhus-vs-lyngby-live-stream-2026-11-20&origin=https%3A%2F%2F1eeba4fd0286af7479cc80a62b2606ee.dynbush.net
-#EXTINF:-1 tvg-logo="https://media.api-sports.io/football/teams/157.png" group-title="Upcoming",Bayern München vs 1. FC Köln [Bundesliga (Germany)] (0-0) | 02:30 WIB 21/11/2026
-https://pl-gratosv-al.bhns.workers.dev/live/5r9k1i.5gkygx509kqv.net:8443/hls/9pbbu39owf6b9.m3u8?s=Y6BNYmnnsk15Wj3imssdQA&e=1795208117&mid=live-bayern-m-nchen-vs-1-fc-k-ln-live-stream-2026-11-20&origin=https%3A%2F%2F1eeba4fd0286af7479cc80a62b2606ee.dynbush.net
-#EXTINF:-1 tvg-logo="https://media.api-sports.io/football/teams/157.png" group-title="Upcoming",Bayern München vs 1. FC Köln [Bundesliga (Germany)] (0-0) | 02:30 WIB 21/11/2026
-https://pl-gratosv-al.bhns.workers.dev/live/5r9k1i.5gkygx509kqv.net:8443/hls/1n55vjab4n8zc.m3u8?s=qQqxupnTYtDJXHjIbP_jvQ&e=1795208147&mid=live-bayern-m-nchen-vs-1-fc-k-ln-live-stream-2026-11-20&origin=https%3A%2F%2F1eeba4fd0286af7479cc80a62b2606ee.dynbush.net
-#EXTINF:-1 tvg-logo="https://media.api-sports.io/football/teams/157.png" group-title="Upcoming",Bayern München vs 1. FC Köln [Bundesliga (Germany)] (0-0) | 02:30 WIB 21/11/2026
-https://pl-gratosv-al.bhns.workers.dev/live/5r9k1i.5gkygx509kqv.net:8443/hls/yxttqyj4clmux.m3u8?s=1Kx2uaR3zQx9ZQ25a--Tqw&e=1795208150&mid=live-bayern-m-nchen-vs-1-fc-k-ln-live-stream-2026-11-20&origin=https%3A%2F%2Fwaterera.net
-#EXTINF:-1 tvg-logo="https://media.api-sports.io/football/teams/157.png" group-title="Upcoming",Bayern München vs 1. FC Köln [Bundesliga (Germany)] (0-0) | 02:30 WIB 21/11/2026
-https://pl-gratosv-al.bhns.workers.dev/live/5r9k1i.5gkygx509kqv.net:8443/hls/twoonyqicok5y.m3u8?s=Qe-Ws5r179DKRk2f3qr4OQ&e=1795208154&mid=live-bayern-m-nchen-vs-1-fc-k-ln-live-stream-2026-11-20&origin=https%3A%2F%2Fwaterera.net
-#EXTINF:-1 tvg-logo="https://media.api-sports.io/football/teams/8157.png" group-title="Upcoming",FC Andorra vs Leganes [Segunda División (Spain)] (0-0) | 02:30 WIB 21/11/2026
-https://pl-gratosv-al.bhns.workers.dev/live/5r9k1i.5gkygx509kqv.net:8443/hls/cd88is8arjavh.m3u8?s=-HjXNv14DoRfXaMAC_H24g&e=1795208117&mid=live-fc-andorra-vs-leganes-live-stream-2026-11-20&origin=https%3A%2F%2F1eeba4fd0286af7479cc80a62b2606ee.dynbush.net
-#EXTINF:-1 tvg-logo="https://media.api-sports.io/football/teams/903.png" group-title="Upcoming",Inverness CT vs Ayr Utd [Championship (Scotland)] (0-0) | 02:30 WIB 21/11/2026
-https://pl-gratosv-al.bhns.workers.dev/live/5r9k1i.5gkygx509kqv.net:8443/hls/acgg75tlvrxeh.m3u8?s=fVGrFjpZjapEozNDlFlUIQ&e=1795208117&mid=live-inverness-ct-vs-ayr-utd-live-stream-2026-11-20&origin=https%3A%2F%2F1eeba4fd0286af7479cc80a62b2606ee.dynbush.net
-#EXTINF:-1 tvg-logo="https://media.api-sports.io/football/teams/110.png" group-title="Upcoming",Estac Troyes vs Le Havre [Ligue 1 (France)] (0-0) | 02:45 WIB 21/11/2026
-https://pl-gratosv-al.bhns.workers.dev/live/5r9k1i.5gkygx509kqv.net:8443/hls/suddyn15kb5wj.m3u8?s=TPv7pX84GWm5qpZJIfcRVw&e=1795208138&mid=live-estac-troyes-vs-le-havre-live-stream-2026-11-20&origin=https%3A%2F%2Fwaterera.net
-#EXTINF:-1 tvg-logo="https://media.api-sports.io/football/teams/531.png" group-title="Upcoming",Athletic Club vs Espanyol [La Liga (Spain)] (0-0) | 03:00 WIB 21/11/2026
-https://pl-gratosv-al.bhns.workers.dev/live/5r9k1i.5gkygx509kqv.net:8443/hls/nessgjp115wr8.m3u8?s=FVRgHjExMcmGbN0jXClc8g&e=1795208138&mid=live-athletic-club-vs-espanyol-live-stream-2026-11-20&origin=https%3A%2F%2F1eeba4fd0286af7479cc80a62b2606ee.dynbush.net
-#EXTINF:-1 tvg-logo="https://media.api-sports.io/football/teams/531.png" group-title="Upcoming",Athletic Club vs Espanyol [La Liga (Spain)] (0-0) | 03:00 WIB 21/11/2026
-https://pl-gratosv-al.bhns.workers.dev/live/5r9k1i.5gkygx509kqv.net:8443/hls/ithh1ij7a196o.m3u8?s=_RB74SdyPMkRUHkrl7NaDw&e=1795208143&mid=live-athletic-club-vs-espanyol-live-stream-2026-11-20&origin=https%3A%2F%2Fwaterera.net
-#EXTINF:-1 tvg-logo="https://media.api-sports.io/football/teams/747.png" group-title="Upcoming",Barnsley vs Sheffield Wednesday [League One (England)] (0-0) | 03:00 WIB 21/11/2026
-https://pl-gratosv-al.bhns.workers.dev/live/5r9k1i.5gkygx509kqv.net:8443/hls/ulgk1vzsw8aqr.m3u8?s=7unE3KbbpRZXfiRBa5cMUg&e=1795208117&mid=live-barnsley-vs-sheffield-wednesday-live-stream-2026-11-20&origin=https%3A%2F%2F1eeba4fd0286af7479cc80a62b2606ee.dynbush.net
-#EXTINF:-1 tvg-logo="https://media.api-sports.io/football/teams/212.png" group-title="Upcoming",FC Porto vs Paredes [Taça de Portugal] (0-0) | 03:45 WIB 21/11/2026
-https://pl-gratosv-al.bhns.workers.dev/live/5r9k1i.5gkygx509kqv.net:8443/hls/pq11l3p9wvhy.m3u8?s=S54y9uT1f2pMBHP9FFCj8w&e=1795208117&mid=live-fc-porto-vs-paredes-live-stream-2026-11-20&origin=https%3A%2F%2Fwaterera.net
+#EXTVLCOPT:http-referrer="https://www.vidio.com/"
+#EXTINF:-1 tvg-id="vidio.204" tvg-logo="" group-title="Vidio" sctv
+https://www.vidio.com/live/204-
+#EXTINF:-1 tvg-id="vidio.205" tvg-logo="" group-title="Vidio" indosiar
+https://www.vidio.com/live/205-
+#EXTINF:-1 tvg-id="vidio.733" tvg-logo="" group-title="Vidio" trans tv
+https://www.vidio.com/live/733-
+#EXTINF:-1 tvg-id="vidio.734" tvg-logo="" group-title="Vidio" trans7
+https://www.vidio.com/live/734-
+#EXTINF:-1 tvg-id="vidio.22337" tvg-logo="" group-title="Vidio" france24
+https://www.vidio.com/live/22337-
+#EXTINF:-1 tvg-id="vidio.6852" tvg-logo="" group-title="Vidio" makkah tv
+https://www.vidio.com/live/6852-
+#EXTINF:-1 tvg-id="vidio.6784" tvg-logo="" group-title="Vidio" arirang
+https://www.vidio.com/live/6784-
+#EXTINF:-1 tvg-id="vidio.6411" tvg-logo="" group-title="Vidio" cna
+https://www.vidio.com/live/6411-
