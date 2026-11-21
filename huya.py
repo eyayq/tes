@@ -11,6 +11,7 @@ from curl_cffi import requests as cffi_requests
 # ==============================
 
 BASE = "https://www.sankavollerei.web.id"
+API_BASE = f"{BASE}/plananimek/api"
 ID_BASE = f"{BASE}/plananimek/id"
 REFERER = "https://sankanime.web.id/"
 ORIGIN = "https://sankanime.web.id"
@@ -100,25 +101,41 @@ def fetch_playwright(url: str):
         with sync_playwright() as p:
             browser = p.chromium.launch(
                 headless=False,
-                proxy={"server": f"http://{PROXY_HOST}:{PROXY_PORT}", "username": PROXY_USER, "password": PROXY_PASS},
+                proxy={
+                    "server": f"http://{PROXY_HOST}:{PROXY_PORT}",
+                    "username": PROXY_USER,
+                    "password": PROXY_PASS,
+                },
                 args=["--disable-blink-features=AutomationControlled", "--no-sandbox"],
             )
             ctx = browser.new_context(user_agent=UA, locale="id-ID")
-            ctx.add_init_script("Object.defineProperty(navigator,'webdriver',{get:()=>undefined})")
+            ctx.add_init_script("""
+                Object.defineProperty(navigator, 'webdriver', {get: () => undefined});
+                Object.defineProperty(navigator, 'plugins', {get: () => [1,2,3,4,5]});
+                Object.defineProperty(navigator, 'languages', {get: () => ['id-ID','id']});
+                window.chrome = { runtime: {} };
+            """)
             page = ctx.new_page()
             result = {}
-            def on_resp(r):
-                if url in r.url:
-                    try: result["body"] = r.text()
-                    except: pass
+
+            def on_resp(resp):
+                if url in resp.url:
+                    try:
+                        result["body"] = resp.text()
+                    except Exception:
+                        pass
+
             page.on("response", on_resp)
             page.goto(url, wait_until="domcontentloaded", timeout=30000)
+
             for _ in range(15):
                 if page.title() not in ("Just a moment...", "Tunggu sebentar..."):
                     break
                 time.sleep(2)
             time.sleep(2)
+
             browser.close()
+
             if "body" in result:
                 return decode(json.loads(result["body"]))
     except Exception as e:
@@ -223,36 +240,18 @@ def main():
     seen = set()
     all_animes = []
 
-    # --- Ambil dari /id/home (endpoint homepage) ---
-    print("[1/3] Ambil data homepage...")
-    d = fetch(f"{ID_BASE}/home")
+    # --- Step 1: Ambil recently updated ---
+    print("[1/3] Ambil recently updated...")
+    d = fetch(f"{API_BASE}/recently-updated")
     if not d:
-        print("[X] Gagal ambil data homepage.")
+        print("[X] Gagal ambil data.")
         return
 
-    # Home bisa punya beberapa section (hot, new, popular, dll)
-    # Ekstrak semua list of dict yang punya "id"
     items = extract_list(d)
     if not items:
-        # Fallback: coba ambil dari nested sections
-        data_inner = d.get("data", d)
-        if isinstance(data_inner, dict):
-            for section_key in ["hot", "new", "today", "popular", "waiting", "fyp", "movie", "data", "list", "items"]:
-                v = data_inner.get(section_key)
-                if isinstance(v, list) and v and isinstance(v[0], dict):
-                    items = v
-                    break
-                if isinstance(v, dict):
-                    for vv in v.values():
-                        if isinstance(vv, list) and vv and isinstance(vv[0], dict) and "id" in vv[0]:
-                            items = vv
-                            break
-                    if items:
-                        break
-        if not items:
-            print("[X] List kosong.")
-            print(f"[DEBUG] {json.dumps(d, ensure_ascii=False)[:800]}")
-            return
+        print("[X] List kosong.")
+        print(f"[DEBUG] {json.dumps(d, ensure_ascii=False)[:500]}")
+        return
 
     for a in items:
         aid = a.get("id")
@@ -268,7 +267,7 @@ def main():
 
     print(f"[+] Total: {len(all_animes)} anime")
 
-    # --- Scrape ---
+    # --- Step 2: Scrape ---
     print("[2/3] Scrape...")
 
     for i, anime in enumerate(all_animes, 1):
@@ -318,12 +317,13 @@ def main():
             m3u_content += f'#EXTINF:-1 tvg-logo="{logo}" group-title="{genre}",{title} - EP {num}\n'
             m3u_content += f"{link}\n"
             count += 1
-            print(f"    ✓ EP {num}")
+            print(f"    \u2713 EP {num}")
 
+    # --- Step 3: Simpan ---
     with open(OUTPUT, "w", encoding="utf-8") as f:
         f.write(m3u_content)
 
-    print(f"\n[3/3] ✅ Selesai")
+    print(f"\n[3/3] \u2705 Selesai")
     print(f"    File: {OUTPUT}")
     print(f"    Entries: {count}")
     print(f"    Size: {len(m3u_content):,} bytes")
