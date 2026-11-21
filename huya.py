@@ -8,6 +8,9 @@ import gzip
 import base64
 import urllib.parse
 import requests
+import urllib3
+
+urllib3.disable_warnings()
 
 # ==============================
 # KONFIGURASI
@@ -18,7 +21,6 @@ REFERER = "https://sankanime.web.id/"
 ORIGIN  = "https://sankanime.web.id"
 UA      = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36"
 PROXY   = "voifrfqj:w50vbiwbunum@23.26.71.145:5628"
-ANT_KEY = "cf489396ecea4f10ad119710edae3847"
 OUTPUT  = "playlist.m3u"
 
 HEADERS = {
@@ -56,7 +58,7 @@ def decode(body: str) -> dict | None:
     return json.loads(out)
 
 # ==============================
-# FETCH CHAIN
+# FETCH (Direct → Proxy)
 # ==============================
 def fetch(url: str) -> dict | None:
     # 1. Direct
@@ -69,15 +71,6 @@ def fetch(url: str) -> dict | None:
     if d is not None:
         return d
 
-    # 3. ScrapingAnt
-    target = urllib.parse.quote(url, safe='')
-    sa_url = f"https://api.scrapingant.com?url={target}&x-api-key={ANT_KEY}&browser=true&proxy_type=residential"
-    try:
-        r = requests.get(sa_url, headers={"User-Agent": UA}, timeout=90, verify=False)
-        if r.status_code == 200:
-            return json.loads(r.text)
-    except Exception:
-        pass
     return None
 
 
@@ -85,9 +78,11 @@ def _curl(url: str, proxies: dict | None) -> dict | None:
     try:
         r = requests.get(url, headers=HEADERS, timeout=20, proxies=proxies, verify=False)
         if r.status_code != 200:
+            print(f"    [DEBUG] HTTP {r.status_code} | {url[:60]}")
             return None
         return decode(r.text)
-    except Exception:
+    except Exception as e:
+        print(f"    [DEBUG] {type(e).__name__}: {e}")
         return None
 
 # ==============================
@@ -157,16 +152,15 @@ def unwrap(u: str) -> str:
 # MAIN
 # ==============================
 def main():
-    import urllib3
-    urllib3.disable_warnings()
-
     m3u = "#EXTM3U\n"
     count = 0
 
     print("[1/3] Ambil data homepage...")
     home = fetch(f"{ID_BASE}/home")
     if home is None:
-        print("❌ Gagal ambil data")
+        print("❌ Gagal ambil data (direct & proxy sama-sama gagal)")
+        print("   Cek: apakah IP kamu di-block Cloudflare?")
+        print("   Tes: buka https://sankanime.web.id di browser")
         return
 
     animes = collect_animes(home)
