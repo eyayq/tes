@@ -1,99 +1,78 @@
 #!/usr/bin/env python3
-"""scrape.py — Generate playlist.m3u dari Sanka Vollerei (API internal)"""
+"""scrape.py — Generate playlist.m3u dari Sanka Vollerei (Playwright + Proxy)"""
 
 import json
 import time
 import random
-import zlib
-import base64
-import urllib.parse
-from curl_cffi import requests as cffi_requests
+import asyncio
+from playwright.async_api import async_playwright
 
 # ==============================
 # KONFIGURASI
 # ==============================
-ID_BASE = "https://www.sankavollerei.web.id/plananimek/id"
-PROXY   = "http://voifrfqj:w50vbiwbunum@23.26.71.145:5628"
-OUTPUT  = "playlist.m3u"
-PAGES   = 3
+ID_BASE    = "https://www.sankavollerei.web.id/plananimek/id"
+ORIGIN     = "https://sankanime.web.id"
+OUTPUT     = "playlist.m3u"
+PAGES      = 3
+GENRE_ID   = 23
 
-HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36",
-    "Accept": "*/*",
-    "Accept-Language": "id-ID,id;q=0.9",
-    "Origin": "https://sankanime.web.id",
-    "Referer": "https://sankanime.web.id/",
-    "Sec-Fetch-Site": "cross-site",
-    "Sec-Fetch-Mode": "cors",
-    "Sec-Fetch-Dest": "empty",
-    "sec-ch-ua-platform": '"Android"',
-    "sec-ch-ua": '"Not-A.Brand";v="99", "Brave";v="157", "Chromium";v="157"',
-    "sec-ch-ua-mobile": "?1",
+PROXY      = {
+    "server":   "http://23.26.71.145:5628",
+    "username": "voifrfqj",
+    "password": "w50vbiwbunum",
 }
 
 # ==============================
-# DECODE: _encsankaa → JSON
+# DECODE
 # ==============================
-def decode(body: str) -> dict | None:
-    raw = json.loads(body)
-    enc = raw.get("_encsankaa")
+def decode(data: dict) -> dict:
+    enc = data.get("_encsankaa")
     if not enc:
-        return raw
-    # base64url → base64
+        return data
+    import zlib, base64
     b64 = enc.replace('-', '+').replace('_', '/')
     pad = 4 - (len(b64) % 4)
     if pad != 4:
         b64 += '=' * pad
-    dec = base64.b64decode(b64)
-    # zlib decompress (header 0x78 0xDA)
-    out = zlib.decompress(dec)
+    out = zlib.decompress(base64.b64decode(b64))
     return json.loads(out)
 
 # ==============================
-# FETCH
+# FETCH VIA BROWSER
 # ==============================
-def fetch(url: str) -> dict | None:
-    # 1. Direct
-    d = _get(url, proxies=None)
-    if d is not None:
-        return d
-    # 2. Proxy
-    d = _get(url, proxies={"http": PROXY, "https": PROXY})
-    if d is not None:
-        return d
-    return None
-
-
-def _get(url: str, proxies: dict | None) -> dict | None:
+async def browser_fetch(page, url: str) -> dict | None:
     try:
-        r = cffi_requests.get(
-            url,
-            headers=HEADERS,
-            impersonate="chrome",
-            timeout=20,
-            proxies=proxies,
-            verify=False,
-        )
-        if r.status_code != 200:
-            print(f"    [DEBUG] HTTP {r.status_code} | {url[:70]}")
+        result = await page.evaluate("""
+            async (url) => {
+                const r = await fetch(url, {
+                    headers: {'Accept': '*/*', 'Accept-Language': 'id-ID,id;q=0.9'},
+                    credentials: 'include',
+                });
+                if (!r.ok) return { __error: r.status };
+                return await r.json();
+            }
+        """, url)
+        if result is None:
             return None
-        return decode(r.text)
+        if result.get("__error"):
+            print(f"    [DEBUG] HTTP {result['__error']} | {url[:70]}")
+            return None
+        return result
     except Exception as e:
         print(f"    [DEBUG] {type(e).__name__}: {e}")
         return None
 
 # ==============================
-# COLLECT ANIME (genre listing)
+# COLLECT ANIME
 # ==============================
-def collect_animes(genre_id: int = 23, pages: int = PAGES) -> list[dict]:
-    animes = []
-    seen = set()
+async def collect_animes(page, genre_id: int, pages: int) -> list[dict]:
+    animes, seen = [], set()
     for p in range(pages):
         print(f"  Halaman {p+1}/{pages}...")
-        d = fetch(f"{ID_BASE}/genre/{genre_id}?page={p}&sort=views&genre_in=")
-        if d is None:
+        raw = await browser_fetch(page, f"{ID_BASE}/genre/{genre_id}?page={p}&sort=views&genre_in=")
+        if raw is None:
             break
-        # Ekstrak list anime
+        d = decode(raw)
         items = d.get("data", d)
         if isinstance(items, dict):
             items = items.get("data", items.get("list", items.get("results", [])))
@@ -111,32 +90,32 @@ def collect_animes(genre_id: int = 23, pages: int = PAGES) -> list[dict]:
                 continue
             seen.add(aid)
             animes.append(a)
-        time.sleep(random.uniform(1, 2))
+        await asyncio.sleep(random.uniform(1, 2))
     return animes
 
 # ==============================
-# GET DETAIL (episode list)
+# GET DETAIL
 # ==============================
-def get_detail(anime_id: int) -> dict | None:
-    return fetch(f"{ID_BASE}/detail/{anime_id}?page=0")
+async def get_detail(page, anime_id: int) -> dict | None:
+    raw = await browser_fetch(page, f"{ID_BASE}/detail/{anime_id}?page=0")
+    return decode(raw) if raw else None
 
 # ==============================
-# GET STREAM URL
+# GET STREAM
 # ==============================
-def get_stream(episode_id: int) -> str:
-    d = fetch(f"{ID_BASE}/stream/{episode_id}")
-    if not d:
+async def get_stream(page, episode_id: int) -> str:
+    raw = await browser_fetch(page, f"{ID_BASE}/stream/{episode_id}")
+    if not raw:
         return ""
+    d = decode(raw)
     data = d.get("data", d)
     if isinstance(data, dict):
-        # Cari URL
         url = (data.get("url") or data.get("file") or data.get("stream")
                or data.get("src") or data.get("source") or "")
         if isinstance(url, dict):
             url = url.get("url") or url.get("file") or url.get("src") or ""
         if isinstance(url, str) and url.startswith("http"):
             return unwrap(url)
-        # Fallback: cari string http di nested
         for v in data.values():
             if isinstance(v, str) and v.startswith("http"):
                 return unwrap(v)
@@ -147,6 +126,7 @@ def get_stream(episode_id: int) -> str:
     return ""
 
 def unwrap(u: str) -> str:
+    import urllib.parse
     if "proxy?url=" in u:
         pos = u.index("proxy?url=")
         return urllib.parse.unquote(u[pos + 10:])
@@ -164,7 +144,6 @@ def extract_episodes(detail: dict) -> list:
             v = data.get(key)
             if isinstance(v, list) and v and isinstance(v[0], dict):
                 return v
-        # Fallback
         for v in data.values():
             if isinstance(v, list) and v and isinstance(v[0], dict) and "id" in v[0]:
                 return v
@@ -173,65 +152,86 @@ def extract_episodes(detail: dict) -> list:
 # ==============================
 # MAIN
 # ==============================
-def main():
+async def main():
     m3u = "#EXTM3U\n"
     count = 0
 
-    print("[1/3] Ambil daftar anime (genre 23 = Action)...")
-    animes = collect_animes(genre_id=23, pages=PAGES)
-    if not animes:
-        print("❌ Tidak ada anime ditemukan")
-        return
+    async with async_playwright() as pw:
+        browser = await pw.chromium.launch(
+            headless=True,
+            proxy=PROXY,  # ← PROXY RESIDENTIAL
+            args=["--disable-blink-features=AutomationControlled", "--no-sandbox"],
+        )
+        context = await browser.new_context(
+            user_agent="Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36",
+            viewport={"width": 390, "height": 844},
+            locale="id-ID",
+        )
+        page = await context.new_page()
 
-    print(f"[2/3] Scrape {len(animes)} anime...")
+        print("[0/3] Buka browser via proxy...")
+        await page.goto(f"{ORIGIN}/", wait_until="domcontentloaded", timeout=30000)
+        await asyncio.sleep(3)
+        print(f"    Title: {await page.title()}")
 
-    for i, a in enumerate(animes, 1):
-        a_id   = a["id"]
-        title  = a.get("title") or a.get("name") or "Unknown"
-        logo   = a.get("image_poster") or a.get("image") or a.get("thumbnail") or ""
-        genre  = a.get("genre") or a.get("category") or "Anime"
-        if isinstance(genre, list):
-            genre = genre[0] if genre else "Anime"
-        elif isinstance(genre, str) and "," in genre:
-            genre = genre.split(",")[0].strip()
+        print("[1/3] Ambil daftar anime (genre 23)...")
+        animes = await collect_animes(page, GENRE_ID, PAGES)
+        if not animes:
+            print("❌ Tidak ada anime ditemukan")
+            await browser.close()
+            return
 
-        print(f"  [{i}/{len(animes)}] {title}")
-        time.sleep(random.uniform(0.5, 1.5))
+        print(f"[2/3] Scrape {len(animes)} anime...")
 
-        detail = get_detail(a_id)
-        if detail is None:
-            continue
+        for i, a in enumerate(animes, 1):
+            a_id   = a["id"]
+            title  = a.get("title") or a.get("name") or "Unknown"
+            logo   = a.get("image_poster") or a.get("image") or a.get("thumbnail") or ""
+            genre  = a.get("genre") or a.get("category") or "Anime"
+            if isinstance(genre, list):
+                genre = genre[0] if genre else "Anime"
+            elif isinstance(genre, str) and "," in genre:
+                genre = genre.split(",")[0].strip()
 
-        eps = extract_episodes(detail)
-        if not eps:
-            if i == 1:
-                with open("debug_detail.json", "w") as f:
-                    json.dump(detail, f, indent=2, ensure_ascii=False)
-                print("    [DEBUG] debug_detail.json")
-            continue
+            print(f"  [{i}/{len(animes)}] {title}")
+            await asyncio.sleep(random.uniform(0.5, 1.5))
 
-        print(f"    {len(eps)} eps")
-
-        for ep in eps:
-            if not isinstance(ep, dict):
-                continue
-            ep_id = ep.get("id")
-            num   = ep.get("number") or ep.get("episode") or "?"
-            if not ep_id:
-                continue
-
-            time.sleep(random.uniform(0.3, 1.0))
-            link = get_stream(ep_id)
-            if not link:
+            detail = await get_detail(page, a_id)
+            if detail is None:
                 continue
 
-            m3u += f'#EXTINF:-1'
-            if logo:
-                m3u += f' tvg-logo="{logo}"'
-            m3u += f' group-title="{genre}"'
-            m3u += f',{title} - EP {num}\n'
-            m3u += f'{link}\n'
-            count += 1
+            eps = extract_episodes(detail)
+            if not eps:
+                if i == 1:
+                    with open("debug_detail.json", "w") as f:
+                        json.dump(detail, f, indent=2, ensure_ascii=False)
+                    print("    [DEBUG] debug_detail.json")
+                continue
+
+            print(f"    {len(eps)} eps")
+
+            for ep in eps:
+                if not isinstance(ep, dict):
+                    continue
+                ep_id = ep.get("id")
+                num   = ep.get("number") or ep.get("episode") or "?"
+                if not ep_id:
+                    continue
+
+                await asyncio.sleep(random.uniform(0.3, 1.0))
+                link = await get_stream(page, ep_id)
+                if not link:
+                    continue
+
+                m3u += f'#EXTINF:-1'
+                if logo:
+                    m3u += f' tvg-logo="{logo}"'
+                m3u += f' group-title="{genre}"'
+                m3u += f',{title} - EP {num}\n'
+                m3u += f'{link}\n'
+                count += 1
+
+        await browser.close()
 
     with open(OUTPUT, "w", encoding="utf-8") as f:
         f.write(m3u)
@@ -243,4 +243,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()   
+    asyncio.run(main())   
