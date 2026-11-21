@@ -5,6 +5,9 @@ import json
 import time
 import random
 import asyncio
+import zlib
+import base64
+import urllib.parse
 from playwright.async_api import async_playwright
 
 # ==============================
@@ -16,7 +19,7 @@ OUTPUT     = "playlist.m3u"
 PAGES      = 3
 GENRE_ID   = 23
 
-PROXY      = {
+PROXY = {
     "server":   "http://23.26.71.145:5628",
     "username": "voifrfqj",
     "password": "w50vbiwbunum",
@@ -29,7 +32,6 @@ def decode(data: dict) -> dict:
     enc = data.get("_encsankaa")
     if not enc:
         return data
-    import zlib, base64
     b64 = enc.replace('-', '+').replace('_', '/')
     pad = 4 - (len(b64) % 4)
     if pad != 4:
@@ -38,26 +40,40 @@ def decode(data: dict) -> dict:
     return json.loads(out)
 
 # ==============================
-# FETCH VIA BROWSER
+# WAIT FOR CLOUDFLARE
 # ==============================
-async def browser_fetch(page, url: str) -> dict | None:
+async def wait_for_cf(page, timeout=30):
+    """Tunggu sampai Cloudflare challenge selesai."""
+    start = time.time()
+    while time.time() - start < timeout:
+        title = await page.title()
+        if "Tunggu" not in title and "Checking" not in title and "Verifying" not in title:
+            print(f"    ✅ CF passed! Title: {title}")
+            return True
+        await asyncio.sleep(2)
+    print(f"    ⚠️ CF timeout. Title: {title}")
+    return False
+
+# ==============================
+# FETCH VIA context.request (bukan page.evaluate)
+# ==============================
+async def api_fetch(context, url: str) -> dict | None:
+    """Pakai Playwright APIRequestContext → share cookie dengan browser."""
     try:
-        result = await page.evaluate("""
-            async (url) => {
-                const r = await fetch(url, {
-                    headers: {'Accept': '*/*', 'Accept-Language': 'id-ID,id;q=0.9'},
-                    credentials: 'include',
-                });
-                if (!r.ok) return { __error: r.status };
-                return await r.json();
-            }
-        """, url)
-        if result is None:
+        resp = await context.request.get(
+            url,
+            headers={
+                "Accept": "*/*",
+                "Accept-Language": "id-ID,id;q=0.9",
+                "Origin": ORIGIN,
+                "Referer": f"{ORIGIN}/",
+            },
+            timeout=20000,
+        )
+        if resp.status != 200:
+            print(f"    [DEBUG] HTTP {resp.status} | {url[:70]}")
             return None
-        if result.get("__error"):
-            print(f"    [DEBUG] HTTP {result['__error']} | {url[:70]}")
-            return None
-        return result
+        return await resp.json()
     except Exception as e:
         print(f"    [DEBUG] {type(e).__name__}: {e}")
         return None
@@ -65,11 +81,11 @@ async def browser_fetch(page, url: str) -> dict | None:
 # ==============================
 # COLLECT ANIME
 # ==============================
-async def collect_animes(page, genre_id: int, pages: int) -> list[dict]:
+async def collect_animes(context, genre_id: int, pages: int) -> list[dict]:
     animes, seen = [], set()
     for p in range(pages):
         print(f"  Halaman {p+1}/{pages}...")
-        raw = await browser_fetch(page, f"{ID_BASE}/genre/{genre_id}?page={p}&sort=views&genre_in=")
+        raw = await api_fetch(context, f"{ID_BASE}/genre/{genre_id}?page={p}&sort=views&genre_in=")
         if raw is None:
             break
         d = decode(raw)
@@ -96,15 +112,15 @@ async def collect_animes(page, genre_id: int, pages: int) -> list[dict]:
 # ==============================
 # GET DETAIL
 # ==============================
-async def get_detail(page, anime_id: int) -> dict | None:
-    raw = await browser_fetch(page, f"{ID_BASE}/detail/{anime_id}?page=0")
+async def get_detail(context, anime_id: int) -> dict | None:
+    raw = await api_fetch(context, f"{ID_BASE}/detail/{anime_id}?page=0")
     return decode(raw) if raw else None
 
 # ==============================
 # GET STREAM
 # ==============================
-async def get_stream(page, episode_id: int) -> str:
-    raw = await browser_fetch(page, f"{ID_BASE}/stream/{episode_id}")
+async def get_stream(context, episode_id: int) -> str:
+    raw = await api_fetch(context, f"{ID_BASE}/stream/{episode_id}")
     if not raw:
         return ""
     d = decode(raw)
@@ -126,7 +142,6 @@ async def get_stream(page, episode_id: int) -> str:
     return ""
 
 def unwrap(u: str) -> str:
-    import urllib.parse
     if "proxy?url=" in u:
         pos = u.index("proxy?url=")
         return urllib.parse.unquote(u[pos + 10:])
@@ -158,24 +173,44 @@ async def main():
 
     async with async_playwright() as pw:
         browser = await pw.chromium.launch(
-            headless=True,
-            proxy=PROXY,  # ← PROXY RESIDENTIAL
-            args=["--disable-blink-features=AutomationControlled", "--no-sandbox"],
+            headless=False,  # ← PENTING: headless=False biar CF tidak detect
+            proxy=PROXY,
+            args=[
+                "--disable-blink-features=AutomationControlled",
+                "--no-sandbox",
+                "--disable-features=IsolateOrigins,site-per-process",
+            ],
         )
         context = await browser.new_context(
             user_agent="Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36",
             viewport={"width": 390, "height": 844},
             locale="id-ID",
         )
+
+        # Anti-detect: hapus navigator.webdriver
+        await context.add_init_script("""
+            Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
+            Object.defineProperty(navigator, 'plugins', { get: () => [1, 2, 3, 4, 5] });
+            Object.defineProperty(navigator, 'languages', { get: () => ['id-ID', 'id'] });
+            window.chrome = { runtime: {} };
+        """)
+
         page = await context.new_page()
 
+        # Load site → tunggu CF challenge
         print("[0/3] Buka browser via proxy...")
-        await page.goto(f"{ORIGIN}/", wait_until="domcontentloaded", timeout=30000)
-        await asyncio.sleep(3)
-        print(f"    Title: {await page.title()}")
+        await page.goto(f"{ORIGIN}/", wait_until="domcontentloaded", timeout=60000)
+        cf_ok = await wait_for_cf(page, timeout=30)
+        if not cf_ok:
+            print("❌ Cloudflare tidak pass. Coba jalankan ulang atau ganti proxy.")
+            await browser.close()
+            return
+
+        # Tunggu network idle
+        await page.wait_for_load_state("networkidle", timeout=15000)
 
         print("[1/3] Ambil daftar anime (genre 23)...")
-        animes = await collect_animes(page, GENRE_ID, PAGES)
+        animes = await collect_animes(context, GENRE_ID, PAGES)
         if not animes:
             print("❌ Tidak ada anime ditemukan")
             await browser.close()
@@ -196,7 +231,7 @@ async def main():
             print(f"  [{i}/{len(animes)}] {title}")
             await asyncio.sleep(random.uniform(0.5, 1.5))
 
-            detail = await get_detail(page, a_id)
+            detail = await get_detail(context, a_id)
             if detail is None:
                 continue
 
@@ -219,7 +254,7 @@ async def main():
                     continue
 
                 await asyncio.sleep(random.uniform(0.3, 1.0))
-                link = await get_stream(page, ep_id)
+                link = await get_stream(context, ep_id)
                 if not link:
                     continue
 
