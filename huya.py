@@ -3,20 +3,23 @@ import time
 import random
 import zlib
 import base64
-from urllib.parse import quote, unquote
+from urllib.parse import unquote
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from curl_cffi import requests as cffi_requests
-from playwright.sync_api import sync_playwright
 
 # ==============================
 # KONFIGURASI
 # ==============================
 
 BASE = "https://www.sankavollerei.web.id"
-API = f"{BASE}/plananimek/api"
 ID_BASE = f"{BASE}/plananimek/id"
 REFERER = "https://sankanime.web.id/"
 ORIGIN = "https://sankanime.web.id"
 OUTPUT = "playlist.m3u"
+
+GENRES = [23, 33]
+PAGES_PER_GENRE = 3
+MAX_WORKERS = 5  # jumlah thread paralel
 
 PROXY_HOST = "23.26.71.145"
 PROXY_PORT = "5628"
@@ -25,17 +28,12 @@ PROXY_PASS = "w50vbiwbunum"
 
 PROXY_URL = f"http://{PROXY_USER}:{PROXY_PASS}@{PROXY_HOST}:{PROXY_PORT}"
 PROXY_CURL = {"http": PROXY_URL, "https": PROXY_URL}
-PROXY_PW = {
-    "server": f"http://{PROXY_HOST}:{PROXY_PORT}",
-    "username": PROXY_USER,
-    "password": PROXY_PASS,
-}
 
 UA = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36"
 
 HEADERS = {
     "User-Agent": UA,
-    "Accept": "application/json, text/plain, */*",
+    "Accept": "*/*",
     "Accept-Language": "id-ID,id;q=0.9",
     "Origin": ORIGIN,
     "Referer": REFERER,
@@ -67,10 +65,10 @@ def decode(data):
 
 
 # ==============================
-# FETCH DIRECT
+# FETCH (thread-safe)
 # ==============================
 
-def fetch_direct(url: str):
+def fetch(url: str):
     try:
         r = cffi_requests.get(
             url,
@@ -82,105 +80,22 @@ def fetch_direct(url: str):
         if r.status_code == 200:
             return decode(r.json())
         else:
-            print(f"[DIRECT] HTTP {r.status_code} | {url[:70]}")
+            print(f"  [ERR] HTTP {r.status_code} | {url[:60]}")
     except Exception as e:
-        print(f"[DIRECT] {type(e).__name__}: {e}")
+        print(f"  [ERR] {type(e).__name__}: {e}")
     return None
 
 
 # ==============================
-# FETCH PLAYWRIGHT
-# ==============================
-
-def fetch_playwright(url: str, timeout: int = 60):
-    try:
-        with sync_playwright() as p:
-            browser = p.chromium.launch(
-                headless=False,
-                proxy=PROXY_PW,
-                args=["--disable-blink-features=AutomationControlled", "--no-sandbox"],
-            )
-            context = browser.new_context(
-                user_agent=UA,
-                viewport={"width": 390, "height": 844},
-                locale="id-ID",
-                extra_http_headers={
-                    "Referer": REFERER,
-                    "Origin": ORIGIN,
-                    "Accept": "application/json, text/plain, */*",
-                },
-            )
-            context.add_init_script("""
-                Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
-                Object.defineProperty(navigator, 'plugins', { get: () => [1, 2, 3, 4, 5] });
-                Object.defineProperty(navigator, 'languages', { get: () => ['id-ID', 'id'] });
-                window.chrome = { runtime: {} };
-            """)
-            page = context.new_page()
-            result = {}
-
-            def handle_response(response):
-                nonlocal result
-                if url in response.url or response.url.startswith(url.split("?")[0]):
-                    try:
-                        result["status"] = response.status
-                        result["body"] = response.text()
-                    except Exception:
-                        pass
-
-            page.on("response", handle_response)
-            page.goto(url, wait_until="networkidle", timeout=timeout * 1000)
-
-            for _ in range(20):
-                if page.title() not in ("Just a moment...", "Tunggu sebentar..."):
-                    break
-                time.sleep(2)
-
-            browser.close()
-
-            if "body" in result:
-                try:
-                    return decode(json.loads(result["body"]))
-                except (json.JSONDecodeError, zlib.error) as e:
-                    print(f"[PLAYWRIGHT] Decode error: {e}")
-                    return None
-            return None
-    except Exception as e:
-        print(f"[PLAYWRIGHT] Error: {type(e).__name__}: {e}")
-    return None
-
-
-# ==============================
-# FETCH
-# ==============================
-
-def fetch(url: str):
-    data = fetch_direct(url)
-    if data:
-        return data
-    print("[PLAYWRIGHT] Bypassing Cloudflare...")
-    return fetch_playwright(url)
-
-
-# ==============================
-# EXTRACT LIST (FIXED)
+# EXTRACT LIST
 # ==============================
 
 def extract_list(data):
-    """
-    Handle struktur:
-    - {"results": {"data": [...]}}  ← recently-updated
-    - {"data": [...]}
-    - {"data": {"data": [...]}}
-    - {"data": {"results": [...]}}
-    - [...]
-    """
     if isinstance(data, list):
         return data
     if not isinstance(data, dict):
         return []
 
-    # Level 1: cek "results" dulu (struktur recently-updated)
     results = data.get("results")
     if isinstance(results, dict):
         for key in ["data", "list", "items", "results"]:
@@ -190,17 +105,15 @@ def extract_list(data):
     elif isinstance(results, list) and results and isinstance(results[0], dict):
         return results
 
-    # Level 2: cek "data"
     d = data.get("data")
     if isinstance(d, list) and d and isinstance(d[0], dict):
         return d
     if isinstance(d, dict):
-        for key in ["data", "results", "list", "items", "episodes", "episode_list", "animes"]:
+        for key in ["data", "results", "list", "items", "episodes", "episode_list"]:
             v = d.get(key)
             if isinstance(v, list) and v and isinstance(v[0], dict):
                 return v
 
-    # Fallback: cari list of dict dengan "id"
     for v in data.values():
         if isinstance(v, list) and v and isinstance(v[0], dict) and "id" in v[0]:
             return v
@@ -251,11 +164,54 @@ def unwrap(u: str) -> str:
 
 
 # ==============================
-# DELAY
+# WORKER: proses 1 anime
 # ==============================
 
-def delay(min_s=1, max_s=3):
-    time.sleep(random.uniform(min_s, max_s))
+def process_anime(anime, index, total):
+    a_id = anime.get("id")
+    if not a_id:
+        return []
+
+    title = anime.get("title") or anime.get("name") or "Unknown"
+    logo = anime.get("poster") or anime.get("image_poster") or anime.get("image") or ""
+    genre = anime.get("genre") or anime.get("category") or "Anime"
+    if isinstance(genre, list):
+        genre = genre[0] if genre else "Anime"
+    elif isinstance(genre, str) and "," in genre:
+        genre = genre.split(",")[0].strip()
+
+    # Detail → episodes
+    detail = fetch(f"{ID_BASE}/detail/{a_id}?page=0")
+    if not detail:
+        print(f"  [{index}/{total}] {title} → gagal detail")
+        return []
+
+    eps = extract_list(detail)
+    if not eps:
+        print(f"  [{index}/{total}] {title} → no episodes")
+        return []
+
+    entries = []
+    for ep in eps:
+        if not isinstance(ep, dict):
+            continue
+        ep_id = ep.get("id")
+        num = ep.get("number") or ep.get("episode") or "?"
+        if not ep_id:
+            continue
+
+        stream = fetch(f"{ID_BASE}/stream/{ep_id}")
+        if not stream:
+            continue
+
+        link = get_stream_url(stream)
+        if not link:
+            continue
+
+        entries.append((title, logo, genre, num, link))
+
+    print(f"  [{index}/{total}] {title} → {len(entries)} eps ✓")
+    return entries
 
 
 # ==============================
@@ -265,77 +221,53 @@ def delay(min_s=1, max_s=3):
 def main():
     m3u_content = "#EXTM3U\n"
     count = 0
+    seen = set()
+    all_animes = []
 
-    print("[1/3] Ambil daftar anime...")
-    recent = fetch(f"{API}/recently-updated?page=1")
-    if not recent:
-        print("[X] Gagal ambil data awal.")
+    # --- Kumpulkan anime ---
+    print("[1/3] Kumpulkan anime...")
+    for gid in GENRES:
+        for p in range(PAGES_PER_GENRE):
+            d = fetch(f"{ID_BASE}/genre/{gid}?page={p}&sort=views&genre_in=")
+            if not d:
+                break
+            items = extract_list(d)
+            if not items:
+                break
+            for a in items:
+                aid = a.get("id")
+                if aid and aid not in seen:
+                    seen.add(aid)
+                    all_animes.append(a)
+            time.sleep(0.2)
+
+    if not all_animes:
+        print("[X] Tidak ada anime.")
         return
 
-    anime_list = extract_list(recent)
-    if not anime_list:
-        print("[X] List anime kosong.")
-        print(f"[DEBUG] {json.dumps(recent, ensure_ascii=False)[:500]}")
-        return
+    print(f"[+] Total: {len(all_animes)} anime, {MAX_WORKERS} threads")
 
-    print(f"[+] Total Anime: {len(anime_list)}")
+    # --- Scrape paralel ---
+    print("[2/3] Scrape (paralel)...")
+    all_entries = []
 
-    print("[2/3] Scrape...")
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
+        futures = {
+            pool.submit(process_anime, anime, i, len(all_animes)): anime
+            for i, anime in enumerate(all_animes, 1)
+        }
+        for future in as_completed(futures):
+            try:
+                entries = future.result()
+                all_entries.extend(entries)
+            except Exception as e:
+                print(f"  [ERR] {e}")
 
-    for i, anime in enumerate(anime_list, 1):
-        a_id = anime.get("id", "")
-        if not a_id:
-            continue
-
-        title = anime.get("title") or anime.get("name") or "Unknown"
-        logo = anime.get("poster") or anime.get("image_poster") or anime.get("image") or ""
-        genre = anime.get("genre") or anime.get("category") or "Anime"
-        if isinstance(genre, list):
-            genre = genre[0] if genre else "Anime"
-        elif isinstance(genre, str) and "," in genre:
-            genre = genre.split(",")[0].strip()
-
-        print(f"  [{i}/{len(anime_list)}] {title}")
-        delay(0.5, 1.5)
-
-        # Info anime
-        info = fetch(f"{API}/info?id={a_id}")
-        if not info:
-            continue
-
-        # Episodes
-        eps_data = fetch(f"{API}/episodes/{a_id}")
-        if not eps_data:
-            continue
-
-        ep_list = extract_list(eps_data)
-        if not ep_list:
-            continue
-
-        print(f"    {len(ep_list)} eps")
-
-        for ep in ep_list:
-            if not isinstance(ep, dict):
-                continue
-            ep_id = ep.get("id")
-            num = ep.get("number") or ep.get("episode") or "?"
-            if not ep_id:
-                continue
-
-            delay(0.3, 1.0)
-
-            stream = fetch(f"{API}/stream?id={a_id}&ep={ep_id}&server=hd-2&type=sub")
-            if not stream:
-                continue
-
-            link = get_stream_url(stream)
-            if not link:
-                continue
-
-            m3u_content += f'#EXTINF:-1 tvg-logo="{logo}" group-title="{genre}",{title} - EP {num}\n'
-            m3u_content += f"{link}\n"
-            count += 1
-            print(f"    ✓ EP {num}")
+    # --- Tulis m3u ---
+    for title, logo, genre, num, link in all_entries:
+        m3u_content += f'#EXTINF:-1 tvg-logo="{logo}" group-title="{genre}",{title} - EP {num}\n'
+        m3u_content += f"{link}\n"
+        count += 1
 
     with open(OUTPUT, "w", encoding="utf-8") as f:
         f.write(m3u_content)
