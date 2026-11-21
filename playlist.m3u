@@ -1,18 +1,1 @@
 #EXTM3U
-#EXTVLCOPT:http-referrer="https://www.vidio.com/"
-#EXTINF:-1 tvg-id="vidio.204" tvg-logo="" group-title="Vidio" sctv
-https://www.vidio.com/live/204-
-#EXTINF:-1 tvg-id="vidio.205" tvg-logo="" group-title="Vidio" indosiar
-https://www.vidio.com/live/205-
-#EXTINF:-1 tvg-id="vidio.733" tvg-logo="" group-title="Vidio" trans tv
-https://www.vidio.com/live/733-
-#EXTINF:-1 tvg-id="vidio.734" tvg-logo="" group-title="Vidio" trans7
-https://www.vidio.com/live/734-
-#EXTINF:-1 tvg-id="vidio.22337" tvg-logo="" group-title="Vidio" france24
-https://www.vidio.com/live/22337-
-#EXTINF:-1 tvg-id="vidio.6852" tvg-logo="" group-title="Vidio" makkah tv
-https://www.vidio.com/live/6852-
-#EXTINF:-1 tvg-id="vidio.6784" tvg-logo="" group-title="Vidio" arirang
-https://www.vidio.com/live/6784-
-#EXTINF:-1 tvg-id="vidio.6411" tvg-logo="" group-title="Vidio" cna
-https://www.vidio.com/live/6411-
