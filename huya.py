@@ -1,374 +1,252 @@
 #!/usr/bin/env python3
-"""
-Vidio IPTV Playlist Generator
-Scrape channel live dari vidio.com dan generate playlist.m3u
-dengan format: #EXTINF:-1 tvg-id="..." tvg-logo="..." group-title="..."
-"""
+"""scrape.py — Generate playlist.m3u8 dari sankanime"""
 
 import json
-import re
 import time
-import logging
+import random
+import gzip
+import base64
+import urllib.parse
 import requests
-from base64 import b64encode
-from typing import Optional
-from dataclasses import dataclass, field
-from concurrent.futures import ThreadPoolExecutor, as_completed
 
-# ─── Konfigurasi ───────────────────────────────────────────────────────────────
-OUTPUT_FILE = "playlist.m3u"
-MAX_WORKERS = 5          # jumlah thread untuk fetch stream URL
-REQUEST_TIMEOUT = 15     # timeout per request (detik)
-STREAM_URL_EXPIRY = 120  # URL stream expire setelah ~120 detik (sesuai API)
+# ==============================
+# KONFIGURASI
+# ==============================
+API     = "https://www.sankavollerei.web.id/plananimek/api"
+ID_BASE = "https://www.sankavollerei.web.id/plananimek/id"
+REFERER = "https://sankanime.web.id/"
+ORIGIN  = "https://sankanime.web.id"
+UA      = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36"
+PROXY   = "voifrfqj:w50vbiwbunum@23.26.71.145:5628"
+ANT_KEY = "cf489396ecea4f10ad119710edae3847"
+OUTPUT  = "playlist.m3u"
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
-log = logging.getLogger("vidio-m3u")
+HEADERS = {
+    "User-Agent": UA,
+    "Accept": "*/*",
+    "Accept-Language": "id-ID,id;q=0.9",
+    "Origin": ORIGIN,
+    "Referer": REFERER,
+    "Sec-Fetch-Site": "cross-site",
+    "Sec-Fetch-Mode": "cors",
+    "Sec-Fetch-Dest": "empty",
+    "sec-ch-ua-platform": '"Android"',
+    "sec-ch-ua": '"Not-A.Brand";v="99", "Google Chrome";v="157", "Chromium";v="157"',
+    "sec-ch-ua-mobile": "?1",
+}
 
-# ─── Konstanta API ─────────────────────────────────────────────────────────────
-API_AUTH = "https://api.vidio.com/auth"
-API_LIVESTREAMINGS_DETAIL = "https://api.vidio.com/api/livestreamings/{streamid}/detail"
-API_LIVESTREAMINGS_STREAM = "https://api.vidio.com/livestreamings/{streamid}/stream?initialize=true"
-PAGE_LIVE = "https://www.vidio.com/live"
+# ==============================
+# DECODE
+# ==============================
+def decode(body: str) -> dict | None:
+    raw = json.loads(body)
+    enc = raw.get("_encsankaa")
+    if not enc:
+        return raw
+    b64 = enc.replace('-', '+').replace('_', '/')
+    pad = 4 - (len(b64) % 4)
+    if pad != 4:
+        b64 += '=' * pad
+    dec = base64.b64decode(b64)
+    try:
+        out = gzip.decompress(dec)
+    except Exception:
+        import zlib
+        out = zlib.decompress(dec, -zlib.MAX_WBITS)
+    return json.loads(out)
 
-API_KEY_PUBKEY = b"dPr0QImQ7bc5o9LMntNba2DOsSbZcjUh"
-API_KEY_IV = b"C8RWsrtFsoeyCyPt"
+# ==============================
+# FETCH CHAIN
+# ==============================
+def fetch(url: str) -> dict | None:
+    # 1. Direct
+    d = _curl(url, proxies=None)
+    if d is not None:
+        return d
 
-# ─── Dataclass ─────────────────────────────────────────────────────────────────
-@dataclass
-class Channel:
-    streamid: str
-    name: str
-    logo: str = ""
-    group: str = "Vidio"
-    stream_url: str = ""
+    # 2. Proxy
+    d = _curl(url, proxies={"http": f"http://{PROXY}", "https": f"http://{PROXY}"})
+    if d is not None:
+        return d
+
+    # 3. ScrapingAnt
+    target = urllib.parse.quote(url, safe='')
+    sa_url = f"https://api.scrapingant.com?url={target}&x-api-key={ANT_KEY}&browser=true&proxy_type=residential"
+    try:
+        r = requests.get(sa_url, headers={"User-Agent": UA}, timeout=90, verify=False)
+        if r.status_code == 200:
+            return json.loads(r.text)
+    except Exception:
+        pass
+    return None
 
 
-# ─── Vidio API Client ──────────────────────────────────────────────────────────
-class VidioClient:
-    def __init__(self):
-        self.session = requests.Session()
-        self.session.headers.update({
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
-            "Origin": "https://www.vidio.com",
-            "Referer": "https://www.vidio.com/",
-            "Accept": "application/json, text/plain, */*",
-        })
-        self._api_key: Optional[str] = None
-        self._signature: Optional[tuple[str, str]] = None
-
-    def _get_signature(self, page_url: str = PAGE_LIVE) -> tuple[str, str]:
-        """Ekstrak streamSignature (clientId + signature) dari halaman Vidio."""
-        if self._signature:
-            return self._signature
-
-        resp = self.session.get(page_url, timeout=REQUEST_TIMEOUT)
-        resp.raise_for_status()
-        html = resp.text
-
-        # Cari pattern: "streamSignature":{"clientId":"...","signature":"..."}
-        pattern = r'"streamSignature"\s*:\s*\{\s*"clientId"\s*:\s*"([^"]+)"\s*,\s*"signature"\s*:\s*"([^"]+)"'
-        match = re.search(pattern, html)
-        if not match:
-            # Fallback: coba cari di script tag
-            pattern2 = r'streamSignature[^}]*clientId[^"]*"?([a-zA-Z0-9_-]+)"?[^}]*signature[^"]*"?([a-zA-Z0-9_-]+)"?'
-            match = re.search(pattern2, html)
-
-        if not match:
-            raise RuntimeError("Gagal menemukan streamSignature di halaman Vidio")
-
-        self._signature = (match.group(1), match.group(2))
-        log.info(f"Signature ditemukan: clientId={self._signature[0][:8]}...")
-        return self._signature
-
-    def _get_api_key(self) -> str:
-        """Dapatkan dan enkripsi API key."""
-        if self._api_key:
-            return self._api_key
-
-        resp = self.session.post(API_AUTH, timeout=REQUEST_TIMEOUT)
-        resp.raise_for_status()
-        data = resp.json()
-        api_key = data["api_key"]
-
-        # Enkripsi dengan AES-CBC (sama seperti streamlink plugin)
-        try:
-            from Crypto.Cipher import AES
-            from Crypto.Util.Padding import pad
-        except ImportError:
-            # Fallback: pakai pycryptodome atau plain
-            try:
-                from Cryptodome.Cipher import AES
-                from Cryptodome.Util.Padding import pad
-            except ImportError:
-                log.warning("pycryptodome tidak terpasang, menggunakan API key mentah")
-                self._api_key = api_key
-                return self._api_key
-
-        cipher = AES.new(API_KEY_PUBKEY, AES.MODE_CBC, API_KEY_IV)
-        padded = pad(api_key.encode("utf-8"), AES.block_size)
-        encrypted = cipher.encrypt(padded)
-        self._api_key = b64encode(encrypted).decode("utf-8")
-        log.info("API key berhasil di-enkripsi")
-        return self._api_key
-
-    def _query_api(self, url: str) -> dict:
-        """Query API Vidio dengan header autentikasi."""
-        client_id, signature = self._get_signature()
-        api_key = self._get_api_key()
-
-        headers = {
-            "x-api-key": api_key,
-            "x-api-platform": "web-desktop",
-            "x-client": client_id,
-            "x-secure-level": "2",
-            "x-signature": signature,
-        }
-
-        resp = self.session.get(url, headers=headers, timeout=REQUEST_TIMEOUT)
-        resp.raise_for_status()
-        return resp.json()
-
-    def get_stream_url(self, streamid: str) -> Optional[str]:
-        """Dapatkan URL HLS stream untuk channel tertentu."""
-        try:
-            url = API_LIVESTREAMINGS_STREAM.format(streamid=streamid)
-            data = self._query_api(url)
-            hls_url = data.get("data", {}).get("attributes", {}).get("hls")
-            if hls_url:
-                return hls_url
-        except Exception as e:
-            log.debug(f"Gagal get stream URL untuk {streamid}: {e}")
+def _curl(url: str, proxies: dict | None) -> dict | None:
+    try:
+        r = requests.get(url, headers=HEADERS, timeout=20, proxies=proxies, verify=False)
+        if r.status_code != 200:
+            return None
+        return decode(r.text)
+    except Exception:
         return None
 
-    def get_channel_detail(self, streamid: str) -> dict:
-        """Dapatkan detail channel (logo, nama, kategori)."""
-        try:
-            url = API_LIVESTREAMINGS_DETAIL.format(streamid=streamid)
-            data = self._query_api(url)
-            return data.get("data", {})
-        except Exception as e:
-            log.debug(f"Gagal get detail untuk {streamid}: {e}")
-            return {}
+# ==============================
+# COLLECT ANIME
+# ==============================
+def collect_animes(home: dict) -> list:
+    data = home.get("data", {}).get("data", home.get("data", {}))
+    if not isinstance(data, dict):
+        return []
 
-
-# ─── Scraper Halaman Live ─────────────────────────────────────────────────────
-def scrape_live_page(client: VidioClient) -> list[Channel]:
-    """Scrape halaman vidio.com/live untuk mendapatkan daftar channel."""
-    log.info("Meng-scrape halaman live Vidio...")
-    resp = client.session.get(PAGE_LIVE, timeout=REQUEST_TIMEOUT)
-    resp.raise_for_status()
-    html = resp.text
-
-    channels = []
-
-    # ── Strategi 1: Cari JSON ter-embed di halaman (Next.js __NEXT_DATA__) ──
-    next_data_match = re.search(r'<script id="__NEXT_DATA__" type="application/json">(.*?)</script>', html, re.DOTALL)
-    if next_data_match:
-        try:
-            next_data = json.loads(next_data_match.group(1))
-            # Jelajahi struktur untuk menemukan daftar livestreaming
-            channels = _extract_from_next_data(next_data)
-            if channels:
-                log.info(f"Ditemukan {len(channels)} channel dari __NEXT_DATA__")
-                return channels
-        except (json.JSONDecodeError, KeyError):
-            pass
-
-    # ── Strategi 2: Cari pattern streamid dari link di HTML ──
-    # Pattern: /live/12345-nama-channel
-    link_pattern = r'href="[^"]*/live/(\d+)-([^"/]+)'
-    matches = re.findall(link_pattern, html)
-    seen_ids = set()
-    for streamid, slug in matches:
-        if streamid not in seen_ids:
-            seen_ids.add(streamid)
-            name = slug.replace("-", " ").strip()
-            channels.append(Channel(
-                streamid=streamid,
-                name=name,
-                group="Vidio",
-            ))
-
-    if channels:
-        log.info(f"Ditemukan {len(channels)} channel dari link pattern")
-    else:
-        log.warning("Tidak ada channel ditemukan dari scraping HTML")
-
-    return channels
-
-
-def _extract_from_next_data(data: dict) -> list[Channel]:
-    """Ekstrak channel dari __NEXT_DATA__ structure."""
-    channels = []
-
-    def find_livestreamings(obj, path=""):
-        """Recursively cari key 'livestreamings' atau 'liveChannels' di JSON."""
-        if isinstance(obj, dict):
-            for key, value in obj.items():
-                if key in ("livestreamings", "liveChannels", "live_channels", "items") and isinstance(value, list):
-                    for item in value:
-                        if isinstance(item, dict):
-                            ch = _parse_channel_item(item)
-                            if ch:
-                                channels.append(ch)
-                else:
-                    find_livestreamings(value, f"{path}.{key}")
-        elif isinstance(obj, list):
-            for i, item in enumerate(obj):
-                find_livestreamings(item, f"{path}[{i}]")
-
-    find_livestreamings(data)
-    return channels
-
-
-def _parse_channel_item(item: dict) -> Optional[Channel]:
-    """Parse satu item channel dari JSON."""
-    # Berbagai kemungkinan struktur
-    streamid = item.get("id") or item.get("streamId") or item.get("stream_id")
-    if not streamid:
-        attrs = item.get("attributes", {})
-        streamid = attrs.get("id") or attrs.get("streamId")
-    if not streamid:
-        return None
-
-    streamid = str(streamid)
-
-    # Nama
-    name = item.get("name") or item.get("title") or ""
-    if not name:
-        attrs = item.get("attributes", {})
-        name = attrs.get("name") or attrs.get("title") or ""
-
-    # Logo
-    logo = item.get("logo") or item.get("thumbnail") or item.get("image") or ""
-    if not logo:
-        attrs = item.get("attributes", {})
-        logo = attrs.get("logo") or attrs.get("thumbnail") or attrs.get("image") or ""
-        # Atau dari relationships
-        rels = item.get("relationships", {})
-        if "logo" in rels:
-            logo_data = rels["logo"].get("data", {})
-            logo = logo_data.get("attributes", {}).get("url", "")
-
-    # Group / Kategori
-    group = item.get("category") or item.get("genre") or item.get("group") or "Vidio"
-    if not group or group == "Vidio":
-        attrs = item.get("attributes", {})
-        group = attrs.get("category") or attrs.get("genre") or "Vidio"
-
-    if not name:
-        return None
-
-    return Channel(
-        streamid=streamid,
-        name=name,
-        logo=logo,
-        group=group,
-    )
-
-
-# ─── Fetch Stream URLs (parallel) ─────────────────────────────────────────────
-def fetch_stream_urls(channels: list[Channel], client: VidioClient) -> list[Channel]:
-    """Fetch stream URL untuk semua channel secara parallel."""
-    log.info(f"Fetching stream URL untuk {len(channels)} channel...")
-
-    def _fetch(ch: Channel) -> Channel:
-        url = client.get_stream_url(ch.streamid)
-        if url:
-            ch.stream_url = url
-        else:
-            # Fallback: gunakan URL halaman Vidio (bisa dipakai streamlink)
-            ch.stream_url = f"https://www.vidio.com/live/{ch.streamid}-"
-        return ch
-
-    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-        futures = {executor.submit(_fetch, ch): ch for ch in channels}
-        for future in as_completed(futures):
-            try:
-                future.result()
-            except Exception as e:
-                log.debug(f"Error: {e}")
-
-    success = sum(1 for ch in channels if ch.stream_url)
-    log.info(f"Berhasil: {success}/{len(channels)} channel memiliki stream URL")
-    return channels
-
-
-# ─── Generate M3U ─────────────────────────────────────────────────────────────
-def generate_m3u(channels: list[Channel], output_file: str = OUTPUT_FILE) -> str:
-    """Generate file playlist.m3u dengan format M3U Extended."""
-    lines = ["#EXTM3U"]
-
-    # Header info
-    lines.append(f'#EXTVLCOPT:http-referrer="https://www.vidio.com/"')
-
-    for ch in channels:
-        if not ch.stream_url:
+    seen = set()
+    result = []
+    for sec in ["hot", "new", "today", "popular", "waiting", "fyp"]:
+        items = data.get(sec, [])
+        if not isinstance(items, list):
             continue
+        for a in items:
+            if not isinstance(a, dict):
+                continue
+            aid = a.get("id")
+            if not aid or aid in seen:
+                continue
+            seen.add(aid)
+            result.append(a)
+    return result
 
-        # Sanitasi nama untuk tvg-id
-        tvg_id = f"vidio.{ch.streamid}"
+# ==============================
+# EXTRACT EPISODES
+# ==============================
+def extract_episodes(eps: dict) -> list:
+    if not isinstance(eps, dict):
+        return []
+    data = eps.get("data", eps)
+    if isinstance(data, list) and data and isinstance(data[0], dict):
+        return data
+    if isinstance(data, dict):
+        for v in data.values():
+            if isinstance(v, list) and v and isinstance(v[0], dict) and ("id" in v[0] or "number" in v[0]):
+                return v
+    return []
 
-        # Escape karakter khusus di attribute
-        name_escaped = ch.name.replace('"', "'")
-        group_escaped = ch.group.replace('"', "'")
-
-        line = (
-            f'#EXTINF:-1 '
-            f'tvg-id="{tvg_id}" '
-            f'tvg-logo="{ch.logo}" '
-            f'group-title="{group_escaped}" '
-            f'{name_escaped}'
-        )
-        lines.append(line)
-        lines.append(ch.stream_url)
-
-    content = "\n".join(lines) + "\n"
-
-    with open(output_file, "w", encoding="utf-8") as f:
-        f.write(content)
-
-    log.info(f"Playlist tersimpan: {output_file} ({len(channels)} channel)")
-    return content
+# ==============================
+# EXTRACT STREAM URL
+# ==============================
+def stream_url(d: dict | None) -> str:
+    if not d:
+        return ""
+    s = d.get("sources") or d.get("data", {}).get("sources")
+    if isinstance(s, list) and s:
+        f = s[0] if isinstance(s[0], dict) else s
+        u = f.get("file") or f.get("url") or f.get("src") or ""
+        if u:
+            return unwrap(u)
+    u = d.get("file") or d.get("url") or d.get("stream") or d.get("data", {}).get("file") or d.get("data", {}).get("url") or ""
+    if u:
+        return unwrap(u)
+    return ""
 
 
-# ─── Main ─────────────────────────────────────────────────────────────────────
+def unwrap(u: str) -> str:
+    if "proxy?url=" in u:
+        pos = u.index("proxy?url=")
+        return urllib.parse.unquote(u[pos + 10:])
+    return u
+
+# ==============================
+# MAIN
+# ==============================
 def main():
-    log.info("=" * 50)
-    log.info("Vidio IPTV Playlist Generator")
-    log.info("=" * 50)
+    import urllib3
+    urllib3.disable_warnings()
 
-    client = VidioClient()
+    m3u = "#EXTM3U\n"
+    count = 0
 
-    # Step 1: Scrape daftar channel
-    channels = scrape_live_page(client)
-    if not channels:
-        log.error("Tidak ada channel ditemukan. Pastikan Vidio sedang live.")
+    print("[1/3] Ambil data homepage...")
+    home = fetch(f"{ID_BASE}/home")
+    if home is None:
+        print("❌ Gagal ambil data")
         return
 
-    # Step 2: Enrich dengan detail dari API (logo, kategori)
-    log.info("Mendapatkan detail channel dari API...")
-    for ch in channels:
-        if not ch.logo or ch.group == "Vidio":
-            detail = client.get_channel_detail(ch.streamid)
-            attrs = detail.get("attributes", {})
-            if not ch.logo:
-                ch.logo = attrs.get("logo") or attrs.get("thumbnail") or ""
-            if ch.group == "Vidio":
-                ch.group = attrs.get("category") or attrs.get("genre") or "Vidio"
-            if not ch.name:
-                ch.name = attrs.get("name") or attrs.get("title") or ch.name
-        time.sleep(0.1)  # rate limit
+    animes = collect_animes(home)
+    if not animes:
+        print("❌ Tidak ada anime")
+        with open("debug.json", "w") as f:
+            json.dump(home, f, indent=2, ensure_ascii=False)
+        print("   [DEBUG] debug.json")
+        return
 
-    # Step 3: Fetch stream URLs
-    channels = fetch_stream_urls(channels, client)
+    print(f"[2/3] Scrape {len(animes)} anime...")
 
-    # Step 4: Generate M3U
-    generate_m3u(channels)
+    for a in animes:
+        a_id   = a["id"]
+        title  = a.get("title", "Unknown")
+        logo   = a.get("image_poster") or a.get("image_cover") or ""
+        genre  = a.get("genre", "Anime")
+        if "," in genre:
+            genre = genre.split(",")[0].strip()
 
-    log.info("Selesai! ✅")
-    log.info(f"⚠️  Catatan: URL stream expire setelah ~{STREAM_URL_EXPIRY} detik.")
-    log.info("   Jalankan ulang script ini secara berkala (cron) untuk update playlist.")
+        print(f"  {title}")
+        time.sleep(random.uniform(0.5, 2))
+
+        eps = fetch(f"{API}/episodes/{a_id}")
+        if eps is None:
+            continue
+
+        ep_list = extract_episodes(eps)
+        if not ep_list:
+            if count == 0 and not _exists("debug_eps.json"):
+                with open("debug_eps.json", "w") as f:
+                    json.dump(eps, f, indent=2, ensure_ascii=False)
+                print("    [DEBUG] debug_eps.json")
+            continue
+
+        print(f"    {len(ep_list)} eps")
+
+        for ep in ep_list:
+            if not isinstance(ep, dict):
+                continue
+            ep_id = ep.get("id")
+            num   = ep.get("number") or ep.get("episode") or "?"
+            if not ep_id:
+                continue
+
+            time.sleep(random.uniform(0.3, 1.5))
+
+            st = fetch(f"{API}/stream?id={a_id}&ep={ep_id}&server=hd-2&type=sub")
+            if st is None:
+                continue
+
+            if count == 0 and not _exists("debug_stream.json"):
+                with open("debug_stream.json", "w") as f:
+                    json.dump(st, f, indent=2, ensure_ascii=False)
+                print("    [DEBUG] debug_stream.json")
+
+            link = stream_url(st)
+            if not link:
+                continue
+
+            m3u += f'#EXTINF:-1'
+            if logo:
+                m3u += f' tvg-logo="{logo}"'
+            m3u += f' group-title="{genre}"'
+            m3u += f',{title} - EP {num}\n'
+            m3u += f'{link}\n'
+            count += 1
+
+    with open(OUTPUT, "w", encoding="utf-8") as f:
+        f.write(m3u)
+
+    print(f"[3/3] ✅ Selesai")
+    print(f"    File: {OUTPUT}")
+    print(f"    Entries: {count}")
+    print(f"    Size: {len(m3u):,} bytes")
+
+
+def _exists(path: str) -> bool:
+    import os
+    return os.path.exists(path)
 
 
 if __name__ == "__main__":
