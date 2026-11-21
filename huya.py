@@ -10,7 +10,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import re
 
 BASE = "https://365w.org"
-WORKER = "https://exsample.d-n-s.name"
+WORKER = "https://exsample.d-n-s.name/play.m3u8"
 UA = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36"
 HEADERS = {
     "User-Agent": UA,
