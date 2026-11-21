@@ -16,9 +16,8 @@ API = f"{BASE}/plananimek/api"
 ID_BASE = f"{BASE}/plananimek/id"
 REFERER = "https://sankanime.web.id/"
 ORIGIN = "https://sankanime.web.id"
-OUTPUT = "playlist.m3u8"
+OUTPUT = "playlist.m3u"
 
-# Proxy Residential
 PROXY_HOST = "23.26.71.145"
 PROXY_PORT = "5628"
 PROXY_USER = "voifrfqj"
@@ -50,11 +49,10 @@ HEADERS = {
 
 
 # ==============================
-# DECODE: _encsankaa → JSON
+# DECODE
 # ==============================
 
 def decode(data):
-    """Decode _encsankaa: base64url → zlib decompress → JSON"""
     if not isinstance(data, dict):
         return data
     enc = data.get("_encsankaa")
@@ -69,7 +67,7 @@ def decode(data):
 
 
 # ==============================
-# FETCH DIRECT (curl_cffi + proxy)
+# FETCH DIRECT
 # ==============================
 
 def fetch_direct(url: str):
@@ -91,7 +89,7 @@ def fetch_direct(url: str):
 
 
 # ==============================
-# FETCH PLAYWRIGHT (bypass CF + proxy)
+# FETCH PLAYWRIGHT
 # ==============================
 
 def fetch_playwright(url: str, timeout: int = 60):
@@ -100,10 +98,7 @@ def fetch_playwright(url: str, timeout: int = 60):
             browser = p.chromium.launch(
                 headless=False,
                 proxy=PROXY_PW,
-                args=[
-                    "--disable-blink-features=AutomationControlled",
-                    "--no-sandbox",
-                ],
+                args=["--disable-blink-features=AutomationControlled", "--no-sandbox"],
             )
             context = browser.new_context(
                 user_agent=UA,
@@ -115,7 +110,6 @@ def fetch_playwright(url: str, timeout: int = 60):
                     "Accept": "application/json, text/plain, */*",
                 },
             )
-            # Anti-detect
             context.add_init_script("""
                 Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
                 Object.defineProperty(navigator, 'plugins', { get: () => [1, 2, 3, 4, 5] });
@@ -123,7 +117,6 @@ def fetch_playwright(url: str, timeout: int = 60):
                 window.chrome = { runtime: {} };
             """)
             page = context.new_page()
-
             result = {}
 
             def handle_response(response):
@@ -138,7 +131,6 @@ def fetch_playwright(url: str, timeout: int = 60):
             page.on("response", handle_response)
             page.goto(url, wait_until="networkidle", timeout=timeout * 1000)
 
-            # Tunggu CF challenge
             for _ in range(20):
                 if page.title() not in ("Just a moment...", "Tunggu sebentar..."):
                     break
@@ -151,17 +143,15 @@ def fetch_playwright(url: str, timeout: int = 60):
                     return decode(json.loads(result["body"]))
                 except (json.JSONDecodeError, zlib.error) as e:
                     print(f"[PLAYWRIGHT] Decode error: {e}")
-                    print(f"[PLAYWRIGHT] Preview: {result['body'][:200]}")
                     return None
             return None
-
     except Exception as e:
         print(f"[PLAYWRIGHT] Error: {type(e).__name__}: {e}")
     return None
 
 
 # ==============================
-# FETCH: DIRECT → PLAYWRIGHT
+# FETCH
 # ==============================
 
 def fetch(url: str):
@@ -173,34 +163,63 @@ def fetch(url: str):
 
 
 # ==============================
-# EXTRACT HELPERS
+# EXTRACT LIST (FIXED)
 # ==============================
 
-def extract_list(data, keys=None):
-    """Cari list of dict di dalam response."""
-    if keys is None:
-        keys = ["results", "data", "items", "list", "animes", "episodes", "episode_list", "eps"]
+def extract_list(data):
+    """
+    Handle struktur:
+    - {"results": {"data": [...]}}  ← recently-updated
+    - {"data": [...]}
+    - {"data": {"data": [...]}}
+    - {"data": {"results": [...]}}
+    - [...]
+    """
     if isinstance(data, list):
         return data
-    if isinstance(data, dict):
-        for key in keys:
-            v = data.get(key)
+    if not isinstance(data, dict):
+        return []
+
+    # Level 1: cek "results" dulu (struktur recently-updated)
+    results = data.get("results")
+    if isinstance(results, dict):
+        for key in ["data", "list", "items", "results"]:
+            v = results.get(key)
             if isinstance(v, list) and v and isinstance(v[0], dict):
                 return v
-        # Fallback
-        for v in data.values():
-            if isinstance(v, list) and v and isinstance(v[0], dict) and "id" in v[0]:
+    elif isinstance(results, list) and results and isinstance(results[0], dict):
+        return results
+
+    # Level 2: cek "data"
+    d = data.get("data")
+    if isinstance(d, list) and d and isinstance(d[0], dict):
+        return d
+    if isinstance(d, dict):
+        for key in ["data", "results", "list", "items", "episodes", "episode_list", "animes"]:
+            v = d.get(key)
+            if isinstance(v, list) and v and isinstance(v[0], dict):
                 return v
+
+    # Fallback: cari list of dict dengan "id"
+    for v in data.values():
+        if isinstance(v, list) and v and isinstance(v[0], dict) and "id" in v[0]:
+            return v
+        if isinstance(v, dict):
+            for vv in v.values():
+                if isinstance(vv, list) and vv and isinstance(vv[0], dict) and "id" in vv[0]:
+                    return vv
     return []
 
 
+# ==============================
+# GET STREAM URL
+# ==============================
+
 def get_stream_url(stream_data):
-    """Ekstrak URL stream dari response."""
     if not stream_data:
         return ""
     data = stream_data.get("data", stream_data)
     if isinstance(data, dict):
-        # sources
         sources = data.get("sources", [])
         if isinstance(sources, list) and sources:
             raw = sources[0].get("file", "") if isinstance(sources[0], dict) else ""
@@ -210,17 +229,10 @@ def get_stream_url(stream_data):
             raw = sources.get("file", "")
             if raw:
                 return unwrap(raw)
-        # Direct keys
         for key in ["url", "file", "stream", "src", "source"]:
             v = data.get(key)
             if isinstance(v, str) and v.startswith("http"):
                 return unwrap(v)
-            if isinstance(v, dict):
-                for kk in ["url", "file", "src"]:
-                    vv = v.get(kk)
-                    if isinstance(vv, str) and vv.startswith("http"):
-                        return unwrap(vv)
-        # Deep search
         for v in data.values():
             if isinstance(v, str) and v.startswith("http"):
                 return unwrap(v)
@@ -254,7 +266,6 @@ def main():
     m3u_content = "#EXTM3U\n"
     count = 0
 
-    # --- Ambil daftar anime ---
     print("[1/3] Ambil daftar anime...")
     recent = fetch(f"{API}/recently-updated?page=1")
     if not recent:
@@ -269,16 +280,15 @@ def main():
 
     print(f"[+] Total Anime: {len(anime_list)}")
 
-    # --- Scrape tiap anime ---
     print("[2/3] Scrape...")
 
     for i, anime in enumerate(anime_list, 1):
-        a_id = anime.get("id") if isinstance(anime, dict) else anime
+        a_id = anime.get("id", "")
         if not a_id:
             continue
 
         title = anime.get("title") or anime.get("name") or "Unknown"
-        logo = anime.get("image_poster") or anime.get("image") or anime.get("thumbnail") or ""
+        logo = anime.get("poster") or anime.get("image_poster") or anime.get("image") or ""
         genre = anime.get("genre") or anime.get("category") or "Anime"
         if isinstance(genre, list):
             genre = genre[0] if genre else "Anime"
@@ -288,18 +298,23 @@ def main():
         print(f"  [{i}/{len(anime_list)}] {title}")
         delay(0.5, 1.5)
 
-        # Detail + Episodes
-        detail = fetch(f"{ID_BASE}/detail/{a_id}?page=0")
-        if not detail:
+        # Info anime
+        info = fetch(f"{API}/info?id={a_id}")
+        if not info:
             continue
 
-        eps = extract_list(detail)
-        if not eps:
+        # Episodes
+        eps_data = fetch(f"{API}/episodes/{a_id}")
+        if not eps_data:
             continue
 
-        print(f"    {len(eps)} eps")
+        ep_list = extract_list(eps_data)
+        if not ep_list:
+            continue
 
-        for ep in eps:
+        print(f"    {len(ep_list)} eps")
+
+        for ep in ep_list:
             if not isinstance(ep, dict):
                 continue
             ep_id = ep.get("id")
@@ -309,8 +324,7 @@ def main():
 
             delay(0.3, 1.0)
 
-            # Stream
-            stream = fetch(f"{ID_BASE}/stream/{ep_id}")
+            stream = fetch(f"{API}/stream?id={a_id}&ep={ep_id}&server=hd-2&type=sub")
             if not stream:
                 continue
 
@@ -323,7 +337,6 @@ def main():
             count += 1
             print(f"    ✓ EP {num}")
 
-    # --- Simpan ---
     with open(OUTPUT, "w", encoding="utf-8") as f:
         f.write(m3u_content)
 
