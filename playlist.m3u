@@ -1,223 +1,111 @@
 #EXTM3U
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Teuta Durres vs Laci
-https://exsample.d-n-s.name/play.m3u8/stream/26022203/teuta_durres_vs_laci
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Eupen vs Hasselt
-https://exsample.d-n-s.name/play.m3u8/stream/26021440/eupen_vs_hasselt
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Ararat Yerevan vs Cska Yerevan
-https://exsample.d-n-s.name/play.m3u8/stream/26021491/ararat_yerevan_vs_cska_yerevan
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Umm Al Hassam vs Al Shabab Manama
-https://exsample.d-n-s.name/play.m3u8/stream/26027192/umm_al_hassam_vs_al_shabab_manama
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Wsg Tirol vs Austria Lustenau
-https://exsample.d-n-s.name/play.m3u8/stream/26022158/wsg_tirol_vs_austria_lustenau
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Rfc Liege vs Anderlecht 2
-https://exsample.d-n-s.name/play.m3u8/stream/26021441/rfc_liege_vs_anderlecht_2
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Fc Rangers vs Sporting Escaldes
-https://exsample.d-n-s.name/play.m3u8/stream/26029620/fc_rangers_vs_sporting_escaldes
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Charleroi vs Sint Truidense
-https://exsample.d-n-s.name/play.m3u8/stream/26021381/charleroi_vs_sint_truidense
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Lask vs Hartberg
-https://exsample.d-n-s.name/play.m3u8/stream/26022157/lask_vs_hartberg
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Dynamo Brest vs Naftan Novopolotsk
-https://exsample.d-n-s.name/play.m3u8/stream/26021948/dynamo_brest_vs_naftan_novopolotsk
-#EXTINF:-1 group-title="Women · Superleague" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Zulte Waregem W vs Anderlecht W
-https://exsample.d-n-s.name/play.m3u8/stream/26041346/zulte_waregem_w_vs_anderlecht_w
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Zeljeznicar Sarajevo vs Borac Banja Luka
-https://exsample.d-n-s.name/play.m3u8/stream/26021442/zeljeznicar_sarajevo_vs_borac_banja_luka
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Radnik Bijeljina vs Velez Mostar
-https://exsample.d-n-s.name/play.m3u8/stream/26021443/radnik_bijeljina_vs_velez_mostar
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Spartak Varna vs Cherno More Varna
-https://exsample.d-n-s.name/play.m3u8/stream/26021872/spartak_varna_vs_cherno_more_varna
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Coquimbo Unido vs Everton Vm
-https://exsample.d-n-s.name/play.m3u8/stream/26021393/coquimbo_unido_vs_everton_vm
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Omonia Nicosia vs Apoel Nicosia
-https://exsample.d-n-s.name/play.m3u8/stream/26021383/omonia_nicosia_vs_apoel_nicosia
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Swansea vs West Bromwich
-https://exsample.d-n-s.name/play.m3u8/stream/26021373/swansea_vs_west_bromwich
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Lincoln City vs Wrexham
-https://exsample.d-n-s.name/play.m3u8/stream/26021374/lincoln_city_vs_wrexham
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Wolverhampton vs Charlton Athletic
-https://exsample.d-n-s.name/play.m3u8/stream/26021375/wolverhampton_vs_charlton_athletic
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Stoke City vs Birmingham City
-https://exsample.d-n-s.name/play.m3u8/stream/26021376/stoke_city_vs_birmingham_city
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",West Ham vs Preston North End
-https://exsample.d-n-s.name/play.m3u8/stream/26021377/west_ham_vs_preston_north_end
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Bolton Wanderers vs Portsmouth
-https://exsample.d-n-s.name/play.m3u8/stream/26021378/bolton_wanderers_vs_portsmouth
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Sheffield United vs Watford
-https://exsample.d-n-s.name/play.m3u8/stream/26021379/sheffield_united_vs_watford
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Middlesbrough vs Bristol City
-https://exsample.d-n-s.name/play.m3u8/stream/26021380/middlesbrough_vs_bristol_city
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Plymouth Argyle vs Peterborough United
-https://exsample.d-n-s.name/play.m3u8/stream/26021394/plymouth_argyle_vs_peterborough_united
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Notts County vs Stevenage
-https://exsample.d-n-s.name/play.m3u8/stream/26021396/notts_county_vs_stevenage
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Mansfield Town vs Milton Keynes Dons
-https://exsample.d-n-s.name/play.m3u8/stream/26021397/mansfield_town_vs_milton_keynes_dons
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Burton Albion vs Luton Town
-https://exsample.d-n-s.name/play.m3u8/stream/26021399/burton_albion_vs_luton_town
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Cambridge United vs Stockport County
-https://exsample.d-n-s.name/play.m3u8/stream/26021398/cambridge_united_vs_stockport_county
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Bradford City vs Doncaster Rovers
-https://exsample.d-n-s.name/play.m3u8/stream/26021400/bradford_city_vs_doncaster_rovers
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Leyton Orient vs Afc Wimbledon
-https://exsample.d-n-s.name/play.m3u8/stream/26021402/leyton_orient_vs_afc_wimbledon
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Huddersfield vs Leicester
-https://exsample.d-n-s.name/play.m3u8/stream/26021401/huddersfield_vs_leicester
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Tranmere Rovers vs Colchester United
-https://exsample.d-n-s.name/play.m3u8/stream/26021403/tranmere_rovers_vs_colchester_united
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Crawley Town vs Fleetwood Town
-https://exsample.d-n-s.name/play.m3u8/stream/26021404/crawley_town_vs_fleetwood_town
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Oldham vs Exeter City
-https://exsample.d-n-s.name/play.m3u8/stream/26021405/oldham_vs_exeter_city
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Barnet vs Port Vale
-https://exsample.d-n-s.name/play.m3u8/stream/26021406/barnet_vs_port_vale
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",York City vs Walsall
-https://exsample.d-n-s.name/play.m3u8/stream/26021407/york_city_vs_walsall
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Northampton Town vs Rochdale
-https://exsample.d-n-s.name/play.m3u8/stream/26021408/northampton_town_vs_rochdale
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Grimsby Town vs Rotherham
-https://exsample.d-n-s.name/play.m3u8/stream/26021409/grimsby_town_vs_rotherham
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Accrington Stanley vs Salford City
-https://exsample.d-n-s.name/play.m3u8/stream/26021410/accrington_stanley_vs_salford_city
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Chesterfield vs Shrewsbury Town
-https://exsample.d-n-s.name/play.m3u8/stream/26021411/chesterfield_vs_shrewsbury_town
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Cheltenham Town vs Bristol Rovers
-https://exsample.d-n-s.name/play.m3u8/stream/26021412/cheltenham_town_vs_bristol_rovers
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Kidderminster vs Fylde
-https://exsample.d-n-s.name/play.m3u8/stream/26021425/kidderminster_vs_fylde
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Barrow vs Carlisle United
-https://exsample.d-n-s.name/play.m3u8/stream/26021426/barrow_vs_carlisle_united
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Gateshead vs Hartlepool United
-https://exsample.d-n-s.name/play.m3u8/stream/26021427/gateshead_vs_hartlepool_united
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Halifax Town vs Woking
-https://exsample.d-n-s.name/play.m3u8/stream/26021428/halifax_town_vs_woking
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Worthing vs Harrogate Town
-https://exsample.d-n-s.name/play.m3u8/stream/26021429/worthing_vs_harrogate_town
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Sutton United vs Boston United
-https://exsample.d-n-s.name/play.m3u8/stream/26021430/sutton_united_vs_boston_united
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Wealdstone vs Hornchurch
-https://exsample.d-n-s.name/play.m3u8/stream/26021431/wealdstone_vs_hornchurch
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Aldershot Town vs Scunthorpe United
-https://exsample.d-n-s.name/play.m3u8/stream/26021432/aldershot_town_vs_scunthorpe_united
-#EXTINF:-1 group-title="Premier League · Season 26/27" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Aston Villa vs Sunderland
-https://exsample.d-n-s.name/play.m3u8/stream/26021368/aston_villa_vs_sunderland
-#EXTINF:-1 group-title="Premier League · Season 26/27" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Tottenham vs Ipswich Town
-https://exsample.d-n-s.name/play.m3u8/stream/26021369/tottenham_vs_ipswich_town
-#EXTINF:-1 group-title="Premier League · Season 26/27" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Bournemouth vs Nottingham Forest
-https://exsample.d-n-s.name/play.m3u8/stream/26021370/bournemouth_vs_nottingham_forest
-#EXTINF:-1 group-title="Premier League · Season 26/27" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Chelsea vs Leeds
-https://exsample.d-n-s.name/play.m3u8/stream/26021371/chelsea_vs_leeds
-#EXTINF:-1 group-title="Premier League · Season 26/27" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Coventry City vs Crystal Palace
-https://exsample.d-n-s.name/play.m3u8/stream/26021372/coventry_city_vs_crystal_palace
-#EXTINF:-1 group-title="Ligue 1 · Season 26/27" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Nice vs Psg
-https://exsample.d-n-s.name/play.m3u8/stream/26022410/nice_vs_psg
-#EXTINF:-1 group-title="Women · Division 1" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Lens W vs Montpellier W
-https://exsample.d-n-s.name/play.m3u8/stream/26021503/lens_w_vs_montpellier_w
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Sioni vs Gareji Sagarejo
-https://exsample.d-n-s.name/play.m3u8/stream/26038347/sioni_vs_gareji_sagarejo
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Gori vs Odishi
-https://exsample.d-n-s.name/play.m3u8/stream/26038348/gori_vs_odishi
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Dinamo Batumi vs Fc Rustavi
-https://exsample.d-n-s.name/play.m3u8/stream/26030058/dinamo_batumi_vs_fc_rustavi
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Alemannia Aachen vs Waldhof Mannheim
-https://exsample.d-n-s.name/play.m3u8/stream/26021952/alemannia_aachen_vs_waldhof_mannheim
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Glacis United vs St Joseph S
-https://exsample.d-n-s.name/play.m3u8/stream/26043159/glacis_united_vs_st_joseph_s
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Fehervar vs Aqvital Csakvar
-https://exsample.d-n-s.name/play.m3u8/stream/26022166/fehervar_vs_aqvital_csakvar
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Pecsi vs Sarbogard
-https://exsample.d-n-s.name/play.m3u8/stream/26029553/pecsi_vs_sarbogard
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Ujpest vs Kisvarda
-https://exsample.d-n-s.name/play.m3u8/stream/26021382/ujpest_vs_kisvarda
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Naft Maysan vs Mosul
-https://exsample.d-n-s.name/play.m3u8/stream/26021954/naft_maysan_vs_mosul
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Catanzaro vs Palermo
-https://exsample.d-n-s.name/play.m3u8/stream/26022411/catanzaro_vs_palermo
-#EXTINF:-1 group-title="Cup · Round of 16" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Al Faisaly Amman vs Al Ahli Amman
-https://exsample.d-n-s.name/play.m3u8/stream/26032415/al_faisaly_amman_vs_al_ahli_amman
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Real Bamako vs As Bakaridjan
-https://exsample.d-n-s.name/play.m3u8/stream/26030601/real_bamako_vs_as_bakaridjan
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Djoliba Ac vs Cs Bamako
-https://exsample.d-n-s.name/play.m3u8/stream/26030602/djoliba_ac_vs_cs_bamako
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Zurrieq vs Zebbug Rangers
-https://exsample.d-n-s.name/play.m3u8/stream/26037068/zurrieq_vs_zebbug_rangers
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Vittoriosa Stars vs Victoria Hotspurs
-https://exsample.d-n-s.name/play.m3u8/stream/26037069/vittoriosa_stars_vs_victoria_hotspurs
-#EXTINF:-1 group-title="Liga Premier · Seria A" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Correcaminos 2 vs Canoneros Marina
-https://exsample.d-n-s.name/play.m3u8/stream/26041348/correcaminos_2_vs_canoneros_marina
-#EXTINF:-1 group-title="U21 · Liga MX" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Pachuca U21 vs Toluca U21
-https://exsample.d-n-s.name/play.m3u8/stream/26030599/pachuca_u21_vs_toluca_u21
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Fc Eindhoven vs Waalwijk
-https://exsample.d-n-s.name/play.m3u8/stream/26021951/fc_eindhoven_vs_waalwijk
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Nec Nijmegen vs Psv
-https://exsample.d-n-s.name/play.m3u8/stream/26021949/nec_nijmegen_vs_psv
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",As Police Niger vs Gendarmerie Nationale
-https://exsample.d-n-s.name/play.m3u8/stream/26042966/as_police_niger_vs_gendarmerie_nationale
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Hamarkameratene vs Fredrikstad
-https://exsample.d-n-s.name/play.m3u8/stream/26021384/hamarkameratene_vs_fredrikstad
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Sandecja Nowy Sacz vs Znicz Pruszkow
-https://exsample.d-n-s.name/play.m3u8/stream/26027195/sandecja_nowy_sacz_vs_znicz_pruszkow
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Covilha vs Lusitano Evora
-https://exsample.d-n-s.name/play.m3u8/stream/26029619/covilha_vs_lusitano_evora
-#EXTINF:-1 group-title="Cup · 1/16" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Mafra vs Arouca
-https://exsample.d-n-s.name/play.m3u8/stream/26029550/mafra_vs_arouca
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Cfr Cluj vs Otelul Galati
-https://exsample.d-n-s.name/play.m3u8/stream/26021950/cfr_cluj_vs_otelul_galati
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Al Shahaniya vs Al Rayyan
-https://exsample.d-n-s.name/play.m3u8/stream/26021953/al_shahaniya_vs_al_rayyan
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Rayon Sports vs Apr Kigali
-https://exsample.d-n-s.name/play.m3u8/stream/26042810/rayon_sports_vs_apr_kigali
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Celtic vs Saint Mirren
-https://exsample.d-n-s.name/play.m3u8/stream/26021389/celtic_vs_saint_mirren
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Kilmarnock vs Aberdeen
-https://exsample.d-n-s.name/play.m3u8/stream/26021390/kilmarnock_vs_aberdeen
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Hibernian vs Dundee United
-https://exsample.d-n-s.name/play.m3u8/stream/26021391/hibernian_vs_dundee_united
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Ofk Beograd vs Novi Pazar
-https://exsample.d-n-s.name/play.m3u8/stream/26022159/ofk_beograd_vs_novi_pazar
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Falkirk vs St Johnstone
-https://exsample.d-n-s.name/play.m3u8/stream/26021392/falkirk_vs_st_johnstone
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Loznica vs Graficar Beograd
-https://exsample.d-n-s.name/play.m3u8/stream/26027194/loznica_vs_graficar_beograd
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Kamboi Eagles vs Wilberforce Strikers
-https://exsample.d-n-s.name/play.m3u8/stream/26031412/kamboi_eagles_vs_wilberforce_strikers
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Mighty Blackpool vs Western United
-https://exsample.d-n-s.name/play.m3u8/stream/26031413/mighty_blackpool_vs_western_united
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",East End Lions vs Bhantal
-https://exsample.d-n-s.name/play.m3u8/stream/26031414/east_end_lions_vs_bhantal
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Primorje vs Posavje Krsko
-https://exsample.d-n-s.name/play.m3u8/stream/26043394/primorje_vs_posavje_krsko
-#EXTINF:-1 group-title="Primera Division · Season 26/27" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Rayo Vallecano vs Valencia
-https://exsample.d-n-s.name/play.m3u8/stream/26021871/rayo_vallecano_vs_valencia
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Real Sociedad 2 vs Cadiz
-https://exsample.d-n-s.name/play.m3u8/stream/26021870/real_sociedad_2_vs_cadiz
-#EXTINF:-1 group-title="Segunda RFEF · Group 3" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Elche B vs Deportiva Minera
-https://exsample.d-n-s.name/play.m3u8/stream/26021502/elche_b_vs_deportiva_minera
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Atzeneta Ue vs Villarreal
-https://exsample.d-n-s.name/play.m3u8/stream/26037062/atzeneta_ue_vs_villarreal
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Santa Marta vs Palencia Cristo Atletico
-https://exsample.d-n-s.name/play.m3u8/stream/26037066/santa_marta_vs_palencia_cristo_atletico
-#EXTINF:-1 group-title="Women · Primera division" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Eibar W vs Atletico Madrid W
-https://exsample.d-n-s.name/play.m3u8/stream/26022170/eibar_w_vs_atletico_madrid_w
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Karpaty Lviv vs Zorya
-https://exsample.d-n-s.name/play.m3u8/stream/26022163/karpaty_lviv_vs_zorya
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Kocaelispor vs Fenerbahce
-https://exsample.d-n-s.name/play.m3u8/stream/26022156/kocaelispor_vs_fenerbahce
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Fatih Karagumruk vs Boluspor
-https://exsample.d-n-s.name/play.m3u8/stream/26022160/fatih_karagumruk_vs_boluspor
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Focusport vs Union Comoe
-https://exsample.d-n-s.name/play.m3u8/stream/26038385/focusport_vs_union_comoe
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Rahimo vs Asfa Yennenga
-https://exsample.d-n-s.name/play.m3u8/stream/26038386/rahimo_vs_asfa_yennenga
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Sporting Cascades vs Majestic
-https://exsample.d-n-s.name/play.m3u8/stream/26038387/sporting_cascades_vs_majestic
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Douanes Ouagadougou vs Vitesse
-https://exsample.d-n-s.name/play.m3u8/stream/26038388/douanes_ouagadougou_vs_vitesse
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Cffeb vs Asf Bobo Dioulasso
-https://exsample.d-n-s.name/play.m3u8/stream/26038389/cffeb_vs_asf_bobo_dioulasso
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Raith Rovers vs Partick Thistle
-https://exsample.d-n-s.name/play.m3u8/stream/26021436/raith_rovers_vs_partick_thistle
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Arbroath vs Stenhousemuir
-https://exsample.d-n-s.name/play.m3u8/stream/26021433/arbroath_vs_stenhousemuir
-#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Queen S Park vs Livingston
-https://exsample.d-n-s.name/play.m3u8/stream/26021435/queen_s_park_vs_livingston
+#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Seraing vs Patro Eisden Maasmechelen
+https://px.bhns.workers.dev/stream/26023681/seraing_vs_patro_eisden_maasmechelen
+#EXTINF:-1 group-title="Premier League · Round of 16" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Defensa Y Justicia vs Barracas Central
+https://px.bhns.workers.dev/stream/26023255/defensa_y_justicia_vs_barracas_central
+#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Partizani Tirana vs Vllaznia Shkoder
+https://px.bhns.workers.dev/stream/26023017/partizani_tirana_vs_vllaznia_shkoder
+#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Ordino vs Penya Encarnada
+https://px.bhns.workers.dev/stream/26029621/ordino_vs_penya_encarnada
+#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Sportivo Italiano vs Deportivo Armenio
+https://px.bhns.workers.dev/stream/26022720/sportivo_italiano_vs_deportivo_armenio
+#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Deportivo Camioneros vs Villa Dalmine
+https://px.bhns.workers.dev/stream/26022723/deportivo_camioneros_vs_villa_dalmine
+#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Newell S Old Boys vs Atletico Tostado
+https://px.bhns.workers.dev/stream/26035115/newell_s_old_boys_vs_atletico_tostado
+#EXTINF:-1 group-title="Women · Superleague" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Standard Liege W vs Brugge W
+https://px.bhns.workers.dev/stream/26043468/standard_liege_w_vs_brugge_w
+#EXTINF:-1 group-title="Women · Primera Division" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Newell S Old Boys W vs Union Santa Fe W
+https://px.bhns.workers.dev/stream/26030610/newell_s_old_boys_w_vs_union_santa_fe_w
+#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Gak vs Rapid Vienna
+https://px.bhns.workers.dev/stream/26023489/gak_vs_rapid_vienna
+#EXTINF:-1 group-title="Women · Superleague" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Gent W vs Genk W
+https://px.bhns.workers.dev/stream/26043469/gent_w_vs_genk_w
+#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Real Tomayapo vs Nacional Potosi
+https://px.bhns.workers.dev/stream/26023675/real_tomayapo_vs_nacional_potosi
+#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Niteroiense vs Goytacaz
+https://px.bhns.workers.dev/stream/26032417/niteroiense_vs_goytacaz
+#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Serrano Rj vs Duque De Caxias
+https://px.bhns.workers.dev/stream/26037746/serrano_rj_vs_duque_de_caxias
+#EXTINF:-1 group-title="Copa Parana · Final · Second leg" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Parana vs Athletico Paranaense 2
+https://px.bhns.workers.dev/stream/26044980/parana_vs_athletico_paranaense_2
+#EXTINF:-1 group-title="Goiano · 3th division" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Real Itumbiara vs Itumbiara
+https://px.bhns.workers.dev/stream/26043467/real_itumbiara_vs_itumbiara
+#EXTINF:-1 group-title="Mineiro · Division 3" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Paracatu vs Rio Branco Venda Nova
+https://px.bhns.workers.dev/stream/26032443/paracatu_vs_rio_branco_venda_nova
+#EXTINF:-1 group-title="Mineiro · Division 3" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Betim 2 vs Sao Joao Del Rei
+https://px.bhns.workers.dev/stream/26032444/betim_2_vs_sao_joao_del_rei
+#EXTINF:-1 group-title="Mineiro · Division 3" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Nacional Minas Gerais vs Novo Ipatinga
+https://px.bhns.workers.dev/stream/26032445/nacional_minas_gerais_vs_novo_ipatinga
+#EXTINF:-1 group-title="Potiguar · Division 2" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Visao Celeste vs Mossoro
+https://px.bhns.workers.dev/stream/26044982/visao_celeste_vs_mossoro
+#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Ad Frei Paulistano vs Carmopolis
+https://px.bhns.workers.dev/stream/26043459/ad_frei_paulistano_vs_carmopolis
+#EXTINF:-1 group-title="U20 · Carioca · Guanabara Cup · Final · First leg" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Botafogo Rj U20 vs Vasco Da Gama U20
+https://px.bhns.workers.dev/stream/26031415/botafogo_rj_u20_vs_vasco_da_gama_u20
+#EXTINF:-1 group-title="U20 · Copa Paranaense" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Fanatico U20 vs Nacional Parana U20
+https://px.bhns.workers.dev/stream/26039804/fanatico_u20_vs_nacional_parana_u20
+#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Patriotas U20 vs Gremio U20
+https://px.bhns.workers.dev/stream/26032447/patriotas_u20_vs_gremio_u20
+#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Yeovil Town vs Forest Green Rovers
+https://px.bhns.workers.dev/stream/26023013/yeovil_town_vs_forest_green_rovers
+#EXTINF:-1 group-title="Premier League · Season 26/27" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Newcastle vs Arsenal
+https://px.bhns.workers.dev/stream/26023008/newcastle_vs_arsenal
+#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Reims vs Saint Etienne
+https://px.bhns.workers.dev/stream/26023674/reims_vs_saint_etienne
+#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Tecnico Universitario vs Deportivo Cuenca
+https://px.bhns.workers.dev/stream/26023676/tecnico_universitario_vs_deportivo_cuenca
+#EXTINF:-1 group-title="Bundesliga · Season 26/27" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Schalke 04 vs Stuttgart
+https://px.bhns.workers.dev/stream/26023010/schalke_04_vs_stuttgart
+#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Kalamata vs Aek Athens
+https://px.bhns.workers.dev/stream/26023011/kalamata_vs_aek_athens
+#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Xelaju vs Suchitepequez
+https://px.bhns.workers.dev/stream/26039011/xelaju_vs_suchitepequez
+#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Ferencvaros vs Gyor Eto
+https://px.bhns.workers.dev/stream/26023012/ferencvaros_vs_gyor_eto
+#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Empoli vs Pisa
+https://px.bhns.workers.dev/stream/26023488/empoli_vs_pisa
+#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Derby Academie vs Foot Elite
+https://px.bhns.workers.dev/stream/26030608/derby_academie_vs_foot_elite
+#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Gorilas Bajio 2 vs Magos Union Deportiva
+https://px.bhns.workers.dev/stream/26043461/gorilas_bajio_2_vs_magos_union_deportiva
+#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Usfas Bamako vs Union Sportive Bougouba
+https://px.bhns.workers.dev/stream/26030609/usfas_bamako_vs_union_sportive_bougouba
+#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Sangre De Campeon vs Ciervos 2
+https://px.bhns.workers.dev/stream/26043472/sangre_de_campeon_vs_ciervos_2
+#EXTINF:-1 group-title="U19 · Liga MX" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Pachuca U19 vs Toluca U19
+https://px.bhns.workers.dev/stream/26043458/pachuca_u19_vs_toluca_u19
+#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Utrecht vs Cambuur
+https://px.bhns.workers.dev/stream/26023147/utrecht_vs_cambuur
+#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Feyenoord vs Excelsior
+https://px.bhns.workers.dev/stream/26023148/feyenoord_vs_excelsior
+#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Sporting Lagos vs Kwara United
+https://px.bhns.workers.dev/stream/26031395/sporting_lagos_vs_kwara_united
+#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Radomiak Radom vs Wisla Krakow
+https://px.bhns.workers.dev/stream/26023797/radomiak_radom_vs_wisla_krakow
+#EXTINF:-1 group-title="Cup · 1/16" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Maritimo vs Chaves
+https://px.bhns.workers.dev/stream/26029554/maritimo_vs_chaves
+#EXTINF:-1 group-title="Cup · 1/16" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Sporting Lisbon vs Uniao Serra
+https://px.bhns.workers.dev/stream/26030055/sporting_lisbon_vs_uniao_serra
+#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Alverca U19 vs Mafra U19
+https://px.bhns.workers.dev/stream/26030059/alverca_u19_vs_mafra_u19
+#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Dinamo Bucuresti vs Petrolul Ploiesti
+https://px.bhns.workers.dev/stream/26023490/dinamo_bucuresti_vs_petrolul_ploiesti
+#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Montrose vs Alloa Athletic
+https://px.bhns.workers.dev/stream/26023016/montrose_vs_alloa_athletic
+#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Dundee vs Hearts
+https://px.bhns.workers.dev/stream/26023149/dundee_vs_hearts
+#EXTINF:-1 group-title="Soccer" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Castellon vs Eldence
+https://px.bhns.workers.dev/stream/26023007/castellon_vs_eldence
+#EXTINF:-1 group-title="Primera Division · Season 26/27" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Sevilla vs Betis
+https://px.bhns.workers.dev/stream/26023009/sevilla_vs_betis
+#EXTINF:-1 group-title="Segunda Division RFEF · Group 5" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Real Madrid 3 vs Numancia
+https://px.bhns.workers.dev/stream/26023015/real_madrid_3_vs_numancia
+#EXTINF:-1 group-title="Segunda RFEF · Group 4" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Cd Estepona vs Sevilla Atletico
+https://px.bhns.workers.dev/stream/26023262/cd_estepona_vs_sevilla_atletico
+#EXTINF:-1 group-title="Women · Primera division" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Logrono W vs Alaves W
+https://px.bhns.workers.dev/stream/26023264/logrono_w_vs_alaves_w
+#EXTINF:-1 group-title="USL · Final" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",Sacramento Republic vs Louisville City
+https://px.bhns.workers.dev/stream/26022719/sacramento_republic_vs_louisville_city
+#EXTINF:-1 group-title="MLS · 1/8 финала · До 2-х побед" tvg-logo="https://365w.org/static/sport_symbols.svg#soccer",New England Revolution vs Philadelphia Union
+https://px.bhns.workers.dev/stream/26023673/new_england_revolution_vs_philadelphia_union
