@@ -19,8 +19,8 @@ OUTPUT = "playlist.m3u"
 
 MAX_ANIME = 30
 
-PROXY_HOST = "23.26.71.145"
-PROXY_PORT = "5628"
+PROXY_HOST = "64.137.10.153"
+PROXY_PORT = "5803"
 PROXY_USER = "voifrfqj"
 PROXY_PASS = "w50vbiwbunum"
 
