@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
-"""scrape.py — Generate playlist.m3u8 dari sankanime"""
+"""scrape.py — Generate playlist.m3u dari Sanka Vollerei (API Publik)"""
 
 import json
 import time
 import random
-import gzip
-import base64
-import urllib.parse
+import os
 import requests
 import urllib3
 
@@ -15,138 +13,110 @@ urllib3.disable_warnings()
 # ==============================
 # KONFIGURASI
 # ==============================
-API     = "https://www.sankavollerei.web.id/plananimek/api"
-ID_BASE = "https://www.sankavollerei.web.id/plananimek/id"
-REFERER = "https://sankanime.web.id/"
-ORIGIN  = "https://sankanime.web.id"
+BASE    = "https://www.sankavollerei.web.id/anime"
 UA      = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36"
 PROXY   = "voifrfqj:w50vbiwbunum@23.26.71.145:5628"
 OUTPUT  = "playlist.m3u"
+PAGE    = 3  # jumlah halaman ongoing yang di-scrape (1 halaman ≈ 20-30 anime)
 
 HEADERS = {
     "User-Agent": UA,
-    "Accept": "*/*",
+    "Accept": "application/json, */*",
     "Accept-Language": "id-ID,id;q=0.9",
-    "Origin": ORIGIN,
-    "Referer": REFERER,
-    "Sec-Fetch-Site": "cross-site",
-    "Sec-Fetch-Mode": "cors",
-    "Sec-Fetch-Dest": "empty",
-    "sec-ch-ua-platform": '"Android"',
-    "sec-ch-ua": '"Not-A.Brand";v="99", "Google Chrome";v="157", "Chromium";v="157"',
-    "sec-ch-ua-mobile": "?1",
 }
 
 # ==============================
-# DECODE
+# FETCH
 # ==============================
-def decode(body: str) -> dict | None:
-    raw = json.loads(body)
-    enc = raw.get("_encsankaa")
-    if not enc:
-        return raw
-    b64 = enc.replace('-', '+').replace('_', '/')
-    pad = 4 - (len(b64) % 4)
-    if pad != 4:
-        b64 += '=' * pad
-    dec = base64.b64decode(b64)
-    try:
-        out = gzip.decompress(dec)
-    except Exception:
-        import zlib
-        out = zlib.decompress(dec, -zlib.MAX_WBITS)
-    return json.loads(out)
-
-# ==============================
-# FETCH (Direct → Proxy)
-# ==============================
-def fetch(url: str) -> dict | None:
-    # 1. Direct
-    d = _curl(url, proxies=None)
-    if d is not None:
-        return d
-
-    # 2. Proxy
-    d = _curl(url, proxies={"http": f"http://{PROXY}", "https": f"http://{PROXY}"})
-    if d is not None:
-        return d
-
+def fetch(url: str, params: dict | None = None) -> dict | None:
+    for attempt, use_proxy in enumerate([False, True]):
+        try:
+            proxies = None
+            if use_proxy:
+                proxies = {"http": f"http://{PROXY}", "https": f"http://{PROXY}"}
+            r = requests.get(url, headers=HEADERS, params=params,
+                             timeout=20, proxies=proxies, verify=False)
+            if r.status_code != 200:
+                print(f"    [DEBUG] HTTP {r.status_code} | {url[:70]}")
+                continue
+            data = r.json()
+            if data.get("status") is False:
+                print(f"    [DEBUG] API error: {data.get('message', 'unknown')}")
+                continue
+            return data
+        except Exception as e:
+            print(f"    [DEBUG] {type(e).__name__}: {e}")
+            continue
     return None
 
 
-def _curl(url: str, proxies: dict | None) -> dict | None:
-    try:
-        r = requests.get(url, headers=HEADERS, timeout=20, proxies=proxies, verify=False)
-        if r.status_code != 200:
-            print(f"    [DEBUG] HTTP {r.status_code} | {url[:60]}")
-            return None
-        return decode(r.text)
-    except Exception as e:
-        print(f"    [DEBUG] {type(e).__name__}: {e}")
-        return None
-
 # ==============================
-# COLLECT ANIME
+# COLLECT ANIME (dari ongoing-anime)
 # ==============================
-def collect_animes(home: dict) -> list:
-    data = home.get("data", {}).get("data", home.get("data", {}))
-    if not isinstance(data, dict):
-        return []
-
+def collect_animes(pages: int) -> list[dict]:
+    animes = []
     seen = set()
-    result = []
-    for sec in ["hot", "new", "today", "popular", "waiting", "fyp"]:
-        items = data.get(sec, [])
+    for p in range(1, pages + 1):
+        print(f"  Halaman {p}/{pages}...")
+        d = fetch(f"{BASE}/ongoing-anime", params={"page": p})
+        if d is None:
+            break
+        items = d.get("data", [])
+        if isinstance(items, dict):
+            items = items.get("data", [])
         if not isinstance(items, list):
-            continue
+            break
         for a in items:
-            if not isinstance(a, dict):
+            slug = a.get("slug") or a.get("url")
+            if not slug or slug in seen:
                 continue
-            aid = a.get("id")
-            if not aid or aid in seen:
-                continue
-            seen.add(aid)
-            result.append(a)
-    return result
+            seen.add(slug)
+            animes.append(a)
+        time.sleep(random.uniform(1, 2))
+    return animes
+
 
 # ==============================
-# EXTRACT EPISODES
+# GET EPISODES dari detail anime
 # ==============================
-def extract_episodes(eps: dict) -> list:
-    if not isinstance(eps, dict):
+def get_episodes(slug: str) -> list[dict]:
+    d = fetch(f"{BASE}/anime/{slug}")
+    if d is None:
         return []
-    data = eps.get("data", eps)
-    if isinstance(data, list) and data and isinstance(data[0], dict):
-        return data
-    if isinstance(data, dict):
-        for v in data.values():
-            if isinstance(v, list) and v and isinstance(v[0], dict) and ("id" in v[0] or "number" in v[0]):
-                return v
+    data = d.get("data", {})
+    eps = data.get("episodes", [])
+    if isinstance(eps, list):
+        return eps
     return []
 
+
 # ==============================
-# EXTRACT STREAM URL
+# GET STREAM URL
 # ==============================
-def stream_url(d: dict | None) -> str:
-    if not d:
+def get_stream(episode_slug: str) -> str:
+    """Ambil server pertama dari episode, lalu ambil URL stream."""
+    d = fetch(f"{BASE}/episode/{episode_slug}")
+    if d is None:
         return ""
-    s = d.get("sources") or d.get("data", {}).get("sources")
-    if isinstance(s, list) and s:
-        f = s[0] if isinstance(s[0], dict) else s
-        u = f.get("file") or f.get("url") or f.get("src") or ""
-        if u:
-            return unwrap(u)
-    u = d.get("file") or d.get("url") or d.get("stream") or d.get("data", {}).get("file") or d.get("data", {}).get("url") or ""
-    if u:
-        return unwrap(u)
-    return ""
+    data = d.get("data", {})
+    servers = data.get("servers", [])
+    if not isinstance(servers, list) or not servers:
+        return ""
+    # Ambil server pertama (biasanya HD)
+    server = servers[0]
+    server_id = server.get("id") or server.get("server_id") or server.get("url")
+    if not server_id:
+        return ""
+    # Fetch stream
+    s = fetch(f"{BASE}/server/{server_id}")
+    if s is None:
+        return ""
+    sd = s.get("data", {})
+    url = sd.get("url") or sd.get("file") or sd.get("stream") or ""
+    if isinstance(url, dict):
+        url = url.get("url") or url.get("file") or ""
+    return url if isinstance(url, str) else ""
 
-
-def unwrap(u: str) -> str:
-    if "proxy?url=" in u:
-        pos = u.index("proxy?url=")
-        return urllib.parse.unquote(u[pos + 10:])
-    return u
 
 # ==============================
 # MAIN
@@ -155,69 +125,41 @@ def main():
     m3u = "#EXTM3U\n"
     count = 0
 
-    print("[1/3] Ambil data homepage...")
-    home = fetch(f"{ID_BASE}/home")
-    if home is None:
-        print("❌ Gagal ambil data (direct & proxy sama-sama gagal)")
-        print("   Cek: apakah IP kamu di-block Cloudflare?")
-        print("   Tes: buka https://sankanime.web.id di browser")
-        return
-
-    animes = collect_animes(home)
+    print("[1/3] Ambil daftar anime ongoing...")
+    animes = collect_animes(PAGE)
     if not animes:
-        print("❌ Tidak ada anime")
-        with open("debug.json", "w") as f:
-            json.dump(home, f, indent=2, ensure_ascii=False)
-        print("   [DEBUG] debug.json")
+        print("❌ Tidak ada anime ditemukan")
         return
 
     print(f"[2/3] Scrape {len(animes)} anime...")
 
-    for a in animes:
-        a_id   = a["id"]
-        title  = a.get("title", "Unknown")
-        logo   = a.get("image_poster") or a.get("image_cover") or ""
-        genre  = a.get("genre", "Anime")
-        if "," in genre:
-            genre = genre.split(",")[0].strip()
+    for i, a in enumerate(animes, 1):
+        slug  = a.get("slug") or a.get("url", "")
+        title = a.get("title", "Unknown")
+        logo  = a.get("image_poster") or a.get("image") or a.get("thumbnail") or ""
+        genre = a.get("genre", "Anime")
+        if isinstance(genre, list):
+            genre = genre[0] if genre else "Anime"
+        elif "," in str(genre):
+            genre = str(genre).split(",")[0].strip()
 
-        print(f"  {title}")
-        time.sleep(random.uniform(0.5, 2))
+        print(f"  [{i}/{len(animes)}] {title}")
+        time.sleep(random.uniform(0.5, 1.5))
 
-        eps = fetch(f"{API}/episodes/{a_id}")
-        if eps is None:
+        # Ambil episode list
+        eps = get_episodes(slug)
+        if not eps:
             continue
+        print(f"    {len(eps)} episodes")
 
-        ep_list = extract_episodes(eps)
-        if not ep_list:
-            if count == 0 and not _exists("debug_eps.json"):
-                with open("debug_eps.json", "w") as f:
-                    json.dump(eps, f, indent=2, ensure_ascii=False)
-                print("    [DEBUG] debug_eps.json")
-            continue
-
-        print(f"    {len(ep_list)} eps")
-
-        for ep in ep_list:
-            if not isinstance(ep, dict):
-                continue
-            ep_id = ep.get("id")
-            num   = ep.get("number") or ep.get("episode") or "?"
-            if not ep_id:
+        for ep in eps:
+            ep_slug = ep.get("slug") or ep.get("url") or ""
+            num     = ep.get("number") or ep.get("episode") or "?"
+            if not ep_slug:
                 continue
 
-            time.sleep(random.uniform(0.3, 1.5))
-
-            st = fetch(f"{API}/stream?id={a_id}&ep={ep_id}&server=hd-2&type=sub")
-            if st is None:
-                continue
-
-            if count == 0 and not _exists("debug_stream.json"):
-                with open("debug_stream.json", "w") as f:
-                    json.dump(st, f, indent=2, ensure_ascii=False)
-                print("    [DEBUG] debug_stream.json")
-
-            link = stream_url(st)
+            time.sleep(random.uniform(0.3, 1.0))
+            link = get_stream(ep_slug)
             if not link:
                 continue
 
@@ -236,11 +178,6 @@ def main():
     print(f"    File: {OUTPUT}")
     print(f"    Entries: {count}")
     print(f"    Size: {len(m3u):,} bytes")
-
-
-def _exists(path: str) -> bool:
-    import os
-    return os.path.exists(path)
 
 
 if __name__ == "__main__":
