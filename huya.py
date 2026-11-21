@@ -11,7 +11,6 @@ from curl_cffi import requests as cffi_requests
 # ==============================
 
 BASE = "https://www.sankavollerei.web.id"
-API_BASE = f"{BASE}/plananimek/api"
 ID_BASE = f"{BASE}/plananimek/id"
 REFERER = "https://sankanime.web.id/"
 ORIGIN = "https://sankanime.web.id"
@@ -63,10 +62,10 @@ def decode(data):
 
 
 # ==============================
-# FETCH (serial + retry)
+# FETCH (serial + retry + Playwright fallback)
 # ==============================
 
-def fetch(url: str, retries=3):
+def fetch(url: str, retries=2):
     for attempt in range(retries):
         try:
             r = cffi_requests.get(
@@ -78,13 +77,13 @@ def fetch(url: str, retries=3):
             )
             if r.status_code == 200:
                 return decode(r.json())
-            elif r.status_code == 429:
-                wait = (attempt + 1) * 5
-                print(f"  [429] Rate limited, tunggu {wait}s...")
-                time.sleep(wait)
-            elif r.status_code == 403:
-                wait = (attempt + 1) * 10
-                print(f"  [403] Blocked, tunggu {wait}s...")
+            elif r.status_code in (429, 403):
+                print(f"  [HTTP {r.status_code}] → Playwright fallback...")
+                d = fetch_playwright(url)
+                if d:
+                    return d
+                wait = (attempt + 1) * 15
+                print(f"  [403/429] PW gagal, tunggu {wait}s...")
                 time.sleep(wait)
             else:
                 print(f"  [ERR] HTTP {r.status_code} | {url[:60]}")
@@ -92,6 +91,38 @@ def fetch(url: str, retries=3):
         except Exception as e:
             print(f"  [ERR] {type(e).__name__}: {e}")
             time.sleep(3)
+    return None
+
+
+def fetch_playwright(url: str):
+    try:
+        from playwright.sync_api import sync_playwright
+        with sync_playwright() as p:
+            browser = p.chromium.launch(
+                headless=False,
+                proxy={"server": f"http://{PROXY_HOST}:{PROXY_PORT}", "username": PROXY_USER, "password": PROXY_PASS},
+                args=["--disable-blink-features=AutomationControlled", "--no-sandbox"],
+            )
+            ctx = browser.new_context(user_agent=UA, locale="id-ID")
+            ctx.add_init_script("Object.defineProperty(navigator,'webdriver',{get:()=>undefined})")
+            page = ctx.new_page()
+            result = {}
+            def on_resp(r):
+                if url in r.url:
+                    try: result["body"] = r.text()
+                    except: pass
+            page.on("response", on_resp)
+            page.goto(url, wait_until="domcontentloaded", timeout=30000)
+            for _ in range(15):
+                if page.title() not in ("Just a moment...", "Tunggu sebentar..."):
+                    break
+                time.sleep(2)
+            time.sleep(2)
+            browser.close()
+            if "body" in result:
+                return decode(json.loads(result["body"]))
+    except Exception as e:
+        print(f"  [PW] {type(e).__name__}: {e}")
     return None
 
 
@@ -192,22 +223,43 @@ def main():
     seen = set()
     all_animes = []
 
-    # --- Ambil recently updated (tanpa parameter page) ---
-    print("[1/3] Ambil recently updated...")
-    d = fetch(f"{API_BASE}/recently-updated")
+    # --- Ambil dari /id/home (endpoint homepage) ---
+    print("[1/3] Ambil data homepage...")
+    d = fetch(f"{ID_BASE}/home")
     if not d:
-        print("[X] Gagal ambil data.")
+        print("[X] Gagal ambil data homepage.")
         return
+
+    # Home bisa punya beberapa section (hot, new, popular, dll)
+    # Ekstrak semua list of dict yang punya "id"
     items = extract_list(d)
     if not items:
-        print("[X] List kosong.")
-        print(f"[DEBUG] {json.dumps(d, ensure_ascii=False)[:500]}")
-        return
+        # Fallback: coba ambil dari nested sections
+        data_inner = d.get("data", d)
+        if isinstance(data_inner, dict):
+            for section_key in ["hot", "new", "today", "popular", "waiting", "fyp", "movie", "data", "list", "items"]:
+                v = data_inner.get(section_key)
+                if isinstance(v, list) and v and isinstance(v[0], dict):
+                    items = v
+                    break
+                if isinstance(v, dict):
+                    for vv in v.values():
+                        if isinstance(vv, list) and vv and isinstance(vv[0], dict) and "id" in vv[0]:
+                            items = vv
+                            break
+                    if items:
+                        break
+        if not items:
+            print("[X] List kosong.")
+            print(f"[DEBUG] {json.dumps(d, ensure_ascii=False)[:800]}")
+            return
+
     for a in items:
         aid = a.get("id")
         if aid and aid not in seen:
             seen.add(aid)
             all_animes.append(a)
+
     print(f"    {len(items)} anime ditemukan")
 
     if len(all_animes) > MAX_ANIME:
