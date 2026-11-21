@@ -17,8 +17,7 @@ REFERER = "https://sankanime.web.id/"
 ORIGIN = "https://sankanime.web.id"
 OUTPUT = "playlist.m3u"
 
-MAX_ANIME = 10
-RECENT_PAGES = 2  # jumlah halaman recently-updated
+MAX_ANIME = 30
 
 PROXY_HOST = "23.26.71.145"
 PROXY_PORT = "5628"
@@ -193,26 +192,23 @@ def main():
     seen = set()
     all_animes = []
 
-    # --- Ambil recently updated ---
+    # --- Ambil recently updated (tanpa parameter page) ---
     print("[1/3] Ambil recently updated...")
-    for p in range(1, RECENT_PAGES + 1):
-        d = fetch(f"{API_BASE}/recently-updated?page={p}")
-        if not d:
-            break
-        items = extract_list(d)
-        if not items:
-            break
-        for a in items:
-            aid = a.get("id")
-            if aid and aid not in seen:
-                seen.add(aid)
-                all_animes.append(a)
-        print(f"    Halaman {p}: {len(items)} item")
-        time.sleep(1)
-
-    if not all_animes:
-        print("[X] Tidak ada anime.")
+    d = fetch(f"{API_BASE}/recently-updated")
+    if not d:
+        print("[X] Gagal ambil data.")
         return
+    items = extract_list(d)
+    if not items:
+        print("[X] List kosong.")
+        print(f"[DEBUG] {json.dumps(d, ensure_ascii=False)[:500]}")
+        return
+    for a in items:
+        aid = a.get("id")
+        if aid and aid not in seen:
+            seen.add(aid)
+            all_animes.append(a)
+    print(f"    {len(items)} anime ditemukan")
 
     if len(all_animes) > MAX_ANIME:
         all_animes = all_animes[:MAX_ANIME]
@@ -237,7 +233,7 @@ def main():
             genre = genre.split(",")[0].strip()
 
         print(f"  [{i}/{len(all_animes)}] {title}")
-        time.sleep(0.5)
+        time.sleep(0.8)
 
         detail = fetch(f"{ID_BASE}/detail/{a_id}?page=0")
         if not detail:
@@ -257,7 +253,7 @@ def main():
             if not ep_id:
                 continue
 
-            time.sleep(0.5)
+            time.sleep(0.8)
 
             stream = fetch(f"{ID_BASE}/stream/{ep_id}")
             if not stream:
