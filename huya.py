@@ -4,7 +4,6 @@ import random
 import zlib
 import base64
 from urllib.parse import unquote
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from curl_cffi import requests as cffi_requests
 
 # ==============================
@@ -12,14 +11,14 @@ from curl_cffi import requests as cffi_requests
 # ==============================
 
 BASE = "https://www.sankavollerei.web.id"
+API_BASE = f"{BASE}/plananimek/api"
 ID_BASE = f"{BASE}/plananimek/id"
 REFERER = "https://sankanime.web.id/"
 ORIGIN = "https://sankanime.web.id"
 OUTPUT = "playlist.m3u"
 
-GENRES = [23, 33]
-PAGES_PER_GENRE = 3
-MAX_WORKERS = 5
+MAX_ANIME = 10
+RECENT_PAGES = 2  # jumlah halaman recently-updated
 
 PROXY_HOST = "23.26.71.145"
 PROXY_PORT = "5628"
@@ -65,24 +64,35 @@ def decode(data):
 
 
 # ==============================
-# FETCH
+# FETCH (serial + retry)
 # ==============================
 
-def fetch(url: str):
-    try:
-        r = cffi_requests.get(
-            url,
-            impersonate="chrome",
-            headers=HEADERS,
-            proxies=PROXY_CURL,
-            timeout=20,
-        )
-        if r.status_code == 200:
-            return decode(r.json())
-        else:
-            print(f"  [ERR] HTTP {r.status_code} | {url[:60]}")
-    except Exception as e:
-        print(f"  [ERR] {type(e).__name__}: {e}")
+def fetch(url: str, retries=3):
+    for attempt in range(retries):
+        try:
+            r = cffi_requests.get(
+                url,
+                impersonate="chrome",
+                headers=HEADERS,
+                proxies=PROXY_CURL,
+                timeout=20,
+            )
+            if r.status_code == 200:
+                return decode(r.json())
+            elif r.status_code == 429:
+                wait = (attempt + 1) * 5
+                print(f"  [429] Rate limited, tunggu {wait}s...")
+                time.sleep(wait)
+            elif r.status_code == 403:
+                wait = (attempt + 1) * 10
+                print(f"  [403] Blocked, tunggu {wait}s...")
+                time.sleep(wait)
+            else:
+                print(f"  [ERR] HTTP {r.status_code} | {url[:60]}")
+                return None
+        except Exception as e:
+            print(f"  [ERR] {type(e).__name__}: {e}")
+            time.sleep(3)
     return None
 
 
@@ -96,7 +106,6 @@ def extract_list(data):
     if not isinstance(data, dict):
         return []
 
-    # Cek "results"
     results = data.get("results")
     if isinstance(results, dict):
         for key in ["data", "list", "items", "results", "movie"]:
@@ -106,17 +115,14 @@ def extract_list(data):
     elif isinstance(results, list) and results and isinstance(results[0], dict):
         return results
 
-    # Cek "data"
     d = data.get("data")
     if isinstance(d, list) and d and isinstance(d[0], dict):
         return d
     if isinstance(d, dict):
-        # Level 1
         for key in ["movie", "data", "results", "list", "items", "episodes", "episode_list"]:
             v = d.get(key)
             if isinstance(v, list) and v and isinstance(v[0], dict):
                 return v
-        # Level 2: data.data.movie
         inner = d.get("data")
         if isinstance(inner, dict):
             for key in ["movie", "data", "results", "list", "items", "episodes"]:
@@ -124,7 +130,6 @@ def extract_list(data):
                 if isinstance(v, list) and v and isinstance(v[0], dict):
                     return v
 
-    # Fallback: cari list of dict dengan "id" di level 1-3
     for v in data.values():
         if isinstance(v, list) and v and isinstance(v[0], dict) and "id" in v[0]:
             return v
@@ -179,56 +184,6 @@ def unwrap(u: str) -> str:
 
 
 # ==============================
-# WORKER: proses 1 anime
-# ==============================
-
-def process_anime(anime, index, total):
-    a_id = anime.get("id")
-    if not a_id:
-        return []
-
-    title = anime.get("title") or anime.get("name") or "Unknown"
-    logo = anime.get("poster") or anime.get("image_poster") or anime.get("image") or ""
-    genre = anime.get("genre") or anime.get("category") or "Anime"
-    if isinstance(genre, list):
-        genre = genre[0] if genre else "Anime"
-    elif isinstance(genre, str) and "," in genre:
-        genre = genre.split(",")[0].strip()
-
-    detail = fetch(f"{ID_BASE}/detail/{a_id}?page=0")
-    if not detail:
-        print(f"  [{index}/{total}] {title} → gagal detail")
-        return []
-
-    eps = extract_list(detail)
-    if not eps:
-        print(f"  [{index}/{total}] {title} → no episodes")
-        return []
-
-    entries = []
-    for ep in eps:
-        if not isinstance(ep, dict):
-            continue
-        ep_id = ep.get("id")
-        num = ep.get("number") or ep.get("episode") or "?"
-        if not ep_id:
-            continue
-
-        stream = fetch(f"{ID_BASE}/stream/{ep_id}")
-        if not stream:
-            continue
-
-        link = get_stream_url(stream)
-        if not link:
-            continue
-
-        entries.append((title, logo, genre, num, link))
-
-    print(f"  [{index}/{total}] {title} → {len(entries)} eps ✓")
-    return entries
-
-
-# ==============================
 # MAIN
 # ==============================
 
@@ -238,47 +193,84 @@ def main():
     seen = set()
     all_animes = []
 
-    print("[1/3] Kumpulkan anime...")
-    for gid in GENRES:
-        for p in range(PAGES_PER_GENRE):
-            d = fetch(f"{ID_BASE}/genre/{gid}?page={p}&sort=views&genre_in=")
-            if not d:
-                break
-            items = extract_list(d)
-            if not items:
-                break
-            for a in items:
-                aid = a.get("id")
-                if aid and aid not in seen:
-                    seen.add(aid)
-                    all_animes.append(a)
-            time.sleep(0.2)
+    # --- Ambil recently updated ---
+    print("[1/3] Ambil recently updated...")
+    for p in range(1, RECENT_PAGES + 1):
+        d = fetch(f"{API_BASE}/recently-updated?page={p}")
+        if not d:
+            break
+        items = extract_list(d)
+        if not items:
+            break
+        for a in items:
+            aid = a.get("id")
+            if aid and aid not in seen:
+                seen.add(aid)
+                all_animes.append(a)
+        print(f"    Halaman {p}: {len(items)} item")
+        time.sleep(1)
 
     if not all_animes:
         print("[X] Tidak ada anime.")
         return
 
-    print(f"[+] Total: {len(all_animes)} anime, {MAX_WORKERS} threads")
+    if len(all_animes) > MAX_ANIME:
+        all_animes = all_animes[:MAX_ANIME]
+        print(f"[i] Dibatasi ke {MAX_ANIME} anime")
 
-    print("[2/3] Scrape (paralel)...")
-    all_entries = []
+    print(f"[+] Total: {len(all_animes)} anime")
 
-    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
-        futures = {
-            pool.submit(process_anime, anime, i, len(all_animes)): anime
-            for i, anime in enumerate(all_animes, 1)
-        }
-        for future in as_completed(futures):
-            try:
-                entries = future.result()
-                all_entries.extend(entries)
-            except Exception as e:
-                print(f"  [ERR] {e}")
+    # --- Scrape ---
+    print("[2/3] Scrape...")
 
-    for title, logo, genre, num, link in all_entries:
-        m3u_content += f'#EXTINF:-1 tvg-logo="{logo}" group-title="{genre}",{title} - EP {num}\n'
-        m3u_content += f"{link}\n"
-        count += 1
+    for i, anime in enumerate(all_animes, 1):
+        a_id = anime.get("id")
+        if not a_id:
+            continue
+
+        title = anime.get("title") or anime.get("name") or "Unknown"
+        logo = anime.get("poster") or anime.get("image_poster") or anime.get("image") or ""
+        genre = anime.get("genre") or anime.get("category") or "Anime"
+        if isinstance(genre, list):
+            genre = genre[0] if genre else "Anime"
+        elif isinstance(genre, str) and "," in genre:
+            genre = genre.split(",")[0].strip()
+
+        print(f"  [{i}/{len(all_animes)}] {title}")
+        time.sleep(0.5)
+
+        detail = fetch(f"{ID_BASE}/detail/{a_id}?page=0")
+        if not detail:
+            continue
+
+        eps = extract_list(detail)
+        if not eps:
+            continue
+
+        print(f"    {len(eps)} eps")
+
+        for ep in eps:
+            if not isinstance(ep, dict):
+                continue
+            ep_id = ep.get("id")
+            num = ep.get("number") or ep.get("episode") or "?"
+            if not ep_id:
+                continue
+
+            time.sleep(0.5)
+
+            stream = fetch(f"{ID_BASE}/stream/{ep_id}")
+            if not stream:
+                continue
+
+            link = get_stream_url(stream)
+            if not link:
+                continue
+
+            m3u_content += f'#EXTINF:-1 tvg-logo="{logo}" group-title="{genre}",{title} - EP {num}\n'
+            m3u_content += f"{link}\n"
+            count += 1
+            print(f"    ✓ EP {num}")
 
     with open(OUTPUT, "w", encoding="utf-8") as f:
         f.write(m3u_content)
