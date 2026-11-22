@@ -38,6 +38,45 @@ jobs:
       - name: ✓
         run: xvfb-run python huya.py --debug 
 
+      - name: Install Google Chrome
+        run: |
+          sudo apt-get update
+
+          wget -q \
+            https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+
+          sudo apt install -y \
+            ./google-chrome-stable_current_amd64.deb
+
+          google-chrome --version
+
+      - name: Install ChromeDriver
+        run: |
+
+          CHROME_VERSION=$(google-chrome --version | awk '{print $3}')
+
+          CHROME_MAJOR=$(echo $CHROME_VERSION | cut -d '.' -f1)
+
+          echo "CHROME VERSION: $CHROME_VERSION"
+          echo "CHROME MAJOR: $CHROME_MAJOR"
+
+          DRIVER_VERSION=$(curl -s \
+            "https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_${CHROME_MAJOR}")
+
+          echo "DRIVER VERSION: $DRIVER_VERSION"
+
+          wget -q -O chromedriver.zip \
+            "https://storage.googleapis.com/chrome-for-testing-public/${DRIVER_VERSION}/linux64/chromedriver-linux64.zip"
+
+          unzip chromedriver.zip
+
+          sudo mv chromedriver-linux64/chromedriver \
+            /usr/local/bin/chromedriver
+
+          sudo chmod +x /usr/local/bin/chromedriver
+
+          chromedriver --version
+
       - name: ✓
         run: |
           git config --local user.email "eyayq@users.noreply.github.com"
