@@ -160,7 +160,7 @@ def build_m3u(matches: list[dict], streams_map: dict[str, list[str]]) -> str:
 
         lines.append(
             f'#EXTINF:-1 tvg-id="" tvg-name="{prefix}{m["home"]} vs {m["away"]}" '
-            f'tvg-logo="{logo}" group-title="{group}",{title}'
+            f'tvg-logo="{logo}" group-title="truct-tiep",{title}'
         )
         lines.append(f'#EXTVLCOPT: http-user-agent={UA}')
         lines.append(f'#EXTVLCOPT: http-referrer={BASE}/')
