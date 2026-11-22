@@ -1,32 +1,12 @@
 #EXTM3U
-#EXTINF:-1 tvg-id="" tvg-name="LIVE Estrella Roja vs Lobos UPNFM" tvg-logo="https://media2.16m50.tv/media/club/14714.webp" group-title="Honduras Primera Division",LIVE Estrella Roja vs Lobos UPNFM [65']
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tv.trackervsb.live/vi/3d/football?profile=lzmp1hd71udukm6&uuid=34kgmigvrz9feko
-#EXTINF:-1 tvg-id="" tvg-name="LIVE Puntarenas FC vs CS Herediano" tvg-logo="https://media2.16m50.tv/media/club/651.webp" group-title="Costa Rica Primera Division",LIVE Puntarenas FC vs CS Herediano [66']
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tv.trackervsb.live/vi/3d/football?profile=lzmp1hd71udukm6&uuid=xvkjoi8yngga879
-#EXTINF:-1 tvg-id="" tvg-name="LIVE Universidad de Concepcion vs Nublense" tvg-logo="https://media2.16m50.tv/media/club/7575.webp" group-title="CHI Liga de Primera",LIVE Universidad de Concepcion vs Nublense [66']
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tv.trackervsb.live/vi/3d/football?profile=lzmp1hd71udukm6&uuid=8lk2dir6mw2sz73
 #EXTINF:-1 tvg-id="" tvg-name="LIVE Oriente Petrolero vs Independiente Petrolero" tvg-logo="https://media2.16m50.tv/media/club/7197.webp" group-title="Bolivian Primera Division",LIVE Oriente Petrolero vs Independiente Petrolero [66']
 #EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
 #EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tv.trackervsb.live/vi/3d/football?profile=lzmp1hd71udukm6&uuid=527r3i3ey2vc47e
-#EXTINF:-1 tvg-id="" tvg-name="LIVE Jaguares Chiapas FC vs Los Cabos United" tvg-logo="https://media2.16m50.tv/media/club/5168.webp" group-title="MEX Liga Premier",LIVE Jaguares Chiapas FC vs Los Cabos United [Đang đá]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tv.trackervsb.live/vi/3d/football?profile=lzmp1hd71udukm6&uuid=zrkn6i4zyr4swql
+https://live.hztx2020.com/live/14559548_a33219be3e312376139d9067938be86e_autoChange.m3u8?auth_key=1795324671-0-0-24df6cb7f7f62bbe7199df180c14607f
 #EXTINF:-1 tvg-id="" tvg-name="LIVE Chapecoense - SC vs Cruzeiro - MG" tvg-logo="https://media2.16m50.tv/media/club/14332.webp" group-title="Brazilian Serie A",LIVE Chapecoense - SC vs Cruzeiro - MG [63']
 #EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
 #EXTVLCOPT: http-referrer=https://tructiep-hd.club/
 https://live3.hztx2020.com/live/13391555_4b73ab7b56ba87dc65d08a52b1fbb84a_autoChange.m3u8?auth_key=1795321775-0-0-f5041ec9e6ed5fd56f51d34a639de310
-#EXTINF:-1 tvg-id="" tvg-name="LIVE CD Copiapo S.A. vs CSD Antofagasta" tvg-logo="https://media2.16m50.tv/media/club/7577.webp" group-title="CHI Liga de Ascenso",LIVE CD Copiapo S.A. vs CSD Antofagasta [65']
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tv.trackervsb.live/vi/3d/football?profile=lzmp1hd71udukm6&uuid=69759ir39pjigk2
 #EXTINF:-1 tvg-id="" tvg-name="LIVE Gimnasia Jujuy vs Deportivo Madryn" tvg-logo="https://media2.16m50.tv/media/club/7252.webp" group-title="ARG Primera Nacional",LIVE Gimnasia Jujuy vs Deportivo Madryn [6']
 #EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
 #EXTVLCOPT: http-referrer=https://tructiep-hd.club/
@@ -35,215 +15,23 @@ https://live.hztx2020.com/live/14710624_fab994207a87b039caaf963faaa7a58e_autoCha
 #EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
 #EXTVLCOPT: http-referrer=https://tructiep-hd.club/
 https://live.hztx2020.com/live/14601162_32a6401d94464b851a3cedb3de978f27_autoChange.m3u8?auth_key=1795321776-0-0-f6a9144f935c47df2c7148702437e3eb
-#EXTINF:-1 tvg-id="" tvg-name="LIVE La Tribu de Cd. Juarez vs Real Refineros" tvg-logo="https://media2.16m50.tv/media/club/14953.webp" group-title="MEX Liga Premier",LIVE La Tribu de Cd. Juarez vs Real Refineros [7']
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tv.trackervsb.live/vi/3d/football?profile=lzmp1hd71udukm6&uuid=j374oi41mrvfgqo
 #EXTINF:-1 tvg-id="" tvg-name="LIVE Canterbury United Women vs West Coast Rangers Women" tvg-logo="https://media2.16m50.tv/media/club/24944.webp" group-title="New Zealand Women's Premier Division",LIVE Canterbury United Women vs West Coast Rangers Women [Đang đá]
 #EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
 #EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tv.trackervsb.live/vi/3d/football?profile=lzmp1hd71udukm6&uuid=xvkjoi29p3na879
-#EXTINF:-1 tvg-id="" tvg-name="LIVE Celaya FC vs Zacatepec" tvg-logo="https://media2.16m50.tv/media/club/8480.webp" group-title="MEX Liga Premier",LIVE Celaya FC vs Zacatepec [4']
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tv.trackervsb.live/vi/3d/football?profile=lzmp1hd71udukm6&uuid=vmqy9ivg1exbgk9
+https://live5.hztx2020.com/live/14438209_9506c58da93818ffbfe934daa05d66ac_autoChange.m3u8?auth_key=1795324670-0-0-3ec64f2dfbfb9490b4dcb441025b2d45
 #EXTINF:-1 tvg-id="" tvg-name="LIVE San Marcos FC vs Real Esteli" tvg-logo="https://media2.16m50.tv/media/club/2075.webp" group-title="Nicaragua Liga Primera",LIVE San Marcos FC vs Real Esteli [Đang đá]
 #EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
 #EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://live.hztx2020.com/live/2436077_f9af8be004fb459c6c81c5c7bab3e8db_autoChange.m3u8?auth_key=1795324032-0-0-85fee551a5ad2d9f04ae5bba5cb51663
+https://live.hztx2020.com/live/2436077_f9af8be004fb459c6c81c5c7bab3e8db_autoChange.m3u8?auth_key=1795324670-0-0-0f5545b1220f1723c8151637afe34c84
 #EXTINF:-1 tvg-id="" tvg-name="LIVE CF Wellington United Women vs Wellington Phoenix Reserves Women" tvg-logo="https://media2.16m50.tv/media/club/25237.webp" group-title="New Zealand Women's Premier Division",LIVE CF Wellington United Women vs Wellington Phoenix Reserves Women [Đang đá]
 #EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
 #EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tv.trackervsb.live/vi/3d/football?profile=lzmp1hd71udukm6&uuid=g6763ipv8m0ao7r
+https://live4.hztx2020.com/live/14438210_18b3589dae6d0fb85ee4126b74a08b73_autoChange.m3u8?auth_key=1795324670-0-0-f245c5cc7e670538bd365fc7d13ba54c
 #EXTINF:-1 tvg-id="" tvg-name="LIVE Fencibles United W vs Auckland United Women" tvg-logo="https://media2.16m50.tv/media/club/15032.webp" group-title="New Zealand Women's Premier Division",LIVE Fencibles United W vs Auckland United Women [1']
 #EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
 #EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tv.trackervsb.live/vi/3d/football?profile=lzmp1hd71udukm6&uuid=ezk96ijn1zmu1kn
-#EXTINF:-1 tvg-id="" tvg-name="LIVE Pumas U.N.A.M. vs Rayados de Monterrey" tvg-logo="https://media2.16m50.tv/media/club/1889.webp" group-title="Giải Vô địch Bóng đá Quốc gia Mexico",LIVE Pumas U.N.A.M. vs Rayados de Monterrey [1']
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tv.trackervsb.live/vi/3d/football?profile=lzmp1hd71udukm6&uuid=8lk2dirp45whz73
+https://live3.hztx2020.com/live/14438207_df4f629c7f533cfa7d564d803d9dce7f_autoChange.m3u8?auth_key=1795324670-0-0-e94a95e948d312a94d2ccff121f26ba9
 #EXTINF:-1 tvg-id="" tvg-name="Deportiva Once Caldas vs Atletico Nacional Medellin" tvg-logo="https://media2.16m50.tv/media/club/1869.webp" group-title="Categoría Primera A",Deportiva Once Caldas vs Atletico Nacional Medellin [08:15 WIB]
 #EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
 #EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://live.hztx2020.com/live/14700953_d5fd427dbdd5db1a2a6a33a9340dfb0c_autoChange.m3u8?auth_key=1795324029-0-0-dcbea82a030c843d4209e87fd463a7ee
-#EXTINF:-1 tvg-id="" tvg-name="CD Arabe Unido vs San Francisco FC" tvg-logo="https://media2.16m50.tv/media/club/7586.webp" group-title="Panamanian Liga de Futbol",CD Arabe Unido vs San Francisco FC [08:30 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tv.trackervsb.live/vi/3d/football?profile=lzmp1hd71udukm6&uuid=vrqwni0odwyu4qn
-#EXTINF:-1 tvg-id="" tvg-name="Dallas Trinity Women vs Lexington SC Women" tvg-logo="https://media2.16m50.tv/media/club/7085.webp" group-title="United States Women's Premier League",Dallas Trinity Women vs Lexington SC Women [08:30 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tv.trackervsb.live/vi/3d/football?profile=lzmp1hd71udukm6&uuid=vmqy9iyj4z9ugk9
-#EXTINF:-1 tvg-id="" tvg-name="Real Espana vs Marathon" tvg-logo="https://media2.16m50.tv/media/club/7374.webp" group-title="Honduras Primera Division",Real Espana vs Marathon [08:30 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tv.trackervsb.live/vi/3d/football?profile=lzmp1hd71udukm6&uuid=69759irwogwugk2
-#EXTINF:-1 tvg-id="" tvg-name="Atletico Morelia vs Club Atletico La Paz" tvg-logo="https://media2.16m50.tv/media/club/5237.webp" group-title="Mexico Ascenso MX",Atletico Morelia vs Club Atletico La Paz [09:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tv.trackervsb.live/vi/3d/football?profile=lzmp1hd71udukm6&uuid=xvkjoi29wyys879
-#EXTINF:-1 tvg-id="" tvg-name="Guastatoya vs C.S.D. Comunicaciones" tvg-logo="https://media2.16m50.tv/media/club/636.webp" group-title="Guatemala Liga Nacional",Guastatoya vs C.S.D. Comunicaciones [09:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tv.trackervsb.live/vi/3d/football?profile=lzmp1hd71udukm6&uuid=ndqmliwvn9parkv
-#EXTINF:-1 tvg-id="" tvg-name="Municipal Pérez Zeledón vs Deportivo Saprissa" tvg-logo="https://media2.16m50.tv/media/club/548.webp" group-title="Costa Rica Primera Division",Municipal Pérez Zeledón vs Deportivo Saprissa [09:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tv.trackervsb.live/vi/3d/football?profile=lzmp1hd71udukm6&uuid=m2q15izxwm1be76
-#EXTINF:-1 tvg-id="" tvg-name="Wellington Phoenix vs Macarthur FC" tvg-logo="https://media2.16m50.tv/media/club/1010.webp" group-title="Giải vô địch quốc gia Úc",Wellington Phoenix vs Macarthur FC [09:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tv.trackervsb.live/vi/3d/football?profile=lzmp1hd71udukm6&uuid=vmqy9iv1jvosgk9
-#EXTINF:-1 tvg-id="" tvg-name="Club Atletico Tijuana vs Club Sporting de Sonora" tvg-logo="https://media2.16m50.tv/media/club/5299.webp" group-title="Mexican TDP League",Club Atletico Tijuana vs Club Sporting de Sonora [10:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tv.trackervsb.live/vi/3d/football?profile=lzmp1hd71udukm6&uuid=vmqy9iyj42mhgk9
-#EXTINF:-1 tvg-id="" tvg-name="Kawasaki Frontale U21 vs Fagiano Okayama U21" tvg-logo="https://media2.16m50.tv/media/club/25165.webp" group-title="J.League U-21",Kawasaki Frontale U21 vs Fagiano Okayama U21 [10:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tv.trackervsb.live/vi/3d/football?profile=lzmp1hd71udukm6&uuid=m2q15i82lmese76
-#EXTINF:-1 tvg-id="" tvg-name="Eastern Suburbs AFC vs Wellington Phoenix Reserve" tvg-logo="https://media2.16m50.tv/media/club/10624.webp" group-title="New Zealand Football Championship",Eastern Suburbs AFC vs Wellington Phoenix Reserve [10:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tv.trackervsb.live/vi/3d/football?profile=lzmp1hd71udukm6&uuid=69759irw5d4ugk2
-#EXTINF:-1 tvg-id="" tvg-name="Tigres UANL vs Club America" tvg-logo="https://media2.16m50.tv/media/club/666.webp" group-title="Giải Vô địch Bóng đá Quốc gia Mexico",Tigres UANL vs Club America [10:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tv.trackervsb.live/vi/3d/football?profile=lzmp1hd71udukm6&uuid=63kv9iger4eax7e
-#EXTINF:-1 tvg-id="" tvg-name="Okinawa SV vs Maruyasu Okazaki" tvg-logo="https://media2.16m50.tv/media/club/10631.webp" group-title="Japanese Football League",Okinawa SV vs Maruyasu Okazaki [11:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tv.trackervsb.live/vi/3d/football?profile=lzmp1hd71udukm6&uuid=wv78xiv0vxosokr
-#EXTINF:-1 tvg-id="" tvg-name="Melbourne Victory Women vs Perth Glory Women" tvg-logo="https://media2.16m50.tv/media/club/8586.webp" group-title="Australia W-League",Melbourne Victory Women vs Perth Glory Women [11:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tv.trackervsb.live/vi/3d/football?profile=lzmp1hd71udukm6&uuid=wv78xiv01zmfokr
-#EXTINF:-1 tvg-id="" tvg-name="Yokogawa Musashino FC vs Honda FC" tvg-logo="https://media2.16m50.tv/media/club/10142.webp" group-title="Japanese Football League",Yokogawa Musashino FC vs Honda FC [11:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tv.trackervsb.live/vi/3d/football?profile=lzmp1hd71udukm6&uuid=ndkz6i3e3l8ixq3
-#EXTINF:-1 tvg-id="" tvg-name="Avondale FC vs APIA Leichhardt Tigers" tvg-logo="https://media2.16m50.tv/media/club/2201.webp" group-title="Aus Champ",Avondale FC vs APIA Leichhardt Tigers [11:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tv.trackervsb.live/vi/3d/football?profile=lzmp1hd71udukm6&uuid=ndkz6i2mer6uxq3
-#EXTINF:-1 tvg-id="" tvg-name="Iwate Grulla Morioka vs J-Lease FC" tvg-logo="https://media2.16m50.tv/media/club/10626.webp" group-title="Japanese Football League",Iwate Grulla Morioka vs J-Lease FC [11:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tv.trackervsb.live/vi/3d/football?profile=lzmp1hd71udukm6&uuid=jr7owip5prxcgq0
-#EXTINF:-1 tvg-id="" tvg-name="Adelaide City FC vs Broadmeadow Magic" tvg-logo="https://media2.16m50.tv/media/club/2393.webp" group-title="Aus Champ",Adelaide City FC vs Broadmeadow Magic [11:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tv.trackervsb.live/vi/3d/football?profile=lzmp1hd71udukm6&uuid=9gklzi5lzvmbm7x
-#EXTINF:-1 tvg-id="" tvg-name="Minebea Mitsumi FC vs Reinmeer Aomori FC" tvg-logo="https://media2.16m50.tv/media/club/10628.webp" group-title="Japanese Football League",Minebea Mitsumi FC vs Reinmeer Aomori FC [11:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tv.trackervsb.live/vi/3d/football?profile=lzmp1hd71udukm6&uuid=9gklzi1z140am7x
-#EXTINF:-1 tvg-id="" tvg-name="Roasso Kumamoto vs Giravanz Kitakyushu" tvg-logo="https://media2.16m50.tv/media/club/5433.webp" group-title="Japanese J3 League",Roasso Kumamoto vs Giravanz Kitakyushu [11:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tv.trackervsb.live/vi/3d/football?profile=lzmp1hd71udukm6&uuid=63kv9igegnjix7e
-#EXTINF:-1 tvg-id="" tvg-name="Veertien Mie vs Criacao Shinjuku" tvg-logo="https://media2.16m50.tv/media/club/6019.webp" group-title="Japanese Football League",Veertien Mie vs Criacao Shinjuku [11:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tv.trackervsb.live/vi/3d/football?profile=lzmp1hd71udukm6&uuid=527r3i4o4woc47e
-#EXTINF:-1 tvg-id="" tvg-name="Gamba Osaka U21 vs Tokyo Verdy U21" tvg-logo="https://media2.16m50.tv/media/club/26598.webp" group-title="J.League U-21",Gamba Osaka U21 vs Tokyo Verdy U21 [12:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tructiep-hd.club/watch_other/ef3899da6c0cf85bfbd01503a309ecb1/xem-truc-tiep-tran-dau-gamba-osaka-u21-vs-tokyo-verdy-u21-luc-1200-22112026-w1779060-c0
-#EXTINF:-1 tvg-id="" tvg-name="Vissel Kobe U21 vs FC Tokyo U21" tvg-logo="https://media2.16m50.tv/media/club/25786.webp" group-title="J.League U-21",Vissel Kobe U21 vs FC Tokyo U21 [12:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tructiep-hd.club/watch_other/ef3899da6c0cf85bfbd01503a309ecb1/xem-truc-tiep-tran-dau-vissel-kobe-u21-vs-fc-tokyo-u21-luc-1200-22112026-w1779061-c0
-#EXTINF:-1 tvg-id="" tvg-name="Tokushima Vortis vs Shonan Bellmare" tvg-logo="https://media2.16m50.tv/media/club/5397.webp" group-title="Japanese J2 League",Tokushima Vortis vs Shonan Bellmare [12:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tructiep-hd.club/watch_other/ef3899da6c0cf85bfbd01503a309ecb1/xem-truc-tiep-tran-dau-tokushima-vortis-vs-shonan-bellmare-luc-1200-22112026-w1779062-c0
-#EXTINF:-1 tvg-id="" tvg-name="Daegu Football Club vs Gimhae City" tvg-logo="https://media2.16m50.tv/media/club/2158.webp" group-title="Korean K League 2",Daegu Football Club vs Gimhae City [12:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tructiep-hd.club/watch_other/ef3899da6c0cf85bfbd01503a309ecb1/xem-truc-tiep-tran-dau-daegu-football-club-vs-gimhae-city-luc-1200-22112026-w1779063-c0
-#EXTINF:-1 tvg-id="" tvg-name="Jeonnam Dragons vs Ansan Greeners FC" tvg-logo="https://media2.16m50.tv/media/club/2159.webp" group-title="Korean K League 2",Jeonnam Dragons vs Ansan Greeners FC [12:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tructiep-hd.club/watch_other/ef3899da6c0cf85bfbd01503a309ecb1/xem-truc-tiep-tran-dau-jeonnam-dragons-vs-ansan-greeners-fc-luc-1200-22112026-w1779064-c0
-#EXTINF:-1 tvg-id="" tvg-name="Renofa Yamaguchi vs Reilac Shiga FC" tvg-logo="https://media2.16m50.tv/media/club/2004.webp" group-title="Japanese J3 League",Renofa Yamaguchi vs Reilac Shiga FC [12:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tructiep-hd.club/watch_other/ef3899da6c0cf85bfbd01503a309ecb1/xem-truc-tiep-tran-dau-renofa-yamaguchi-vs-reilac-shiga-fc-luc-1200-22112026-w1779065-c0
-#EXTINF:-1 tvg-id="" tvg-name="Bright Cerulean FC vs Sham Shui Po" tvg-logo="https://media2.16m50.tv/media/club/5503.webp" group-title="Chinese Hong Kong First Division",Bright Cerulean FC vs Sham Shui Po [12:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tructiep-hd.club/watch_other/ef3899da6c0cf85bfbd01503a309ecb1/xem-truc-tiep-tran-dau-bright-cerulean-fc-vs-sham-shui-po-luc-1200-22112026-w1779066-c0
-#EXTINF:-1 tvg-id="" tvg-name="Azul Claro Numazu vs Yokohama SCC" tvg-logo="https://media2.16m50.tv/media/club/10242.webp" group-title="Japanese Football League",Azul Claro Numazu vs Yokohama SCC [12:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tructiep-hd.club/watch_other/ef3899da6c0cf85bfbd01503a309ecb1/xem-truc-tiep-tran-dau-azul-claro-numazu-vs-yokohama-scc-luc-1200-22112026-w1779067-c0
-#EXTINF:-1 tvg-id="" tvg-name="Gimcheon Sangmu Football Club vs Jeju SK FC" tvg-logo="https://media2.16m50.tv/media/club/5404.webp" group-title="Giải K1 Hàn Quốc",Gimcheon Sangmu Football Club vs Jeju SK FC [12:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tructiep-hd.club/watch_other/ef3899da6c0cf85bfbd01503a309ecb1/xem-truc-tiep-tran-dau-gimcheon-sangmu-football-club-vs-jeju-sk-fc-luc-1200-22112026-w1767615-c0
-#EXTINF:-1 tvg-id="" tvg-name="Gwangju Football Club vs Bucheon FC 1995" tvg-logo="https://media2.16m50.tv/media/club/2162.webp" group-title="Giải K1 Hàn Quốc",Gwangju Football Club vs Bucheon FC 1995 [12:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tructiep-hd.club/watch_other/ef3899da6c0cf85bfbd01503a309ecb1/xem-truc-tiep-tran-dau-gwangju-football-club-vs-bucheon-fc-1995-luc-1200-22112026-w1767635-c0
-#EXTINF:-1 tvg-id="" tvg-name="Kln City District RSC vs Mutual Football Club" tvg-logo="https://media2.16m50.tv/media/club/10640.webp" group-title="Chinese Hong Kong Division 3",Kln City District RSC vs Mutual Football Club [12:30 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tructiep-hd.club/watch_other/ef3899da6c0cf85bfbd01503a309ecb1/xem-truc-tiep-tran-dau-kln-city-district-rsc-vs-mutual-football-club-luc-1230-22112026-w1779068-c0
-#EXTINF:-1 tvg-id="" tvg-name="Tung Sing vs Hoi King" tvg-logo="https://media2.16m50.tv/media/club/23828.webp" group-title="Chinese Hong Kong First Division",Tung Sing vs Hoi King [12:30 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tructiep-hd.club/watch_other/ef3899da6c0cf85bfbd01503a309ecb1/xem-truc-tiep-tran-dau-tung-sing-vs-hoi-king-luc-1230-22112026-w1779072-c0
-#EXTINF:-1 tvg-id="" tvg-name="Leaper MG vs Kui Tan" tvg-logo="https://media2.16m50.tv/media/club/10673.webp" group-title="Chinese Hong Kong First Division",Leaper MG vs Kui Tan [12:30 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tructiep-hd.club/watch_other/ef3899da6c0cf85bfbd01503a309ecb1/xem-truc-tiep-tran-dau-leaper-mg-vs-kui-tan-luc-1230-22112026-w1779077-c0
-#EXTINF:-1 tvg-id="" tvg-name="Jubilo Iwata U21 vs V-Varen Nagasaki U21" tvg-logo="https://media2.16m50.tv/media/club/25177.webp" group-title="J.League U-21",Jubilo Iwata U21 vs V-Varen Nagasaki U21 [13:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tructiep-hd.club/watch_other/ef3899da6c0cf85bfbd01503a309ecb1/xem-truc-tiep-tran-dau-jubilo-iwata-u21-vs-v-varen-nagasaki-u21-luc-1300-22112026-w1779083-c0
-#EXTINF:-1 tvg-id="" tvg-name="FC Osaka vs Kamatamare Sanuki" tvg-logo="https://media2.16m50.tv/media/club/1063.webp" group-title="Japanese J3 League",FC Osaka vs Kamatamare Sanuki [13:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tructiep-hd.club/watch_other/ef3899da6c0cf85bfbd01503a309ecb1/xem-truc-tiep-tran-dau-fc-osaka-vs-kamatamare-sanuki-luc-1300-22112026-w1779088-c0
-#EXTINF:-1 tvg-id="" tvg-name="Shanghai Women vs Zhejiang Hangzhou Women" tvg-logo="https://media2.16m50.tv/media/club/12850.webp" group-title="CFA Women's Super League",Shanghai Women vs Zhejiang Hangzhou Women [13:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tructiep-hd.club/watch_other/ef3899da6c0cf85bfbd01503a309ecb1/xem-truc-tiep-tran-dau-shanghai-women-vs-zhejiang-hangzhou-women-luc-1300-22112026-w1779089-c0
-#EXTINF:-1 tvg-id="" tvg-name="Beijing Women vs Wuhan Jiangda Women" tvg-logo="https://media2.16m50.tv/media/club/12848.webp" group-title="CFA Women's Super League",Beijing Women vs Wuhan Jiangda Women [13:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tructiep-hd.club/watch_other/ef3899da6c0cf85bfbd01503a309ecb1/xem-truc-tiep-tran-dau-beijing-women-vs-wuhan-jiangda-women-luc-1300-22112026-w1779090-c0
-#EXTINF:-1 tvg-id="" tvg-name="Jiangsu Yinhao Women vs Liaoning Shenbei Hefeng Women" tvg-logo="https://media2.16m50.tv/media/club/15202.webp" group-title="CFA Women's Super League",Jiangsu Yinhao Women vs Liaoning Shenbei Hefeng Women [13:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tructiep-hd.club/watch_other/ef3899da6c0cf85bfbd01503a309ecb1/xem-truc-tiep-tran-dau-jiangsu-yinhao-women-vs-liaoning-shenbei-hefeng-women-luc-1300-22112026-w1779091-c0
-#EXTINF:-1 tvg-id="" tvg-name="Sha Tin vs Eastern SC" tvg-logo="https://media2.16m50.tv/media/club/5505.webp" group-title="Chinese Hong Kong Premier League",Sha Tin vs Eastern SC [14:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tructiep-hd.club/watch_other/ef3899da6c0cf85bfbd01503a309ecb1/xem-truc-tiep-tran-dau-sha-tin-vs-eastern-sc-luc-1400-22112026-w1779092-c0
-#EXTINF:-1 tvg-id="" tvg-name="Konter vs Soar FC" tvg-logo="https://media2.16m50.tv/media/club/6417.webp" group-title="Chinese Hong Kong Division 3",Konter vs Soar FC [14:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tructiep-hd.club/watch_other/ef3899da6c0cf85bfbd01503a309ecb1/xem-truc-tiep-tran-dau-konter-vs-soar-fc-luc-1400-22112026-w1779093-c0
-#EXTINF:-1 tvg-id="" tvg-name="Wofoo Social Enterprises vs Central & Western District RSA" tvg-logo="https://media2.16m50.tv/media/club/24552.webp" group-title="Chinese Hong Kong First Division",Wofoo Social Enterprises vs Central & Western District RSA [14:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tructiep-hd.club/watch_other/ef3899da6c0cf85bfbd01503a309ecb1/xem-truc-tiep-tran-dau-wofoo-social-enterprises-vs-central--western-district-rsa-luc-1400-22112026-w1779094-c0
-#EXTINF:-1 tvg-id="" tvg-name="Addis Ababa Ketema Women vs Nifas Silk Lafto Sub City Women" tvg-logo="https://media2.16m50.tv/media/club/2813.webp" group-title="Ethiopia HL W",Addis Ababa Ketema Women vs Nifas Silk Lafto Sub City Women [14:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tructiep-hd.club/watch_other/ef3899da6c0cf85bfbd01503a309ecb1/xem-truc-tiep-tran-dau-addis-ababa-ketema-women-vs-nifas-silk-lafto-sub-city-women-luc-1400-22112026-w1779095-c0
-#EXTINF:-1 tvg-id="" tvg-name="Nejmet Al Sahra SC U20 vs Al Nejmeh U20" tvg-logo="https://media2.16m50.tv/media/club/27614.webp" group-title="LBN U20",Nejmet Al Sahra SC U20 vs Al Nejmeh U20 [14:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tructiep-hd.club/watch_other/ef3899da6c0cf85bfbd01503a309ecb1/xem-truc-tiep-tran-dau-nejmet-al-sahra-sc-u20-vs-al-nejmeh-u20-luc-1400-22112026-w1779096-c0
-#EXTINF:-1 tvg-id="" tvg-name="Valenzuela PB-Mendiola vs Kaya FC-Iloilo" tvg-logo="https://media2.16m50.tv/media/club/22873.webp" group-title="Philippines Football League",Valenzuela PB-Mendiola vs Kaya FC-Iloilo [14:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tructiep-hd.club/watch_other/ef3899da6c0cf85bfbd01503a309ecb1/xem-truc-tiep-tran-dau-valenzuela-pb-mendiola-vs-kaya-fc-iloilo-luc-1400-22112026-w1779098-c0
-#EXTINF:-1 tvg-id="" tvg-name="Taichung Futuro vs Hang Yuan Football Club" tvg-logo="https://media2.16m50.tv/media/club/5481.webp" group-title="Chinese Taipei Intercity League",Taichung Futuro vs Hang Yuan Football Club [14:00 WIB]
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://tructiep-hd.club/watch_other/ef3899da6c0cf85bfbd01503a309ecb1/xem-truc-tiep-tran-dau-taichung-futuro-vs-hang-yuan-football-club-luc-1400-22112026-w1779099-c0
+https://live.hztx2020.com/live/14700953_d5fd427dbdd5db1a2a6a33a9340dfb0c_autoChange.m3u8?auth_key=1795324670-0-0-5335af4c9c42cb7cb9d75a4c0df19447
