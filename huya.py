@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-Auto-scrape xoilacvck.tv → playlist.m3u
-Selenium + ThreadPoolExecutor
+
 """
 
 import re
 import time
 import os
+import datetime
 
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
@@ -19,7 +19,7 @@ from selenium.webdriver.chrome.service import Service
 
 BASE_URL = "https://xoilacvck.tv"
 IFRAME_REFERER = "https://xl365.domainkqt.cc/"
-MAX_WORKERS = 50
+MAX_WORKERS = 20
 
 LIVE_STATUSES = {"2", "3", "4", "5", "6", "51", "52", "53", "54"}
 
@@ -36,9 +36,15 @@ def setup_driver():
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-gpu")
     options.add_argument("--disable-extensions")
+    options.add_argument("--disable-software-rasterizer")
+    options.add_argument("--disable-features=Translate,CalculateNativeWinOcclusion")
     options.add_argument("--blink-settings=imagesEnabled=false")
+    options.add_argument("--js-flags=--max-old-space-size=128")
+    options.add_argument("--renderer-process-limit=1")
+    options.add_argument("--single-process")
+    options.add_argument("--memory-pressure-off")
 
-    options.page_load_strategy = "eager"
+    options.page_load_strategy = "none"
 
     options.add_argument(
         "--user-agent=Mozilla/5.0 "
@@ -52,7 +58,7 @@ def setup_driver():
     service = Service("/usr/local/bin/chromedriver")
 
     driver = webdriver.Chrome(service=service, options=options)
-    driver.set_page_load_timeout(30)
+    driver.set_page_load_timeout(60)
 
     return driver
 
@@ -106,37 +112,39 @@ def get_streams(driver):
         streams.update(extract_streams_from_html(html))
 
         # PERFORMANCE RESOURCE
-        resources = driver.execute_script("""
-            const resources = performance.getEntriesByType('resource');
-            return resources.map(r => r.name);
-        """)
-
-        for url in resources:
-            if any(x in url.lower() for x in [".m3u8", ".mpd", ".flv"]):
-                streams.add(url)
+        try:
+            resources = driver.execute_script("""
+                const resources = performance.getEntriesByType('resource');
+                return resources.map(r => r.name);
+            """)
+            for url in resources:
+                if any(x in url.lower() for x in [".m3u8", ".mpd", ".flv"]):
+                    streams.add(url)
+        except:
+            pass
 
         # IFRAMES
-        iframes = driver.find_elements("tag name", "iframe")
+        try:
+            iframes = driver.find_elements("tag name", "iframe")
+        except:
+            iframes = []
 
         for iframe in iframes:
             try:
                 src = iframe.get_attribute("src")
 
                 if src:
-                    # Skip template URLs (${...} belum di-render)
                     if "${" in src or "%7B" in src:
                         continue
 
                     if any(x in src.lower() for x in [".m3u8", ".mpd", ".flv"]):
                         streams.add(src)
 
-                    # Buka iframe
                     driver.switch_to.frame(iframe)
                     time.sleep(3)
                     iframe_html = driver.page_source
                     streams.update(extract_streams_from_html(iframe_html))
 
-                    # Performance entries di dalam iframe
                     try:
                         iframe_resources = driver.execute_script("""
                             const resources = performance.getEntriesByType('resource');
@@ -157,7 +165,11 @@ def get_streams(driver):
                     pass
 
         # INLINE SCRIPTS
-        scripts = driver.find_elements("tag name", "script")
+        try:
+            scripts = driver.find_elements("tag name", "script")
+        except:
+            scripts = []
+
         for script in scripts:
             try:
                 content = script.get_attribute("innerHTML")
@@ -245,7 +257,6 @@ def get_match_links():
             if not match_date and data_day and len(data_day) == 8:
                 match_date = f"{data_day[6:8]}/{data_day[4:6]}"
             if not match_time and data_runtime:
-                import datetime
                 dt = datetime.datetime.fromtimestamp(int(data_runtime))
                 match_time = dt.strftime("%H:%M")
 
@@ -269,7 +280,10 @@ def get_match_links():
         print(f"MATCH ERROR: {e}")
 
     finally:
-        driver.quit()
+        try:
+            driver.quit()
+        except:
+            pass
 
     return results
 
@@ -292,8 +306,12 @@ def scrape_match(match):
     print(f"{tag} CHECK -> {title}")
 
     try:
-        driver.get(url)
-        time.sleep(4)
+        try:
+            driver.get(url)
+        except Exception:
+            pass
+
+        time.sleep(5)
 
         soup = BeautifulSoup(driver.page_source, "html.parser")
 
@@ -355,7 +373,10 @@ def scrape_match(match):
         return []
 
     finally:
-        driver.quit()
+        try:
+            driver.quit()
+        except:
+            pass
 
 
 # =========================================================
@@ -429,23 +450,27 @@ if __name__ == "__main__":
 
     matches = get_match_links()
 
-    live_count = sum(1 for m in matches if m["is_live"])
-    print(f"MATCHES: {len(matches)} ({live_count} live, {len(matches)-live_count} upcoming)")
+    # Hanya scrape match live (upcoming pasti NO STREAM)
+    matches = [m for m in matches if m["is_live"]]
+
+    print(f"MATCHES: {len(matches)} (live only)")
     print(f"WORKERS: {MAX_WORKERS}\n")
 
-    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+    if not matches:
+        print("NO LIVE MATCHES")
+    else:
+        with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+            futures = [
+                executor.submit(scrape_match, match)
+                for match in matches
+            ]
 
-        futures = [
-            executor.submit(scrape_match, match)
-            for match in matches
-        ]
-
-        for future in as_completed(futures):
-            try:
-                data = future.result()
-                if data:
-                    all_data.extend(data)
-            except Exception as e:
-                print(f"THREAD ERROR: {e}")
+            for future in as_completed(futures):
+                try:
+                    data = future.result()
+                    if data:
+                        all_data.extend(data)
+                except Exception as e:
+                    print(f"THREAD ERROR: {e}")
 
     write_m3u(all_data)   
