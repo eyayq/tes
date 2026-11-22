@@ -6,7 +6,7 @@ Selenium + ThreadPoolExecutor
 
 import re
 import time
-import datetime
+import os
 
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
@@ -14,11 +14,12 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 
 
 BASE_URL = "https://xoilacvck.tv"
 IFRAME_REFERER = "https://xl365.domainkqt.cc/"
-MAX_WORKERS = 250
+MAX_WORKERS = 300
 
 LIVE_STATUSES = {"2", "3", "4", "5", "6", "51", "52", "53", "54"}
 
@@ -48,7 +49,9 @@ def setup_driver():
         "Safari/537.36"
     )
 
-    driver = webdriver.Chrome(options=options)
+    service = Service("/usr/local/bin/chromedriver")
+
+    driver = webdriver.Chrome(service=service, options=options)
     driver.set_page_load_timeout(30)
 
     return driver
@@ -120,17 +123,20 @@ def get_streams(driver):
                 src = iframe.get_attribute("src")
 
                 if src:
+                    # Skip template URLs (${...} belum di-render)
                     if "${" in src or "%7B" in src:
                         continue
 
                     if any(x in src.lower() for x in [".m3u8", ".mpd", ".flv"]):
                         streams.add(src)
 
+                    # Buka iframe
                     driver.switch_to.frame(iframe)
                     time.sleep(3)
                     iframe_html = driver.page_source
                     streams.update(extract_streams_from_html(iframe_html))
 
+                    # Performance entries di dalam iframe
                     try:
                         iframe_resources = driver.execute_script("""
                             const resources = performance.getEntriesByType('resource');
@@ -239,6 +245,7 @@ def get_match_links():
             if not match_date and data_day and len(data_day) == 8:
                 match_date = f"{data_day[6:8]}/{data_day[4:6]}"
             if not match_time and data_runtime:
+                import datetime
                 dt = datetime.datetime.fromtimestamp(int(data_runtime))
                 match_time = dt.strftime("%H:%M")
 
