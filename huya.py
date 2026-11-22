@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Auto-scrape xoilacvck.tv → playlist.m3u
-Playwright async + asyncio.Semaphore
+Playwright async + network interception
 """
 
 import re
@@ -25,6 +25,7 @@ HEADERS = {
 CONCURRENCY = 100
 LIVE_STATUSES = {"2", "3", "4", "5", "6", "51", "52", "53", "54"}
 MAX_RETRIES = 2
+DEBUG = True # set True untuk log semua request
 
 
 def fetch_page(url: str, retries: int = MAX_RETRIES) -> str:
@@ -108,37 +109,179 @@ def parse_matches(html: str) -> list:
     return matches
 
 
-async def get_stream_from_page(page, match_url: str) -> str | None:
-    """
-    Intercept network requests untuk menangkap stream URL (m3u8/flv/mp4)
-    dari cross-origin iframe.
-    """
-    stream_urls: list[str] = []
+def is_stream_url(url: str) -> bool:
+    """Cek apakah URL adalah stream (m3u8/flv/mp4/websocket stream)"""
+    url_lower = url.lower()
+    if any(ext in url_lower for ext in (".m3u8", ".flv", ".mp4", ".ts")):
+        return True
+    # WebSocket stream
+    if "wss://" in url_lower and ("stream" in url_lower or "flv" in url_lower or "play" in url_lower):
+        return True
+    return False
 
-    def on_request(request):
-        url = request.url
-        if any(ext in url.lower() for ext in (".m3u8", ".flv", ".mp4")):
-            if url not in stream_urls:
-                stream_urls.append(url)
 
-    page.on("request", on_request)
-
+async def get_iframe_src(page, match_url: str) -> str | None:
+    """Navigasi ke match page, ambil src iframe player."""
     try:
         await page.goto(match_url, wait_until="domcontentloaded", timeout=30000)
-
         try:
             await page.wait_for_selector("iframe", timeout=15000)
         except Exception:
             pass
+        await page.wait_for_timeout(3000)
 
-        await page.wait_for_timeout(5000)
+        iframes = await page.query_selector_all("iframe")
+        for iframe in iframes:
+            src = await iframe.get_attribute("src") or ""
+            if not src:
+                continue
+            full_src = urljoin(match_url, src)
+            # Prioritas: iframe yang mengandung kata player/stream/embed
+            if any(kw in full_src.lower() for kw in ("player", "stream", "embed", "xl365", "domainkqt")):
+                return full_src
+            # Fallback: iframe pertama yang bukan ads/social
+            if not any(kw in full_src.lower() for kw in ("facebook", "google", "youtube", "ads", "analytics")):
+                return full_src
 
+        # Coba cari di content
+        content = await page.content()
+        m = re.search(r'<iframe[^>]+src=["\']([^"\']+)["\']', content)
+        if m:
+            return urljoin(match_url, m.group(1))
+
+    except Exception as e:
+        if DEBUG:
+            print(f"    ⚠ get_iframe_src: {e}")
+
+    return None
+
+
+async def capture_stream_from_url(page, target_url: str, referer: str) -> str | None:
+    """
+    Navigasi langsung ke player URL dengan referer yang benar.
+    Intercept semua request untuk menangkap stream URL.
+    """
+    stream_urls: list[str] = []
+    ws_urls: list[str] = []
+
+    def on_request(request):
+        url = request.url
+        if DEBUG:
+            print(f"      [REQ] {request.method} {url[:100]}")
+        if is_stream_url(url):
+            if url not in stream_urls:
+                stream_urls.append(url)
+        # Tangkap WebSocket upgrade
+        if request.headers.get("upgrade", "").lower() == "websocket":
+            if url not in ws_urls:
+                ws_urls.append(url)
+
+    def on_websocket(ws):
+        url = ws.url
+        if DEBUG:
+            print(f"      [WS] {url[:100]}")
+        if url not in ws_urls:
+            ws_urls.append(url)
+
+    page.on("request", on_request)
+    page.on("websocket", on_websocket)
+
+    try:
+        # Navigasi langsung ke player URL dengan referer
+        await page.goto(target_url, wait_until="domcontentloaded", timeout=30000,
+                        referer=referer)
+
+        # Tunggu player load
+        await page.wait_for_timeout(8000)
+
+        # Kalau belum dapat, tunggu lebih lama
         if not stream_urls:
             try:
                 await page.wait_for_load_state("networkidle", timeout=10000)
             except Exception:
                 pass
-            await page.wait_for_timeout(3000)
+            await page.wait_for_timeout(5000)
+
+        # Cek response body untuk stream URL (player kadang embed di HTML)
+        if not stream_urls:
+            try:
+                content = await page.content()
+                m = re.search(r'(https?://[^\s"\'<>\\]+\.m3u8[^\s"\'<>\\]*)', content)
+                if m:
+                    stream_urls.append(m.group(1))
+                m = re.search(r'(https?://[^\s"\'<>\\]+\.flv[^\s"\'<>\\]*)', content)
+                if m:
+                    stream_urls.append(m.group(1))
+            except Exception:
+                pass
+
+        # Pilih prioritas: m3u8 > flv > mp4 > websocket
+        for url in stream_urls:
+            if ".m3u8" in url.lower():
+                return url
+        for url in stream_urls:
+            if ".flv" in url.lower():
+                return url
+        for url in stream_urls:
+            if ".mp4" in url.lower():
+                return url
+        if stream_urls:
+            return stream_urls[0]
+        if ws_urls:
+            return ws_urls[0]
+
+    except Exception as e:
+        if DEBUG:
+            print(f"    ⚠ capture_stream: {e}")
+    finally:
+        page.remove_listener("request", on_request)
+        page.remove_listener("websocket", on_websocket)
+
+    return None
+
+
+async def get_stream_from_page(context, match_url: str) -> str | None:
+    """
+    2-step approach:
+    1. Buka match page → ambil iframe src
+    2. Buka iframe src di page baru (dengan referer) → intercept stream
+    """
+    # Step 1: ambil iframe src
+    page1 = await context.new_page()
+    iframe_src = await get_iframe_src(page1, match_url)
+    await page1.close()
+
+    if not iframe_src:
+        # Fallback: coba intercept langsung di match page
+        page2 = await context.new_page()
+        stream = await capture_stream_from_url(page2, match_url, IFRAME_REFERER)
+        await page2.close()
+        return stream
+
+    # Step 2: buka iframe src langsung dengan referer
+    page2 = await context.new_page()
+    stream = await capture_stream_from_url(page2, iframe_src, IFRAME_REFERER)
+    await page2.close()
+
+    if stream:
+        return stream
+
+    # Step 3: fallback - intercept di match page dengan waktu lebih lama
+    page3 = await context.new_page()
+    stream_urls: list[str] = []
+
+    def on_req(request):
+        url = request.url
+        if DEBUG:
+            print(f"      [REQ-FB] {request.method} {url[:100]}")
+        if is_stream_url(url) and url not in stream_urls:
+            stream_urls.append(url)
+
+    page3.on("request", on_req)
+    try:
+        await page3.goto(match_url, wait_until="domcontentloaded", timeout=30000,
+                         referer=IFRAME_REFERER)
+        await page3.wait_for_timeout(15000)  # tunggu lebih lama
 
         if stream_urls:
             for url in stream_urls:
@@ -147,15 +290,13 @@ async def get_stream_from_page(page, match_url: str) -> str | None:
             for url in stream_urls:
                 if ".flv" in url.lower():
                     return url
-            for url in stream_urls:
-                if ".mp4" in url.lower():
-                    return url
             return stream_urls[0]
-
     except Exception as e:
-        print(f"    ⚠ {e}")
+        if DEBUG:
+            print(f"    ⚠ fallback: {e}")
     finally:
-        page.remove_listener("request", on_request)
+        page3.remove_listener("request", on_req)
+        await page3.close()
 
     return None
 
@@ -170,11 +311,9 @@ async def scrape_match(browser, match: dict, semaphore: asyncio.Semaphore) -> tu
                 "Origin": IFRAME_REFERER.rstrip("/"),
             },
         )
-        page = await context.new_page()
         try:
-            stream_url = await get_stream_from_page(page, match["full_url"])
+            stream_url = await get_stream_from_page(context, match["full_url"])
         finally:
-            await page.close()
             await context.close()
 
         if not stream_url:
@@ -234,13 +373,16 @@ async def main_async(matches: list):
 
 
 def main():
+    global DEBUG
     live_only = "--live-only" in sys.argv
+    debug_flag = "--debug" in sys.argv
+    DEBUG = debug_flag
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
 
     if args:
         slug = args[0].strip("/")
         if not slug:
-            print("⚠ Usage: python script.py [slug] [--live-only]")
+            print("⚠ Usage: python script.py [slug] [--live-only] [--debug]")
             return
         match_url = f"{BASE_URL}/truc-tiep/{slug}/"
         print(f"Scraping: {match_url}")
@@ -256,8 +398,7 @@ def main():
                         "Origin": IFRAME_REFERER.rstrip("/"),
                     },
                 )
-                page = await context.new_page()
-                stream_url = await get_stream_from_page(page, match_url)
+                stream_url = await get_stream_from_page(context, match_url)
                 await browser.close()
             return stream_url
 
@@ -283,7 +424,10 @@ def main():
 
     live_count = sum(1 for m in matches if m["is_live"])
     print(f"📋 Total: {len(matches)} matches ({live_count} live, {len(matches)-live_count} upcoming)")
-    print(f"⚡ Concurrency: {CONCURRENCY}x\n")
+    print(f"⚡ Concurrency: {CONCURRENCY}x")
+    if DEBUG:
+        print("🐛 DEBUG mode ON")
+    print()
 
     if not matches:
         print("⚠ No matches found.")
@@ -292,11 +436,16 @@ def main():
     results = asyncio.run(main_async(matches))
 
     entries = []
+    found_count = 0
     for match in matches:
         if match["fid"] in results:
             m, stream_url = results[match["fid"]]
+            is_real_stream = stream_url != m["full_url"]
+            if is_real_stream:
+                found_count += 1
             tag = "🔴" if m["is_live"] else "⏳"
-            print(f"  {tag} {m['title'][:50]} → {stream_url[:60]}")
+            stream_display = stream_url[:80] if is_real_stream else "NO STREAM"
+            print(f"  {tag} {m['title'][:50]} → {stream_display}")
             entries.append(build_m3u_entry(m, stream_url))
 
     with open("playlist.m3u", "w", encoding="utf-8") as f:
@@ -304,7 +453,7 @@ def main():
         for entry in entries:
             f.write(entry + "\n")
 
-    print(f"\n✅ Done! {len(entries)} entries → playlist.m3u")
+    print(f"\n✅ Done! {len(entries)} entries → playlist.m3u ({found_count} real streams)")
 
 
 if __name__ == "__main__":
