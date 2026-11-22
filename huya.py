@@ -9,7 +9,7 @@ import sys
 import time
 import asyncio
 import datetime
-from urllib.parse import urljoin
+from urllib.parse import urljoin, unquote
 
 from curl_cffi import requests as cffi_requests
 from bs4 import BeautifulSoup
@@ -24,8 +24,8 @@ HEADERS = {
 }
 CONCURRENCY = 100
 LIVE_STATUSES = {"2", "3", "4", "5", "6", "51", "52", "53", "54"}
-MAX_RETRIES = 3
-DEBUG = True 
+MAX_RETRIES = 2
+DEBUG = True
 
 
 def fetch_page(url: str, retries: int = MAX_RETRIES) -> str:
@@ -111,16 +111,21 @@ def parse_matches(html: str) -> list:
 
 def is_stream_url(url: str) -> bool:
     url_lower = url.lower()
-    if any(ext in url_lower for ext in (".m3u8", ".flv", ".mp4", ".ts")):
+    if any(ext in url_lower for ext in (".m3u8", ".flv", ".mp4")):
         return True
     if url_lower.startswith("wss://") and any(kw in url_lower for kw in ("stream", "flv", "play", "hls")):
         return True
     return False
 
 
+def is_template_url(url: str) -> bool:
+    """Cek apakah URL masih berupa template JS (belum di-render)"""
+    decoded = unquote(url)
+    return "${" in decoded or "%7B" in url or "$%7B" in url
+
+
 def pick_best_stream(stream_urls: list[str]) -> str | None:
-    """Prioritas: m3u8 > flv > mp4 > ts > lainnya"""
-    for priority in (".m3u8", ".flv", ".mp4", ".ts"):
+    for priority in (".m3u8", ".flv", ".mp4"):
         for url in stream_urls:
             if priority in url.lower():
                 return url
@@ -129,175 +134,232 @@ def pick_best_stream(stream_urls: list[str]) -> str | None:
 
 async def get_stream_from_context(context, match_url: str) -> str | None:
     """
-    Context-level interception:
-    1. Buka match page → ambil semua iframe src
-    2. Buka setiap iframe src di page baru
-    3. Context listener catch SEMUA request dari SEMUA frame
+    Strategy:
+    1. Intercept RESPONSE (bukan request) untuk menangkap API response
+       yang mengandung stream URL
+    2. Poll iframe src sampai template ${...} di-substitute
+    3. Evaluate JS untuk baca variable stream
     """
     stream_urls: list[str] = []
-    ws_urls: list[str] = []
-    all_requests: list[str] = []  # untuk debug
+    api_responses: list[str] = []
+    all_requests: list[str] = []
 
-    # === CONTEXT-LEVEL LISTENERS (catch semua frame) ===
-    def on_context_request(request):
-        url = request.url
+    # === INTERCEPT RESPONSE (ini kuncinya) ===
+    async def on_response(response):
+        url = response.url
         if DEBUG:
-            all_requests.append(f"{request.method} {url[:120]}")
+            all_requests.append(f"{response.status} {url[:120]}")
+
+        # Skip template URLs
+        if is_template_url(url):
+            return
+
+        # Cek URL langsung
         if is_stream_url(url):
             if url not in stream_urls:
                 stream_urls.append(url)
+            return
 
-    def on_context_websocket(ws):
-        if DEBUG:
-            print(f"      [WS] {ws.url[:120]}")
-        if ws.url not in ws_urls:
-            ws_urls.append(ws.url)
+        # Cek response body untuk stream URL
+        try:
+            content_type = response.headers.get("content-type", "")
+            if "json" in content_type or "javascript" in content_type or "text" in content_type:
+                body = await response.text()
+                # Cari stream URL di body
+                for m in re.finditer(r'(https?://[^\s"\'<>\\]+?\.(?:m3u8|flv|mp4)[^\s"\'<>\\]*)', body):
+                    if m.group(1) not in stream_urls:
+                        stream_urls.append(m.group(1))
+                # Cari pattern: "stream_url": "..." atau "random_stream_url": "..."
+                for m in re.finditer(r'["\'](?:stream_url|random_stream_url|video_url|play_url|hls_url|flv_url)["\']\s*:\s*["\'](https?://[^"\']+)["\']', body):
+                    if m.group(1) not in stream_urls:
+                        stream_urls.append(m.group(1))
+                # Simpan response untuk debug
+                if DEBUG and len(body) < 5000:
+                    api_responses.append(f"{url[:80]} → {body[:200]}")
+        except Exception:
+            pass
 
-    context.on("request", on_context_request)
-    context.on("websocket", on_context_websocket)
+    context.on("response", on_response)
 
     try:
-        # === STEP 1: Buka match page, kumpulkan semua iframe src ===
-        page1 = await context.new_page()
-        iframe_sources: list[str] = []
-
+        # === STEP 1: Buka match page, tunggu JS render ===
+        page = await context.new_page()
         try:
-            await page1.goto(match_url, wait_until="domcontentloaded", timeout=30000)
-            try:
-                await page1.wait_for_selector("iframe", timeout=10000)
-            except Exception:
-                pass
-            await page1.wait_for_timeout(3000)
+            await page.goto(match_url, wait_until="domcontentloaded", timeout=30000)
 
-            # Kumpulkan SEMUA iframe src (termasuk nested)
-            iframes = await page1.query_selector_all("iframe")
-            for iframe in iframes:
-                src = await iframe.get_attribute("src") or ""
-                if src:
+            # Tunggu JS render (iframe src berubah dari template ke URL aktual)
+            iframe_src = None
+            for attempt in range(10):  # max 30 detik
+                await page.wait_for_timeout(3000)
+
+                # Cek iframe src
+                iframes = await page.query_selector_all("iframe")
+                for iframe in iframes:
+                    src = await iframe.get_attribute("src") or ""
+                    if not src:
+                        continue
+                    if is_template_url(src):
+                        continue  # masih template, tunggu lagi
                     full_src = urljoin(match_url, src)
-                    if full_src not in iframe_sources:
-                        iframe_sources.append(full_src)
+                    if not any(kw in full_src.lower() for kw in ("facebook", "google", "youtube", "ads", "analytics")):
+                        iframe_src = full_src
+                        break
 
-            # Juga cek di HTML source
-            content = await page1.content()
-            for m in re.finditer(r'<iframe[^>]+src=["\']([^"\']+)["\']', content):
-                full_src = urljoin(match_url, m.group(1))
-                if full_src not in iframe_sources:
-                    iframe_sources.append(full_src)
+                if iframe_src:
+                    break
 
-        except Exception as e:
-            if DEBUG:
-                print(f"    ⚠ Step1: {e}")
-        finally:
-            await page1.close()
-
-        # === STEP 2: Buka setiap iframe src di page baru ===
-        for iframe_src in iframe_sources:
-            # Skip non-player iframes
-            if any(kw in iframe_src.lower() for kw in ("facebook", "google", "youtube", "ads", "analytics", "chat")):
-                continue
-
-            page2 = await context.new_page()
-            try:
-                await page2.goto(iframe_src, wait_until="domcontentloaded", timeout=20000)
-                # Tunggu player load stream
-                await page2.wait_for_timeout(8000)
-
-                # Kalau sudah dapat stream, stop
+                # Cek apakah sudah ada stream dari response interception
                 if stream_urls:
                     break
 
-                # Coba extract dari page content
-                try:
-                    content = await page2.content()
-                    for m in re.finditer(r'(https?://[^\s"\'<>\\]+?\.(?:m3u8|flv|mp4)[^\s"\'<>\\]*)', content):
-                        if m.group(1) not in stream_urls:
-                            stream_urls.append(m.group(1))
-                except Exception:
-                    pass
-
-                # Cek nested iframe di player page
-                nested_iframes = await page2.query_selector_all("iframe")
-                for ni in nested_iframes:
-                    src = await ni.get_attribute("src") or ""
-                    if src:
-                        full_src = urljoin(iframe_src, src)
-                        if is_stream_url(full_src) and full_src not in stream_urls:
-                            stream_urls.append(full_src)
-
-            except Exception as e:
+            # Kalau iframe src sudah di-render, navigasi ke sana
+            if iframe_src:
                 if DEBUG:
-                    print(f"    ⚠ Step2 ({iframe_src[:60]}): {e}")
+                    print(f"      [IFRAME] {iframe_src[:100]}")
+                # Tunggu stream load dari iframe
+                await page.wait_for_timeout(5000)
+
+            # === STEP 2: Evaluate JS untuk cari stream URL ===
+            if not stream_urls:
+                try:
+                    js_result = await page.evaluate("""
+                        () => {
+                            const results = [];
+
+                            // 1. Cari di global variables
+                            const keys = ['streamUrl', 'stream_url', 'videoUrl', 'video_url',
+                                          'hlsUrl', 'hls_url', 'flvUrl', 'flv_url',
+                                          'playUrl', 'play_url', 'random_stream_url',
+                                          'playerUrl', 'player_url', 'src'];
+                            for (const key of keys) {
+                                if (window[key] && typeof window[key] === 'string' &&
+                                    (window[key].includes('.m3u8') || window[key].includes('.flv') ||
+                                     window[key].includes('.mp4') || window[key].startsWith('http'))) {
+                                    results.push(window[key]);
+                                }
+                            }
+
+                            // 2. Cari di iframe src (sudah di-render)
+                            const iframes = document.querySelectorAll('iframe');
+                            for (const iframe of iframes) {
+                                const src = iframe.src || '';
+                                if (src && !src.includes('${') &&
+                                    (src.includes('.m3u8') || src.includes('.flv') ||
+                                     src.includes('.mp4') || src.includes('stream') ||
+                                     src.includes('player') || src.includes('xl365'))) {
+                                    results.push(src);
+                                }
+                            }
+
+                            // 3. Cari di data attributes
+                            const player = document.querySelector('[data-stream], [data-src], [data-url], [data-video]');
+                            if (player) {
+                                const src = player.dataset.stream || player.dataset.src ||
+                                          player.dataset.url || player.dataset.video;
+                                if (src) results.push(src);
+                            }
+
+                            // 4. Cari di performance entries
+                            const entries = performance.getEntriesByType('resource');
+                            for (const e of entries) {
+                                if (e.name.includes('.m3u8') || e.name.includes('.flv') ||
+                                    (e.name.includes('stream') && e.name.includes('xl365'))) {
+                                    results.push(e.name);
+                                }
+                            }
+
+                            // 5. Regex di entire HTML
+                            const html = document.documentElement.innerHTML;
+                            const matches = html.match(/https?:\\/\\/[^\\s"'<>]+?\\.(?:m3u8|flv|mp4)[^\\s"'<>]*/g);
+                            if (matches) results.push(...matches);
+
+                            // 6. Cari pattern xl365 atau domainkqt di HTML
+                            const domainMatches = html.match(/https?:\\/\\/[^\\s"'<>]*domainkqt[^\\s"'<>]*/g);
+                            if (domainMatches) results.push(...domainMatches);
+
+                            return results;
+                        }
+                    """)
+                    if js_result:
+                        for url in js_result:
+                            if url and not is_template_url(url) and url not in stream_urls:
+                                stream_urls.append(url)
+                except Exception as e:
+                    if DEBUG:
+                        print(f"      [JS EVAL] {e}")
+
+        except Exception as e:
+            if DEBUG:
+                print(f"    ⚠ Page load: {e}")
+        finally:
+            await page.close()
+
+        # === STEP 3: Kalau masih kosong, coba buka iframe src langsung ===
+        if not stream_urls:
+            # Ambil iframe src dari page (mungkin sudah di-render sekarang)
+            page2 = await context.new_page()
+            try:
+                await page2.goto(match_url, wait_until="domcontentloaded", timeout=30000)
+                await page2.wait_for_timeout(10000)
+
+                iframes = await page2.query_selector_all("iframe")
+                for iframe in iframes:
+                    src = await iframe.get_attribute("src") or ""
+                    if not src or is_template_url(src):
+                        continue
+                    full_src = urljoin(match_url, src)
+                    if any(kw in full_src.lower() for kw in ("facebook", "google", "youtube", "ads")):
+                        continue
+
+                    if DEBUG:
+                        print(f"      [IFRAME2] {full_src[:100]}")
+
+                    # Buka iframe src di page baru
+                    page3 = await context.new_page()
+                    try:
+                        await page3.goto(full_src, wait_until="domcontentloaded", timeout=20000)
+                        await page3.wait_for_timeout(8000)
+
+                        # Cek content
+                        try:
+                            content = await page3.content()
+                            for m in re.finditer(r'(https?://[^\s"\'<>\\]+?\.(?:m3u8|flv|mp4)[^\s"\'<>\\]*)', content):
+                                if m.group(1) not in stream_urls:
+                                    stream_urls.append(m.group(1))
+                        except Exception:
+                            pass
+                    except Exception:
+                        pass
+                    finally:
+                        await page3.close()
+
+                    if stream_urls:
+                        break
+            except Exception:
+                pass
             finally:
                 await page2.close()
 
+        # === DEBUG OUTPUT ===
+        if DEBUG:
+            if all_requests:
+                print(f"    [DEBUG] Requests ({len(all_requests)}):")
+                for r in all_requests[-20:]:
+                    print(f"      {r}")
+            if api_responses:
+                print(f"    [DEBUG] API responses:")
+                for r in api_responses[-10:]:
+                    print(f"      {r}")
             if stream_urls:
-                break
-
-        # === STEP 3: Kalau masih kosong, tunggu lebih lama di match page ===
-        if not stream_urls:
-            page3 = await context.new_page()
-            try:
-                await page3.goto(match_url, wait_until="domcontentloaded", timeout=30000)
-                await page3.wait_for_timeout(20000)  # tunggu 20 detik
-
-                # Evaluate JS untuk cari stream URL
-                try:
-                    js_stream = await page3.evaluate("""
-                        () => {
-                            // Cari di semua frame
-                            const frames = [window];
-                            for (let i = 0; i < window.frames.length; i++) {
-                                try { frames.push(window.frames[i]); } catch(e) {}
-                            }
-                            for (const f of frames) {
-                                try {
-                                    const html = f.document.documentElement.innerHTML;
-                                    const matches = html.match(/https?:\\/\\/[^\\s"'<>]+?\\.(?:m3u8|flv|mp4)[^\\s"'<>]*/g);
-                                    if (matches) return matches;
-                                } catch(e) {}
-                            }
-                            // Cek performance entries
-                            const entries = performance.getEntriesByType('resource');
-                            const streams = entries
-                                .filter(e => e.name.includes('.m3u8') || e.name.includes('.flv'))
-                                .map(e => e.name);
-                            if (streams.length) return streams;
-                            return null;
-                        }
-                    """)
-                    if js_stream:
-                        for url in js_stream:
-                            if url not in stream_urls:
-                                stream_urls.append(url)
-                except Exception:
-                    pass
-
-            except Exception as e:
-                if DEBUG:
-                    print(f"    ⚠ Step3: {e}")
-            finally:
-                await page3.close()
-
-        # === Hasil ===
-        if stream_urls:
-            return pick_best_stream(stream_urls)
-        if ws_urls:
-            return ws_urls[0]
-
-        if DEBUG and all_requests:
-            print(f"    [DEBUG] All requests ({len(all_requests)}):")
-            for r in all_requests[-30:]:
-                print(f"      {r}")
+                print(f"    [DEBUG] Stream URLs found: {stream_urls[:5]}")
 
     except Exception as e:
         if DEBUG:
             print(f"    ⚠ get_stream: {e}")
     finally:
-        context.remove_listener("request", on_context_request)
-        context.remove_listener("websocket", on_context_websocket)
+        context.remove_listener("response", on_response)
 
-    return None
+    return pick_best_stream(stream_urls)
 
 
 async def scrape_match(browser, match: dict, semaphore: asyncio.Semaphore) -> tuple:
