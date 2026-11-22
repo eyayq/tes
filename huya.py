@@ -7,7 +7,7 @@ import re, time
 BASE = "https://tructiep-hd.club"
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 WIB = timezone(timedelta(hours=7))
-MAX_WORKERS = 50  # jumlah thread paralel
+MAX_WORKERS = 10
 
 
 def get_matches(html: str) -> list[dict]:
@@ -75,7 +75,29 @@ def to_wib(time_str: str, is_live: bool) -> str:
     return time_str
 
 
+def extract_streams_from_html(html: str) -> list[str]:
+    """Ekstrak URL stream dari HTML (iframe + script fallback)."""
+    soup = BeautifulSoup(html, "html.parser")
+    streams = []
+
+    for iframe in soup.find_all("iframe"):
+        src = iframe.get("src", "") or iframe.get("data-src", "")
+        if src and not src.endswith((".js", ".css", ".png", ".gif")):
+            streams.append(src)
+
+    if not streams:
+        for s in soup.find_all("script"):
+            text = s.string or ""
+            for m in re.finditer(r'(https?://[^\s"\'<>]+\.(?:m3u8|mp4)[^\s"\'<>]*)', text):
+                streams.append(m.group(1))
+            for m in re.finditer(r'(?:streamUrl|playerUrl|videoUrl|embedUrl|file)\s*[:=]\s*["\']([^"\']+\.(?:m3u8|mp4)[^"\']*)["\']', text, re.I):
+                streams.append(m.group(1))
+
+    return streams
+
+
 def get_stream_url(slug: str) -> list[str]:
+    """Pass 1: halaman match → Pass 2: halaman embed (jika perlu)."""
     url = f"{BASE}/{slug}"
     try:
         r = cffi_requests.get(
@@ -88,25 +110,34 @@ def get_stream_url(slug: str) -> list[str]:
     except Exception:
         return []
 
-    soup = BeautifulSoup(r.text, "html.parser")
-    streams = []
+    streams = extract_streams_from_html(r.text)
 
-    for iframe in soup.find_all("iframe"):
-        src = iframe.get("src", "") or iframe.get("data-src", "")
-        if src:
-            streams.append(src)
+    # Filter false positive
+    streams = [s for s in streams if not s.endswith((".js", ".css", ".png", ".gif"))]
 
-    if not streams:
-        for s in soup.find_all("script"):
-            text = s.string or ""
-            for m in re.finditer(r'(https?://[^\s"\'<>]+\.(?:m3u8|mp4)[^\s"\'<>]*)', text):
-                streams.append(m.group(1))
-            for m in re.finditer(r'(?:streamUrl|playerUrl|videoUrl|embedUrl|src)\s*[:=]\s*["\']([^"\']+)["\']', text, re.I):
-                val = m.group(1)
-                if val.startswith("http"):
-                    streams.append(val)
+    # ✅ PASS 2: jika URL adalah halaman embed/intermediate
+    final_streams = []
+    for s in streams:
+        if "tructiep-hd.club/watch" in s or "trackervsb.live" in s:
+            try:
+                r2 = cffi_requests.get(
+                    s,
+                    headers={"Referer": BASE + "/"},
+                    impersonate="chrome",
+                    timeout=15,
+                )
+                r2.raise_for_status()
+                found = extract_streams_from_html(r2.text)
+                if found:
+                    final_streams.extend(found)
+                else:
+                    final_streams.append(s)  # fallback: simpan URL embed
+            except Exception:
+                final_streams.append(s)
+        else:
+            final_streams.append(s)
 
-    return streams
+    return final_streams
 
 
 def build_m3u(matches: list[dict], streams_map: dict[str, list[str]]) -> str:
@@ -118,11 +149,8 @@ def build_m3u(matches: list[dict], streams_map: dict[str, list[str]]) -> str:
             continue
 
         time_wib = to_wib(m["time_str"], m["is_live"])
-
-        # ✅ Tambahkan "LIVE " di awal title jika live
         prefix = "LIVE " if m["is_live"] else ""
         title = f"{prefix}{m['home']} vs {m['away']} [{time_wib}]"
-
         logo = m["home_logo"]
         group = m["league"]
         stream_url = streams[0]
@@ -145,7 +173,6 @@ if __name__ == "__main__":
     matches = get_matches(r.text)
     print(f"Total pertandingan: {len(matches)}\n")
 
-    # ✅ ThreadPoolExecutor untuk scrape paralel
     streams_map = {}
 
     def fetch(slug: str) -> tuple[str, list[str]]:
