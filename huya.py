@@ -7,7 +7,13 @@ import re, time
 BASE = "https://tructiep-hd.club"
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 WIB = timezone(timedelta(hours=7))
-MAX_WORKERS = 200
+MAX_WORKERS = 250
+
+VALID_STREAM = re.compile(r'\.(m3u8|flv|mp4|php)(\?|$)', re.I)
+
+
+def is_valid_stream(url: str) -> bool:
+    return bool(VALID_STREAM.search(url))
 
 
 def get_matches(html: str) -> list[dict]:
@@ -76,7 +82,6 @@ def to_wib(time_str: str, is_live: bool) -> str:
 
 
 def extract_streams_from_html(html: str) -> list[str]:
-    """Ekstrak URL stream dari HTML (iframe + script fallback)."""
     soup = BeautifulSoup(html, "html.parser")
     streams = []
 
@@ -88,16 +93,15 @@ def extract_streams_from_html(html: str) -> list[str]:
     if not streams:
         for s in soup.find_all("script"):
             text = s.string or ""
-            for m in re.finditer(r'(https?://[^\s"\'<>]+\.(?:m3u8|mp4)[^\s"\'<>]*)', text):
+            for m in re.finditer(r'(https?://[^\s"\'<>]+\.(?:m3u8|mp4|flv|php)[^\s"\'<>]*)', text):
                 streams.append(m.group(1))
-            for m in re.finditer(r'(?:streamUrl|playerUrl|videoUrl|embedUrl|file)\s*[:=]\s*["\']([^"\']+\.(?:m3u8|mp4)[^"\']*)["\']', text, re.I):
+            for m in re.finditer(r'(?:streamUrl|playerUrl|videoUrl|embedUrl|file)\s*[:=]\s*["\']([^"\']+\.(?:m3u8|mp4|flv|php)[^"\']*)["\']', text, re.I):
                 streams.append(m.group(1))
 
     return streams
 
 
 def get_stream_url(slug: str) -> list[str]:
-    """Pass 1: halaman match → Pass 2: halaman embed (jika perlu)."""
     url = f"{BASE}/{slug}"
     try:
         r = cffi_requests.get(
@@ -111,11 +115,8 @@ def get_stream_url(slug: str) -> list[str]:
         return []
 
     streams = extract_streams_from_html(r.text)
-
-    # Filter false positive
     streams = [s for s in streams if not s.endswith((".js", ".css", ".png", ".gif"))]
 
-    # ✅ PASS 2: jika URL adalah halaman embed/intermediate
     final_streams = []
     for s in streams:
         if "tructiep-hd.club/watch" in s or "trackervsb.live" in s:
@@ -131,13 +132,14 @@ def get_stream_url(slug: str) -> list[str]:
                 if found:
                     final_streams.extend(found)
                 else:
-                    final_streams.append(s)  # fallback: simpan URL embed
+                    final_streams.append(s)
             except Exception:
                 final_streams.append(s)
         else:
             final_streams.append(s)
 
-    return final_streams
+    # ✅ Filter: hanya m3u8, flv, mp4, php
+    return [s for s in final_streams if is_valid_stream(s)]
 
 
 def build_m3u(matches: list[dict], streams_map: dict[str, list[str]]) -> str:
@@ -145,6 +147,7 @@ def build_m3u(matches: list[dict], streams_map: dict[str, list[str]]) -> str:
 
     for m in matches:
         streams = streams_map.get(m["slug"], [])
+        streams = [s for s in streams if is_valid_stream(s)]
         if not streams:
             continue
 
@@ -195,4 +198,5 @@ if __name__ == "__main__":
     with open("playlist.m3u", "w", encoding="utf-8") as f:
         f.write(m3u_content)
 
-    print(f"\n✅ Tersimpan ke playlist.m3u ({len(streams_map)} stream)")   
+    valid_count = sum(1 for v in streams_map.values() if v)
+    print(f"\n✅ Tersimpan ke playlist.m3u ({valid_count} stream valid)")   
