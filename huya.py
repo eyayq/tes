@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
-Auto-scrape xoilacvck.tv → playlist.m3u
-Selenium + ThreadPoolExecutor
+✓
 """
 
 import re
@@ -18,9 +17,9 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 
 
-BASE_URL = "https://xoilacvck.tv"
+BASE_URL = "https://citizensnotpoliticians.org"
 IFRAME_REFERER = "https://xl365.domainkqt.cc/"
-MAX_WORKERS = 7
+MAX_WORKERS = 20
 
 LIVE_STATUSES = {"2", "3", "4", "5", "6", "51", "52", "53", "54"}
 
