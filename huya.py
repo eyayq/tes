@@ -19,7 +19,7 @@ from selenium.webdriver.chrome.service import Service
 
 BASE_URL = "https://xoilacvck.tv"
 IFRAME_REFERER = "https://xl365.domainkqt.cc/"
-MAX_WORKERS = 300
+MAX_WORKERS = 50
 
 LIVE_STATUSES = {"2", "3", "4", "5", "6", "51", "52", "53", "54"}
 
