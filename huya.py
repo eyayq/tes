@@ -1,19 +1,18 @@
 #!/usr/bin/env python3
 """
 Auto-scrape xoilacvck.tv → playlist.m3u
-Uses curl_cffi for homepage + Playwright for match pages (JS-rendered iframes)
+Playwright async + asyncio.Semaphore (5x/10x concurrent)
 """
 
 import re
 import sys
-import time
+import asyncio
 import datetime
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from urllib.parse import urljoin
 
 from curl_cffi import requests as cffi_requests
 from bs4 import BeautifulSoup
-from playwright.sync_api import sync_playwright
+from playwright.async_api import async_playwright
 
 BASE_URL = "https://xoilacvck.tv"
 HEADERS = {
@@ -21,7 +20,7 @@ HEADERS = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
     "Accept-Language": "vi-VN,vi;q=0.9,en;q=0.8",
 }
-MAX_WORKERS = 250
+CONCURRENCY = 250  # ← ubah ke 5 atau 10
 LIVE_STATUSES = {"2", "3", "4", "5", "6", "51", "52", "53", "54"}
 
 
@@ -93,24 +92,18 @@ def parse_matches(html: str) -> list:
     return matches
 
 
-def get_stream_playwright(page, match_url: str) -> str | None:
-    """
-    Use Playwright page to render match page and extract stream from iframe.
-    """
+async def get_stream_from_page(page, match_url: str) -> str | None:
     try:
-        page.goto(match_url, wait_until="domcontentloaded", timeout=30000)
-        # Wait for iframe to appear (JS renders it)
+        await page.goto(match_url, wait_until="domcontentloaded", timeout=30000)
         try:
-            page.wait_for_selector("iframe", timeout=10000)
+            await page.wait_for_selector("iframe", timeout=10000)
         except Exception:
             pass
-        # Extra wait for lazy-loaded iframes
-        page.wait_for_timeout(3000)
+        await page.wait_for_timeout(2000)
 
-        # Get all iframe srcs
-        iframes = page.query_selector_all("iframe")
+        iframes = await page.query_selector_all("iframe")
         for iframe in iframes:
-            src = iframe.get_attribute("src") or ""
+            src = await iframe.get_attribute("src") or ""
             if not src:
                 continue
             full_src = urljoin(match_url, src)
@@ -119,11 +112,10 @@ def get_stream_playwright(page, match_url: str) -> str | None:
                 return full_src
 
             if any(kw in full_src.lower() for kw in ("stream", "player", "embed", "hls", "video", "watch")):
-                # Navigate to iframe URL and look for m3u8
                 try:
-                    page.goto(full_src, wait_until="domcontentloaded", timeout=15000)
-                    page.wait_for_timeout(2000)
-                    content = page.content()
+                    await page.goto(full_src, wait_until="domcontentloaded", timeout=15000)
+                    await page.wait_for_timeout(2000)
+                    content = await page.content()
                     m = re.search(r'(https?://[^\s"\'<>\\]+\.m3u8[^\s"\'<>\\]*)', content)
                     if m:
                         return m.group(1)
@@ -131,40 +123,37 @@ def get_stream_playwright(page, match_url: str) -> str | None:
                     pass
                 return full_src
 
-        # Fallback: search page content for m3u8
-        content = page.content()
+        content = await page.content()
         m = re.search(r'(https?://[^\s"\'<>\\]+\.m3u8[^\s"\'<>\\]*)', content)
         if m:
             return m.group(1)
 
-        # Search for JSON stream data in scripts
-        scripts = page.query_selector_all("script")
-        for script in scripts:
-            text = script.inner_text()
+        for script in await page.query_selector_all("script"):
+            text = await script.inner_text()
             m = re.search(r'"(?:src|url|file|source|stream)"\s*:\s*"([^"]+\.m3u8[^"]*)"', text)
             if m:
                 return m.group(1)
 
     except Exception as e:
-        print(f"    ⚠ Playwright error: {e}")
+        print(f"    ⚠ {e}")
 
     return None
 
 
-def scrape_match_worker(browser, match: dict) -> tuple:
-    """Worker: create a page per thread, scrape, close."""
-    context = browser.new_context(
-        user_agent=HEADERS["User-Agent"],
-        locale="vi-VN",
-    )
-    page = context.new_page()
-    stream_url = get_stream_playwright(page, match["full_url"])
-    page.close()
-    context.close()
+async def scrape_match(browser, match: dict, semaphore: asyncio.Semaphore) -> tuple:
+    async with semaphore:
+        context = await browser.new_context(
+            user_agent=HEADERS["User-Agent"],
+            locale="vi-VN",
+        )
+        page = await context.new_page()
+        stream_url = await get_stream_from_page(page, match["full_url"])
+        await page.close()
+        await context.close()
 
-    if not stream_url:
-        stream_url = match["full_url"]
-    return (match, stream_url)
+        if not stream_url:
+            stream_url = match["full_url"]
+        return (match, stream_url)
 
 
 def build_m3u_entry(match: dict, stream_url: str) -> str:
@@ -189,6 +178,31 @@ def build_m3u_entry(match: dict, stream_url: str) -> str:
     return "\n".join(lines)
 
 
+async def main_async(matches: list):
+    semaphore = asyncio.Semaphore(CONCURRENCY)
+    results = {}
+    done_count = 0
+
+    async with async_playwright() as p:
+        browser = await p.chromium.launch(headless=True)
+
+        tasks = [scrape_match(browser, m, semaphore) for m in matches]
+
+        for coro in asyncio.as_completed(tasks):
+            try:
+                m, stream_url = await coro
+                results[m["fid"]] = (m, stream_url)
+            except Exception as e:
+                pass
+            done_count += 1
+            if done_count % 10 == 0 or done_count == len(matches):
+                print(f"  Progress: {done_count}/{len(matches)}")
+
+        await browser.close()
+
+    return results
+
+
 def main():
     if len(sys.argv) > 1:
         slug = sys.argv[1].strip("/")
@@ -197,14 +211,17 @@ def main():
             return
         match_url = f"{BASE_URL}/truc-tiep/{slug}/"
         print(f"Scraping: {match_url}")
-        with sync_playwright() as p:
-            browser = p.chromium.launch(headless=True)
-            context = browser.new_context(user_agent=HEADERS["User-Agent"], locale="vi-VN")
-            page = context.new_page()
-            stream_url = get_stream_playwright(page, match_url)
-            page.close()
-            context.close()
-            browser.close()
+
+        async def debug():
+            async with async_playwright() as p:
+                browser = await p.chromium.launch(headless=True)
+                context = await browser.new_context(user_agent=HEADERS["User-Agent"], locale="vi-VN")
+                page = await context.new_page()
+                stream_url = await get_stream_from_page(page, match_url)
+                await browser.close()
+            return stream_url
+
+        stream_url = asyncio.run(debug())
         print(f"  Stream: {stream_url or 'NOT FOUND'}")
         return
 
@@ -222,35 +239,22 @@ def main():
     matches = unique
 
     live_count = sum(1 for m in matches if m["is_live"])
-    print(f"📋 Total: {len(matches)} matches ({live_count} live, {len(matches)-live_count} upcoming)\n")
+    print(f"📋 Total: {len(matches)} matches ({live_count} live, {len(matches)-live_count} upcoming)")
+    print(f"⚡ Concurrency: {CONCURRENCY}x\n")
 
     if not matches:
         print("⚠ No matches found.")
         return
 
-    # Use Playwright with thread pool
-    results = {}
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-            futures = {executor.submit(scrape_match_worker, browser, m): m for m in matches}
-            for i, future in enumerate(as_completed(futures), 1):
-                match = futures[future]
-                try:
-                    m, stream_url = future.result()
-                    results[m["fid"]] = (m, stream_url)
-                    tag = "🔴" if m["is_live"] else "⏳"
-                    stream_short = stream_url[:70] + "..." if len(stream_url) > 70 else stream_url
-                    print(f"[{i:2d}/{len(matches)}] {tag} {m['title'][:45]:45s} → {stream_short}")
-                except Exception as e:
-                    print(f"[{i:2d}/{len(matches)}] ⚠ {e}")
-        browser.close()
+    results = asyncio.run(main_async(matches))
 
-    # Write playlist.m3u
+    # Write playlist.m3u (original order)
     entries = []
     for match in matches:
         if match["fid"] in results:
             m, stream_url = results[match["fid"]]
+            tag = "🔴" if m["is_live"] else "⏳"
+            print(f"  {tag} {m['title'][:50]} → {stream_url[:60]}")
             entries.append(build_m3u_entry(m, stream_url))
 
     with open("playlist.m3u", "w", encoding="utf-8") as f:
