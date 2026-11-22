@@ -1,6 +1,7 @@
 from curl_cffi import requests as cffi_requests
 from bs4 import BeautifulSoup
-import re, time
+from datetime import datetime, timedelta, timezone
+import re, time   
 
 BASE = "https://tructiep-hd.club"
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
