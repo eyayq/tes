@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-SportFusion IPTV Playlist Generator
+SportFusion IPTV Playlist Generator v2
 Workflow:
-  1. GET / → ambil cookies
-  2. GET /r/{sport} → parse jadwal (match list)
-  3. GET /u/{league}/{slug} → ekstrak URL stream (m3u8)
+  1. requests: GET / → cookies
+  2. requests: GET /r/{sport} → parse jadwal
+  3. playwright: GET /u/{league}/{slug} → intercept .m3u8 (JS obfuscated)
   4. Tulis playlist.m3u
 """
 
@@ -16,12 +16,14 @@ from urllib.parse import urljoin
 
 import requests
 from bs4 import BeautifulSoup
+from playwright.sync_api import sync_playwright, Browser
 
 # ─── Konfigurasi ───────────────────────────────────────────────
 BASE_URL = "https://sportsfusion.im"
 OUTPUT_FILE = "playlist.m3u"
-DELAY_BETWEEN_REQUESTS = 1.5
-TIMEOUT = 15
+DELAY_BETWEEN_REQUESTS = 1.0
+TIMEOUT = 20
+PLAYER_WAIT_MS = 8000  # tunggu player load (ms)
 
 SPORTS = [
     "football", "basketball", "american-football", "baseball",
@@ -44,7 +46,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 log = logging.getLogger(__name__)
 
 
-# ─── Session ────────────────────────────────────────────────────
+# ─── Session (requests) ────────────────────────────────────────
 def create_session() -> requests.Session:
     s = requests.Session()
     s.headers.update(HEADERS)
@@ -55,17 +57,15 @@ def create_session() -> requests.Session:
     return s
 
 
-# ─── Step 1: Scrape Jadwal per Kategori ────────────────────────
+# ─── Step 1: Scrape Jadwal ─────────────────────────────────────
 def scrape_schedule(session: requests.Session, sport: str) -> list[dict]:
     url = f"{BASE_URL}/r/{sport}"
     log.info("Scrape jadwal: %s", url)
     resp = session.get(url, timeout=TIMEOUT)
     resp.raise_for_status()
 
-    # Debug: pastikan HTML valid
     if "vi-sch-item" not in resp.text:
-        log.warning("  ⚠ HTML tidak mengandung 'vi-sch-item' — kemungkinan encoding issue")
-        log.warning("  Content-Type: %s, Length: %d", resp.headers.get("Content-Type"), len(resp.text))
+        log.warning("  ⚠ HTML tidak valid (encoding?)")
         return []
 
     soup = BeautifulSoup(resp.text, "html.parser")
@@ -77,7 +77,6 @@ def scrape_schedule(session: requests.Session, sport: str) -> list[dict]:
             continue
 
         league = item.get("data-league", "").strip()
-
         time_el = item.select_one("time.vi-sch-item__time")
         time_str = time_el.get("content", "") if time_el else ""
 
@@ -87,94 +86,88 @@ def scrape_schedule(session: requests.Session, sport: str) -> list[dict]:
             if t.get_text(strip=True)
         ]
 
-        if len(team_names) >= 2:
-            title = f"{team_names[0]} vs {team_names[1]}"
-        else:
-            title = item.get("title", "").replace(" Stream", "")
+        title = (f"{team_names[0]} vs {team_names[1]}" if len(team_names) >= 2
+                 else item.get("title", "").replace(" Stream", ""))
 
-        full_url = urljoin(BASE_URL, href)
         matches.append({
             "title": title,
             "league": league,
             "time": time_str,
-            "url": full_url,
+            "url": urljoin(BASE_URL, href),
             "href": href,
             "sport": sport,
         })
 
-    log.info("  → %d match ditemukan", len(matches))
+    log.info("  → %d match", len(matches))
     return matches
 
 
-# ─── Step 2: Ekstrak URL Stream ─────────────────────────────────
-def extract_stream_url(session: requests.Session, match_url: str) -> str | None:
-    log.info("  Ekstrak stream: %s", match_url)
+# ─── Step 2: Ekstrak Stream via Playwright ─────────────────────
+def create_browser(pw) -> Browser:
+    browser = pw.chromium.launch(
+        headless=True,
+        args=[
+            "--no-sandbox",
+            "--disable-web-security",
+            "--disable-features=IsolateOrigins,site-per-process",
+        ]
+    )
+    return browser
+
+
+def extract_stream_url(browser: Browser, match_url: str) -> str | None:
+    """
+    Buka halaman player, intercept semua request .m3u8 / hls.
+    JS obfuscated akan decode dan load stream → kita tangkap di network.
+    """
+    log.info("  [Playwright] %s", match_url)
+    captured_urls: list[str] = []
+
+    context = browser.new_context(
+        user_agent=HEADERS["User-Agent"],
+        viewport={"width": 390, "height": 844},
+        locale="en-US",
+    )
+    page = context.new_page()
+
+    # Intercept semua response
+    def on_response(response):
+        url = response.url
+        if ".m3u8" in url or "/hls/" in url or "/live/" in url:
+            if url not in captured_urls:
+                captured_urls.append(url)
+                log.info("    🎯 Intercept: %s", url[:100])
+
+    page.on("response", on_response)
+
     try:
-        resp = session.get(match_url, timeout=TIMEOUT)
-        resp.raise_for_status()
-    except requests.RequestException as e:
-        log.warning("  Gagal fetch: %s", e)
-        return None
+        page.goto(match_url, timeout=TIMEOUT * 1000, wait_until="domcontentloaded")
+        # Tunggu player load & JS decode selesai
+        page.wait_for_timeout(PLAYER_WAIT_MS)
 
-    html = resp.text
+        # Coba juga: cek kalau ada video element yang sudah punya src
+        video_src = page.evaluate("""
+            () => {
+                const v = document.querySelector('video');
+                return v ? (v.currentSrc || v.src) : null;
+            }
+        """)
+        if video_src and video_src not in captured_urls:
+            captured_urls.append(video_src)
+            log.info("    🎯 Video src: %s", video_src[:100])
 
-    # Pola 1: URL .m3u8 langsung
-    m3u8_patterns = [
-        r'https?://[^\s"\'<>\\]+\.m3u8[^\s"\'<>\\]*',
-        r'streamUrl\s*[:=]\s*["\']([^"\']+)["\']',
-        r'src\s*=\s*["\'](https?://[^"\']+\.m3u8[^"\']*)["\']',
-        r'"url"\s*:\s*"(https?://[^"]+\.m3u8[^"]*)"',
-        r'file\s*:\s*["\'](https?://[^"\']+\.m3u8[^"\']*)["\']',
-        r'"src"\s*:\s*"(https?://[^"]+\.m3u8[^"]*)"',
-        r'setSource\(\s*["\'](https?://[^"\']+\.m3u8[^"\']*)["\']',
-        r'loadSource\(\s*["\'](https?://[^"\']+\.m3u8[^"\']*)["\']',
-    ]
+    except Exception as e:
+        log.warning("    Error: %s", e)
+    finally:
+        context.close()
 
-    for pattern in m3u8_patterns:
-        m = re.search(pattern, html)
-        if m:
-            stream = m.group(1).strip().replace("\\/", "/")
-            log.info("    ✓ Stream: %s", stream[:80])
-            return stream
+    if captured_urls:
+        # Pilih URL terbaik (paling panjang / paling spesifik)
+        best = max(captured_urls, key=len)
+        log.info("    ✓ Stream: %s", best[:100])
+        return best
 
-    # Pola 2: iframe embed
-    iframe = re.search(r'<iframe[^>]+src=["\']([^"\']+)', html)
-    if iframe:
-        src = iframe.group(1)
-        log.info("    → Iframe: %s", src[:60])
-        return _resolve_iframe(session, src)
-
-    # Pola 3: HLS path
-    m = re.search(r'(https?://[^"\'<>\s]+/hls/[^"\'<>\s]+)', html)
-    if m:
-        return m.group(1)
-
-    # Pola 4: data attribute
-    m = re.search(r'data-src=["\'](https?://[^"\']+\.m3u8[^"\']*)["\']', html)
-    if m:
-        return m.group(1)
-
-    log.warning("    ✗ Tidak menemukan stream URL")
-    # Debug: simpan HTML untuk inspeksi manual
-    debug_file = f"debug_{Path(match_url).name}.html"
-    Path(debug_file).write_text(html, encoding="utf-8")
-    log.info("    → HTML disimpan ke %s untuk debugging", debug_file)
-    return None
-
-
-def _resolve_iframe(session: requests.Session, iframe_src: str) -> str | None:
-    try:
-        full_src = urljoin(BASE_URL, iframe_src)
-        resp = session.get(full_src, timeout=TIMEOUT)
-        html = resp.text
-        m = re.search(r'https?://[^\s"\'<>\\]+\.m3u8[^\s"\'<>\\]*', html)
-        if m:
-            return m.group(0).replace("\\/", "/")
-        m = re.search(r'source\s+src=["\']([^"\']+\.m3u8[^"\']*)', html)
-        if m:
-            return m.group(1)
-    except requests.RequestException:
-        pass
+    log.warning("    ✗ Tidak ada stream ter-capture")
     return None
 
 
@@ -182,7 +175,7 @@ def _resolve_iframe(session: requests.Session, iframe_src: str) -> str | None:
 def generate_m3u(entries: list[dict], output: str = OUTPUT_FILE):
     lines = ["#EXTM3U"]
     lines.append(f"# Generated: {time.strftime('%Y-%m-%d %H:%M:%S')}")
-    lines.append(f"# Total channels: {sum(1 for e in entries if e.get('stream_url'))}")
+    lines.append(f"# Total: {sum(1 for e in entries if e.get('stream_url'))} channels")
     lines.append("")
 
     for e in entries:
@@ -200,26 +193,33 @@ def generate_m3u(entries: list[dict], output: str = OUTPUT_FILE):
 
     Path(output).write_text("\n".join(lines), encoding="utf-8")
     count = sum(1 for e in entries if e.get("stream_url"))
-    log.info("✓ Playlist: %s (%d channel)", output, count)
+    log.info("✓ %s → %d channel", output, count)
 
 
 # ─── Main ───────────────────────────────────────────────────────
 def main():
+    # 1. Session untuk schedule
     session = create_session()
-    all_entries: list[dict] = []
 
-    for sport in SPORTS:
-        matches = scrape_schedule(session, sport)
-        for match in matches:
-            stream = extract_stream_url(session, match["url"])
-            match["stream_url"] = stream
-            all_entries.append(match)
+    # 2. Browser untuk player
+    with sync_playwright() as pw:
+        browser = create_browser(pw)
+        all_entries: list[dict] = []
+
+        for sport in SPORTS:
+            matches = scrape_schedule(session, sport)
+            for match in matches:
+                stream = extract_stream_url(browser, match["url"])
+                match["stream_url"] = stream
+                all_entries.append(match)
+                time.sleep(DELAY_BETWEEN_REQUESTS)
+
             time.sleep(DELAY_BETWEEN_REQUESTS)
 
-        time.sleep(DELAY_BETWEEN_REQUESTS)
+        browser.close()
 
     valid = [e for e in all_entries if e["stream_url"]]
-    log.info("Total: %d match, %d dengan stream URL", len(all_entries), len(valid))
+    log.info("Total: %d match, %d dengan stream", len(all_entries), len(valid))
     generate_m3u(all_entries)
     log.info("Selesai! Buka %s di player IPTV.", OUTPUT_FILE)
 
