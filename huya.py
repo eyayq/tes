@@ -7,7 +7,7 @@ import re, time
 BASE = "https://tructiep-hd.club"
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 WIB = timezone(timedelta(hours=7))
-MAX_WORKERS = 10
+MAX_WORKERS = 200
 
 
 def get_matches(html: str) -> list[dict]:
