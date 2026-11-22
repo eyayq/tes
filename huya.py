@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Scrape streaming URLs from xoilacvck.tv iframes → playlist.m3u
-Uses curl_cffi (TLS fingerprint bypass) + ThreadPoolExecutor (concurrent)
+Auto-scrape xoilacvck.tv → playlist.m3u
+Uses curl_cffi for homepage + Playwright for match pages (JS-rendered iframes)
 """
 
 import re
@@ -13,6 +13,7 @@ from urllib.parse import urljoin
 
 from curl_cffi import requests as cffi_requests
 from bs4 import BeautifulSoup
+from playwright.sync_api import sync_playwright
 
 BASE_URL = "https://xoilacvck.tv"
 HEADERS = {
@@ -20,23 +21,14 @@ HEADERS = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
     "Accept-Language": "vi-VN,vi;q=0.9,en;q=0.8",
 }
-MAX_WORKERS = 250  # concurrent threads
+MAX_WORKERS = 250
+LIVE_STATUSES = {"2", "3", "4", "5", "6", "51", "52", "53", "54"}
 
 
 def fetch_page(url: str) -> str:
     resp = cffi_requests.get(url, headers=HEADERS, impersonate="chrome", timeout=30)
     resp.raise_for_status()
     return resp.text
-
-
-def get_all_sports(html: str) -> list:
-    soup = BeautifulSoup(html, "html.parser")
-    sports = []
-    for item in soup.select(".main-grid-match"):
-        sport = item.get("data-sport")
-        if sport and sport not in sports:
-            sports.append(sport)
-    return sports
 
 
 def parse_matches(html: str) -> list:
@@ -80,7 +72,7 @@ def parse_matches(html: str) -> list:
             dt = datetime.datetime.fromtimestamp(int(data_runtime))
             match_time = dt.strftime("%H:%M")
 
-        is_live = status in {"2", "3", "4", "5", "6", "51", "52", "53", "54"}
+        is_live = status in LIVE_STATUSES
         if item.select_one(".icon-live, .live-badge, [class*='live']"):
             is_live = True
 
@@ -101,46 +93,78 @@ def parse_matches(html: str) -> list:
     return matches
 
 
-def get_stream_from_iframe(match_url: str) -> str | None:
+def get_stream_playwright(page, match_url: str) -> str | None:
+    """
+    Use Playwright page to render match page and extract stream from iframe.
+    """
     try:
-        html = fetch_page(match_url)
-    except Exception as e:
-        print(f"    ⚠ Fetch error: {e}")
-        return None
+        page.goto(match_url, wait_until="domcontentloaded", timeout=30000)
+        # Wait for iframe to appear (JS renders it)
+        try:
+            page.wait_for_selector("iframe", timeout=10000)
+        except Exception:
+            pass
+        # Extra wait for lazy-loaded iframes
+        page.wait_for_timeout(3000)
 
-    soup = BeautifulSoup(html, "html.parser")
-    iframes = soup.select("iframe")
+        # Get all iframe srcs
+        iframes = page.query_selector_all("iframe")
+        for iframe in iframes:
+            src = iframe.get_attribute("src") or ""
+            if not src:
+                continue
+            full_src = urljoin(match_url, src)
 
-    for iframe in iframes:
-        src = iframe.get("src", "")
-        if not src:
-            continue
-        full_src = urljoin(match_url, src)
+            if ".m3u8" in full_src:
+                return full_src
 
-        if ".m3u8" in full_src:
-            return full_src
+            if any(kw in full_src.lower() for kw in ("stream", "player", "embed", "hls", "video", "watch")):
+                # Navigate to iframe URL and look for m3u8
+                try:
+                    page.goto(full_src, wait_until="domcontentloaded", timeout=15000)
+                    page.wait_for_timeout(2000)
+                    content = page.content()
+                    m = re.search(r'(https?://[^\s"\'<>\\]+\.m3u8[^\s"\'<>\\]*)', content)
+                    if m:
+                        return m.group(1)
+                except Exception:
+                    pass
+                return full_src
 
-        if any(kw in full_src.lower() for kw in ("stream", "player", "embed", "hls", "video", "watch")):
-            try:
-                iframe_html = fetch_page(full_src)
-                m = re.search(r'(https?://[^\s"\'<>\\]+\.m3u8[^\s"\'<>\\]*)', iframe_html)
-                if m:
-                    return m.group(1)
-            except Exception:
-                pass
-            return full_src
-
-    m = re.search(r'(https?://[^\s"\'<>\\]+\.m3u8[^\s"\'<>\\]*)', html)
-    if m:
-        return m.group(1)
-
-    for script in soup.select("script"):
-        text = script.string or script.get_text()
-        m = re.search(r'"(?:src|url|file|source|stream)"\s*:\s*"([^"]+\.m3u8[^"]*)"', text)
+        # Fallback: search page content for m3u8
+        content = page.content()
+        m = re.search(r'(https?://[^\s"\'<>\\]+\.m3u8[^\s"\'<>\\]*)', content)
         if m:
             return m.group(1)
 
+        # Search for JSON stream data in scripts
+        scripts = page.query_selector_all("script")
+        for script in scripts:
+            text = script.inner_text()
+            m = re.search(r'"(?:src|url|file|source|stream)"\s*:\s*"([^"]+\.m3u8[^"]*)"', text)
+            if m:
+                return m.group(1)
+
+    except Exception as e:
+        print(f"    ⚠ Playwright error: {e}")
+
     return None
+
+
+def scrape_match_worker(browser, match: dict) -> tuple:
+    """Worker: create a page per thread, scrape, close."""
+    context = browser.new_context(
+        user_agent=HEADERS["User-Agent"],
+        locale="vi-VN",
+    )
+    page = context.new_page()
+    stream_url = get_stream_playwright(page, match["full_url"])
+    page.close()
+    context.close()
+
+    if not stream_url:
+        stream_url = match["full_url"]
+    return (match, stream_url)
 
 
 def build_m3u_entry(match: dict, stream_url: str) -> str:
@@ -165,75 +189,76 @@ def build_m3u_entry(match: dict, stream_url: str) -> str:
     return "\n".join(lines)
 
 
-def scrape_match(match: dict) -> tuple:
-    """Worker function for ThreadPoolExecutor."""
-    stream_url = get_stream_from_iframe(match["full_url"])
-    if not stream_url:
-        stream_url = match["full_url"]
-    return (match, stream_url)
-
-
 def main():
     if len(sys.argv) > 1:
         slug = sys.argv[1].strip("/")
+        if not slug:
+            print("⚠ Usage: python script.py <slug>")
+            return
         match_url = f"{BASE_URL}/truc-tiep/{slug}/"
-        print(f"Scraping single match: {match_url}")
-        stream_url = get_stream_from_iframe(match_url)
-        if stream_url:
-            print(f"  Stream: {stream_url}")
-        else:
-            print("  ⚠ No stream found")
+        print(f"Scraping: {match_url}")
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            context = browser.new_context(user_agent=HEADERS["User-Agent"], locale="vi-VN")
+            page = context.new_page()
+            stream_url = get_stream_playwright(page, match_url)
+            page.close()
+            context.close()
+            browser.close()
+        print(f"  Stream: {stream_url or 'NOT FOUND'}")
         return
 
-    print(f"Fetching: {BASE_URL}")
+    # === AUTO MODE ===
+    print(f"🔄 Fetching {BASE_URL} ...")
     html = fetch_page(BASE_URL)
-    sports = get_all_sports(html)
-    print(f"Sports found: {sports}")
-
     matches = parse_matches(html)
-    # Deduplicate
+
     seen = set()
-    unique_matches = []
+    unique = []
     for m in matches:
-        if m["slug"] not in seen:
+        if m["slug"] and m["slug"] not in seen:
             seen.add(m["slug"])
-            unique_matches.append(m)
-    matches = unique_matches
+            unique.append(m)
+    matches = unique
 
-    print(f"Total matches: {len(matches)}\n")
+    live_count = sum(1 for m in matches if m["is_live"])
+    print(f"📋 Total: {len(matches)} matches ({live_count} live, {len(matches)-live_count} upcoming)\n")
 
-    all_entries = []
+    if not matches:
+        print("⚠ No matches found.")
+        return
+
+    # Use Playwright with thread pool
     results = {}
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+            futures = {executor.submit(scrape_match_worker, browser, m): m for m in matches}
+            for i, future in enumerate(as_completed(futures), 1):
+                match = futures[future]
+                try:
+                    m, stream_url = future.result()
+                    results[m["fid"]] = (m, stream_url)
+                    tag = "🔴" if m["is_live"] else "⏳"
+                    stream_short = stream_url[:70] + "..." if len(stream_url) > 70 else stream_url
+                    print(f"[{i:2d}/{len(matches)}] {tag} {m['title'][:45]:45s} → {stream_short}")
+                except Exception as e:
+                    print(f"[{i:2d}/{len(matches)}] ⚠ {e}")
+        browser.close()
 
-    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-        futures = {executor.submit(scrape_match, m): m for m in matches}
-        for i, future in enumerate(as_completed(futures), 1):
-            match = futures[future]
-            try:
-                m, stream_url = future.result()
-            except Exception as e:
-                print(f"[{i}/{len(matches)}] ⚠ Error: {e}")
-                continue
-
-            status_tag = "🔴 LIVE" if m["is_live"] else "⏳"
-            print(f"[{i}/{len(matches)}] {status_tag} {m['title']} ({m['match_time']} {m['match_date']})")
-            print(f"    → {stream_url[:80]}")
-
-            results[m["fid"]] = (m, stream_url)
-
-    # Build entries in original order
+    # Write playlist.m3u
+    entries = []
     for match in matches:
         if match["fid"] in results:
             m, stream_url = results[match["fid"]]
-            all_entries.append(build_m3u_entry(m, stream_url))
+            entries.append(build_m3u_entry(m, stream_url))
 
-    output_file = "playlist.m3u"
-    with open(output_file, "w", encoding="utf-8") as f:
+    with open("playlist.m3u", "w", encoding="utf-8") as f:
         f.write("#EXTM3U\n")
-        for entry in all_entries:
+        for entry in entries:
             f.write(entry + "\n")
 
-    print(f"\n✅ Done! {len(all_entries)} entries → {output_file}")
+    print(f"\n✅ Done! {len(entries)} entries → playlist.m3u")
 
 
 if __name__ == "__main__":
