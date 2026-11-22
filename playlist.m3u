@@ -1,37 +1,57 @@
 #EXTM3U
-#EXTINF:-1 tvg-id="" tvg-name="LIVE Chapecoense - SC vs Cruzeiro - MG" tvg-logo="https://media2.16m50.tv/media/club/14332.webp" group-title="truct-tiep",LIVE Chapecoense - SC vs Cruzeiro - MG [63']
+#EXTINF:-1 tvg-id="" tvg-name="LIVE Gamba Osaka U21 vs Tokyo Verdy U21" tvg-logo="https://media2.16m50.tv/media/club/26598.webp" group-title="truct-tiep",LIVE Gamba Osaka U21 vs Tokyo Verdy U21 [66']
 #EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
 #EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://live3.hztx2020.com/live/13391555_4b73ab7b56ba87dc65d08a52b1fbb84a_autoChange.m3u8?auth_key=1795325152-0-0-011f9b70a33c947bd8e9d8a0d38a488c
-#EXTINF:-1 tvg-id="" tvg-name="LIVE Gimnasia Jujuy vs Deportivo Madryn" tvg-logo="https://media2.16m50.tv/media/club/7252.webp" group-title="truct-tiep",LIVE Gimnasia Jujuy vs Deportivo Madryn [Đang đá]
+https://live2.hztx2020.com/live/14471774_0b0e61f875657323ae196b5d484cc83b_autoChange.m3u8?auth_key=1795343367-0-0-39f9824dbe1f42cf252f5e562f41eebd
+#EXTINF:-1 tvg-id="" tvg-name="LIVE Vissel Kobe U21 vs FC Tokyo U21" tvg-logo="https://media2.16m50.tv/media/club/25786.webp" group-title="truct-tiep",LIVE Vissel Kobe U21 vs FC Tokyo U21 [67']
 #EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
 #EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://live.hztx2020.com/live/14710624_fab994207a87b039caaf963faaa7a58e_autoChange.m3u8?auth_key=1795325152-0-0-353794184f8fe7bafbe99ccfb9371ff5
-#EXTINF:-1 tvg-id="" tvg-name="LIVE SV Sporting vs SV Dakota" tvg-logo="https://media2.16m50.tv/media/club/8819.webp" group-title="truct-tiep",LIVE SV Sporting vs SV Dakota [Đang đá]
+https://live1.hztx2020.com/live/14471773_903252d0536d3858f7d805d8ca1cae4c_autoChange.m3u8?auth_key=1795343367-0-0-28d9afa21d0cd4bc71f49a6ee4d8e1a0
+#EXTINF:-1 tvg-id="" tvg-name="LIVE Tokushima Vortis vs Shonan Bellmare" tvg-logo="https://media2.16m50.tv/media/club/5397.webp" group-title="truct-tiep",LIVE Tokushima Vortis vs Shonan Bellmare [68']
 #EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
 #EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://live.hztx2020.com/live/14601162_32a6401d94464b851a3cedb3de978f27_autoChange.m3u8?auth_key=1795325152-0-0-1c2b6b6881a5d6e945eb1f28a5f568c9
-#EXTINF:-1 tvg-id="" tvg-name="LIVE Canterbury United Women vs West Coast Rangers Women" tvg-logo="https://media2.16m50.tv/media/club/24944.webp" group-title="truct-tiep",LIVE Canterbury United Women vs West Coast Rangers Women [Đang đá]
+https://live2.hztx2020.com/live/14067923_3b32b88118d500ddbf13ab1e63a6ba3a_autoChange.m3u8?auth_key=1795343367-0-0-dc1389e08e8aaa9a322f4e7a2efc50f4
+#EXTINF:-1 tvg-id="" tvg-name="LIVE Daegu Football Club vs Gimhae City" tvg-logo="https://media2.16m50.tv/media/club/2158.webp" group-title="truct-tiep",LIVE Daegu Football Club vs Gimhae City [63']
 #EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
 #EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://live5.hztx2020.com/live/14438209_9506c58da93818ffbfe934daa05d66ac_autoChange.m3u8?auth_key=1795325152-0-0-6f2175b1af52ad84380713355c045552
-#EXTINF:-1 tvg-id="" tvg-name="LIVE San Marcos FC vs Real Esteli" tvg-logo="https://media2.16m50.tv/media/club/2075.webp" group-title="truct-tiep",LIVE San Marcos FC vs Real Esteli [Đang đá]
+https://live4.hztx2020.com/live/13533561_b95016ba3eefe684c5c8e1a3f3a45946_autoChange.m3u8?auth_key=1795343367-0-0-9e8b599e906e806796d448fd0a7fd88c
+#EXTINF:-1 tvg-id="" tvg-name="LIVE Jeonnam Dragons vs Ansan Greeners FC" tvg-logo="https://media2.16m50.tv/media/club/2159.webp" group-title="truct-tiep",LIVE Jeonnam Dragons vs Ansan Greeners FC [65']
 #EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
 #EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://live.hztx2020.com/live/2436077_f9af8be004fb459c6c81c5c7bab3e8db_autoChange.m3u8?auth_key=1795325153-0-0-e8fe5b5a77c6f43ae6ea17efaed783c4
-#EXTINF:-1 tvg-id="" tvg-name="LIVE CF Wellington United Women vs Wellington Phoenix Reserves Women" tvg-logo="https://media2.16m50.tv/media/club/25237.webp" group-title="truct-tiep",LIVE CF Wellington United Women vs Wellington Phoenix Reserves Women [Đang đá]
+https://live3.hztx2020.com/live/13533562_c2a9d74240600ea6c27333a1266e3d07_autoChange.m3u8?auth_key=1795343367-0-0-7ba1fbf3c9cb34fbfd908c35ab085f89
+#EXTINF:-1 tvg-id="" tvg-name="LIVE Renofa Yamaguchi vs Reilac Shiga FC" tvg-logo="https://media2.16m50.tv/media/club/2004.webp" group-title="truct-tiep",LIVE Renofa Yamaguchi vs Reilac Shiga FC [67']
 #EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
 #EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://live4.hztx2020.com/live/14438210_18b3589dae6d0fb85ee4126b74a08b73_autoChange.m3u8?auth_key=1795325152-0-0-024d05ef7ab5eb397356453347543e28
-#EXTINF:-1 tvg-id="" tvg-name="LIVE Fencibles United W vs Auckland United Women" tvg-logo="https://media2.16m50.tv/media/club/15032.webp" group-title="truct-tiep",LIVE Fencibles United W vs Auckland United Women [1']
+https://live5.hztx2020.com/live/14247110_d70c3e9d37da96f2d3abc68946a39fcd_autoChange.m3u8?auth_key=1795343367-0-0-f6a2f025ef2927db754cee9142edebe1
+#EXTINF:-1 tvg-id="" tvg-name="LIVE Azul Claro Numazu vs Yokohama SCC" tvg-logo="https://media2.16m50.tv/media/club/10242.webp" group-title="truct-tiep",LIVE Azul Claro Numazu vs Yokohama SCC [64']
 #EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
 #EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://live3.hztx2020.com/live/14438207_df4f629c7f533cfa7d564d803d9dce7f_autoChange.m3u8?auth_key=1795325152-0-0-079ff532b544bb25425c7813c0e06717
-#EXTINF:-1 tvg-id="" tvg-name="LIVE Deportiva Once Caldas vs Atletico Nacional Medellin" tvg-logo="https://media2.16m50.tv/media/club/1869.webp" group-title="truct-tiep",LIVE Deportiva Once Caldas vs Atletico Nacional Medellin [Đang đá]
+https://live.hztx2020.com/live/14239378_9fa5656879f6ee333833753227dd721e_autoChange.m3u8?auth_key=1795343367-0-0-f693998627b4465b4a3963b401f15957
+#EXTINF:-1 tvg-id="" tvg-name="LIVE Gimcheon Sangmu Football Club vs Jeju SK FC" tvg-logo="https://media2.16m50.tv/media/club/5404.webp" group-title="truct-tiep",LIVE Gimcheon Sangmu Football Club vs Jeju SK FC [62']
 #EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
 #EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://live.hztx2020.com/live/14700953_d5fd427dbdd5db1a2a6a33a9340dfb0c_autoChange.m3u8?auth_key=1795325150-0-0-112d211ed5a98d1f76ecbd67f9316842
-#EXTINF:-1 tvg-id="" tvg-name="LIVE Washington Spirit Women vs Kansas City Current Women" tvg-logo="https://media2.16m50.tv/media/club/8473.webp" group-title="truct-tiep",LIVE Washington Spirit Women vs Kansas City Current Women [2']
+https://live.hztx2020.com/live/14624244_bec7594054c8b806b696a3f23a6e9d11_autoChange.m3u8?auth_key=1795343367-0-0-1c3041041a90f17775abbe6a76c6b30d
+#EXTINF:-1 tvg-id="" tvg-name="LIVE Gwangju Football Club vs Bucheon FC 1995" tvg-logo="https://media2.16m50.tv/media/club/2162.webp" group-title="truct-tiep",LIVE Gwangju Football Club vs Bucheon FC 1995 [63']
 #EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
 #EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://live.hztx2020.com/live/14705015_b606392cf497dec5dacee06b4c19d9ec_autoChange.m3u8?auth_key=1795325152-0-0-1e5849fd9bb06e61b8529e9601227478
+https://live1.hztx2020.com/live/14624245_64c77ba4ad9f1bd6f646d58bb6d03f18_autoChange.m3u8?auth_key=1795343367-0-0-9d9e5fb805232860db282a95d5c0d4fb
+#EXTINF:-1 tvg-id="" tvg-name="LIVE Jubilo Iwata U21 vs V-Varen Nagasaki U21" tvg-logo="https://media2.16m50.tv/media/club/25177.webp" group-title="truct-tiep",LIVE Jubilo Iwata U21 vs V-Varen Nagasaki U21 [3']
+#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
+#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
+https://live1.hztx2020.com/live/74459146_c66ebcf55a7ba73ed3567763ecf03ce6_autoChange.m3u8?auth_key=1795343368-0-0-588394e7e2c2b3f84a439498c9db40a3
+#EXTINF:-1 tvg-id="" tvg-name="LIVE FC Osaka vs Kamatamare Sanuki" tvg-logo="https://media2.16m50.tv/media/club/1063.webp" group-title="truct-tiep",LIVE FC Osaka vs Kamatamare Sanuki [4']
+#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
+#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
+https://live3.hztx2020.com/live/14247109_dbb17cdea0bfc6fbeaf236e570efa4a9_autoChange.m3u8?auth_key=1795343368-0-0-4eaa27d66d817ca9e0ceeb0829b917d7
+#EXTINF:-1 tvg-id="" tvg-name="LIVE Shanghai Women vs Zhejiang Hangzhou Women" tvg-logo="https://media2.16m50.tv/media/club/12850.webp" group-title="truct-tiep",LIVE Shanghai Women vs Zhejiang Hangzhou Women [1']
+#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
+#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
+https://live.hztx2020.com/live/14524721_431299dfcc4bbc7f5ddf6d3ad2971bf1_autoChange.m3u8?auth_key=1795343368-0-0-dd1b7a4d13deb11368933c4f9e872fa6
+#EXTINF:-1 tvg-id="" tvg-name="LIVE Beijing Women vs Wuhan Jiangda Women" tvg-logo="https://media2.16m50.tv/media/club/12848.webp" group-title="truct-tiep",LIVE Beijing Women vs Wuhan Jiangda Women [1']
+#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
+#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
+https://live5.hztx2020.com/live/14524720_ff85cfb9f4e1e993908b9b446dfda0cf_autoChange.m3u8?auth_key=1795343368-0-0-ee42ebdef9532fdd379718129fddf0b1
+#EXTINF:-1 tvg-id="" tvg-name="LIVE Jiangsu Yinhao Women vs Liaoning Shenbei Hefeng Women" tvg-logo="https://media2.16m50.tv/media/club/15202.webp" group-title="truct-tiep",LIVE Jiangsu Yinhao Women vs Liaoning Shenbei Hefeng Women [1']
+#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
+#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
+https://live4.hztx2020.com/live/14520367_622848ea2d8799ce9d85436d36ab5604_autoChange.m3u8?auth_key=1795343368-0-0-def7bf21f8b023c1a91eee710e5598b5
