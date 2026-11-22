@@ -1,8 +1,4 @@
 #EXTM3U
-#EXTINF:-1 tvg-id="" tvg-name="LIVE Oriente Petrolero vs Independiente Petrolero" tvg-logo="https://media2.16m50.tv/media/club/7197.webp" group-title="truct-tiep",LIVE Oriente Petrolero vs Independiente Petrolero [66']
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://live.hztx2020.com/live/14559548_a33219be3e312376139d9067938be86e_autoChange.m3u8?auth_key=1795325152-0-0-3fe9eed96a0674eb11aed3413a72e37b
 #EXTINF:-1 tvg-id="" tvg-name="LIVE Chapecoense - SC vs Cruzeiro - MG" tvg-logo="https://media2.16m50.tv/media/club/14332.webp" group-title="truct-tiep",LIVE Chapecoense - SC vs Cruzeiro - MG [63']
 #EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
 #EXTVLCOPT: http-referrer=https://tructiep-hd.club/
@@ -11,14 +7,10 @@ https://live3.hztx2020.com/live/13391555_4b73ab7b56ba87dc65d08a52b1fbb84a_autoCh
 #EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
 #EXTVLCOPT: http-referrer=https://tructiep-hd.club/
 https://live.hztx2020.com/live/14710624_fab994207a87b039caaf963faaa7a58e_autoChange.m3u8?auth_key=1795325152-0-0-353794184f8fe7bafbe99ccfb9371ff5
-#EXTINF:-1 tvg-id="" tvg-name="LIVE SV Sporting vs SV Dakota" tvg-logo="https://media2.16m50.tv/media/club/8819.webp" group-title="truct-tiep",LIVE SV Sporting vs SV Dakota [9']
+#EXTINF:-1 tvg-id="" tvg-name="LIVE SV Sporting vs SV Dakota" tvg-logo="https://media2.16m50.tv/media/club/8819.webp" group-title="truct-tiep",LIVE SV Sporting vs SV Dakota [Đang đá]
 #EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
 #EXTVLCOPT: http-referrer=https://tructiep-hd.club/
 https://live.hztx2020.com/live/14601162_32a6401d94464b851a3cedb3de978f27_autoChange.m3u8?auth_key=1795325152-0-0-1c2b6b6881a5d6e945eb1f28a5f568c9
-#EXTINF:-1 tvg-id="" tvg-name="LIVE Washington Spirit Women vs Kansas City Current Women" tvg-logo="https://media2.16m50.tv/media/club/8473.webp" group-title="truct-tiep",LIVE Washington Spirit Women vs Kansas City Current Women [22']
-#EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
-#EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://live.hztx2020.com/live/14705015_b606392cf497dec5dacee06b4c19d9ec_autoChange.m3u8?auth_key=1795325152-0-0-1e5849fd9bb06e61b8529e9601227478
 #EXTINF:-1 tvg-id="" tvg-name="LIVE Canterbury United Women vs West Coast Rangers Women" tvg-logo="https://media2.16m50.tv/media/club/24944.webp" group-title="truct-tiep",LIVE Canterbury United Women vs West Coast Rangers Women [Đang đá]
 #EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
 #EXTVLCOPT: http-referrer=https://tructiep-hd.club/
@@ -39,7 +31,7 @@ https://live3.hztx2020.com/live/14438207_df4f629c7f533cfa7d564d803d9dce7f_autoCh
 #EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
 #EXTVLCOPT: http-referrer=https://tructiep-hd.club/
 https://live.hztx2020.com/live/14700953_d5fd427dbdd5db1a2a6a33a9340dfb0c_autoChange.m3u8?auth_key=1795325150-0-0-112d211ed5a98d1f76ecbd67f9316842
-#EXTINF:-1 tvg-id="" tvg-name="Dallas Trinity Women vs Lexington SC Women" tvg-logo="https://media2.16m50.tv/media/club/7085.webp" group-title="truct-tiep",Dallas Trinity Women vs Lexington SC Women [08:30 WIB]
+#EXTINF:-1 tvg-id="" tvg-name="LIVE Washington Spirit Women vs Kansas City Current Women" tvg-logo="https://media2.16m50.tv/media/club/8473.webp" group-title="truct-tiep",LIVE Washington Spirit Women vs Kansas City Current Women [2']
 #EXTVLCOPT: http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
 #EXTVLCOPT: http-referrer=https://tructiep-hd.club/
-https://live.hztx2020.com/live/14042847_def0e7476690a55942f7a6f808174a72_autoChange.m3u8?auth_key=1795325150-0-0-b596d92b1b9f5caeea725b50d47f74a0
+https://live.hztx2020.com/live/14705015_b606392cf497dec5dacee06b4c19d9ec_autoChange.m3u8?auth_key=1795325152-0-0-1e5849fd9bb06e61b8529e9601227478
