@@ -1,3 +1,1084 @@
+import re
+import time
+import subprocess
+import undetected_chromedriver as uc
+
+from bs4 import BeautifulSoup
+from urllib.parse import urljoin
+
+
+BASE_URL = "https://xoilacct.tv"
+
+
+# =========================================================
+# GET CHROME VERSION
+# =========================================================
+def get_chrome_major():
+
+    try:
+
+        version = subprocess.check_output(
+            ["google-chrome", "--version"]
+        ).decode()
+
+        major = re.search(r'(\d+)\.', version)
+
+        if major:
+            return int(major.group(1))
+
+    except Exception as e:
+
+        print("CHROME VERSION ERROR:", e)
+
+    return 147
+
+
+# =========================================================
+# SETUP DRIVER
+# =========================================================
+def setup_driver():
+
+    options = uc.ChromeOptions()
+
+    options.add_argument("--headless=new")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--disable-gpu")
+
+    options.add_argument(
+        "--user-agent=Mozilla/5.0 "
+        "(Linux; Android 10; K) "
+        "AppleWebKit/537.36 "
+        "(KHTML, like Gecko) "
+        "Chrome/147.0.0.0 "
+        "Mobile Safari/537.36"
+    )
+
+    version_main = get_chrome_major()
+
+    print("CHROME VERSION:", version_main)
+
+    driver = uc.Chrome(
+        options=options,
+        version_main=version_main,
+        use_subprocess=True
+    )
+
+    driver.set_page_load_timeout(60)
+
+    return driver
+
+
+# =========================================================
+# EXTRACT STREAMS FROM HTML
+# =========================================================
+def extract_streams_from_html(html):
+
+    streams = set()
+
+    patterns = [
+
+        r'https?:\/\/[^"\']+\.m3u8[^"\']*',
+        r'https?:\/\/[^"\']+\.mpd[^"\']*',
+        r'https?:\/\/[^"\']+\.flv[^"\']*',
+
+        r'"file"\s*:\s*"([^"]+)"',
+        r'"src"\s*:\s*"([^"]+)"',
+        r'"source"\s*:\s*"([^"]+)"',
+        r'"hls"\s*:\s*"([^"]+)"',
+
+        r'file:\s*"([^"]+)"',
+        r'source:\s*"([^"]+)"',
+
+        r'["\'](https?:\/\/[^"\']+)["\']'
+    ]
+
+    for pattern in patterns:
+
+        matches = re.findall(pattern, html, re.I)
+
+        for m in matches:
+
+            m = m.replace("\\/", "/")
+
+            if any(x in m for x in [
+                ".m3u8",
+                ".mpd",
+                ".flv"
+            ]):
+
+                streams.add(m)
+
+    return streams
+
+
+# =========================================================
+# GET STREAMS
+# =========================================================
+def get_streams(driver):
+
+    streams = set()
+
+    try:
+        # Polling 5x × 3 detik = max 15 detik
+        for _ in range(5):
+            time.sleep(3)
+
+            try:
+                resources = driver.execute_script("""
+                    const resources = performance.getEntriesByType('resource');
+                    return resources.map(r => r.name);
+                """)
+                for url in resources:
+                    if any(x in url.lower() for x in [".m3u8", ".mpd", ".flv"]):
+                        streams.add(url)
+            except:
+                pass
+
+            if streams:
+                break
+
+        html = driver.page_source   
+
+        streams.update(
+            extract_streams_from_html(html)
+        )
+
+        # =============================================
+        # PERFORMANCE RESOURCE
+        # =============================================
+        resources = driver.execute_script("""
+            const resources = performance.getEntriesByType('resource');
+            return resources.map(r => r.name);
+        """)
+
+        for url in resources:
+
+            if any(x in url for x in [
+                ".m3u8",
+                ".mpd",
+                ".flv"
+            ]):
+
+                streams.add(url)
+
+        # =============================================
+        # IFRAMES
+        # =============================================
+        iframes = driver.find_elements("tag name", "iframe")
+
+        print("IFRAMES:", len(iframes))
+
+        for iframe in iframes:
+
+            try:
+
+                src = iframe.get_attribute("src")
+
+                if src:
+
+                    print("IFRAME:", src)
+
+                    if any(x in src for x in [
+                        ".m3u8",
+                        ".mpd",
+                        ".flv"
+                    ]):
+
+                        streams.add(src)
+
+                driver.switch_to.frame(iframe)
+
+                iframe_html = driver.page_source
+
+                streams.update(
+                    extract_streams_from_html(
+                        iframe_html
+                    )
+                )
+
+                iframe_resources = driver.execute_script("""
+                    const resources = performance.getEntriesByType('resource');
+                    return resources.map(r => r.name);
+                """)
+
+                for url in iframe_resources:
+
+                    if any(x in url for x in [
+                        ".m3u8",
+                        ".mpd",
+                        ".flv"
+                    ]):
+
+                        streams.add(url)
+
+                driver.switch_to.default_content()
+
+            except Exception as e:
+
+                print("IFRAME ERROR:", e)
+
+                driver.switch_to.default_content()
+
+        # =============================================
+        # SCRIPTS INLINE
+        # =============================================
+        scripts = driver.find_elements("tag name", "script")
+
+        for script in scripts:
+
+            try:
+
+                content = script.get_attribute(
+                    "innerHTML"
+                )
+
+                if content:
+
+                    streams.update(
+                        extract_streams_from_html(
+                            content
+                        )
+                    )
+
+            except:
+                pass
+
+    except Exception as e:
+
+        print("STREAM ERROR:", e)
+
+    return list(streams)
+
+
+# =========================================================
+# GET MATCH LINKS
+# =========================================================
+def get_match_links(driver):
+
+    results = []
+
+    try:
+
+        driver.get(BASE_URL)
+
+        time.sleep(8)
+
+        soup = BeautifulSoup(
+            driver.page_source,
+            "html.parser"
+        )
+
+        links = soup.find_all("a", href=True)
+
+        used = set()
+
+        for a in links:
+
+            href = a["href"]
+
+            text = a.get_text(" ", strip=True)
+
+            if not text:
+                continue
+
+            if len(text) < 5:
+                continue
+
+            blocked = [
+                "tại sao",
+                "hệ thống",
+                "danh sách",
+                "xoilac",
+                "room bóng ảo"
+            ]
+
+            if any(x in text.lower() for x in blocked):
+                continue
+
+            keywords = [
+                "vs",
+                "live",
+                "trực tiếp",
+                ":",
+                "-"
+            ]
+
+            if any(k.lower() in text.lower() for k in keywords):
+
+                if not href.startswith("http"):
+                    href = urljoin(BASE_URL, href)
+
+                if href in used:
+                    continue
+
+                used.add(href)
+
+                text = re.sub(r'\s+', ' ', text)
+
+                results.append({
+                    "title": text,
+                    "url": href
+                })
+
+        return results
+
+    except Exception as e:
+
+        print("MATCH ERROR:", e)
+
+        return []
+
+
+# =========================================================
+# SCRAPE MATCH
+# =========================================================
+def scrape_match(driver, match):
+
+    title = match["title"]
+    url = match["url"]
+
+    print(f"CHECK -> {title}")
+
+    try:
+
+        driver.get(url)
+
+        time.sleep(10)
+
+        soup = BeautifulSoup(
+            driver.page_source,
+            "html.parser"
+        )
+
+        # =============================================
+        # IMPROVE TITLE
+        # =============================================
+        h1 = soup.find("h1")
+
+        if h1:
+
+            better = h1.get_text(
+                " ",
+                strip=True
+            )
+
+            if len(better) > 5:
+                title = better
+
+        og = soup.find(
+            "meta",
+            property="og:title"
+        )
+
+        if og and og.get("content"):
+
+            og_title = og["content"].strip()
+
+            if len(og_title) > 5:
+                title = og_title
+
+        title = re.sub(r'\s+', ' ', title)
+
+        title = re.sub(
+            r'\s*[\|\-]\s*xoilac.*$',
+            '',
+            title,
+            flags=re.I
+        )
+
+        # =============================================
+        # LOGO
+        # =============================================
+        logo = "https://viiip.kitashinsaku.com/0.php"
+
+        imgs = soup.find_all("img", src=True)
+
+        for img in imgs:
+
+            src = img["src"]
+
+            if any(x in src.lower() for x in [
+                "logo",
+                "team",
+                "club"
+            ]):
+
+                if not src.startswith("http"):
+                    src = urljoin(BASE_URL, src)
+
+                logo = src
+
+                break
+
+        # =============================================
+        # STREAMS
+        # =============================================
+        streams = get_streams(driver)
+
+        if not streams:
+
+            print("NO STREAM")
+
+            return []
+
+        results = []
+
+        for stream in streams:
+
+            print("FOUND STREAM:", stream)
+
+            results.append({
+                "name": title,
+                "logo": logo,
+                "url": stream
+            })
+
+        return results
+
+    except Exception as e:
+
+        print("DETAIL ERROR:", e)
+
+        return []
+
+
+# =========================================================
+# WRITE M3U
+# =========================================================
+def write_m3u(data):
+
+    if not data:
+
+        print("NO DATA")
+
+        return
+
+    content = "#EXTM3U\n\n"
+
+    used = set()
+
+    for item in data:
+
+        if item["url"] in used:
+            continue
+
+        used.add(item["url"])
+
+        content += (
+            f'#EXTINF:-1 '
+            f'tvg-logo="{item["logo"]}" '
+            f'group-title="XOILAC LIVE",'
+            f' {item["name"]}\n'
+        )
+
+        content += (
+            '#EXTVLCOPT:http-user-agent='
+            'Mozilla/5.0 (Linux; Android 10; K) '
+            'AppleWebKit/537.36 '
+            '(KHTML, like Gecko) '
+            'Chrome/147.0.0.0 '
+            'Mobile Safari/537.36\n'
+        )
+
+        content += (
+            f'#EXTVLCOPT:http-referrer={BASE_URL}/\n'
+        )
+
+        content += (
+            f'#EXTVLCOPT:http-origin={BASE_URL}\n'
+        )
+
+        content += item["url"] + "\n\n"
+
+    output = (
+        "a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/"
+        "s/t/u/v/w/x/y/z/krtalk.php"
+    )
+
+    with open(output, "w", encoding="utf-8") as f:
+        f.write(content)
+
+    print("DONE:", len(data))
+
+
+# =========================================================
+# MAIN
+# =========================================================
+if __name__ == "__main__":
+
+    driver = setup_driver()
+
+    all_data = []
+
+    try:
+
+        matches = get_match_links(driver)
+
+        print("MATCHES:", len(matches))
+
+        for match in matches:
+
+            data = scrape_match(driver, match)
+
+            if data:
+                all_data.extend(data)
+
+        write_m3u(all_data)
+
+    finally:
+
+        driver.quit()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import re
+import time
+
+from bs4 import BeautifulSoup
+from urllib.parse import urljoin
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+
+
+BASE_URL = "https://xoilacct.tv"
+
+# jumlah worker parallel
+MAX_WORKERS = 4
+
+
+# =========================================================
+# SETUP DRIVER
+# =========================================================
+def setup_driver():
+
+    options = Options()
+
+    options.add_argument("--headless=new")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--disable-gpu")
+
+    options.add_argument("--disable-extensions")
+
+    options.add_argument(
+        "--blink-settings=imagesEnabled=false"
+    )
+
+    options.page_load_strategy = "eager"
+
+    options.add_argument(
+        "--user-agent=Mozilla/5.0 "
+        "(Linux; Android 10; K) "
+        "AppleWebKit/537.36 "
+        "(KHTML, like Gecko) "
+        "Chrome/147.0.0.0 "
+        "Mobile Safari/537.36"
+    )
+
+    service = Service(
+        "/usr/local/bin/chromedriver"
+    )
+
+    driver = webdriver.Chrome(
+        service=service,
+        options=options
+    )
+
+    driver.set_page_load_timeout(30)
+
+    return driver
+
+
+# =========================================================
+# EXTRACT STREAMS FROM HTML
+# =========================================================
+def extract_streams_from_html(html):
+
+    streams = set()
+
+    patterns = [
+
+        r'https?:\/\/[^"\']+\.m3u8[^"\']*',
+        r'https?:\/\/[^"\']+\.mpd[^"\']*',
+        r'https?:\/\/[^"\']+\.flv[^"\']*',
+
+        r'"file"\s*:\s*"([^"]+)"',
+        r'"src"\s*:\s*"([^"]+)"',
+        r'"source"\s*:\s*"([^"]+)"',
+        r'"hls"\s*:\s*"([^"]+)"',
+
+        r'file:\s*"([^"]+)"',
+        r'source:\s*"([^"]+)"',
+
+        r'["\'](https?:\/\/[^"\']+)["\']'
+    ]
+
+    for pattern in patterns:
+
+        matches = re.findall(pattern, html, re.I)
+
+        for m in matches:
+
+            m = m.replace("\\/", "/")
+
+            if any(x in m for x in [
+                ".m3u8",
+                ".mpd",
+                ".flv"
+            ]):
+
+                streams.add(m)
+
+    return streams
+
+
+# =========================================================
+# GET STREAMS
+# =========================================================
+def get_streams(driver):
+
+    streams = set()
+
+    try:
+
+        time.sleep(3)
+
+        html = driver.page_source
+
+        streams.update(
+            extract_streams_from_html(html)
+        )
+
+        # =============================================
+        # PERFORMANCE RESOURCE
+        # =============================================
+        resources = driver.execute_script("""
+            const resources = performance.getEntriesByType('resource');
+            return resources.map(r => r.name);
+        """)
+
+        for url in resources:
+
+            if any(x in url for x in [
+                ".m3u8",
+                ".mpd",
+                ".flv"
+            ]):
+
+                streams.add(url)
+
+        # =============================================
+        # IFRAMES
+        # =============================================
+        iframes = driver.find_elements("tag name", "iframe")
+
+        for iframe in iframes:
+
+            try:
+
+                src = iframe.get_attribute("src")
+
+                if src:
+
+                    if any(x in src for x in [
+                        ".m3u8",
+                        ".mpd",
+                        ".flv"
+                    ]):
+
+                        streams.add(src)
+
+                driver.switch_to.frame(iframe)
+
+                iframe_html = driver.page_source
+
+                streams.update(
+                    extract_streams_from_html(
+                        iframe_html
+                    )
+                )
+
+                driver.switch_to.default_content()
+
+            except:
+
+                driver.switch_to.default_content()
+
+        # =============================================
+        # INLINE SCRIPTS
+        # =============================================
+        scripts = driver.find_elements("tag name", "script")
+
+        for script in scripts:
+
+            try:
+
+                content = script.get_attribute(
+                    "innerHTML"
+                )
+
+                if content:
+
+                    streams.update(
+                        extract_streams_from_html(
+                            content
+                        )
+                    )
+
+            except:
+                pass
+
+    except Exception as e:
+
+        print("STREAM ERROR:", e)
+
+    return list(streams)
+
+
+# =========================================================
+# GET MATCH LINKS
+# =========================================================
+def get_match_links():
+
+    driver = setup_driver()
+
+    results = []
+
+    try:
+
+        driver.get(BASE_URL)
+
+        time.sleep(5)
+
+        soup = BeautifulSoup(
+            driver.page_source,
+            "html.parser"
+        )
+
+        links = soup.find_all("a", href=True)
+
+        used = set()
+
+        for a in links:
+
+            href = a["href"]
+
+            text = a.get_text(" ", strip=True)
+
+            if not text:
+                continue
+
+            if len(text) < 5:
+                continue
+
+            blocked = [
+                "tại sao",
+                "hệ thống",
+                "danh sách",
+                "xoilac",
+                "room bóng ảo"
+            ]
+
+            if any(x in text.lower() for x in blocked):
+                continue
+
+            keywords = [
+                "vs",
+                "live",
+                "trực tiếp",
+                ":",
+                "-"
+            ]
+
+            if any(k.lower() in text.lower() for k in keywords):
+
+                if not href.startswith("http"):
+                    href = urljoin(BASE_URL, href)
+
+                if href in used:
+                    continue
+
+                used.add(href)
+
+                text = re.sub(r'\s+', ' ', text)
+
+                results.append({
+                    "title": text,
+                    "url": href
+                })
+
+    except Exception as e:
+
+        print("MATCH ERROR:", e)
+
+    finally:
+
+        driver.quit()
+
+    return results
+
+
+# =========================================================
+# SCRAPE MATCH
+# =========================================================
+def scrape_match(match):
+
+    driver = setup_driver()
+
+    title = match["title"]
+    url = match["url"]
+
+    print(f"CHECK -> {title}")
+
+    try:
+
+        driver.get(url)
+
+        time.sleep(4)
+
+        soup = BeautifulSoup(
+            driver.page_source,
+            "html.parser"
+        )
+
+        # =============================================
+        # IMPROVE TITLE
+        # =============================================
+        h1 = soup.find("h1")
+
+        if h1:
+
+            better = h1.get_text(
+                " ",
+                strip=True
+            )
+
+            if len(better) > 5:
+                title = better
+
+        og = soup.find(
+            "meta",
+            property="og:title"
+        )
+
+        if og and og.get("content"):
+
+            og_title = og["content"].strip()
+
+            if len(og_title) > 5:
+                title = og_title
+
+        title = re.sub(r'\s+', ' ', title)
+
+        title = title.replace(",", "")
+
+        title = title.strip()
+
+        title = re.sub(
+            r'\s*[\|\-]\s*xoilac.*$',
+            '',
+            title,
+            flags=re.I
+        )
+
+        # =============================================
+        # LOGO
+        # =============================================
+        logo = "https://viiip.kitashinsaku.com/0.php"
+
+        imgs = soup.find_all("img", src=True)
+
+        for img in imgs:
+
+            src = img["src"]
+
+            if any(x in src.lower() for x in [
+                "logo",
+                "team",
+                "club"
+            ]):
+
+                if not src.startswith("http"):
+                    src = urljoin(BASE_URL, src)
+
+                logo = src
+
+                break
+
+        # =============================================
+        # STREAMS
+        # =============================================
+        streams = get_streams(driver)
+
+        if not streams:
+
+            print("NO STREAM")
+
+            return []
+
+        results = []
+
+        for stream in streams:
+
+            print("FOUND STREAM:", stream)
+
+            results.append({
+                "name": title,
+                "logo": logo,
+                "url": stream
+            })
+
+        return results
+
+    except Exception as e:
+
+        print("DETAIL ERROR:", e)
+
+        return []
+
+    finally:
+
+        driver.quit()
+
+
+# =========================================================
+# WRITE M3U
+# =========================================================
+def write_m3u(data):
+
+    if not data:
+
+        print("NO DATA")
+
+        return
+
+    content = "#EXTM3U\n\n"
+
+    used = set()
+
+    for item in data:
+
+        if item["url"] in used:
+            continue
+
+        used.add(item["url"])
+
+        content += (
+            f'#EXTINF:-1 '
+            f'tvg-logo="{item["logo"]}" '
+            f'group-title="XOILAC LIVE",'
+            f' {item["name"]}\n'
+        )
+
+        content += (
+            '#EXTVLCOPT:http-user-agent='
+            'Mozilla/5.0 (Linux; Android 10; K) '
+            'AppleWebKit/537.36 '
+            '(KHTML, like Gecko) '
+            'Chrome/147.0.0.0 '
+            'Mobile Safari/537.36\n'
+        )
+
+        content += (
+            f'#EXTVLCOPT:http-referrer={BASE_URL}/\n'
+        )
+
+        content += (
+            f'#EXTVLCOPT:http-origin={BASE_URL}\n'
+        )
+
+        content += item["url"] + "\n\n"
+
+    output = (
+        "a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/"
+        "s/t/u/v/w/x/y/z/xolax.php"
+    )
+
+    with open(output, "w", encoding="utf-8") as f:
+        f.write(content)
+
+    print("DONE:", len(data))
+
+
+# =========================================================
+# MAIN
+# =========================================================
+if __name__ == "__main__":
+
+    all_data = []
+
+    matches = get_match_links()
+
+    print("MATCHES:", len(matches))
+
+    # =====================================================
+    # PARALLEL PROCESS
+    # =====================================================
+    with ThreadPoolExecutor(
+        max_workers=MAX_WORKERS
+    ) as executor:
+
+        futures = [
+            executor.submit(scrape_match, match)
+            for match in matches
+        ]
+
+        for future in as_completed(futures):
+
+            try:
+
+                data = future.result()
+
+                if data:
+                    all_data.extend(data)
+
+            except Exception as e:
+
+                print("THREAD ERROR:", e)
+
+    write_m3u(all_data)
+
+
+
+
+
+
+
+
+
+
+
+
+ke 3
+
 #!/usr/bin/env python3
 """
 ✓
@@ -308,7 +1389,7 @@ def scrape_match(match):
         except Exception:
             pass
 
-        time.sleep(5)
+        time.sleep(3)
 
         soup = BeautifulSoup(driver.page_source, "html.parser")
 
@@ -448,9 +1529,7 @@ if __name__ == "__main__":
     matches = get_match_links()
 
     # Hanya scrape match live
-    matches = [m for m in matches if m["is_live"]]
-
-    print(f"MATCHES: {len(matches)} (live only)")
+    print(f"MATCHES: {len(matches)} (all)")
     print(f"WORKERS: {MAX_WORKERS}\n")
 
     if not matches:
