@@ -20,7 +20,7 @@ HEADERS = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
     "Accept-Language": "vi-VN,vi;q=0.9,en;q=0.8",
 }
-MAX_WORKERS = 5  # concurrent threads
+MAX_WORKERS = 250  # concurrent threads
 
 
 def fetch_page(url: str) -> str:
