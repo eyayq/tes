@@ -16,12 +16,13 @@ from bs4 import BeautifulSoup
 from playwright.async_api import async_playwright
 
 BASE_URL = "https://xoilacvck.tv"
+IFRAME_REFERER = "https://xl365.domainkqt.cc/"
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
     "Accept-Language": "vi-VN,vi;q=0.9,en;q=0.8",
 }
-CONCURRENCY = 100  # ← FIX: 250 → 10
+CONCURRENCY = 100
 LIVE_STATUSES = {"2", "3", "4", "5", "6", "51", "52", "53", "54"}
 MAX_RETRIES = 2
 
@@ -47,14 +48,13 @@ def parse_matches(html: str) -> list:
 
     for item in soup.select(".main-grid-match"):
         fid = item.get("data-fid", "")
-        sport = item.get("data-sport", "unknown")       # "tennis", "badminton", "football"
-        sport_id = item.get("data-sport-id", "")         # FIX: tambahkan
+        sport = item.get("data-sport", "unknown")
+        sport_id = item.get("data-sport-id", "")
         league = item.get("data-league", "")
         status = item.get("data-status", "1")
         data_day = item.get("data-day", "")
         data_runtime = item.get("data-runtime", "")
 
-        # FIX: pakai selector lebih spesifik agar tidak match link .commentator
         link = item.select_one("a.redirectPopup[href*='/truc-tiep/']")
         if not link:
             link = item.select_one("a[href*='/truc-tiep/']:not(.commentator)")
@@ -76,7 +76,6 @@ def parse_matches(html: str) -> list:
         away = "/".join(away_names) if away_names else "Away"
         title = f"{home} vs {away}"
 
-        # FIX: data-time ada di <text> SVG, selector tetap valid
         time_el = item.select_one(".gmd-e_minutes[data-time]")
         match_time = time_el.get("data-time", "") if time_el else ""
 
@@ -89,7 +88,6 @@ def parse_matches(html: str) -> list:
             dt = datetime.datetime.fromtimestamp(int(data_runtime))
             match_time = dt.strftime("%H:%M")
 
-        # FIX: hanya cek status, jangan pakai [class*='live'] (false-positive)
         is_live = status in LIVE_STATUSES
 
         matches.append({
@@ -111,75 +109,53 @@ def parse_matches(html: str) -> list:
 
 
 async def get_stream_from_page(page, match_url: str) -> str | None:
+    """
+    Intercept network requests untuk menangkap stream URL (m3u8/flv/mp4)
+    dari cross-origin iframe.
+    """
+    stream_urls: list[str] = []
+
+    def on_request(request):
+        url = request.url
+        if any(ext in url.lower() for ext in (".m3u8", ".flv", ".mp4")):
+            if url not in stream_urls:
+                stream_urls.append(url)
+
+    page.on("request", on_request)
+
     try:
         await page.goto(match_url, wait_until="domcontentloaded", timeout=30000)
 
-        # Tunggu iframe atau player muncul
         try:
-            await page.wait_for_selector("iframe, video, [class*='player']", timeout=12000)
+            await page.wait_for_selector("iframe", timeout=15000)
         except Exception:
             pass
-        await page.wait_for_timeout(3000)  # FIX: 2000 → 3000 (JS player butuh waktu)
 
-        # 1. Cek iframe src
-        iframes = await page.query_selector_all("iframe")
-        for iframe in iframes:
-            src = await iframe.get_attribute("src") or ""
-            if not src:
-                continue
-            full_src = urljoin(match_url, src)
+        await page.wait_for_timeout(5000)
 
-            if ".m3u8" in full_src:
-                return full_src
+        if not stream_urls:
+            try:
+                await page.wait_for_load_state("networkidle", timeout=10000)
+            except Exception:
+                pass
+            await page.wait_for_timeout(3000)
 
-            if any(kw in full_src.lower() for kw in ("stream", "player", "embed", "hls", "video", "watch")):
-                try:
-                    await page.goto(full_src, wait_until="domcontentloaded", timeout=15000)
-                    await page.wait_for_timeout(3000)
-                    content = await page.content()
-                    m = re.search(r'(https?://[^\s"\'<>\\]+\.m3u8[^\s"\'<>\\]*)', content)
-                    if m:
-                        return m.group(1)
-                except Exception:
-                    pass
-                return full_src
-
-        # 2. Cari m3u8 di page content
-        content = await page.content()
-        m = re.search(r'(https?://[^\s"\'<>\\]+\.m3u8[^\s"\'<>\\]*)', content)
-        if m:
-            return m.group(1)
-
-        # 3. Cari di script tags
-        for script in await page.query_selector_all("script"):
-            text = await script.inner_text()
-            m = re.search(r'"(?:src|url|file|source|stream|video_src|videoUrl)"\s*:\s*"([^"]+\.m3u8[^"]*)"', text)
-            if m:
-                return m.group(1)
-            # FIX: tambah pattern untuk variable assignment
-            m = re.search(r'(?:var|let|const)\s+\w+\s*=\s*["\'](https?://[^"\']+\.m3u8[^"\']*)["\']', text)
-            if m:
-                return m.group(1)
-
-        # 4. FIX: cek network requests (untuk player yang load stream via JS)
-        #    (opsional - uncomment jika masih gagal)
-        # try:
-        #     response = await page.evaluate("""
-        #         () => {
-        #             const entries = performance.getEntriesByType('resource');
-        #             for (const e of entries) {
-        #                 if (e.name.includes('.m3u8')) return e.name;
-        #             }
-        #             return null;
-        #         }
-        #     """)
-        #     if response:
-        #         return response
-        # except:
-        #     pass
+        if stream_urls:
+            for url in stream_urls:
+                if ".m3u8" in url.lower():
+                    return url
+            for url in stream_urls:
+                if ".flv" in url.lower():
+                    return url
+            for url in stream_urls:
+                if ".mp4" in url.lower():
+                    return url
+            return stream_urls[0]
 
     except Exception as e:
         print(f"    ⚠ {e}")
+    finally:
+        page.remove_listener("request", on_request)
 
     return None
 
@@ -189,6 +165,10 @@ async def scrape_match(browser, match: dict, semaphore: asyncio.Semaphore) -> tu
         context = await browser.new_context(
             user_agent=HEADERS["User-Agent"],
             locale="vi-VN",
+            extra_http_headers={
+                "Referer": IFRAME_REFERER,
+                "Origin": IFRAME_REFERER.rstrip("/"),
+            },
         )
         page = await context.new_page()
         try:
@@ -220,7 +200,7 @@ def build_m3u_entry(match: dict, stream_url: str) -> str:
     lines = []
     lines.append(f'#EXTINF:-1 group-title="{league}" tvg-logo="{match["tvg_logo"]}",{full_title}')
     lines.append(f'#EXTVLCOPT:http-user-agent={HEADERS["User-Agent"]}')
-    lines.append(f'#EXTVLCOPT:http-referrer=https://xl365.domainkqt.cc/')
+    lines.append(f'#EXTVLCOPT:http-referrer={IFRAME_REFERER}')
     lines.append(stream_url)
     return "\n".join(lines)
 
@@ -233,7 +213,7 @@ async def main_async(matches: list):
     async with async_playwright() as p:
         browser = await p.chromium.launch(
             headless=True,
-            args=["--no-sandbox", "--disable-dev-shm-usage"],  # FIX: untuk VPS/Docker
+            args=["--no-sandbox", "--disable-dev-shm-usage"],
         )
 
         tasks = [scrape_match(browser, m, semaphore) for m in matches]
@@ -268,7 +248,14 @@ def main():
         async def debug():
             async with async_playwright() as p:
                 browser = await p.chromium.launch(headless=True, args=["--no-sandbox"])
-                context = await browser.new_context(user_agent=HEADERS["User-Agent"], locale="vi-VN")
+                context = await browser.new_context(
+                    user_agent=HEADERS["User-Agent"],
+                    locale="vi-VN",
+                    extra_http_headers={
+                        "Referer": IFRAME_REFERER,
+                        "Origin": IFRAME_REFERER.rstrip("/"),
+                    },
+                )
                 page = await context.new_page()
                 stream_url = await get_stream_from_page(page, match_url)
                 await browser.close()
@@ -283,7 +270,6 @@ def main():
     html = fetch_page(BASE_URL)
     matches = parse_matches(html)
 
-    # Dedup
     seen = set()
     unique = []
     for m in matches:
@@ -292,7 +278,6 @@ def main():
             unique.append(m)
     matches = unique
 
-    # FIX: filter live-only
     if live_only:
         matches = [m for m in matches if m["is_live"]]
 
@@ -306,7 +291,6 @@ def main():
 
     results = asyncio.run(main_async(matches))
 
-    # Write playlist.m3u
     entries = []
     for match in matches:
         if match["fid"] in results:
