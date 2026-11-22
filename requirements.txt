@@ -6,3 +6,4 @@ beautifulsoup4
 websockets
 pycryptodome
 yt-dlp
+selenium
