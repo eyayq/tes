@@ -1,11 +1,14 @@
 from curl_cffi import requests as cffi_requests
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta, timezone
-import re, time   
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import re, time
 
 BASE = "https://tructiep-hd.club"
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 WIB = timezone(timedelta(hours=7))
+MAX_WORKERS = 50  # jumlah thread paralel
+
 
 def get_matches(html: str) -> list[dict]:
     soup = BeautifulSoup(html, "html.parser")
@@ -75,7 +78,6 @@ def to_wib(time_str: str, is_live: bool) -> str:
 def get_stream_url(slug: str) -> list[str]:
     url = f"{BASE}/{slug}"
     try:
-        # ✅ curl_cffi dengan impersonate chrome
         r = cffi_requests.get(
             url,
             headers={"Referer": BASE + "/"},
@@ -116,13 +118,17 @@ def build_m3u(matches: list[dict], streams_map: dict[str, list[str]]) -> str:
             continue
 
         time_wib = to_wib(m["time_str"], m["is_live"])
-        title = f"{m['home']} vs {m['away']} [{time_wib}]"
+
+        # ✅ Tambahkan "LIVE " di awal title jika live
+        prefix = "LIVE " if m["is_live"] else ""
+        title = f"{prefix}{m['home']} vs {m['away']} [{time_wib}]"
+
         logo = m["home_logo"]
         group = m["league"]
         stream_url = streams[0]
 
         lines.append(
-            f'#EXTINF:-1 tvg-id="" tvg-name="{m["home"]} vs {m["away"]}" '
+            f'#EXTINF:-1 tvg-id="" tvg-name="{prefix}{m["home"]} vs {m["away"]}" '
             f'tvg-logo="{logo}" group-title="{group}",{title}'
         )
         lines.append(f'#EXTVLCOPT: http-user-agent={UA}')
@@ -134,21 +140,29 @@ def build_m3u(matches: list[dict], streams_map: dict[str, list[str]]) -> str:
 
 # === MAIN ===
 if __name__ == "__main__":
-    # Ambil beranda via curl_cffi
     r = cffi_requests.get(BASE, impersonate="chrome", timeout=20)
     r.raise_for_status()
     matches = get_matches(r.text)
     print(f"Total pertandingan: {len(matches)}\n")
 
+    # ✅ ThreadPoolExecutor untuk scrape paralel
     streams_map = {}
-    for m in matches:
-        streams = get_stream_url(m["slug"])
-        streams_map[m["slug"]] = streams
-        status = "✓" if streams else "✗"
-        print(f"[{status}] {m['home']} vs {m['away']}")
-        if streams:
-            print(f"     → {streams[0]}")
-        time.sleep(1)
+
+    def fetch(slug: str) -> tuple[str, list[str]]:
+        return slug, get_stream_url(slug)
+
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
+        futures = {pool.submit(fetch, m["slug"]): m for m in matches}
+        done = 0
+        for future in as_completed(futures):
+            slug, streams = future.result()
+            streams_map[slug] = streams
+            done += 1
+            m = futures[future]
+            status = "✓" if streams else "✗"
+            print(f"[{done}/{len(matches)}] [{status}] {m['home']} vs {m['away']}")
+            if streams:
+                print(f"     → {streams[0]}")
 
     m3u_content = build_m3u(matches, streams_map)
     with open("playlist.m3u", "w", encoding="utf-8") as f:
