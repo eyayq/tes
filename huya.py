@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 """
 ✓
@@ -20,7 +19,7 @@ from selenium.webdriver.chrome.service import Service
 
 BASE_URL = "https://citizensnotpoliticians.org"
 IFRAME_REFERER = "https://xl365.domainkqt.cc/"
-MAX_WORKERS = 100
+MAX_WORKERS = 150
 
 LIVE_STATUSES = {"2", "3", "4", "5", "6", "51", "52", "53", "54"}
 
@@ -104,25 +103,9 @@ def get_streams(driver):
     streams = set()
 
     try:
-        # Polling 5x × 3 detik = max 15 detik
-        for _ in range(5):
-            time.sleep(3)
+        time.sleep(5)
 
-            try:
-                resources = driver.execute_script("""
-                    const resources = performance.getEntriesByType('resource');
-                    return resources.map(r => r.name);
-                """)
-                for url in resources:
-                    if any(x in url.lower() for x in [".m3u8", ".mpd", ".flv"]):
-                        streams.add(url)
-            except:
-                pass
-
-            if streams:
-                break
-
-        html = driver.page_source   
+        html = driver.page_source
         streams.update(extract_streams_from_html(html))
 
         # PERFORMANCE RESOURCE
@@ -325,7 +308,7 @@ def scrape_match(match):
         except Exception:
             pass
 
-        time.sleep(3)
+        time.sleep(5)
 
         soup = BeautifulSoup(driver.page_source, "html.parser")
 
@@ -465,7 +448,9 @@ if __name__ == "__main__":
     matches = get_match_links()
 
     # Hanya scrape match live
-    print(f"MATCHES: {len(matches)} (all)")
+    matches = [m for m in matches if m["is_live"]]
+
+    print(f"MATCHES: {len(matches)} (live only)")
     print(f"WORKERS: {MAX_WORKERS}\n")
 
     if not matches:
