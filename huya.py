@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-
+Auto-scrape xoilacvck.tv → playlist.m3u
+Selenium + ThreadPoolExecutor
 """
 
 import re
@@ -19,7 +20,7 @@ from selenium.webdriver.chrome.service import Service
 
 BASE_URL = "https://xoilacvck.tv"
 IFRAME_REFERER = "https://xl365.domainkqt.cc/"
-MAX_WORKERS = 20
+MAX_WORKERS = 7
 
 LIVE_STATUSES = {"2", "3", "4", "5", "6", "51", "52", "53", "54"}
 
@@ -40,9 +41,6 @@ def setup_driver():
     options.add_argument("--disable-features=Translate,CalculateNativeWinOcclusion")
     options.add_argument("--blink-settings=imagesEnabled=false")
     options.add_argument("--js-flags=--max-old-space-size=128")
-    options.add_argument("--renderer-process-limit=1")
-    options.add_argument("--single-process")
-    options.add_argument("--memory-pressure-off")
 
     options.page_load_strategy = "none"
 
@@ -450,7 +448,7 @@ if __name__ == "__main__":
 
     matches = get_match_links()
 
-    # Hanya scrape match live (upcoming pasti NO STREAM)
+    # Hanya scrape match live
     matches = [m for m in matches if m["is_live"]]
 
     print(f"MATCHES: {len(matches)} (live only)")
