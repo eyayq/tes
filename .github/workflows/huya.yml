@@ -35,9 +35,6 @@ jobs:
           playwright install chromium --with-deps
           playwright install chrome firefox   
 
-      - name: ✓
-        run: xvfb-run python huya.py --debug 
-
       - name: Install Google Chrome
         run: |
           sudo apt-get update
@@ -76,6 +73,9 @@ jobs:
           sudo chmod +x /usr/local/bin/chromedriver
 
           chromedriver --version
+
+      - name: ✓
+        run: xvfb-run python huya.py --debug 
 
       - name: ✓
         run: |
