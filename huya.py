@@ -20,7 +20,7 @@ from selenium.webdriver.chrome.service import Service
 
 BASE_URL = "https://citizensnotpoliticians.org"
 IFRAME_REFERER = "https://xl365.domainkqt.cc/"
-MAX_WORKERS = 20
+MAX_WORKERS = 100
 
 LIVE_STATUSES = {"2", "3", "4", "5", "6", "51", "52", "53", "54"}
 
