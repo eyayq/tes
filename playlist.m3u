@@ -1,201 +1,87 @@
 #EXTM3U
-# Generated: 2026-11-23 02:49:51 WIB
-# Total: 33 channels
-
-#EXTINF:-1 tvg-id="u-mexico-liga-mx-queretaro-vs-necaxa" tvg-name="Queretaro vs Necaxa" tvg-group="Mexico Liga MX" tvg-logo="https://sportsfusion.im/imgs/team/svg/queretaro.svg",[2026-11-23 08:10] Queretaro vs Necaxa [Mexico Liga MX]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://posamari.me/sd0embed/football?pid=5&v=fub6&player=clappr&csrf=ZTRjMjFlOWUyNjFhMjhhMzAzN2NjNGE3NTkyMDkzNzdkMmE5OGVkNzJhMjc1ZjEzYjIyNDIxNjkyYmJjZGI4OA.MTc5NTQwMjA3NA.YzQyNmEyN2UzNTMwMzY3Y2VlZWIyMTg0OWQ4OGU0OWVhYjk4YjYzOTg2MTNiNzhlNmMxNjgwMzhiNzU1MGUwNw&csrf_ip=rDw24Unjq1Fhf3ksKLoHH21WylNUNqsHolpvSMKc8n2kIZh6QWBw4%2BPVInqdCcc4bfBUi5tkm9btB1nARh3Pdyleevbzt8O5qECUZ7aWUqgWylpuEGZMpF22f5x0&expires=1795402074&sec_hash=0KI2-PRMSaCtSA8qiakpiw/
-#EXTVLCOPT:http-origin=https://posamari.me
-https://s-c11.mhys.ink/pavel/cer0dado3oho7acexa6o_8awi302ikuyiv0101ude/play.m3u8?session_id=82bcedb18dfaec03451024464f17772d&u_id=stlan-2ae20c0a7e031240f85bd7ca915671bd9303066afb2066bb8e0c5606bc515a2e&ssid=sv2.1795409216.2f16c79212bb0c9e88e06ad80de1e91eb58337a7d19c1cd548bd0f43aedb3534
-
-#EXTINF:-1 tvg-id="u-mls-vancouver-whitecaps-vs-real-salt-lake" tvg-name="Vancouver Whitecaps vs Real Salt Lake" tvg-group="MLS" tvg-logo="https://sportsfusion.im/imgs/team/svg/vancouver-whitecaps.svg",[2026-11-23 08:30] Vancouver Whitecaps vs Real Salt Lake [MLS]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://ninguno.cc/sd0embed/football?pid=5&v=mls5&player=clappr&csrf=ZTRmMzlkMzdlN2U4MTk5YzVjMmZkZTMyNTY5ZjZkNTI1NjhkNjIzMjI5M2IzNmM0NzY2ZWFlODY4ZThmNTljYQ.MTc5NTQwMjA3NA.MjQwNTYwMDhmYWUzNjdlMWVjNTExODhkZWE1YmU3ODk2NGEwYzlkY2E3NWNmNDZjNmViMGE0ZWMxMjRhMWQ0Mg&csrf_ip=YmEF69ygMCQ3jBE4Qb94abpCnr%2FGR0gaSku0kNNmL8eZ2l%2FVbRW930EztAtRTW6hFgU1jVugqbgUXeNrSjozDZlPTd%2FmOxzzmDspl99ydDCY6Tbq7uHt%2FaM%2FKCAi&expires=1795402074&sec_hash=uotgzjJCkF-iarx1-xPOCg/
-#EXTVLCOPT:http-origin=https://ninguno.cc
-https://s-c11.rusfish.space/pavel/ya4ugi1in0z0soxe70nu_3ige20gerigunelo8uze/play.m3u8?session_id=43f3276831e885272e5528e4159d1154&u_id=stlev-88e65e57dd228acd39805e2469d8d52ed1bba0f1c009dd49d0af0c0652de8d91&ssid=sv2.1795409216.70b39b3dd819db8ce6af3b130713b7c0bf02ae42bfdb08190740c5c1486809fb
+# Generated: 2026-11-23 07:31:27 WIB
+# Total: 14 channels
 
 #EXTINF:-1 tvg-id="u-nba-nba-tv" tvg-name="NBA TV" tvg-group="NBA" tvg-logo="https://sportsfusion.im/imgs/team/svg/nba-nba-tv.svg",NBA TV [NBA]
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://fallafar.me/sd0embed/basketball?pid=5&v=nbatv&player=clappr&csrf=NDk0YmFmMzQxNjFmM2U5N2U4YTgwMzRjOTk2NmI2NGJhOWJjZjM4ODE2NTZmOTBmOGRlNWIwMGY5YzU5NjM2NA.MTc5NTQwMjE1NA.MGFhNThhMGE4ZWY3MTlmMGIyYzkxZDgyYTI0YTY0MTZjZmU0MmE2MTZhZWRmYjRlNzI3M2Y5ZTgwNDEzNDgxOA&csrf_ip=6hP9ekD6PrmfARkM62MgUcZKTmtwsBsYxBVvU7cXZLsrUI0C0cTIHZNnXtniy5wqVJVHgDxyCpf4z6g6djfhKppHTBEG39F0hPzoZ8%2FSOHqYr5p5Vq9WRuN0Reaf&expires=1795402154&sec_hash=4U0cOVwdkzFGgZM3o053Eg/
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTVLCOPT:http-origin=https://fallafar.me
-https://s-c13.rusfish.space/pavel/j0nave809o8a6u2odado_cu5urabus0nowixoxeku/play.m3u8?u_id=stlan-88ff5ff57f459d973d61939947fc807e0fe2aeb7802d96eba87e20d927b9e31f&ssid=sv2.1795409296.30504bacf4f097fa114185bfc7a3c1b97b864a78c489f73b914b7bd919fc8362&session_id=7b6accc9bd4eb346077b219b182efa70
+https://s-c13.ragice.autos/pavel/j0nave809o8a6u2odado_cu5urabus0nowixoxeku/play.m3u8?u_id=stlev-71767119dcf918d3119ff51c8f98c44545c955bb993777bc45ab87f9b169acc5&ssid=sv2.1795426142.ec6a19a03e609d971074b17d7e87e24f4c77d36eacaecbefc909e6993fff14c9&session_id=0116948f85f7506cd203b515c4a40c9e
 
 #EXTINF:-1 tvg-id="u-nba-espn-first-take" tvg-name="ESPN First Take" tvg-group="NBA" tvg-logo="https://sportsfusion.im/imgs/team/svg/nba-espn-first-take.svg",ESPN First Take [NBA]
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://posamari.me/sd0embed/basketball?pid=5&v=espn&player=clappr&csrf=NmQ5YzBmNDdmMjc0NTIxZmY5NWY5NjliMzBlNjRhY2Q1NDczNDNjNmE4OWRkNGEzYzY1MTRlNWFlNTUzNDU1OQ.MTc5NTQwMjE1NA.NmFiMzQ2NTU0OTZkOTUyN2Q4ZjA5YjFmZDBkMTRmYTVmMTkwZDYwZGUzMjE0OGE2OTgzZjU3NDIwYTRiZDRlYw&csrf_ip=gWNvPfc23HMe%2Bc72SS48dO6U7apJCv6quLqxUvEZimc1slC7uro7t%2FeorJx9IepsU1Da84ohojNa857vNBVuXKBz342mb7oVG9F5ZHlnOe0msNDQT%2BGEnogcD8Rq&expires=1795402154&sec_hash=3Cjkgqu3QUnRnwgpzxD-nw/
-#EXTVLCOPT:http-origin=https://posamari.me
-https://s-a3.owledge.cc/pavel/yu6one8are5in03epo9e_vogoxikuyu70ze3eturo/play.m3u8?u_id=stlev-338aec950ecebe7efd46fffe65b486a3e0bd143ed72db437afe9140fb98a5dcc&ssid=sv2.1795409296.bab62bbdff21fe3a84bda7574869bd3bb5f5b9e1b4523de842b570186480eae8&session_id=9fc09c0881a0e0fe28f686e973c0c086
-
-#EXTINF:-1 tvg-id="u-nba-miami-heat-vs-oklahoma-city-thunder" tvg-name="Miami Heat vs Oklahoma City Thunder" tvg-group="NBA" tvg-logo="https://sportsfusion.im/imgs/team/svg/miami-heat.svg",[2026-11-23 06:00] Miami Heat vs Oklahoma City Thunder [NBA]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://posamari.me/sd0embed/basketball?pid=10&v=fhdnba2&player=clappr&csrf=NDdlYzEzY2RjOWU1NTA1Y2UyNTlhNTIyOGE2MDVjZWMyZTIyOTBhODE5YjA1YTdiZTc4Nzc0ODY4MWZhNDRjMg.MTc5NTQwMjE1NA.ZmE1NjVjMDVmMmE3ZWY5ZDE0MzVlOWI1NzY2Yjg3MWVmN2Y2ODg2MmZhYTMxZjU0ZDQzODgxMGI5OGM3MWVjOQ&csrf_ip=W0RJyqwItlHTLtG4J371wMyCYPbxB4kXQ%2FpOO7xJ5cQOJsdP7LZjzHN5Biiw9Gk%2BQjVbOR2ww0f%2B69RIBTvWgAG95scozyZNdatpUdrwg%2FWUWNkrXIOBVP6zA4ZH&expires=1795402154&sec_hash=EWUDcUS66OE4RFncwwXS1Q/
-#EXTVLCOPT:http-origin=https://posamari.me
-https://s-c13.mhys.ink/pavel/3e5iwivoko8oyigeyexi_ve7ihupe50cifidonuw0/play.m3u8?session_id=ea2287d57015094224df906ff993628e&u_id=stlev-1faede0c2388c5d3ddd46402bbcaf0c956f991e033ac9f01b19f4d9b74d81fdd&ssid=sv2.1795409296.67c61a530f4ebee42cdb7306e3a6d77b078e38a6d6937b6a6eae4cfafd9324f7
-
-#EXTINF:-1 tvg-id="u-nba-chicago-bulls-vs-denver-nuggets" tvg-name="Chicago Bulls vs Denver Nuggets" tvg-group="NBA" tvg-logo="https://sportsfusion.im/imgs/team/svg/chicago-bulls.svg",[2026-11-23 07:00] Chicago Bulls vs Denver Nuggets [NBA]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://ninguno.cc/sd0embed/basketball?pid=10&v=fhdnba3&player=clappr&csrf=YjI3Y2NmNThiMDViNDc5MmMzYjdjNDAwZDFmMDAwNGNiZDNmOTI2ZDEwNDdjOTg3MmY3MTM4ZmZlMTkwNTc0Zg.MTc5NTQwMjE2Mg.NjMyZDUyZDc4OTc2NTZiYjViZmU2ZjhkNzZlOTA0MGU5N2EwZGMyNDEzZGI4YTJmMTNjMTQ1NTQzMDc5MTc3OA&csrf_ip=oOZsQ%2FxFuno9njUs7U0u%2Bc08Qk0B8nYhSwmRmgzqtNrJsVqE0e72%2BtgtTpmoc%2BjzmTUhSAWYeNImw5hafqfdKrOoHd%2B1ZSCljUa9noYIx0b7Dd03m5HdB0QMAvP0&expires=1795402162&sec_hash=YCTgu1-IWWiNHjN0OtO37w/
-#EXTVLCOPT:http-origin=https://ninguno.cc
-https://s-c11.owledge.cc/pavel/detav0ravumujox0c0mi_k0yuwe5el0y0pihizo9a/play.m3u8?session_id=6af76009719916b06e02faef7d5556d6&u_id=stlan-203aadea90f88fa07262dde5ae581988171adaf93f219c19e5b7e26c98766399&ssid=sv2.1795409303.077ef8b413cb4841907b86968c4640542df7241334158da64996483d45fce968
-
-#EXTINF:-1 tvg-id="u-nba-utah-jazz-vs-dallas-mavericks" tvg-name="Utah Jazz vs Dallas Mavericks" tvg-group="NBA" tvg-logo="https://sportsfusion.im/imgs/team/svg/utah-jazz.svg",[2026-11-23 07:00] Utah Jazz vs Dallas Mavericks [NBA]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://posamari.me/sd0embed/basketball?pid=10&v=fhdnba4&player=clappr&csrf=ZTY0NDE2ODQ5Y2Q2MmQzZjkwZmFmZDkyMjkwM2NkNmJlYzhlOWI5ZTM2ZmQ4ZTUwZTZkMGRmODFmN2U3OWExZg.MTc5NTQwMjE2Mw.MDExMjAxMTU1ZWFhNTc0OWY4ZWRkY2VkMjk2Zjc1M2NlYzIwNmIzNGNlMmMzNTIxZmUxMDdhMTBlYTVhODA5OA&csrf_ip=dd0E1GtibdKSV2fmHo9C9WUUQvzmW8MZw4SPC%2FGGudEGSbObABxh%2BQth74ENL6fMQLXFoLEt0YLq%2BMdzYk2f3LvrxrRTmM0Wb0xyDDf%2BUJShExKVftlrWTRnfG7v&expires=1795402163&sec_hash=5miEDkBQi4H7BU0BR6dAYg/
-#EXTVLCOPT:http-origin=https://posamari.me
-https://s-c11.rusfish.space/pavel/yozo2o2idu9o9edute7i_s01epeci3ale6uwa3u6u/play.m3u8?session_id=0898285cdcbf5400ed199852dabf2f7a&u_id=stlan-d3e0c8b408d7b71561780555cb80296a886933ffc713b14898eab6309646559c&ssid=sv2.1795409305.d536c6687ccbfc7b9065a2d054c3495d49775fc8240be65d55a65b7bcdb04dd6
-
-#EXTINF:-1 tvg-id="u-nba-washington-wizards-vs-orlando-magic" tvg-name="Washington Wizards vs Orlando Magic" tvg-group="NBA" tvg-logo="https://sportsfusion.im/imgs/team/svg/washington-wizards.svg",[2026-11-23 07:00] Washington Wizards vs Orlando Magic [NBA]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://fallafar.me/sd0embed/basketball?pid=10&v=fhdnba5&player=clappr&csrf=MWM0MmU5MmQwMTZkZDdmZWI3YTU4YWU1MTEyYWU3ODEyOGJhNWMzNTZjYjNlZmYwMTg1Yjc4ZDI3ODIxNmE5Yg.MTc5NTQwMjE2Mw.MTQ1YTljMGY4NTEzZDhmYTYzZTg5ZjgxNWJmOGZjZTZhOTkyNzVhOTYxYjcxMDdjZGU4YjM3YzQ5MjdhZmJkYQ&csrf_ip=d8RrnMs6fV0dWssZTzGh8uBhPTy9h4v2P8a8Awh2tNegzKAFIzfm2l%2FwGMgp2R1ytHZUJBpwkPm2sowmbZ3bi%2BMZBXBIh83KHygb0QkHeT6doSYx1T9tk9Ii%2BMjs&expires=1795402163&sec_hash=4zOwVAimsXupTvfQFpVqhg/
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTVLCOPT:http-origin=https://fallafar.me
-https://s-a3.owledge.cc/pavel/di7a9anowubil01ixetu_luco9ojosuni2e80j0x0/play.m3u8?u_id=stlev-84cd7fc14ad2394135226a28771487047bd1d5b46cafe48ca5671eacaf483864&ssid=sv2.1795409304.ef3986839dd63c6afc02261e28a433f63e20f67bcf56aaefff42a62c56c2eb9d&session_id=4e76cf894deb74f0ccb92f3f80627139
-
-#EXTINF:-1 tvg-id="u-nba-new-york-knicks-vs-indiana-pacers" tvg-name="New York Knicks vs Indiana Pacers" tvg-group="NBA" tvg-logo="https://sportsfusion.im/imgs/team/svg/new-york-knicks.svg",[2026-11-23 08:00] New York Knicks vs Indiana Pacers [NBA]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://ninguno.cc/sd0embed/basketball?pid=10&v=fhdnba6&player=clappr&csrf=Zjk5M2JiZjZhMzI4NTAyNzI3YmRkNTAyZTgwYTcyMDAwNTM0YTNlYmQ2MzQ2ZDczZGZjNmExODE3NmQ0MGM0MQ.MTc5NTQwMjE2Mw.YzRkZmRkY2RhYzE3ZDc0NWU2NGY2ZmJlMzRiNjY1YjFlZjhjZjkzYjFlYzYyYjA2Y2Q0ODkyYjUxYmY0MGM4ZQ&csrf_ip=6vl0wbjsmL004YTa8nzqcNi1DEWO%2BID2dWVxfCQXHR7kZ63t1SsrOgksRgvt3%2BykqbqDRQP3zdZF4iMjbByq%2FJUtNoaN1w5p97dPkfmfzehvezW3%2Fg5V0Vlsr6dS&expires=1795402163&sec_hash=lYCjVo8Vuz9t5mgFxDt0_A/
-#EXTVLCOPT:http-origin=https://ninguno.cc
-https://s-a3.ragice.autos/pavel/5uh04uho4a7on0fezu6o_9etur0yi3agedir0duga/play.m3u8?u_id=stlan-7c539250aa285a7e9354defe33a4885b0e25481639200656b550064f78fca0fc&ssid=sv2.1795409304.95532ca5215b7b277f8028b42b96d2be3cb23d72591ae82810260b01fc859516&session_id=97070d33fa55340191c796ea907e1fe4
-
-#EXTINF:-1 tvg-id="u-mens-college-basketball-menlo-vs-saint-mary-s" tvg-name="Menlo vs Saint Mary's" tvg-group="Mens College Basketball" tvg-logo="https://sportsfusion.im/imgs/team/svg/college-basketball.svg",[2026-11-23 08:00] Menlo vs Saint Mary's [Mens College Basketball]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/sd0embed/basketball?pid=5&v=ncaab21&player=clappr&csrf=Yjg4Y2MxMzIxYzgwN2EzOTAzY2NkM2IxNzgwZWU0MTQwMjI2NzQzZGMyZmFjMzE3MzhkOThiZWVjZjVkOGIyOQ.MTc5NTQwMjE2Mw.ZGQzMDgwOThhOWFlZGVkNWM1MGNhZDRlMTYyNWM3NWY2ZTM2Mjg0NzBlYzY3NWQ4MTZlZjBmNzhjYTUyNmQ4Yw&csrf_ip=CjKD1SdESKqAPmebq0KeNaNMjQZQBUGt2kAfrjlI2NS9J4bt8aGycDJWurZLvk1sve1oSMgi4ukQsi2%2F63SgMLeosNoZtpFrXUUXdBsX%2B4Z3oqB68yFxwJPxo5JE&expires=1795402163&sec_hash=ygUv17UYKXY08Y2rIngAtg/
-#EXTVLCOPT:http-origin=https://lonpapil.eu
-https://s-c11.ragice.autos/pavel/5ekicoxuzasu5a2opo1e_hi9i5ev0mof08atuzo9e/play.m3u8?u_id=stlan-3ad6574159662d5805d463feaef80d72ff6c30928ec0a604def34eaee7ff02a3&ssid=sv2.1795409306.674969fda17ca78549e535383ee6e5eaa8983cb9e1d60c88abaef103e65538ed&session_id=948ad826f83ccf6210ba7cf8226ac696
-
-#EXTINF:-1 tvg-id="u-mens-college-basketball-ut-martin-vs-utah-valley" tvg-name="UT Martin vs Utah Valley" tvg-group="Mens College Basketball" tvg-logo="https://sportsfusion.im/imgs/team/svg/ut-martin.svg",[2026-11-23 08:00] UT Martin vs Utah Valley [Mens College Basketball]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://ninguno.cc/sd0embed/basketball?pid=5&v=ncaab23&player=clappr&csrf=MTcyMTI5N2Y0ZjBmZTlmNTc0ZmRmNzBkMzFmNzI4ZTc1YTlmZTBkNTZkNTA0ZTkyZmYzY2MyYWNlYmM0NzMwNA.MTc5NTQwMjE3MA.Mjg5NzQ2ZDYxYzA0ODg2NjM2YTgwZDM1MjViOTMxNjZkNzdiYmEyMTNhYmFiMjM3NGQyNTlkNmYyNmRiODZkMA&csrf_ip=JUHk5gSx%2Faodu1WvhVQ6GHDRRLINV%2Bq3oNEihLpO0LKrBKONzxLcJk1vvb2%2FonR6l4vETF897X7Y7kvEKTtBkNqBE3M%2FH6mn%2FE7g8AnROw2PGk9PBOvvUeKyqw8e&expires=1795402170&sec_hash=osuHpis9Lgf-duvNfWzJHg/
-#EXTVLCOPT:http-origin=https://ninguno.cc
-https://s-c11.ragice.autos/pavel/goxoy0te5a4ek0pagu5e_me2a8ifi1ayo1inapex0/play.m3u8?session_id=14dab02a90943957430ed71a320fa48f&u_id=stlan-ef1825eb152758f7fa35a6212c81b4362b6b222f7d2ed0c5fe01e492d780acd2&ssid=sv2.1795409313.6b929871d7d4931b9c87d22eaf2b92fba1e7a566ec7f199a28235ead4bdaea6f
-
-#EXTINF:-1 tvg-id="u-mens-college-basketball-louisiana-vs-18-usc" tvg-name="Louisiana vs 18 USC" tvg-group="Mens College Basketball" tvg-logo="https://sportsfusion.im/imgs/team/svg/louisiana.svg",[2026-11-23 08:00] Louisiana vs 18 USC [Mens College Basketball]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://posamari.me/sd0embed/basketball?pid=5&v=ncaab25&player=clappr&csrf=ZDYzNmNmN2VlMmYwYzk5NDE3MzMzNzU1NDhmZGYxNjQ4ZGNjYzgyMzkxM2I2NDYyYWM2ODY4NDU1YmIwOWRmYw.MTc5NTQwMjE3Mg.YTIyZjg1MjYyNjQ5OTZkNDJiMTcyOGU4MWQ2ZGU4MzZmMzk4YTcxNjRlYmJlZDM0ODY5OTFlMjk2MmEyNDNhMQ&csrf_ip=yImKgaBNRncjTz%2BK%2B3jFFn93%2BDQH50i%2B4f8nUAs3WKs4MnFrSC%2Fd0UtHcBOY9dkdcwXfc7narwzsvkmNr1bVytOteKKv793WWet8lTxlhDDyWJJhEIJBBciPgn4K&expires=1795402172&sec_hash=sBo_cW5X_Eb3GtjNxIgybw/
-#EXTVLCOPT:http-origin=https://posamari.me
-https://s-c5.ragice.autos/pavel/6a2ano8uzato6es03e8i_3u2i7aw01ofojo70yo8i/play.m3u8?ssid=sv2.1795409314.7bc4a65e40aec42265283a2a2570f687efb11bb1571f901264be0743d362bbd1&session_id=8d9eee367b98f022c1cab3acb72a857f&u_id=stlev-8cc1bc097fe477e68b15fa517820761449a4e0d3f71783e5d91ff1f9f2a33829
-
-#EXTINF:-1 tvg-id="u-nba-golden-state-warriors-vs-boston-celtics" tvg-name="Golden State Warriors vs Boston Celtics" tvg-group="NBA" tvg-logo="https://sportsfusion.im/imgs/team/svg/golden-state-warriors.svg",[2026-11-23 08:30] Golden State Warriors vs Boston Celtics [NBA]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/sd0embed/basketball?pid=10&v=fhdnba7&player=clappr&csrf=ODBhYWZmM2M0NzAzM2NiOWU2NzFkMTc5ZTFiYTVhMWRhMGZiYWUzOGY4MTlmNWMwNjc3NTFkN2IwOWZjOTczMQ.MTc5NTQwMjE3Mg.NzZkNjI3ODdmYWUyNTE5NzBiOWQ4OWFkOWNhMzM4MjQxYTgwOTZjZTczYjU4ZjI0ZmEwMDdmY2NjZTFiZmIxYg&csrf_ip=HQoTKJCv4CqAVQw%2Bm9wsxwmT61lHgxWzEyqNpSn3W5ASmypk7%2FeALw09eTKPP2OJbfJXV8IttGljJQvAO0rPL9Y46dGBQ5fhbS7d3g9M7dmSaqMeVaODwb5pZVng&expires=1795402172&sec_hash=zJCvHGjHroYqtdDFLHqzVg/
-#EXTVLCOPT:http-origin=https://lonpapil.eu
-https://s-c11.rusfish.space/pavel/xelamor02ujugaroz0bu_2i10joz0besirewocutu/play.m3u8?u_id=stlev-f00b2ffd5f5afc876b570f8858e2830536811e49c614ea9708ed5b97cc25dca7&ssid=sv2.1795409314.df5e163ec902b3c840f47fb2ee270320fc4ce5d75935696816d1d3d0d7b47289&session_id=c04724608108be5267d6c20153deef85
+https://s-c13.owledge.cc/pavel/yu6one8are5in03epo9e_vogoxikuyu70ze3eturo/play.m3u8?session_id=f6ea77d50448140355447ad5c0e3bcfb&u_id=stlan-4fd1e858acb78266a2a0fd1d34737cbfd02ffaa2159f0d3ee8a0a0c9f7a5cc8c&ssid=sv2.1795426142.bdce3d33a53c827049015be27e92408ca36de20931b22e685f3526469d6a4695
 
 #EXTINF:-1 tvg-id="u-nfl-news-espn" tvg-name="ESPN" tvg-group="NFL News" tvg-logo="https://sportsfusion.im/imgs/team/svg/television.svg",ESPN [NFL News]
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://fallafar.me/sd0embed/american-football?pid=5&v=espn&player=clappr&csrf=ZmVlMzdjZTliMGFkMjU3MGNhZDI1ZmI0YjJhMWNjZDdjZWQ1OGFlNDAwYTcxYWRmYjU1YTQ1MTcyNDMyNWU2NA.MTc5NTQwMjE3Mg.NDlkYTA1ZDhlZWIwZWNkYzEyMTI3NmI5ZmRjMmY3ZjU3NDM1NTdlYmUxMTRiNDM5MzM4ZDE2YWQ4MTYwYjRmOQ&csrf_ip=4342C4AMyc%2FEVO67tfJRukptt4NvEkE2QcyZhzNRASIyv2Q%2BJGD1ebGk5U79gCb%2F3f1vHC7x1EY7CkiZNoiaAA61cjn3MwGNQtIn5KRYwLKvrhLrROyMpbPfsMrL&expires=1795402172&sec_hash=pWVhX1hAFs6J7CYhP6AgHg/
-#EXTVLCOPT:http-origin=https://fallafar.me
-https://s-c5.rusfish.space/pavel/yu6one8are5in03epo9e_vogoxikuyu70ze3eturo/play.m3u8?u_id=stlev-8fcadc1c6f22bc51695766a2d21cde66f20e051962f741a10d7d76e3080c45a6&ssid=sv2.1795409313.267bc00bfc5332d8db909d4667a35ee681bf68840e43d11698ebdf871295d659&session_id=0640e6d920d5675d44c0a444ead8bdde
+#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTVLCOPT:http-origin=https://posamari.me
+https://s-c11.owledge.cc/pavel/yu6one8are5in03epo9e_vogoxikuyu70ze3eturo/play.m3u8?session_id=36b259fb3c31a51fde5b45323c7035c8&u_id=stlan-bfb079da65eb7cda3163d90a21ba7e439b1d697f91dd420f065308e37dd2a089&ssid=sv2.1795426193.0038cf086b4e8a028d21b5ddab0e937f0f6757ff5e9f726be4273c3036123ac6
 
 #EXTINF:-1 tvg-id="u-nfl-nfl-network" tvg-name="NFL Network" tvg-group="NFL" tvg-logo="https://sportsfusion.im/imgs/team/svg/nfl-nfl-network.svg",NFL Network [NFL]
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/sd0embed/american-football?pid=5&v=nflnet&player=clappr&csrf=MDU1ZGY3NzYxODk4MjUzMmU1Zjk4YWI2YTE2ZjhlOTU5OTFlZmJmNTgwMGY0OTcxN2ZhMGI2MWUzMGEwNDQzNw.MTc5NTQwMjE3Mg.MzE0ZGJlYmE0OTlkNjQ5ZTA2ZGIyMTgzNGFlMTcyNmY4MTgzN2U0ZjJlYjhmMTIyZmY5MzQwZTYyNDFiYmRmOQ&csrf_ip=qJM%2BR%2FCQexv58xAUNyvGqOQP1A%2BNafT%2B5biAECEiTa%2F62XD%2BztIe8mLeE84R%2BThEZdWHacn7r8ex6nC0bJxC2QuEhdJ2EIXMfuFh%2BV4U%2Fl8RnY2eSotSzRRI1Y6c&expires=1795402172&sec_hash=WRqvm7B8YummLVmhJ_2-6g/
-#EXTVLCOPT:http-origin=https://lonpapil.eu
-https://s-c5.ragice.autos/pavel/7azaf02e8oy0hihijize_rofe9i4omoce6afoxe8u/play.m3u8?ssid=sv2.1795409314.ec639ee1aaea9397820bed3cbc0d1d9f726d2c96ecf9979c64b811ec72b3139b&session_id=4915f4a0bd8b90727fa0e929a3dc2ab0&u_id=stlan-9e77658e4aa8209532e312b09e34c8e13ca79a4a7a9f029347b75bb125a713b8
+#EXTVLCOPT:http-referrer=https://fallafar.me/
+#EXTVLCOPT:http-origin=https://fallafar.me
+https://s-c11.mhys.ink/pavel/7azaf02e8oy0hihijize_rofe9i4omoce6afoxe8u/play.m3u8?session_id=3fd5ef8550d0faa4c1d13c5ab70b143b&u_id=stlan-12131be1cc4109ff445c3e751bb694115dd782be5009008f1df71710565b9485&ssid=sv2.1795426194.4f15ccc49b06f5f023050a6555cb9bd87848aa1b1d70def464e344a4d7ace7ea
 
 #EXTINF:-1 tvg-id="u-nfl-nfl-redzone" tvg-name="NFL RedZone" tvg-group="NFL" tvg-logo="https://sportsfusion.im/imgs/team/svg/nfl-nfl-redzone.svg",NFL RedZone [NFL]
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://posamari.me/sd0embed/american-football?pid=6&v=t8C8wdOsw0A741Ue_1ebQT4-qutCCk3-VZipfmHyP8P2f-Ndm0pmUdt_v8S6eRsEAHxjTt3h9_y6Nv3RY6qeQ2CFAjijn5RkLu6fTDtKl8Uvme07d9Lfb8ogKREWr-JvcJPquIm7csmtEwddThbTH_d1wCvzdKC_EpA3am_C3mJKJQuI0R35uv50lAy0BJGhYLtqrI2L_NH5Yayuyh2KvjniGBhIC0ILmOM5G9g9eZZ0lFNTIXPADPTWTJkUvEtLnnZt4P5YHvI03LPhIVjE8ePX7oQrFVzqyTl5iyvEVR5ERA&player=clappr&csrf=OTUzNjY5MTc1YzA5ZDk4NmM2ZDFkZDZhZmMwZGIwMzQ4Mzc2MzYyOTQ1N2U2Mjg2ZDM0NDM4NzdhZjY2ZDlmZg.MTc5NTQwMjE3OQ.YWM2ZTAyMTBjZThkM2M1N2U5YWExODAwMWM4MmRlNjgxNDRlZGRmY2YyYzQ4MjNmY2Q0MzhlNTM4NmJhNDBhNA&csrf_ip=W0ZpguKG74NmW708gcxWubRokHqNrg7Oxb%2BB%2Foc3EJ8uz0KqsbrHiERkSd7UAlLE8Q%2BIg4m3P6luc0EPibK4wORn%2BHa3qBgLW3XDtCLeo4yYK5sU%2B1RA0gGrbpQj&expires=1795402179&sec_hash=pf4fgPnDCaObVEBOGguqMg/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTVLCOPT:http-origin=https://posamari.me
-https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/dash/enc/tppdoitn9n/out/v1/9828b56372fb434fafdcf88c72052d01/cenc_audio_7_0_35451254.mp4?m=1770714124
+https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/dash/enc/tppdoitn9n/out/v1/9828b56372fb434fafdcf88c72052d01/cenc_audio_7_0_35459692.mp4?m=1770714124
 
 #EXTINF:-1 tvg-id="u-nfl-mnf-monday-night-football" tvg-name="MNF: Monday Night Football" tvg-group="NFL" tvg-logo="https://sportsfusion.im/imgs/team/svg/nfl.svg",MNF: Monday Night Football [NFL]
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://posamari.me/sd0embed/american-football?pid=5&v=espn&player=clappr&csrf=ZTM5OWMxOWMwNDRkYzU3M2M4NDFjZjM0Y2EzYTliNDAyYWY5ZDllNjdjZGUzMTMyNDAxNGM4MWE3NzcyMjc5YQ.MTc5NTQwMjE4MA.MGM3YmM5NDljMDk0ZmY5YjJhYmI5M2RmYTdlOWUzZmQwZmFiMTg2YmM1NGFiNzU1YzhkOTQyZTk5NTZhNjQ2NQ&csrf_ip=3IIBtXpWUNtyaDH7mx7b5%2B40Ddlu2QjzBkGk8BBEJM1098JRkFw%2FFuNSFuXtmJm1nrgnQDyfLJCrpKCBO6V5ofnqxqIDWSbTXNh4bS8O%2BDM6xE%2FTjLAzLtLUJJfr&expires=1795402180&sec_hash=3uapnh69NmYHoJaF7PyXtw/
-#EXTVLCOPT:http-origin=https://posamari.me
-https://s-c12.rusfish.space/pavel/yu6one8are5in03epo9e_vogoxikuyu70ze3eturo/play.m3u8?session_id=0603f28dd5211b35494ab321f2bddbcc&u_id=stlev-46e2bce2acbbb7a851927fb39db939169656cd75620208a09b561a2eb416f64c&ssid=sv2.1795409322.8d6ddd3f39ac3c545ffe6ec00fa1e143e9e25e75f268601ee6043220293352ef
-
-#EXTINF:-1 tvg-id="u-nfl-snf-sunday-night-football" tvg-name="SNF: Sunday Night Football" tvg-group="NFL" tvg-logo="https://sportsfusion.im/imgs/team/svg/nfl.svg",SNF: Sunday Night Football [NFL]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/sd0embed/american-football?pid=5&v=nbc&player=clappr&csrf=YjBmZDkxNGZkOTRjMmQ0NWNmNTM4ODIxOTliZGFjZDQ2NjA0MTJhYzQyYWJiMWUxNmY1NjQxNGM5NzMxMzIxNw.MTc5NTQwMjE4MQ.Njk3ZmEyZTAxN2Q0NWY0MTc3ZTlmNDM1YWQ1ODJlY2VhN2Q3ZDc1ZjBlMWZlZWIxMmI1Y2FmYTk5Y2QyYmYyZA&csrf_ip=pbjNOD7%2FVRoyFCA5QPWTy%2BVhhnRdtOEK4kFkKgowec%2BMHDYjEHwuS1RTrQjmrsf2HHffWS7LKq93lPTTxSODRR0JoGecrSm0qdT2xq%2B2HuXDKue9eJ1mh5c8gYSJ&expires=1795402181&sec_hash=PhqrDsOVJ9AaLDYj6amFhQ/
-#EXTVLCOPT:http-origin=https://lonpapil.eu
-https://s-a2.owledge.cc/pavel/firi4ox0wivi1e9afipa_v01etinepuna8ef0devu/play.m3u8?ssid=sv2.1795409322.5700be84ad4f4d762e767adb3799e7220eba3d151755ab4f372cbdb79aff31bd&session_id=8b66d11ecbfd0b5a06f37576b7a5792b&u_id=stlan-2d679b5dd9ea1b1b504f93c3a402c8761346905230d96fadc3a4dcb0feb2a2c8
-
-#EXTINF:-1 tvg-id="u-nfl-nfl-redzone-week-11" tvg-name="NFL RedZone Week 11" tvg-group="NFL" tvg-logo="https://sportsfusion.im/imgs/team/svg/nfl.svg",[2026-11-23 01:00] NFL RedZone Week 11 [NFL]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://ninguno.cc/sd0embed/american-football?pid=6&v=t8C8wdOsw0A741Ue_1ebQT4-qutCCk3-VZipfmHyP8P2f-Ndm0pmUdt_v8S6eRsEAHxjTt3h9_y6Nv3RY6qeQ2CFAjijn5RkLu6fTDtKl8Uvme07d9Lfb8ogKREWr-JvcJPquIm7csmtEwddThbTH_d1wCvzdKC_EpA3am_C3mJKJQuI0R35uv50lAy0BJGhYLtqrI2L_NH5Yayuyh2KvjniGBhIC0ILmOM5G9g9eZZ0lFNTIXPADPTWTJkUvEtLnnZt4P5YHvI03LPhIVjE8ePX7oQrFVzqyTl5iyvEVR5ERA&player=clappr&csrf=ZWE4OWI2ZmM2NGI2YjM1ZDY2YzYxZGI4ZGM2ZGM2NGZlOTA1YzI5NmRjMTFiOTRhNDM4OGI0ZDA4NWQ0NTllZQ.MTc5NTQwMjE4MQ.OWNkMmM3YWJjMjYyNmU5Nzk2MTUyMWYyOGFkZmU4NDNmNWQ4N2UxNDhhOWU5MWVjMGFhZTk0YjYzZDljOTZhMw&csrf_ip=q4RT7%2Bv9Pk5nzjlsfwuJwuad47KGUeMwvH3QCI8pFWJ2dJskfb1Q2hTJcgaQAI9hPWIRTktkVlpT7DbFLpLDqc510lcMqGuOrGzhvArzKlCtzQvwja6wTS9%2Fj2%2FY&expires=1795402181&sec_hash=LhUtcdK3hq_w0k3VChg8yA/
+#EXTVLCOPT:http-referrer=https://ninguno.cc/
 #EXTVLCOPT:http-origin=https://ninguno.cc
-https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/dash/enc/tppdoitn9n/out/v1/9828b56372fb434fafdcf88c72052d01/cenc_audio_7_0_35451254.mp4?m=1770714124
-
-#EXTINF:-1 tvg-id="u-nfl-nbc-sunday-night-football" tvg-name="NBC Sunday Night Football" tvg-group="NFL" tvg-logo="https://sportsfusion.im/imgs/team/svg/nfl.svg",[2026-11-23 07:00] NBC Sunday Night Football [NFL]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/sd0embed/american-football?pid=5&v=nbc&player=clappr&csrf=NmUyZmFmMTdhMmQ1OTJjZmNjMGQxYjUxZmE3ZTIzOWZhM2JhYmY1OGJiZTM4OTU5OGRlODUyM2M0NzRhNzNjYg.MTc5NTQwMjE4OA.OGVmNWEyNjkzNjEyNjBiNTU5ZWE0YTlkNTliNWRjNzBiOWY2YjQwMzlmYjcxMmM4ZTcwYzY0ZmQ2NDE4ZmQxYg&csrf_ip=c0wDp%2FJquYhiL0weT57pEXKk%2BuXcNJRNt%2BylGVp%2F4h3b2lVJcXqRungya4RZNqvGCMARrVR24yC64hlLMtfAgStqO1x0gevbmAI1pG0M8903QB%2FdaOPYWnbCLMbL&expires=1795402188&sec_hash=ZXKTuOe2YwZmB6iRiU1wAA/
-#EXTVLCOPT:http-origin=https://lonpapil.eu
-https://s-c5.rusfish.space/pavel/firi4ox0wivi1e9afipa_v01etinepuna8ef0devu/play.m3u8?ssid=sv2.1795409330.9fa3530ff860a08cb468e80d3e733c9b791c2334136aab104fc70f459aecbea1&session_id=6687ea35ff74344fd32fea6a5b9571bc&u_id=stlev-91192d2bffe5fecc6b4e2282adcab5e86358ef1a60e5fbcf80a1d21080ee0879
-
-#EXTINF:-1 tvg-id="u-nfl-san-francisco-49ers-vs-minnesota-vikings" tvg-name="San Francisco 49ers vs Minnesota Vikings" tvg-group="NFL" tvg-logo="https://sportsfusion.im/imgs/team/svg/san-francisco-49ers.svg",[2026-11-23 08:20] San Francisco 49ers vs Minnesota Vikings [NFL]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://posamari.me/sd0embed/american-football?pid=6&v=jW4oqEkELt5gG8zeoN2sKqKz7p_ZcPap8e5zj-6OXK4kzc1WnjMGJP8nn5qRemYKqrwJuGCYIkx4Mpr3Jec_3mC5InpHhd7jFXPrjY180dbuGp-GVwagxKk7GCnmMRbFJ8HG_46fnhvBiKQzEK5o1SuXhuzsCKPuzA3oguweQFunPWca3pIol-O5IgYX-fx45aQjbXDOj_tRg_cS6Ua0BFNBGtBKZyirCwxThzKwSrn2lsxuRxG20i2rMDkCDZUh0RWKo1uJarhSxCH-nHwDa2_IkC8XbyOWzrsT2dwOtrtAKeEvczRh&player=clappr&csrf=ZGE3YTkxNTE2NWViYzdjZDNlMjkzM2M3Y2Q2YmU1NWE5NmEyODBjOGE5NTRlNDU2NWE3M2Q3YmM2OTFmOGQwMg.MTc5NTQwMjE4OQ.YTZhYzA4N2RmNTIwNTQ1Y2E3MGE0Nzk4YjI2YmIyMzQwYjU3MmFmNmQ2NDJkMjcwYjZlMDQ2MWNlYTIxZjk4Nw&csrf_ip=mboqdWJd8V0Xgpphi1ItQ6C2L3midt0Vf1Nv38i%2Fz3T1vMMVPtQYoODUkLjj39nPw8gTfxrl%2BFbCXGc2nNRV35yOduZCAvWr1OFXEXsBjvsVc2HcnmYkrOijP563&expires=1795402189&sec_hash=OZzKhtZwISlioLKafFKFZg/
-#EXTVLCOPT:http-origin=https://posamari.me
-https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/dx5hfbpk7u/out/v1/c14185a397544650b9761d43ad2e8e91/cenc_audio_7_0_20439508.mp4?m=1755629818
+https://s-a2.mhys.ink/pavel/yu6one8are5in03epo9e_vogoxikuyu70ze3eturo/play.m3u8?ssid=sv2.1795426201.126a107ef775aeb63d0ff1da7527a92d229270202daf64a238c3e1e0c1c4c704&session_id=57b82f5e420990725884581e3d9fd392&u_id=stlev-3990e2d1403315dee842f6df355d844dbe6c4d86558d91e8b6db79a7950c7456
 
 #EXTINF:-1 tvg-id="u-mlb-mlb-network" tvg-name="MLB Network" tvg-group="MLB" tvg-logo="https://sportsfusion.im/imgs/team/svg/mlb-mlb-network.svg",MLB Network [MLB]
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://fallafar.me/sd0embed/baseball?pid=5&v=mlbnet&player=clappr&csrf=OWVkNGJmNjdiNDljZmNlYzQ1YTgxMzY3MTBkZjg4NzYwYzQ5N2MxMTZmZTc5ZGM1OTk3ZjZkMzUwY2FlZjc5ZQ.MTc5NTQwMjE4OQ.YmZlYjhlYzI0ODljZTM1YjMwM2VjNzIyY2JkYmE4NmUzNDkwY2NkZjEyNDk0NmQ5MWIzMjc5NzhmZThiODEyOQ&csrf_ip=WL1tdA7Asb5fhidIlegcgcqLoW%2F5GS1jsCiKZwioW%2BvaBI8iXTDCenCsd8vCmapilk5%2Fknkq8iAVy%2BV2h4c2KPep0YPj79Yx%2FBDfSLepBXrS%2F03JvgSJOJHLkzAa&expires=1795402189&sec_hash=G7EuRyIa7sxqjPTtZolKYQ/
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTVLCOPT:http-origin=https://fallafar.me
-https://s-c12.mhys.ink/pavel/pixagenuwuhikogizula_70h0ki8umi1ix09ugi8a/play.m3u8?session_id=6e22cbd767e8107242705798d210b69d&u_id=stlev-033e87474d3ec128535edd8520f38233071e0ac6960c2e6488f7ef293bb098df&ssid=sv2.1795409331.8307080cad68c6549a28463563fecdf4da0fca9bde869ad409aaca7113d5b1f4
+https://s-a1.mhys.ink/pavel/pixagenuwuhikogizula_70h0ki8umi1ix09ugi8a/play.m3u8?session_id=5b2182c2ef392f204e2366feb2ec3976&u_id=stlev-d493e8bc5d03b7f55fa245cf5d993bbeea7ad8a54dcbfc4a349aaba66e01aae2&ssid=sv2.1795426220.e2f38e85647829325451b91baf16f58df13515265c43bf93ed3e5666fb2d7586
 
 #EXTINF:-1 tvg-id="u-nhl-nhl-network" tvg-name="NHL Network" tvg-group="NHL" tvg-logo="https://sportsfusion.im/imgs/team/svg/nhl-nhl-network.svg",NHL Network [NHL]
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://fallafar.me/sd0embed/ice-hockey?pid=5&v=nhlnet&player=clappr&csrf=OWYxYWMwMmE3ZGIyODZlNWNjOTlhMDhkZDc3ZGEyYzFlNzA2NzEwNmUwNjRiNTkzMThiNzEzM2RmMDBjNGYzNg.MTc5NTQwMjE4OQ.ZmM4YjI2ZDI1MmNiYTljZDgwZjJiYjc4ZmM3ODg3MmNlOWFiNDA0OTJiNzM2ZGJlY2QzNWUyYTdhMjhkN2MzNg&csrf_ip=A5kxvCNpYJUHpcnMUtQCLEqZ6PCAwhRi8AMyakCSsasx900S%2B9xc1mPkuVxU2bUpOkxY8tvTbTSwqfVhDj1MjM46pIxZ9iagcR%2F%2B2f5%2F5bJP4IxdIoy4TxlNN%2BEI&expires=1795402189&sec_hash=HRfFDeRtoisGBbJs0i3tGA/
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTVLCOPT:http-origin=https://fallafar.me
-https://s-a3.mhys.ink/pavel/40hu6udafa8a7ogopa5o_mihi907ubagexogumujo/play.m3u8?u_id=stlev-fc16e1d6f13154acb481f5abcc2958885c5acd689ae3515e69b5723dccdd7bb7&ssid=sv2.1795409331.900a4e48b6017f3080cf79fa250c9d8e8b3b95d4637dcc3c07dc690c60503795&session_id=456de2b17dd63eb5d0d5555383add1b5
-
-#EXTINF:-1 tvg-id="u-nhl-dallas-stars-vs-pittsburgh-penguins" tvg-name="Dallas Stars vs Pittsburgh Penguins" tvg-group="NHL" tvg-logo="https://sportsfusion.im/imgs/team/svg/dallas-stars.svg",[2026-11-23 07:00] Dallas Stars vs Pittsburgh Penguins [NHL]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/sd0embed/ice-hockey?pid=10&v=fhdnhl3&player=clappr&csrf=ZDM2MDc0Njk4NmQ1YzBkMWY1MjE4MGIzODZkYzZkNGUxNTU3NWNjNDYyNzFjZTk3Y2FlMzFmYzA2ZGU0ZjkxNQ.MTc5NTQwMjE5MA.YWE3ODRmMzVmNWI0N2E0OWM1MGY3NDE1ZmNiZmRjMGVlZGI2YWM4MmM2MDk1YjFhMWQzNzM3ZTJhZWMzMjZmOQ&csrf_ip=Y3p%2FgVMGSSnYkB%2BrWj1ESgSmeTYM3sL7ggN21AO7d7NUI%2Fi9gelJngXmeTi9bKawCoKKUw%2B54UaRdGq3gIwlTA2Gb1znRCopb78JG%2FG6db4iFd%2FhNLy5qnldZoGP&expires=1795402190&sec_hash=NQEJlPSRlBKLZW0rSBJlmg/
-#EXTVLCOPT:http-origin=https://lonpapil.eu
-https://s-c12.mhys.ink/pavel/gu3oxurukolu9e90ne8a_2o30celideduyepofihi/play.m3u8?u_id=stlev-76f505be8fb0ce0197cb70536acb5fc5a0b19c843598a9960291277685d6efcb&session_id=bb1ab8b33ba2030730630db9200ef01a&ssid=sv2.1795409332.029da4f952829c52d2b317e72d0c813816e893f162240a2db91e0daed55284a8
-
-#EXTINF:-1 tvg-id="u-nhl-st-louis-blues-vs-edmonton-oilers" tvg-name="St. Louis Blues vs Edmonton Oilers" tvg-group="NHL" tvg-logo="https://sportsfusion.im/imgs/team/svg/st-louis-blues.svg",[2026-11-23 07:00] St. Louis Blues vs Edmonton Oilers [NHL]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://ninguno.cc/sd0embed/ice-hockey?pid=10&v=fhdnhl4&player=clappr&csrf=Mjc0Y2M1YWZmZmViYTM0M2QzNGE2ZjVhNDc3ZjU2YWZkNjM5N2ZhNDUzOGY2YWFkMzgwYWIzNTBjNDJlNjMwMQ.MTc5NTQwMjE5Ng.YTMyZWYyYzAwNjdjNDBjZGM5MGViMjgyNzFjZGY5MGFjNWNlY2JlMTU0ZjczYWE3MDk4NzEyODI0MjZiNWM3MQ&csrf_ip=CdaOv4KC%2FxfUg1v1Q9xo%2F05VAtFuEhjMEPNbEfUp59gpXkmCwj2SLZoSFie%2B6LVnAylesKynDR1y3e33%2BAfYPw3xDtFS3%2B5vfUOJFq4XMIUQTtPK2Id81fPTz%2B37&expires=1795402196&sec_hash=PGz8KfgIfyYYKkGf-69zhQ/
-#EXTVLCOPT:http-origin=https://ninguno.cc
-https://s-a3.ragice.autos/pavel/ze2o9u8onofadokewoxa_9a1u3u5upica1upinuyi/play.m3u8?u_id=stlev-6cae7e9a943b72c528f961676c96ac899986c283c4c895492ffc668b64013440&ssid=sv2.1795409339.95ba4624286d0fef6a6e7dfd9a3808e6f51ceefff6c77baa9dbc5d6824fb362e&session_id=15b82edb8c2aec9554935d55b0bb159d
-
-#EXTINF:-1 tvg-id="u-nhl-vancouver-canucks-vs-chicago-blackhawks" tvg-name="Vancouver Canucks vs Chicago Blackhawks" tvg-group="NHL" tvg-logo="https://sportsfusion.im/imgs/team/svg/vancouver-canucks.svg",[2026-11-23 08:00] Vancouver Canucks vs Chicago Blackhawks [NHL]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://ninguno.cc/sd0embed/ice-hockey?pid=10&v=fhdnhl5&player=clappr&csrf=MGRmMTI1ODA2NjA5ODRiMjBmODc0N2Q2ZGJlODczOWY3YWM4YmQ4NGEyNmNhOWQwYTAyMTU0NjE0OTQzZTIyMA.MTc5NTQwMjE5OA.ODBiNGYzYTE0MGE2MGJmNDU1ZDUxODE5MWI3M2RjODQ4YzQ2OWY3OWExYTU2YzU3NTAxZGU4ODU1MDY0MjA1MQ&csrf_ip=uC%2BG7sWFSSnXlLHWzKQ6dea6LUhW8L8fC8mL03QFLx%2F02k4rVCbX5C%2F3TobE%2FX9l6dwc%2BfIAEm5pbOYZz44KvmT%2F3gcRCTZX%2BixxmyDlnEmCRoK%2BtrQf3hoDIChe&expires=1795402198&sec_hash=_Ls_6m3pd75GJyj26PDM9Q/
-#EXTVLCOPT:http-origin=https://ninguno.cc
-https://s-c12.ragice.autos/pavel/z0wit0b0co8ohuge8a3o_5u9omu6adicora409ice/play.m3u8?session_id=0db736d6b391ca96b0124908cf5e4b84&u_id=stlev-2382c38d8eda5e30d31749d3d8b02439cae49d32d2b8775d3a6cd01e972f61a7&ssid=sv2.1795409340.8620dac01ee60483b6aa8dbc14b8f574c2d239871e8899f8394572c6b6b9b8d1
+https://s-a1.owledge.cc/pavel/40hu6udafa8a7ogopa5o_mihi907ubagexogumujo/play.m3u8?u_id=stlan-221767b46d864186cc55d10205251bb3973b5fdc90ce8b3623c3fe435fb07fa7&ssid=sv2.1795426220.d09363ca8c90f6831ef8508e66f2d6c3c703a6f0ea93c074b411b3b73dc01472&session_id=458c84f4ad5aa703a2b3218bc046f78a
 
 #EXTINF:-1 tvg-id="u-pga-tour-nbc-golf-channel" tvg-name="NBC Golf Channel" tvg-group="PGA Tour" tvg-logo="https://sportsfusion.im/imgs/team/svg/golf.svg",NBC Golf Channel [PGA Tour]
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://ninguno.cc/sd0embed/golf?pid=5&v=golf&player=clappr&csrf=MjQxYTk4ZGJhZGNjZjk3NjM5NzcyNzY3YmZkYmU0ZmI2ZWZmNjU4MTE3YjExYWMzNzk1MDM0ZGVhMzI0MDg3Mw.MTc5NTQwMjIxNg.YmU5ODJhOGM5NmJjMGM3OWY4YjllOWRhNzE1M2VjY2JjZjg4MDllMWRlYzU0ZTVjNTIwY2QwYzJmMmIxZmRlMg&csrf_ip=Czduyi0pYMGa6s2iOnyvSFnDxnULKvcq170MFP42pbJV0esNqwBEEoLJoHqz5sCmZ68cHnviyPn2uln17Ubj4rIQsgn%2BWCc2NT1GDKnmmvRqplZUCBIsLUC6jiG8&expires=1795402216&sec_hash=jO5SuWEhk7nm3lX6kgB26A/
-#EXTVLCOPT:http-origin=https://ninguno.cc
-https://s-c13.owledge.cc/pavel/5im0gu80tuja1opu8aki_suh09o8u40co1unuz0cu/play.m3u8?u_id=stlev-ae694bc86839ad8899db18a4d771772d6911ce472dc069ee3cde66f279ed26d4&ssid=sv2.1795409358.5334bdd03f5f13f10fa420b171e3c82bfa2534db8378f298b547e808423b6eb6&session_id=9eccf0d2c96abda11a550ff5ff1d6d1a
+#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-origin=https://lonpapil.eu
+https://s-a2.owledge.cc/pavel/5im0gu80tuja1opu8aki_suh09o8u40co1unuz0cu/play.m3u8?ssid=sv2.1795426256.b44d75051611b1f0b8119cee0a2d14591c9cbffbc10e4d32b4eba73a818eee72&session_id=93e7d73e47a2e4627169bf559b2bf8d3&u_id=stlev-92b6722d0e270e353d8b8fa51af95ac0eebd6d93c09a192b32c62d287199b674
 
 #EXTINF:-1 tvg-id="u-pga-tour-sky-sports-golf" tvg-name="Sky Sports Golf" tvg-group="PGA Tour" tvg-logo="https://sportsfusion.im/imgs/team/svg/golf.svg",Sky Sports Golf [PGA Tour]
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/sd0embed/golf?pid=5&v=skygolf&player=clappr&csrf=YTNlOWU4NGE4MzYzMzMzZjQ1MTIwYTBmYjViZmQzMmE5Njk3MTQ3YjlmYmNmMjUzZjE0ODVmMTZhNDc4M2UwZQ.MTc5NTQwMjIxNg.NTZmMTBiYzMzNWZjMDQ5NTAzNzA2NzU5MGNmNjQ4ZjYyNTBjYzA5NTg2ODhhN2Y4ZTIxZDk0NTk2ZjU0ZWYzOQ&csrf_ip=%2B2cFU%2BUJ6r%2BoByj88cTFjaucgjz9AhvLTyiMWIAhjMNxZtU1oNglbVk7TnVSt1cHykdlDkooenSEM73z9HEMk4O5lQid5Qdpxo54ivAvkSlcbvypJz2hg%2Fq9%2Fa6Y&expires=1795402216&sec_hash=JQovAT4nyms-Lh-YglTHOQ/
-#EXTVLCOPT:http-origin=https://lonpapil.eu
-https://s-c13.ragice.autos/pavel/kuheyefixehiw0hime60_x0x0r0duraluwe7ofise/play.m3u8?u_id=stlan-caf3d3aedf55ed77f0f814d831d3ae564fa5e9d5289ed9445cec19d98df59158&ssid=sv2.1795409358.475429ec5eae3ab7e6a7d99a7ad6677ae369cb571d3cfd164e162eb56c0a2ab0&session_id=120f0b1a4dc988b0ccbd11421801a26a
+#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTVLCOPT:http-origin=https://posamari.me
+https://s-c5.owledge.cc/pavel/kuheyefixehiw0hime60_x0x0r0duraluwe7ofise/play.m3u8?ssid=sv2.1795426263.19ce1095f3be04fd4006f9615da160285e76dca9ddef5d7df1719c4aea901c8e&session_id=584ab1c6442fdcc03fbefbfeab971479&u_id=stlan-c56eca65475d9f874db622a3980895ef5b5e1da5ad8094b4700cdd805afd84df
 
-#EXTINF:-1 tvg-id="u-lpga-tour-2026-cme-group-tour-championship" tvg-name="2026 CME Group Tour Championship" tvg-group="LPGA Tour" tvg-logo="https://sportsfusion.im/imgs/team/svg/golf.svg",[2026-11-23 08:00] 2026 CME Group Tour Championship [LPGA Tour]
+#EXTINF:-1 tvg-id="u-formula-1-sky-sports-f1-sky-f1" tvg-name="Sky Sports F1 | Sky F1" tvg-group="Formula 1" tvg-logo="https://sportsfusion.im/imgs/team/svg/formula-1.svg",Sky Sports F1 | Sky F1 [Formula 1]
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/sd0embed/golf?pid=5&v=golf&player=clappr&csrf=ZGUyMDlkZTM3MzZhNDZiMTcyZjA2ZGNjODYwMjc2NzAwZGQ2MGYxNzM1MTE1NWQwM2YxZDA2MDI2ZDRiMGE5MA.MTc5NTQwMjIxNg.MmUzODJmZjgzNDVlNjRjN2I1ZjdkZTBmN2NhODg5NjNmNmM3N2MxZTg2YzU0YTcwY2ZhODdmNjIyNDViMzFmNA&csrf_ip=smdWA5cFQBIuz4MeUsnL5lykpv4cs8XB3CaO3GCC6Cc2JJcmM1yse097omHzvIa2zQpBA3UrpqO3IhQyhnAXQke%2BhOMj4faTNuROk10rVUm1c%2FjeRKk58O0L3467&expires=1795402216&sec_hash=jO5SuWEhk7nm3lX6kgB26A/
+#EXTVLCOPT:http-referrer=https://lonpapil.eu/
 #EXTVLCOPT:http-origin=https://lonpapil.eu
-https://s-c13.rusfish.space/pavel/5im0gu80tuja1opu8aki_suh09o8u40co1unuz0cu/play.m3u8?session_id=c7799a25d64edb6d003c2c16432229ca&u_id=stlan-228660625e526079fd99c9b8009f9e40daea09eed42d7721e750443b8e8d59d2&ssid=sv2.1795409358.604ef10fc01e534c17c63bc3efd699bfba24a64adb3cd6c06fcf88496be248fd
+https://s-c5.rusfish.space/pavel/2u5oh0yo80tusu1uravi_hate7olufe4e8uwume8o/play.m3u8?ssid=sv2.1795426264.f2d0ce71235eb1ae3882cc24a45fe5abec80782b1baa3b142509f7ab37e9045b&session_id=5df0b38de860b70bcbcdf3801e24ef47&u_id=stlan-9ed1f25f3be9322750e4599472832e7451d2ded03c7370afc9a11beae9258c4f
+
+#EXTINF:-1 tvg-id="u-formula-1-f1-qualifying-f1-main-race" tvg-name="F1 Qualifying | F1 Main Race" tvg-group="Formula 1" tvg-logo="https://sportsfusion.im/imgs/team/svg/formula-1.svg",F1 Qualifying | F1 Main Race [Formula 1]
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://fallafar.me/
+#EXTVLCOPT:http-origin=https://fallafar.me
+https://s-a1.ragice.autos/pavel/2u5oh0yo80tusu1uravi_hate7olufe4e8uwume8o/play.m3u8?session_id=50c4a74054e42b4db32b53da4034c47b&u_id=stlan-3b05d35426afeea9637d93539cd3d14fdb4b8af9cbe372ec6cce73fdd0df8395&ssid=sv2.1795426272.c64b4d09837b7ae7ce971047c12ae3959f024a114229ea2380feeee66e63b934
 
 #EXTINF:-1 tvg-id="u-moto-gp-motogp-qualifying-motogp-main-race" tvg-name="MotoGP Qualifying | MotoGP Main Race" tvg-group="Moto GP" tvg-logo="https://sportsfusion.im/imgs/team/svg/motogp.svg",MotoGP Qualifying | MotoGP Main Race [Moto GP]
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://ninguno.cc/sd0embed/motorsports?pid=6&v=ANOfpmy07lwVrtTTGbRnbDxryAOVDBHRjnVRZIhAkAnnW-dq18nnJWCltjB8aUFMXt512QkcQEOENTP13E2mJmi1rTsyW1QgskIMAdn9j9SMZwYf6STuc53iVettdL2FuI6bcIeY3i918NaqRU-cn5VS3xK8QWtWxaWwS0KkPvXMEH8lESeKPgPrwhjGBoWbozOefyl4pog1GgsjlNyxoM6bRlaLim6mqhpM9wDwrt8rbzHhhVozUilHuOzFCJuKKAc3i8ehpk3POXqql1zNZQ_cBuL6HYqpUubjtbGoqJiLzbA&player=clappr&csrf=Y2Q1MjVkZmM3NTU5MWUyMjhhMThmMzRhMjFkNTg2MDBhMjQ4YjMzODJhYzc0M2QyNzc3MTJhZmQ4NmIxYWJlZQ.MTc5NTQwMjIzMg.ZmQ4ZDRlODVhYzFhYzQ2Y2Q0ZDNmZTBlNWY1NzdjNGJmMWYwMTVlZDM0Y2ZiNWEwYWZlZDVkYTIyZGI5ZDNmYw&csrf_ip=l4OUGabgzGYfzS3%2B23wTBF0Iah6t73WdV%2BX3zc%2FxBdX42qcDDGMTYFCF3f1a0WzKa7aVc8htkCjJyFSsAudF6kt5cB4sa9flT7R3vuhe4fsWz6BaBhi%2FvZUi9H9t&expires=1795402232&sec_hash=eSVyip5DawXaYh0fN8gWsQ/
-#EXTVLCOPT:http-origin=https://ninguno.cc
-https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/puehlftk5j/out/v1/f7f0da1ee112481ca0024e6d4dd97f4a/cenc_audio_7_0_6844084.mp4?m=1781704738
+#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-origin=https://lonpapil.eu
+https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/puehlftk5j/out/v1/f7f0da1ee112481ca0024e6d4dd97f4a/cenc_audio_7_0_6852534.mp4?m=1781704738
 
-#EXTINF:-1 tvg-id="u-premier-league-darts-darts-tv-all-darts-championship" tvg-name="Darts TV: All Darts Championship" tvg-group="Premier League Darts" tvg-logo="https://sportsfusion.im/imgs/team/svg/darts.svg",Darts TV: All Darts Championship [Premier League Darts]
+#EXTINF:-1 tvg-id="u-tennis-channels-tennis-channel" tvg-name="Tennis Channel" tvg-group="Tennis Channels" tvg-logo="https://sportsfusion.im/imgs/team/svg/tennis-tennis-channel.svg",Tennis Channel [Tennis Channels]
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://ninguno.cc/sd0embed/darts?pid=5&v=hwk1&player=clappr&csrf=YmNkYWNhOThjMTZjNGVmNDllYzg0YTQ0YzRiYmVkNjAyYzMxY2FlNzFmYjdiMmJiZjBlYmE1Mjg1YzFiNDQ3ZQ.MTc5NTQwMjIzMw.NDZlMjQ0NjU1Y2VlMGE0NzExZjZlMmQ2OGRmNTE5OThlMTE2NzJjYWFlN2UzYzU5NDM0ZjNiMDRjNTFkNDNmZQ&csrf_ip=3TGdm%2FUlN%2FHENbyLB3bzVIHckkyy7wqIAFoqaJiTKijqWhvo9JveCrmL%2BQGY8Amhb%2FmxWSiU7USNrLpk9BUqOTV95iaDNpGUaoGaQ29phpNndYEWXVvnZm%2B0QIGm&expires=1795402233&sec_hash=m7UWtrQILQWinytD7BYFhg/
+#EXTVLCOPT:http-referrer=https://ninguno.cc/
 #EXTVLCOPT:http-origin=https://ninguno.cc
-https://s-c11.owledge.cc/pavel/50suzupoju5isu60joni_lugume1i904u8e90p0ki/play.m3u8?session_id=aac3f5acfef893f37a96e0af35fbb294&u_id=stlan-65d95ba301784489eb70fd5ce79ce8d56efc53c4e3468cc17c7f3bbb08c40d1f&ssid=sv2.1795409375.02c0639ca59ace0477584a76ca54707013fb20b09e6f0f19e5b318f2ce2d50ff
-
-#EXTINF:-1 tvg-id="u-pdc-world-championship-sky-sports-darts" tvg-name="Sky Sports Darts" tvg-group="PDC World Championship" tvg-logo="https://sportsfusion.im/imgs/team/svg/pdc-world-championship.svg",Sky Sports Darts [PDC World Championship]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://ninguno.cc/sd0embed/darts?pid=5&v=hwk1&player=clappr&csrf=ZjU3MTZhMGExODZmYTc0YzlmYzVkMDA5OThlMWUwYzNkNTgwZWIwZjJlODVlYjA2ZGMyZTQyOTM5ZTY0Yzc2MQ.MTc5NTQwMjIzNA.ZjNhNjg0ZDIxMzY1NGNkMTcwODk0OTBlNDY5NzBlZTNmMzc4ZDZjYTBkNDQ2YmUyOTY3NzZiNjBlMjBiNTU3OA&csrf_ip=uQGsPKr1f27Npya69Ac44nxJSHieA%2FiDjFUTwbA42VbFYAYIbCGCODOPlBfLo%2FKzjUWSzld6cupTkRUd7CE%2BbcfPOOu%2BUULcYDKV%2FGxIL09AQO5MVswCVzVbHEpN&expires=1795402234&sec_hash=201wkEx0G03X1y1UqA_7hw/
-#EXTVLCOPT:http-origin=https://ninguno.cc
-https://s-c11.mhys.ink/pavel/50suzupoju5isu60joni_lugume1i904u8e90p0ki/play.m3u8?session_id=a28f3fcc49b905dd5d05038148aa3684&u_id=stlev-8e8b34f477d1c966deadef1c2dfa0b54ffe62a62964b7751ee44738e78c7ed1d&ssid=sv2.1795409375.51b371fe5407b74f444adc1173cbef8823f64ce11738bbeb74d6d6c7b13820c7
-
-#EXTINF:-1 tvg-id="u-atp-tour-tennis-channel" tvg-name="Tennis Channel" tvg-group="ATP Tour" tvg-logo="https://sportsfusion.im/imgs/team/svg/tennis-tennis-channel.svg",Tennis Channel [ATP Tour]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://posamari.me/sd0embed/tennis?pid=5&v=tentv&player=clappr&csrf=OTVmYjM3OWQxY2FiYzgxMDdhMTRhZmM2MGRmODQxMjdjMGJmY2Y1NTY3MTJkMzBhZWNhYzFkMTM4ZWMxYzQ2ZQ.MTc5NTQwMjI0Mg.OWFlMTVhZWQ3ZTdjZTBmMWVjMTAwYjZmZTVlMjEwZTVlNGRmMTU4MmM5YWJkOWM2YmMxZmJkNWJkNGQ4MmI0MQ&csrf_ip=hX9bmV%2BBL%2BnRjAG2ZQmIfwRV%2BSidmFIR5l1L%2Btghmd3QX%2FmxM3WWd8EuGEJlEkolgIq7%2FI5mslDhRCplVLn66xan2dJbalQijK6eieAM2Bq8Tkjga34aYov20vpN&expires=1795402242&sec_hash=MYb1tAkAZUQT4Nnv8VxyAw/
-#EXTVLCOPT:http-origin=https://posamari.me
-https://s-c11.ragice.autos/pavel/yu40cij0ka10sawax0c0_dozefiribinumazi7use/play.m3u8?session_id=76243a1ca873f5d532b8c13714bd2514&u_id=stlev-ba1dff3e35a2e283fada8dcd596ebb492b0979f5ae6eebb6adf86466ff811d8c&ssid=sv2.1795409384.b8e1cd7fcd2d4f6bdfbd154aa2a944b444547f0132dab443333d131b80e688f7
+https://s-c12.mhys.ink/pavel/yu40cij0ka10sawax0c0_dozefiribinumazi7use/play.m3u8?session_id=1797841b527815b7c5b874fbdb2b27df&u_id=stlan-dca52c51165802965da71fa361c952139a8f25952ed23b9dc63516b769ff60c1&ssid=sv2.1795426281.48f79b95df45ff723c7015a44f888889be8a25b90a93672248a32df186c41aef
