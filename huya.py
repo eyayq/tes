@@ -24,7 +24,7 @@ SPORTS = [
     "football", "motorsports", "nhl", "others", "tennis", "wrestling",
 ]
 SPORT_URLS = [urljoin(BASE_URL, f"api/{s}.json") for s in SPORTS]
-API_247 = f"{VERCEL_URL}/api/stream-24-7"
+API_247 = urljoin(BASE_URL, "api/stream-24-7")
 
 
 def write_m3u() -> None:
@@ -39,7 +39,7 @@ def write_m3u() -> None:
         attrs += f",{key}"
         lines.append(attrs)
         lines.append(f"#EXTVLCOPT:http-user-agent={USER_AGENT}")
-        lines.append(f"#EXTVLCOPT:http-referrer={info.get('refer', BASE_URL)}")
+        lines.append(f"#EXTVLCOPT:http-referrer={info.get('refer','')}")
         lines.append(info["source"])
     M3U_FILE.write_text("\n".join(lines) + "\n", encoding="utf-8")
     log.info(f"Playlist: {len(urls)} entries")
@@ -83,36 +83,34 @@ async def get_sports(client: httpx.AsyncClient) -> None:
 
 
 async def get_247(client: httpx.AsyncClient) -> None:
-    """Scrape 24/7 streams dari vercel.app"""
     resp = await client.get(API_247)
     if resp.status_code != 200:
-        log.warning(f"24/7 API failed: {resp.status_code}")
+        log.warning(f"24/7 list failed: {resp.status_code}")
         return
 
     data = resp.json()
-    if not data.get("success") or not data.get("streams"):
-        log.warning("24/7 API returned no streams")
+    streams = data.get("streams", data) if isinstance(data, dict) else {}
+    if not streams:
+        log.warning("24/7: no streams in response")
         return
 
     count = 0
-    for category, items in data["streams"].items():
+    for category, items in streams.items():
         if not isinstance(items, list):
             continue
         for stream in items:
             name = stream.get("name", "")
-            uri_name = stream.get("uri_name", "")
+            slug = stream.get("uri_name") or stream.get("slug") or stream.get("name", "").lower().replace(" ", "-")
             poster = stream.get("poster", "")
-            if not name or not uri_name:
+            if not name or not slug:
                 continue
 
-            # Fetch actual stream URL
-            ch_url = f"{VERCEL_URL}/api/channel?name={uri_name}"
+            ch_url = f"{VERCEL_URL}/api/channel?name={slug}"
             try:
                 ch_resp = await client.get(ch_url)
                 if ch_resp.status_code != 200:
                     continue
-                ch_data = ch_resp.json()
-                src = ch_data.get("url", "")
+                src = ch_resp.json().get("url", "")
             except Exception:
                 continue
 
@@ -126,7 +124,7 @@ async def get_247(client: httpx.AsyncClient) -> None:
                 "source": src,
                 "tvg-id": "Live.Event.us",
                 "logo": poster,
-                "refer": f"{VERCEL_URL}/?channel={uri_name}",
+                "refer": f"{VERCEL_URL}/?channel={slug}",
             }
             count += 1
 
@@ -134,13 +132,8 @@ async def get_247(client: httpx.AsyncClient) -> None:
 
 
 async def scrape() -> None:
-    headers = {
-        "User-Agent": USER_AGENT,
-        "Accept": "application/json",
-    }
-    async with httpx.AsyncClient(
-        timeout=20, headers=headers, follow_redirects=True
-    ) as client:
+    headers = {"User-Agent": USER_AGENT, "Accept": "application/json"}
+    async with httpx.AsyncClient(timeout=20, headers=headers, follow_redirects=True) as client:
         await get_sports(client)
         await get_247(client)
 
