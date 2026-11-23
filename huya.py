@@ -264,7 +264,7 @@ def generate_m3u(entries: list[dict], output: str = OUTPUT_FILE):
         # #EXTVLCOPT
         lines.append(f'#EXTVLCOPT:http-user-agent={HEADERS["User-Agent"]}')
         if referrer:
-            lines.append(f'#EXTVLCOPT:http-referrer={referrer}')
+            lines.append(f'#EXTVLCOPT:http-referrer={origin}/')
         if origin:
             lines.append(f'#EXTVLCOPT:http-origin={origin}')
 
