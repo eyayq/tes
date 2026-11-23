@@ -17,7 +17,7 @@ TAG = "FUTBOLX"
 M3U_FILE = Path(__file__).parent / "playlist.m3u"
 BASE_URL = "https://www.futbol-x.top"
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
-PROXY = "http://svr00000:bhns0000@55.223.779.55:6641"
+PROXY = "http://svr00000:bhns0000@64.137.96.74:6641"
 
 SPORTS = [
     "americanfootball", "basketball", "darts", "fights",
