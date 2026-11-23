@@ -1,17 +1,29 @@
 #EXTM3U
 #EXTINF:-1 tvg-id="Live.Event.us" group-title="NFL",[NFL] Jets @ Chargers | Main Feed (FUTBOLX)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-referrer=https://www.futbol-x.top
 https://fup.futx.nx.kg/jets/index.m3u8
 #EXTINF:-1 tvg-id="Live.Event.us" group-title="NFL",[NFL] Jaguars @ Giants | Main Feed (FUTBOLX)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-referrer=https://www.futbol-x.top
 https://fup.futx.nx.kg/jaguars/index.m3u8
 #EXTINF:-1 tvg-id="Live.Event.us" group-title="NFL",[NFL] Raiders @ Broncos | Main Feed (FUTBOLX)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-referrer=https://www.futbol-x.top
 https://fup.futx.nx.kg/raiders/index.m3u8
 #EXTINF:-1 tvg-id="Live.Event.us" group-title="NFL",[NFL] Vikings @ 49ers | Main Feed (FUTBOLX)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-referrer=https://www.futbol-x.top
 https://fup.futx.nx.kg/vik/index.m3u8
+#EXTINF:-1 tvg-id="Live.Event.us" group-title="Seria A",[Seria A] Monza vs Fiorentina | Main Feed (FUTBOLX)
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.futbol-x.top
+https://but.futx.nx.kg/monza/index.m3u8
+#EXTINF:-1 tvg-id="Live.Event.us" group-title="EPL",[EPL] Brentford vs Everton | Main Feed (FUTBOLX)
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.futbol-x.top
+https://but.futx.nx.kg/brentford/index.m3u8
+#EXTINF:-1 tvg-id="Live.Event.us" group-title="Laliga",[Laliga] Levante vs Elche | Main Feed (FUTBOLX)
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://www.futbol-x.top
+https://but.futx.nx.kg/levante/index.m3u8
