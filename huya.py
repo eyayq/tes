@@ -16,17 +16,15 @@ urls: dict[str, dict[str, str | float]] = {}
 TAG = "FUTBOLX"
 M3U_FILE = Path(__file__).parent / "playlist.m3u"
 BASE_URL = "https://www.futbol-x.top"
-USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
-PROXY = "http://svr00000:bhns0000@64.137.96.74:6641"
+VERCEL_URL = "https://futbolxs.vercel.app"
+USER_AGENT = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36"
 
 SPORTS = [
     "americanfootball", "basketball", "darts", "fights",
     "football", "motorsports", "nhl", "others", "tennis", "wrestling",
 ]
 SPORT_URLS = [urljoin(BASE_URL, f"api/{s}.json") for s in SPORTS]
-API_247 = urljoin(BASE_URL, "api/stream-24-7")
-
-STREAM_RE = re.compile(r"^(https?:\/\/)?(www\.)?.*\.(m3u8|ts)(\?.*)?$", re.I)
+API_247 = f"{VERCEL_URL}/api/stream-24-7"
 
 
 def write_m3u() -> None:
@@ -41,7 +39,7 @@ def write_m3u() -> None:
         attrs += f",{key}"
         lines.append(attrs)
         lines.append(f"#EXTVLCOPT:http-user-agent={USER_AGENT}")
-        lines.append(f"#EXTVLCOPT:http-referrer={BASE_URL}")
+        lines.append(f"#EXTVLCOPT:http-referrer={info.get('refer', BASE_URL)}")
         lines.append(info["source"])
     M3U_FILE.write_text("\n".join(lines) + "\n", encoding="utf-8")
     log.info(f"Playlist: {len(urls)} entries")
@@ -52,6 +50,7 @@ async def get_sports(client: httpx.AsyncClient) -> None:
     results = await asyncio.gather(*tasks, return_exceptions=True)
 
     now = datetime.now(timezone.utc)
+    ptrn = re.compile(r"^(https?:\/\/)?(www\.)?.*\.m3u8$", re.I)
 
     for resp in results:
         if isinstance(resp, Exception) or resp.status_code != 200:
@@ -70,17 +69,21 @@ async def get_sports(client: httpx.AsyncClient) -> None:
                 logo = ev.get("logo", "")
                 for s in ev.get("streams", []):
                     src = s.get("url", "")
-                    if not STREAM_RE.search(src):
+                    if not ptrn.search(src):
                         continue
                     key = f"[{sport}] {name} | {s.get('title','')} ({TAG})"
                     if key in urls:
                         continue
-                    urls[key] = {"source": src, "tvg-id": "Live.Event.us", "logo": logo}
-
-    log.info(f"Sports: {len(urls)} events")
+                    urls[key] = {
+                        "source": src,
+                        "tvg-id": "Live.Event.us",
+                        "logo": logo,
+                        "refer": BASE_URL,
+                    }
 
 
 async def get_247(client: httpx.AsyncClient) -> None:
+    """Scrape 24/7 streams dari vercel.app"""
     resp = await client.get(API_247)
     if resp.status_code != 200:
         log.warning(f"24/7 API failed: {resp.status_code}")
@@ -97,32 +100,46 @@ async def get_247(client: httpx.AsyncClient) -> None:
             continue
         for stream in items:
             name = stream.get("name", "")
+            uri_name = stream.get("uri_name", "")
             poster = stream.get("poster", "")
-            if not name:
+            if not name or not uri_name:
                 continue
 
-            # Stream URLs ada di stream["streams"] (array of {url, label})
-            for s in stream.get("streams", []):
-                src = s.get("url", "")
-                if not STREAM_RE.search(src):
+            # Fetch actual stream URL
+            ch_url = f"{VERCEL_URL}/api/channel?name={uri_name}"
+            try:
+                ch_resp = await client.get(ch_url)
+                if ch_resp.status_code != 200:
                     continue
-                label = s.get("label", "")
-                key = f"[{category}] {name} | {label} ({TAG})" if label else f"[{category}] {name} ({TAG})"
-                if key in urls:
-                    continue
-                urls[key] = {"source": src, "tvg-id": "Live.Event.us", "logo": poster}
-                count += 1
+                ch_data = ch_resp.json()
+                src = ch_data.get("url", "")
+            except Exception:
+                continue
+
+            if not src:
+                continue
+
+            key = f"[{category}] {name} ({TAG})"
+            if key in urls:
+                continue
+            urls[key] = {
+                "source": src,
+                "tvg-id": "Live.Event.us",
+                "logo": poster,
+                "refer": f"{VERCEL_URL}/?channel={uri_name}",
+            }
+            count += 1
 
     log.info(f"24/7: {count} streams")
 
 
 async def scrape() -> None:
-    headers = {"User-Agent": USER_AGENT, "Referer": BASE_URL}
+    headers = {
+        "User-Agent": USER_AGENT,
+        "Accept": "application/json",
+    }
     async with httpx.AsyncClient(
-        timeout=30,
-        headers=headers,
-        follow_redirects=True,
-        proxy=PROXY,
+        timeout=20, headers=headers, follow_redirects=True
     ) as client:
         await get_sports(client)
         await get_247(client)
