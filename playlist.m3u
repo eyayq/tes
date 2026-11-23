@@ -1,37 +1,5 @@
 #EXTM3U
-#EXTINF:0,tvg-name="Appalachian State vs St. Bonaventure [BKB]",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="bkb",Appalachian State vs St. Bonaventure [BKB]
-https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js
-#EXTINF:0,tvg-name="Neftchi vs Al-Hilal Saudi FC [ACLE]",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="acle",Neftchi vs Al-Hilal Saudi FC [ACLE]
-https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js
-#EXTINF:0,tvg-name="Italy U17 vs Côte d'Ivoire U17 [WCU]",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="wcu",Italy U17 vs Côte d'Ivoire U17 [WCU]
-https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js
-#EXTINF:0,tvg-name="El Gouna FC vs Zamalek SC [EPL]",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="epl",El Gouna FC vs Zamalek SC [EPL]
-https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js
-#EXTINF:0,tvg-name="Wadi Degla vs Al Ittihad [EPL]",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="epl",Wadi Degla vs Al Ittihad [EPL]
-https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js
-#EXTINF:0,tvg-name="Morocco U17 vs China PR U17 [WCU]",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="wcu",Morocco U17 vs China PR U17 [WCU]
-https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js
-#EXTINF:0,tvg-name="Mali U17 vs Belgium U17 [WCU]",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="wcu",Mali U17 vs Belgium U17 [WCU]
-https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js
-#EXTINF:0,tvg-name="Al Shamal vs Al-Ahli Jeddah [ACLE]",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="acle",Al Shamal vs Al-Ahli Jeddah [ACLE]
-https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js
-#EXTINF:0,tvg-name="Al Ain vs Esteghlal FC [ACLE]",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="acle",Al Ain vs Esteghlal FC [ACLE]
-https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js
-#EXTINF:0,tvg-name="Tractor Sazi vs Al-Wasl FC [ACLE]",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="acle",Tractor Sazi vs Al-Wasl FC [ACLE]
-https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js
-#EXTINF:0,tvg-name="Başakşehir vs Çorum FK [SL]",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="sl",Başakşehir vs Çorum FK [SL]
-https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js
-#EXTINF:0,tvg-name="Al Ahly vs Pyramids FC [EPL]",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="epl",Al Ahly vs Pyramids FC [EPL]
-https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js
-#EXTINF:0,tvg-name="JS Kabylie vs MC Alger [L1]",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="l1",JS Kabylie vs MC Alger [L1]
-https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js
-#EXTINF:0,tvg-name="Al-Ittihad FC vs Pakhtakor [ACLE]",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="acle",Al-Ittihad FC vs Pakhtakor [ACLE]
-https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js
-#EXTINF:0,tvg-name="Al Quwa Al Jawiya vs Al-Gharafa [ACLE]",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="acle",Al Quwa Al Jawiya vs Al-Gharafa [ACLE]
-https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js
-#EXTINF:0,tvg-name="Neftchi vs Al Hilal [ACLE]",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="acle",Neftchi vs Al Hilal [ACLE]
-https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js
-#EXTINF:0,tvg-name="Italia vs Costa de Marfil [CMS]",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="cms",Italia vs Costa de Marfil [CMS]
-https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js
-#EXTINF:0,tvg-name="Polo [P]",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="p",Polo [P]
-https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js
+#EXTINF:0,tvg-name="Instituto vs Huracán [LP]",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="lp",Instituto vs Huracán [LP]
+https://a12.kora-plus.mov/framelatin.php?ch=n2203-f3ecdc1d0668d5b2
+#EXTINF:0,tvg-name="Querétaro vs Necaxa [LM]",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="lm",Querétaro vs Necaxa [LM]
+https://a15.kora-plus.mov/framelatin.php?ch=n2203-f3ecdc1d0668d5b2
