@@ -1,87 +1,37 @@
 #EXTM3U
-# Generated: 2026-11-23 08:32:05 WIB
-# Total: 14 channels
-
-#EXTINF:-1 tvg-id="u-nba-nba-tv" tvg-name="NBA TV" tvg-group="NBA" tvg-logo="https://sportsfusion.im/imgs/team/svg/nba-nba-tv.svg",NBA TV [NBA]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://ninguno.cc/sd0embed/basketball?pid=5&v=nbatv&player=clappr&csrf=NWI4YjFhZGJlZmVkNTNlZmUyOTczOWMzZjZhNGUyNmJjNTdhZDA4Y2YyNDBlMjlmMmZjMGY3OTMwOWYzNjNjYg.MTc5NTQyMjYxOQ.NmZhNGE5YzUwYjgzY2ZmNzJiMjk4YzVhNmMxOGE5OGY5MWFkMGQ3Mjc5NmVhMTk5NGYwNzFiYzc5MmI3NTE4Mg&csrf_ip=yHEahBNLZl7NG%2BmQXLG5DWFq8WR20N0vxoPhDA1Iii12EuoSnhltVzl5YzOvvVh%2FLY%2BRgJ5Lat1D8VK5MTjjni08dntHiraTe0P75KhXESVu9bwdOj%2BmDm4QS%2FGNA4I%3D&expires=1795422619&sec_hash=824lEWxsMUwiEeBLo9hE-g/
-#EXTVLCOPT:http-origin=https://ninguno.cc
-http://YOUR_SERVER:8089/channel/u-nba-nba-tv
-
-#EXTINF:-1 tvg-id="u-nba-espn-first-take" tvg-name="ESPN First Take" tvg-group="NBA" tvg-logo="https://sportsfusion.im/imgs/team/svg/nba-espn-first-take.svg",ESPN First Take [NBA]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/sd0embed/basketball?pid=5&v=espn&player=clappr&csrf=ZDNjMTg5MzNmNGYzNTZkOWZiMTVjMGI2YTBhYmU1ZGJlN2VjMTU3MzI0NzY1MWY4OTU2MzBmMDUyYjhhMTg0ZQ.MTc5NTQyMjYxOQ.NzFiYzk1YzZjNjNkZDYxYTE1M2QyNDQ4ZjU5YTllNGEwYzY1OTg0YWEwODkyYWU5NWMyOTQzNjMyYmY1YjI0NQ&csrf_ip=%2Byuzu%2FpfHqK3RbCJkKUCoRH%2B6S82ZTyk7TCYzRfvD14lLfgi4y9Z1mMN1DZR%2F0f%2FTukm18EnFtQLzE2%2FYaDQXz7vTRwL%2F62QL%2BHTxOw1SIS0toICtMNshampSkOvYSg%3D&expires=1795422619&sec_hash=mT2i-THHNcBxttixEv92Zw/
-#EXTVLCOPT:http-origin=https://lonpapil.eu
-http://YOUR_SERVER:8089/channel/u-nba-espn-first-take
-
-#EXTINF:-1 tvg-id="u-nfl-news-espn" tvg-name="ESPN" tvg-group="NFL News" tvg-logo="https://sportsfusion.im/imgs/team/svg/television.svg",ESPN [NFL News]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://fallafar.me/sd0embed/american-football?pid=5&v=espn&player=clappr&csrf=OTYzMmVkYjg1YzU5YjE3MjJiNjdkZjg2NmExZTRmODZhZWQxOGZiOTU1ZGY0MGVmMTEzMzA5YzZhYzk5Y2NjOA.MTc5NTQyMjY3NQ.NzhmNGFhOGM5NmQ4ZDkwMTJiODk4NjI3YzQ0YTcwYTRiN2FjYmIyZTc3YmRkMTU2ODY2Mjg3MTE1Yzc1MzRjOA&csrf_ip=sLHqN6AYzHIDg7G1rkU0emWY9phSN3GX3%2Bk%2FU6rLyXzrnUa4dL%2FfGiR9LoGnwKhmHdxB4AKdQuReoiSYwZDSEXA48Zd4eDvzffQIX5wge7kFAAI8sAzUUfqCTpYU52M%3D&expires=1795422675&sec_hash=Ks0UnXn_rNHhjjeQ7gQ2Tg/
-#EXTVLCOPT:http-origin=https://fallafar.me
-http://YOUR_SERVER:8089/channel/u-nfl-news-espn
-
-#EXTINF:-1 tvg-id="u-nfl-nfl-network" tvg-name="NFL Network" tvg-group="NFL" tvg-logo="https://sportsfusion.im/imgs/team/svg/nfl-nfl-network.svg",NFL Network [NFL]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/sd0embed/american-football?pid=5&v=nflnet&player=clappr&csrf=OGI0ZTE3MTExYTBjZDE1NGJlNjY2Y2NmNzFlYmEyOGY3ZDg3MjliZGVmOWI0ODRmYmU2YWFlMjhhNWYyNTNjOA.MTc5NTQyMjY3OQ.YjY0YzRkMDhkNzFlZDFiYjgzOWU1OWIwM2Q5NmJmOWJiNzI3NjQ3OTc1OTMyZGRmZGExYmI3MjcwNjYyMmIyNA&csrf_ip=%2Fob%2BGbypw0XIb1v879LDApGmbfkD3%2F8zFTU5tYJvZDu1no120rUsmMN35tqaAhLdjw24ouL8SOJvC9nDpTCUks9NC5TrnltZ8Yu%2BJqgs1%2BOffW9Rcj9tx1U%2FRMWSHBU%3D&expires=1795422679&sec_hash=-68h5Mypg88cUnXptN2Ipw/
-#EXTVLCOPT:http-origin=https://lonpapil.eu
-http://YOUR_SERVER:8089/channel/u-nfl-nfl-network
-
-#EXTINF:-1 tvg-id="u-nfl-nfl-redzone" tvg-name="NFL RedZone" tvg-group="NFL" tvg-logo="https://sportsfusion.im/imgs/team/svg/nfl-nfl-redzone.svg",NFL RedZone [NFL]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://posamari.me/sd0embed/american-football?pid=6&v=t8C8wdOsw0A741Ue_1ebQT4-qutCCk3-VZipfmHyP8P2f-Ndm0pmUdt_v8S6eRsEAHxjTt3h9_y6Nv3RY6qeQ2CFAjijn5RkLu6fTDtKl8Uvme07d9Lfb8ogKREWr-JvcJPquIm7csmtEwddThbTH_d1wCvzdKC_EpA3am_C3mJKJQuI0R35uv50lAy0BJGhYLtqrI2L_NH5Yayuyh2KvjniGBhIC0ILmOM5G9g9eZZ0lFNTIXPADPTWTJkUvEtLnnZt4P5YHvI03LPhIVjE8ePX7oQrFVzqyTl5iyvEVR5ERA&player=clappr&csrf=ZTQyZjkwZDQ4MWY1MjgxMTNhMzA4MmE0NzJjMTAyNDk2MTAyNDVlNzdiZmRkMjNjMDBmODgzYjdjYzA5ZmE1Yg.MTc5NTQyMjY3OQ.NjRjMzgwYTM0MjRkNWY3MDFiM2I5M2U3OGFhMzI5MzQ3ZjQ2NzRlZDBhOGM5MTQ2M2I2ZjI5MDk3N2EyMmQwZg&csrf_ip=p94uPRYRpWduJVkY%2FXl0e6mL2BipPDpuOdY1Vk2CF0SHV2uQgmSzoOAKnsaO8oZ7iPnRvKJqEdmbKQW%2F%2B%2BeI7H4tu5zEe5%2FQ8CqR1N4xDjqqPXf74PlMR0ozqrSwLzU%3D&expires=1795422679&sec_hash=GPynM0OOvnfaV05L1EGtsQ/
-#EXTVLCOPT:http-origin=https://posamari.me
-http://YOUR_SERVER:8089/channel/u-nfl-nfl-redzone
-
-#EXTINF:-1 tvg-id="u-nfl-mnf-monday-night-football" tvg-name="MNF: Monday Night Football" tvg-group="NFL" tvg-logo="https://sportsfusion.im/imgs/team/svg/nfl.svg",MNF: Monday Night Football [NFL]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://fallafar.me/sd0embed/american-football?pid=5&v=espn&player=clappr&csrf=MjhmOTUzYjAyZGJlZDlkNTUwOWUyM2NiZjQwMDc0M2ZjYTM4YjI4ZmJmZTA1NDgyNTM4MjRkNWJkYmE3MjI1OA.MTc5NTQyMjY4MA.MWUyNmM5MzM3N2Q4MDQzM2U5YWU1MWZlZDdkM2RiNDAyMTY2NmU0YWE0NDNhMWEzMmVjZDZhMmQ0ZjE1OGVjZg&csrf_ip=98ixed2HQg%2F8o3lSG8MAfpF4K%2BpWOf78svvo3iNWI95ye3rz8ypT27gxWSoRu8y1OLEvxI6i3KZsoSd%2BlrHqbVV3a%2FSB05OTY5hrFAVxWkh3M1%2BlzPt4tbyh2gIIfRA%3D&expires=1795422680&sec_hash=3DpTeSsRnVu5esYGxm-Bgw/
-#EXTVLCOPT:http-origin=https://fallafar.me
-http://YOUR_SERVER:8089/channel/u-nfl-mnf-monday-night-football
-
-#EXTINF:-1 tvg-id="u-mlb-mlb-network" tvg-name="MLB Network" tvg-group="MLB" tvg-logo="https://sportsfusion.im/imgs/team/svg/mlb-mlb-network.svg",MLB Network [MLB]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://ninguno.cc/sd0embed/baseball?pid=5&v=mlbnet&player=clappr&csrf=Njc0ZjM2ZTRlYzVjM2U5Mzg2N2RiNWIwYjdmMzhlMWM0MjdiMDhmMGNiODRlMGY0Y2EyYzhiNjE3Y2Q1MWY4NA.MTc5NTQyMjcwMA.MDQ2NDhiNzhlM2Y3ODY5OWVhMWM5YjI4NzFhNmVmY2Q2MjE2ZTU5ZTgyZjkwNWRhMjA0NjQzYmJkMDUzNjg3MA&csrf_ip=rprBPiqr9uhSUksiaOK220gGO36aQbavb0jVPKGkq4ZpR53Ah0bcTAy5NDYAI1AUdckO0epkbCctdzvNdme2BSXue9z3K0IxnX%2FTanRr2VTtlTptvzOBJIkhNL5obd4%3D&expires=1795422700&sec_hash=S6eIL6vbbTqk1KQMfrr9wQ/
-#EXTVLCOPT:http-origin=https://ninguno.cc
-http://YOUR_SERVER:8089/channel/u-mlb-mlb-network
-
-#EXTINF:-1 tvg-id="u-nhl-nhl-network" tvg-name="NHL Network" tvg-group="NHL" tvg-logo="https://sportsfusion.im/imgs/team/svg/nhl-nhl-network.svg",NHL Network [NHL]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://ninguno.cc/sd0embed/ice-hockey?pid=5&v=nhlnet&player=clappr&csrf=Mzg0NjQ2YjM2YzdmMWE4NTcxYmFjMGViMGY3NjRhZGQ5ZDk0NGYxNTk0OTM3NWY1YmZjMjM1ODVjZjQ1MGM5Zg.MTc5NTQyMjcwNQ.MzZiMzcwYzc5MmU2NjVmMjUxN2Y4NmNkYWI3MmIxZTVjZTcyMTI5ZTdiZGJmMmFkNDc3NDZmMjYwOWU0NmM3ZA&csrf_ip=gaKVruO3JiTJRbRZP%2BsJv8ndNq5uoM6ZXG8ICDArDbEtNDavd8VJU5bdWEvBwFgglqX3IBJ83oxDhX4YHAIrzeQowmUMpNahxR4LYRXMESZH8MYkyGFoS%2B4sgegc%2F7U%3D&expires=1795422705&sec_hash=RqbeFrKgoi2pIzHHRMAhBQ/
-#EXTVLCOPT:http-origin=https://ninguno.cc
-http://YOUR_SERVER:8089/channel/u-nhl-nhl-network
-
-#EXTINF:-1 tvg-id="u-pga-tour-nbc-golf-channel" tvg-name="NBC Golf Channel" tvg-group="PGA Tour" tvg-logo="https://sportsfusion.im/imgs/team/svg/golf.svg",NBC Golf Channel [PGA Tour]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/sd0embed/golf?pid=5&v=golf&player=clappr&csrf=ZGM1MGM3YmUwMTU1ZTcwZDFmZDFkYWJjZmViMTRjMTc0OGE5ZjY0NjkwMmQ5NmRiYjM0YWU5ZGMwN2I5YzIxNQ.MTc5NTQyMjc0MA.Y2YxZTZkODAxYTNhZDk1MThkZDMwMjAxZTRkMjYyOGI1MGUyYjE0MGVjYjdlMTVjZjA5NzMwNzdmYTljN2E1ZQ&csrf_ip=vQWfOlQNxfo55PCv7JC7%2BvsIHFj%2B3ynBBceX8LfENFXX3q%2FNeipF3g6ZByjtvmNXVU%2FCF1JdCXjZJInvLhpOWfbrJ1yDWV156DEUqnAS%2F3UWhDAAroH3JGwiw%2F2T7R8%3D&expires=1795422740&sec_hash=IJxVQsy1ah8eQP7IkvbT6Q/
-#EXTVLCOPT:http-origin=https://lonpapil.eu
-http://YOUR_SERVER:8089/channel/u-pga-tour-nbc-golf-channel
-
-#EXTINF:-1 tvg-id="u-pga-tour-sky-sports-golf" tvg-name="Sky Sports Golf" tvg-group="PGA Tour" tvg-logo="https://sportsfusion.im/imgs/team/svg/golf.svg",Sky Sports Golf [PGA Tour]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://ninguno.cc/sd0embed/golf?pid=5&v=skygolf&player=clappr&csrf=YjdmNDc0N2U2Yzk2ZGZlMjBjN2Y3ZTJlODhmNjUxMTM5NzU5MjQyY2Y0Yzc5NDY1NWFlMjFlNTNlMTkwOTg5Yg.MTc5NTQyMjc0MQ.ZDRkOThmN2UyZDQxMWQ3YTMzOTU5ZTU5YzFkZDYxYWU1MzVkYjBjNDViNTJmOGJhNjUwNmE5Y2ZhYWY3NGU0NA&csrf_ip=Wbgkuykx8dFxdzZQcDVO1t47sa4d6I5tV4x6kb7J89tzw9Oj6fF%2FX2HmL%2BEQwv4dtDZNf2N6Tkl7T9dFZ795AJFCjUbPt07FijdXSXJUmU%2FAxGPac6loOwCQf8MWoqE%3D&expires=1795422741&sec_hash=inkeC-MH71FFxz4Wk1EQLw/
-#EXTVLCOPT:http-origin=https://ninguno.cc
-http://YOUR_SERVER:8089/channel/u-pga-tour-sky-sports-golf
-
-#EXTINF:-1 tvg-id="u-formula-1-sky-sports-f1-sky-f1" tvg-name="Sky Sports F1 | Sky F1" tvg-group="Formula 1" tvg-logo="https://sportsfusion.im/imgs/team/svg/formula-1.svg",Sky Sports F1 | Sky F1 [Formula 1]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://ninguno.cc/sd0embed/motorsports?pid=5&v=skyf1&player=clappr&csrf=MDFmZTM5MWU4NjQwYjg5ZWI4MWY5OWVlYzMwNTM3MDY5ZDQwYmY3MjA0ZjRiMTdhNGE5M2U5YjY4MDdhYTdlOQ.MTc5NTQyMjc0NA.OGVmMWZiNGE4MzhhNmFlNTcxZjY3NDIxODhiMDFkYzM0YjU0YzQzNzczZTZkMTNhMzcxNGRiMmFiYzY1MmI3MQ&csrf_ip=TOqr5QhLUf9hR3shEqHd0NEyRYNAR28GXIdKQwogLDJQnxp5lHaT3eL%2BNhqnp5jhwMZ30WC5n4SHcn3pE5Dt1zCCXMwkf4IH9DkPAXdiaogPTXoxSB3gNoJc9psgtFk%3D&expires=1795422744&sec_hash=x_7sDPIAtQV9TZ_oSRzkMw/
-#EXTVLCOPT:http-origin=https://ninguno.cc
-http://YOUR_SERVER:8089/channel/u-formula-1-sky-sports-f1-sky-f1
-
-#EXTINF:-1 tvg-id="u-formula-1-f1-qualifying-f1-main-race" tvg-name="F1 Qualifying | F1 Main Race" tvg-group="Formula 1" tvg-logo="https://sportsfusion.im/imgs/team/svg/formula-1.svg",F1 Qualifying | F1 Main Race [Formula 1]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://fallafar.me/sd0embed/motorsports?pid=5&v=skyf1&player=clappr&csrf=MWRlYWVlZGZmNjkwYmNkMzkyNTAyZDFiMTIyZWNhOTI1ODg2MGFkYTA1N2FlODg5MTE0ZTdiMWNmYmQ0NjRkYQ.MTc5NTQyMjc1MA.NjM1MmE5MTJjZGFmM2E0NThjMzdlNzUyOGRiNzcyMTY0ZjU4ZDdiZDBmNzAxYmI1Y2UxNjlmMGIyMmE2ZmQyOA&csrf_ip=0iM02gaph0z8zamdarHxs1Ahry4WFreVqIz2YIH3GTaT5F%2B05MxZ7RVXGUvxhx4oWUyYKkxoRi851jvWz6HDoYw79EBNwwl0JKotC4zFl%2FyxKDgi2KNkMBMo3eone8o%3D&expires=1795422750&sec_hash=W4nj1LWAOW4eJcDEel0C6A/
-#EXTVLCOPT:http-origin=https://fallafar.me
-http://YOUR_SERVER:8089/channel/u-formula-1-f1-qualifying-f1-main-race
-
-#EXTINF:-1 tvg-id="u-moto-gp-motogp-qualifying-motogp-main-race" tvg-name="MotoGP Qualifying | MotoGP Main Race" tvg-group="Moto GP" tvg-logo="https://sportsfusion.im/imgs/team/svg/motogp.svg",MotoGP Qualifying | MotoGP Main Race [Moto GP]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://fallafar.me/sd0embed/motorsports?pid=6&v=ANOfpmy07lwVrtTTGbRnbDxryAOVDBHRjnVRZIhAkAnnW-dq18nnJWCltjB8aUFMXt512QkcQEOENTP13E2mJmi1rTsyW1QgskIMAdn9j9SMZwYf6STuc53iVettdL2FuI6bcIeY3i918NaqRU-cn5VS3xK8QWtWxaWwS0KkPvXMEH8lESeKPgPrwhjGBoWbozOefyl4pog1GgsjlNyxoM6bRlaLim6mqhpM9wDwrt8rbzHhhVozUilHuOzFCJuKKAc3i8ehpk3POXqql1zNZQ_cBuL6HYqpUubjtbGoqJiLzbA&player=clappr&csrf=NGZhZWQzMTQ0YzMwNmIwZTRiNjA5M2IyNTEyMDIwODM5ZThiMWM4ZTRjZmYxMDE5ZTI2YmViZWUwNDQ1ZmFmNg.MTc5NTQyMjc1MA.MTE3MmEzMzQ0ODZmODI1MDRiMDRhYmM1YzhhY2NlYTg4ZTFiMDg4NWVjODVjMmI3MDM3OTM4M2UyY2E3ZjhmMQ&csrf_ip=lRHO0Jz5DiiJGcye5V07xqLThcIH1iVb%2FzkKMuJWCeWAnOuTjBUdcU%2Bkae%2F6BuNoI%2B1QYDYJQQdLalYHuLFTv7qem912rEaEvVM56uk7ebVEdCoXtNwy5SEDYn1oWpA%3D&expires=1795422750&sec_hash=8WDdfOa5blk6W93Y68h3NA/
-#EXTVLCOPT:http-origin=https://fallafar.me
-http://YOUR_SERVER:8089/channel/u-moto-gp-motogp-qualifying-motogp-main-race
-
-#EXTINF:-1 tvg-id="u-tennis-channels-tennis-channel" tvg-name="Tennis Channel" tvg-group="Tennis Channels" tvg-logo="https://sportsfusion.im/imgs/team/svg/tennis-tennis-channel.svg",Tennis Channel [Tennis Channels]
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/sd0embed/tennis?pid=5&v=tentv&player=clappr&csrf=MjNhZmJkNGUyZGEzMDkyYzE0YTE0ZGQ1ZWNjOGNjMjVjNzQ3OTc3ZjYzMzY4NTE2YWJlZmFkZjEyMzk2ZGY3MQ.MTc5NTQyMjc3Ng.NjVhZmVkNDA3ZTFkMDZjNTIyYTg0ZDY3NTJhMDRjYmU5NjAwNmY3OTZiNmVmNDkwZTJhMDliOWI2NzNlYWJlNw&csrf_ip=Wb3wkqt476JksvjU4RolDtiGMuRKMB9U4ZloLIn9GCLI5MA11vbCGSNTmP4OiZRX9dCK%2FtIM9CeszCMYAqnIVx5ByGB07FHcv%2B1RIqOGpEJFdOLIWMGpCBjOH2xElo4%3D&expires=1795422776&sec_hash=AkYe99mXQtYBNlaZHybxaQ/
-#EXTVLCOPT:http-origin=https://lonpapil.eu
-http://YOUR_SERVER:8089/channel/u-tennis-channels-tennis-channel
+#EXTINF:0,tvg-name="Appalachian State vs St. Bonaventure [BKB]",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="bkb",Appalachian State vs St. Bonaventure [BKB]
+https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js
+#EXTINF:0,tvg-name="Neftchi vs Al-Hilal Saudi FC [ACLE]",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="acle",Neftchi vs Al-Hilal Saudi FC [ACLE]
+https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js
+#EXTINF:0,tvg-name="Italy U17 vs Côte d'Ivoire U17 [WCU]",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="wcu",Italy U17 vs Côte d'Ivoire U17 [WCU]
+https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js
+#EXTINF:0,tvg-name="El Gouna FC vs Zamalek SC [EPL]",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="epl",El Gouna FC vs Zamalek SC [EPL]
+https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js
+#EXTINF:0,tvg-name="Wadi Degla vs Al Ittihad [EPL]",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="epl",Wadi Degla vs Al Ittihad [EPL]
+https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js
+#EXTINF:0,tvg-name="Morocco U17 vs China PR U17 [WCU]",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="wcu",Morocco U17 vs China PR U17 [WCU]
+https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js
+#EXTINF:0,tvg-name="Mali U17 vs Belgium U17 [WCU]",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="wcu",Mali U17 vs Belgium U17 [WCU]
+https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js
+#EXTINF:0,tvg-name="Al Shamal vs Al-Ahli Jeddah [ACLE]",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="acle",Al Shamal vs Al-Ahli Jeddah [ACLE]
+https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js
+#EXTINF:0,tvg-name="Al Ain vs Esteghlal FC [ACLE]",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="acle",Al Ain vs Esteghlal FC [ACLE]
+https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js
+#EXTINF:0,tvg-name="Tractor Sazi vs Al-Wasl FC [ACLE]",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="acle",Tractor Sazi vs Al-Wasl FC [ACLE]
+https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js
+#EXTINF:0,tvg-name="Başakşehir vs Çorum FK [SL]",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="sl",Başakşehir vs Çorum FK [SL]
+https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js
+#EXTINF:0,tvg-name="Al Ahly vs Pyramids FC [EPL]",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="epl",Al Ahly vs Pyramids FC [EPL]
+https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js
+#EXTINF:0,tvg-name="JS Kabylie vs MC Alger [L1]",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="l1",JS Kabylie vs MC Alger [L1]
+https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js
+#EXTINF:0,tvg-name="Al-Ittihad FC vs Pakhtakor [ACLE]",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="acle",Al-Ittihad FC vs Pakhtakor [ACLE]
+https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js
+#EXTINF:0,tvg-name="Al Quwa Al Jawiya vs Al-Gharafa [ACLE]",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="acle",Al Quwa Al Jawiya vs Al-Gharafa [ACLE]
+https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js
+#EXTINF:0,tvg-name="Neftchi vs Al Hilal [ACLE]",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="acle",Neftchi vs Al Hilal [ACLE]
+https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js
+#EXTINF:0,tvg-name="Italia vs Costa de Marfil [CMS]",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="cms",Italia vs Costa de Marfil [CMS]
+https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js
+#EXTINF:0,tvg-name="Polo [P]",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="p",Polo [P]
+https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js
