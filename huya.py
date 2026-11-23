@@ -25,6 +25,9 @@ SPORTS = [
 SPORT_URLS = [urljoin(BASE_URL, f"api/{s}.json") for s in SPORTS]
 API_247 = urljoin(BASE_URL, "api/stream-24-7")
 
+STREAM_RE = re.compile(r"^(https?:\/\/)?(www\.)?.*\.(m3u8|ts)$", re.I)
+HTML_STREAM_RE = re.compile(r'https?://[^\s"\'<>]*\.(?:m3u8|ts)[^\s"\'<>]*')
+
 
 def write_m3u() -> None:
     lines: list[str] = ["#EXTM3U"]
@@ -49,7 +52,6 @@ async def get_sports(client: httpx.AsyncClient) -> None:
     results = await asyncio.gather(*tasks, return_exceptions=True)
 
     now = datetime.now(timezone.utc)
-    ptrn = re.compile(r"^(https?:\/\/)?(www\.)?.*\.m3u8$", re.I)
 
     for resp in results:
         if isinstance(resp, Exception) or resp.status_code != 200:
@@ -68,16 +70,17 @@ async def get_sports(client: httpx.AsyncClient) -> None:
                 logo = ev.get("logo", "")
                 for s in ev.get("streams", []):
                     src = s.get("url", "")
-                    if not ptrn.search(src):
+                    if not STREAM_RE.search(src):
                         continue
                     key = f"[{sport}] {name} | {s.get('title','')} ({TAG})"
                     if key in urls:
                         continue
                     urls[key] = {"source": src, "tvg-id": "Live.Event.us", "logo": logo}
 
+    log.info(f"Sports: {len(urls)} events")
+
 
 async def get_247(client: httpx.AsyncClient) -> None:
-    """Scrape 24/7 streams dari /api/stream-24-7"""
     resp = await client.get(API_247)
     if resp.status_code != 200:
         log.warning(f"24/7 API failed: {resp.status_code}")
@@ -88,9 +91,7 @@ async def get_247(client: httpx.AsyncClient) -> None:
         log.warning("24/7 API returned no streams")
         return
 
-    ptrn = re.compile(r"^(https?:\/\/)?(www\.)?.*\.m3u8$", re.I)
     count = 0
-
     for category, items in data["streams"].items():
         if not isinstance(items, list):
             continue
@@ -101,22 +102,24 @@ async def get_247(client: httpx.AsyncClient) -> None:
             if not name or not uri_name:
                 continue
 
-            # Coba ambil URL langsung dari API response
-            src = stream.get("url", "") or stream.get("stream_url", "") or stream.get("src", "")
+            src = (
+                stream.get("url", "")
+                or stream.get("stream_url", "")
+                or stream.get("src", "")
+            )
 
-            # Kalau tidak ada, fetch halaman individual
-            if not src or not ptrn.search(src):
+            if not src or not STREAM_RE.search(src):
                 page_url = urljoin(BASE_URL, f"live-24-7/{uri_name}")
                 try:
                     page = await client.get(page_url)
                     if page.status_code == 200:
-                        matches = re.findall(r'https?://[^\s"\'<>]+\.m3u8[^\s"\'<>]*', page.text)
+                        matches = HTML_STREAM_RE.findall(page.text)
                         if matches:
                             src = matches[0]
                 except Exception:
                     pass
 
-            if not src or not ptrn.search(src):
+            if not src or not STREAM_RE.search(src):
                 continue
 
             key = f"[{category}] {name} ({TAG})"
