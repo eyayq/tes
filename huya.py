@@ -17,6 +17,7 @@ TAG = "FUTBOLX"
 M3U_FILE = Path(__file__).parent / "playlist.m3u"
 BASE_URL = "https://www.futbol-x.top"
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
+PROXY = "http://svr00000:bhns0000@55.223.779.55:6641"
 
 SPORTS = [
     "americanfootball", "basketball", "darts", "fights",
@@ -133,7 +134,12 @@ async def get_247(client: httpx.AsyncClient) -> None:
 
 async def scrape() -> None:
     headers = {"User-Agent": USER_AGENT, "Referer": BASE_URL}
-    async with httpx.AsyncClient(timeout=20, headers=headers, follow_redirects=True) as client:
+    async with httpx.AsyncClient(
+        timeout=30,
+        headers=headers,
+        follow_redirects=True,
+        proxy=PROXY,
+    ) as client:
         await get_sports(client)
         await get_247(client)
 
