@@ -1,22 +1,22 @@
 #!/usr/bin/env python3
 """
-STREAMEAST M3U SCRAPER — v4
-- Watch page → #liveIframe → embed_url → actual .m3u8
-- 2-level iframe intercept
+STREAMEAST M3U SCRAPER — v5
+- SEMUA kategori (bukan hanya live)
+- SEMUA stream per match (Live 1, Live 2, Live 3...)
 """
 
 import asyncio
 import re
 from datetime import datetime, timezone
-from urllib.parse import urlparse, parse_qs, unquote
 from playwright.async_api import async_playwright
 
 SITE_URL = "https://gostreameast.one"
 OUTPUT_M3U = "playlist.m3u"
-MAX_WORKERS = 3
+MAX_WORKERS = 10
 MAX_STREAMS = 50
-WAIT_EMBED = 8   # detik tunggu embed load
-WAIT_STREAM = 10  # detik tunggu stream di level 2
+WAIT_EMBED = 6
+WAIT_STREAM = 8
+WAIT_TAB = 2  # detik antar klik tab
 
 
 def se_ts():
@@ -24,16 +24,9 @@ def se_ts():
     return f"{d.year%100:02d}{d.month:02d}{d.day:02d}{d.hour:02d}{d.minute:02d}"
 
 
-def ts_api():
-    """Timestamp format API: YYYYMMDDHHmm"""
-    d = datetime.now(timezone.utc)
-    return (f"{d.year}{d.month:02d}{d.day:02d}"
-            f"{d.hour:02d}{d.minute:02d}")
-
-
-# ─── STAGE 1: Parse DOM (match list) ─────────────────────────────
+# ─── STAGE 1: Parse DOM (SEMUA match) ────────────────────────────
 async def extract_matches():
-    print("📡 Stage 1: Parse DOM...")
+    print("📡 Stage 1: Parse DOM (semua kategori)...")
     async with async_playwright() as p:
         browser = await p.chromium.launch(
             headless=True,
@@ -48,7 +41,8 @@ async def extract_matches():
             locale="en-US",
         )
         await context.add_init_script(
-            "Object.defineProperty(navigator,'webdriver',{get:()=>undefined});"
+            "Object.defineProperty(navigator,'webdriver',"
+            "{get:()=>undefined});"
         )
         page = await context.new_page()
         await page.goto(SITE_URL, wait_until="domcontentloaded",
@@ -65,12 +59,15 @@ async def extract_matches():
                 let usDomain = '', build = '';
                 for (const row of rows) {
                     const link = row.querySelector('a.row-link');
-                    const tag = row.querySelector('.tag')?.textContent?.trim()||'';
-                    const name = row.querySelector('.name')?.textContent?.trim()||'';
+                    const tag = row.querySelector('.tag')
+                        ?.textContent?.trim() || '';
+                    const name = row.querySelector('.name')
+                        ?.textContent?.trim() || '';
                     const isLive = row.classList.contains('is-live');
                     if (!link?.href) continue;
                     const url = link.href;
-                    const dm = url.match(/^https:\\/\\/([^/]+)\\/us\\//);
+                    const dm = url.match(
+                        /^https:\\/\\/([^/]+)\\/us\\//);
                     if (dm && !usDomain) usDomain = dm[1];
                     const bm = url.match(/[?&]v=([^&]+)/);
                     if (bm && !build) build = bm[1];
@@ -89,9 +86,9 @@ async def extract_matches():
         return data
 
 
-# ─── STAGE 2: 2-level stream intercept ───────────────────────────
+# ─── STAGE 2: Ekstrak SEMUA embed_url + intercept .m3u8 ──────────
 async def intercept_streams(us_domain, build, targets):
-    streams = []
+    all_streams = []
     async with async_playwright() as p:
         browser = await p.chromium.launch(
             headless=True,
@@ -106,10 +103,12 @@ async def intercept_streams(us_domain, build, targets):
             locale="en-US",
         )
         await context.add_init_script(
-            "Object.defineProperty(navigator,'webdriver',{get:()=>undefined});"
+            "Object.defineProperty(navigator,'webdriver',"
+            "{get:()=>undefined});"
         )
 
-        async def get_stream(match, idx):
+        async def get_all_embeds(match):
+            """Buka watch page → klik semua tab → kumpulkan embed_url"""
             watch_url = match.get("watch_url", "")
             if not watch_url:
                 page_id = match.get("page", "us")
@@ -122,50 +121,76 @@ async def intercept_streams(us_domain, build, targets):
                 )
 
             pg = await context.new_page()
-            embed_url = ""
-            stream_urls = []
+            embeds = []
 
-            # ── LEVEL 1: watch page ──
             try:
                 await pg.goto(watch_url, wait_until="domcontentloaded",
                               timeout=30000)
-
-                # Tunggu #liveIframe muncul (JS sudah decrypt API + render)
+                # Tunggu iframe pertama muncul
                 try:
                     await pg.wait_for_selector("#liveIframe", timeout=15000)
                 except:
                     await pg.wait_for_timeout(8000)
 
-                # Ekstrak embed_url dari iframe src
-                embed_url = await pg.evaluate("""
-                    () => {
-                        const iframe = document.getElementById('liveIframe');
-                        if (!iframe?.src) return '';
-                        // src = "/frame.html?url=ENCODED_URL"
-                        const qs = new URL(iframe.src, location.origin)
-                                     .searchParams.get('url');
-                        return qs ? decodeURIComponent(qs) : '';
-                    }
+                # Hitung jumlah tab
+                tab_count = await pg.evaluate("""
+                    () => document.querySelectorAll('.se-tab-btn')
+                          .length
                 """)
 
+                # Baca embed dari tab aktif (default = tab 0)
+                embeds.append(await pg.evaluate("""
+                    () => {
+                        const f = document.getElementById('liveIframe');
+                        if (!f?.src) return '';
+                        const q = new URL(f.src, location.origin)
+                            .searchParams.get('url');
+                        return q ? decodeURIComponent(q) : '';
+                    }
+                """))
+
+                # Klik setiap tab berikutnya
+                for i in range(1, tab_count):
+                    try:
+                        await pg.evaluate(f"""
+                            () => {{
+                                const btns = document
+                                    .querySelectorAll('.se-tab-btn');
+                                if (btns[{i}]) btns[{i}].click();
+                            }}
+                        """)
+                        await pg.wait_for_timeout(WAIT_TAB)
+                        embed = await pg.evaluate("""
+                            () => {
+                                const f = document
+                                    .getElementById('liveIframe');
+                                if (!f?.src) return '';
+                                const q = new URL(f.src, location.origin)
+                                    .searchParams.get('url');
+                                return q ? decodeURIComponent(q) : '';
+                            }
+                        """)
+                        if embed and embed not in embeds:
+                            embeds.append(embed)
+                    except:
+                        continue
+
             except Exception as e:
-                print(f"    ⚠ L1 {match['name']}: {e}")
+                print(f"    ⚠ {match['name']}: {e}")
             finally:
                 await pg.close()
 
-            if not embed_url:
-                print(f"  [{idx+1}/{len(targets)}] ❌ {match['name']} "
-                      f"(no embed_url)")
-                return None
+            return [e for e in embeds if e]
 
-            # ── LEVEL 2: buka embed_url, intercept .m3u8 ──
-            pg2 = await context.new_page()
+        async def get_m3u8_from_embed(embed_url):
+            """Buka embed_url → intercept .m3u8"""
+            pg = await context.new_page()
             stream_urls = []
 
             def on_req(request):
                 u = request.url
-                if any(x in u for x in [".m3u8", "hls", "playlist",
-                                        "manifest", ".mpd"]):
+                if any(x in u for x in
+                       [".m3u8", "hls", "playlist", "manifest", ".mpd"]):
                     if not any(x in u.lower() for x in
                                ["facebook", "google", "sensors",
                                 "analytics", "histats"]):
@@ -174,38 +199,36 @@ async def intercept_streams(us_domain, build, targets):
 
             def on_resp(response):
                 u = response.url
-                if any(x in u for x in [".m3u8", "hls", "playlist",
-                                        "manifest", ".mpd"]):
+                if any(x in u for x in
+                       [".m3u8", "hls", "playlist", "manifest", ".mpd"]):
                     if not any(x in u.lower() for x in
                                ["facebook", "google", "sensors",
                                 "analytics", "histats"]):
                         if u not in stream_urls:
                             stream_urls.append(u)
 
-            pg2.on("request", on_req)
-            pg2.on("response", on_resp)
+            pg.on("request", on_req)
+            pg.on("response", on_resp)
 
             try:
-                await pg2.goto(embed_url, wait_until="domcontentloaded",
-                               timeout=30000)
-                await pg2.wait_for_timeout(WAIT_EMBED)
+                await pg.goto(embed_url, wait_until="domcontentloaded",
+                              timeout=30000)
+                await pg.wait_for_timeout(WAIT_EMBED)
 
-                # Klik play kalau ada
                 for sel in ["video", "[class*='player']",
-                            "[class*='play']", "button",
-                            ".vjs-big-play-button"]:
+                            "[class*='play']", "button"]:
                     try:
-                        el = await pg2.query_selector(sel)
+                        el = await pg.query_selector(sel)
                         if el:
                             await el.click(timeout=1000)
                             break
                     except:
                         continue
 
-                await pg2.wait_for_timeout(WAIT_STREAM)
+                await pg.wait_for_timeout(WAIT_STREAM)
 
-                # Cek video.src / hls.js
-                extra = await pg2.evaluate("""
+                # Cek video / hls
+                extra = await pg.evaluate("""
                     () => {
                         const urls = [];
                         const v = document.querySelector('video');
@@ -214,7 +237,6 @@ async def intercept_streams(us_domain, build, targets):
                             if (v.src) urls.push(v.src);
                         }
                         if (window.hls?.url) urls.push(window.hls.url);
-                        // Cek iframe nested (level 3)
                         const ifr = document.querySelector('iframe');
                         if (ifr?.src) urls.push(ifr.src);
                         return urls;
@@ -224,44 +246,55 @@ async def intercept_streams(us_domain, build, targets):
                     if u and u not in stream_urls:
                         stream_urls.append(u)
 
-                # Fallback: regex di HTML
                 if not stream_urls:
-                    content = await pg2.content()
-                    stream_urls.extend(
-                        re.findall(
-                            r'(https?://[^"\'\\s]+\\.(?:m3u8|mpd)[^"\'\\s]*)',
-                            content
-                        )
-                    )
+                    content = await pg.content()
+                    stream_urls.extend(re.findall(
+                        r'(https?://[^"\'\\s]+\\.(?:m3u8|mpd)[^"\'\\s]*)',
+                        content
+                    ))
 
-            except Exception as e:
-                print(f"    ⚠ L2 {match['name']}: {e}")
+            except:
+                pass
             finally:
-                await pg2.close()
+                await pg.close()
 
-            label = f"{match['name']} [{match.get('tag','')}]"
-            if stream_urls:
-                print(f"  [{idx+1}/{len(targets)}] ✅ {label}")
-                return {**match, "stream_url": stream_urls[0],
-                        "embed_url": embed_url}
-            else:
-                print(f"  [{idx+1}/{len(targets)}] ❌ {label} "
-                      f"(embed={embed_url[:60]}...)")
-                return None
+            return stream_urls[0] if stream_urls else None
 
+        # ── Proses batch ──
         for batch_start in range(0, len(targets), MAX_WORKERS):
             batch = targets[batch_start:batch_start + MAX_WORKERS]
-            tasks = [
-                get_stream(m, batch_start + i)
-                for i, m in enumerate(batch)
-            ]
-            results = await asyncio.gather(*tasks, return_exceptions=True)
-            for r in results:
-                if isinstance(r, dict):
-                    streams.append(r)
+            tasks = [get_all_embeds(m) for m in batch]
+            results = await asyncio.gather(
+                *tasks, return_exceptions=True)
+
+            for i, result in enumerate(results):
+                if isinstance(result, Exception):
+                    continue
+                match = batch[i]
+                embeds = result if isinstance(result, list) else []
+                if not embeds:
+                    print(f"  [{batch_start+i+1}/{len(targets)}] "
+                          f"❌ {match['name']} (no embeds)")
+                    continue
+
+                print(f"  [{batch_start+i+1}/{len(targets)}] "
+                      f"{match['name']} → {len(embeds)} streams")
+
+                # Intercept .m3u8 dari tiap embed
+                m3u8_tasks = [get_m3u8_from_embed(e) for e in embeds]
+                m3u8_results = await asyncio.gather(
+                    *m3u8_tasks, return_exceptions=True)
+
+                for j, m3u8 in enumerate(m3u8_results):
+                    if m3u8:
+                        all_streams.append({
+                            **match,
+                            "stream_url": m3u8,
+                            "stream_num": j + 1,
+                        })
 
         await browser.close()
-    return streams
+    return all_streams
 
 
 # ─── GENERATE M3U ────────────────────────────────────────────────
@@ -271,16 +304,18 @@ def generate_m3u(streams):
         name = s.get("name", "Unknown")
         tag = s.get("tag", "")
         is_live = s.get("is_live", False)
+        num = s.get("stream_num", 1)
         group = "LIVE" if is_live else "UPCOMING"
         logo = "https://gostreameast.one/assets/images/favicon-32x32.png"
 
+        display = f"{name} [{tag}] — Live {num}"
         extinf = (
             f'#EXTINF:0,'
-            f'tvg-name="{name} [{tag}]",'
+            f'tvg-name="{name} [{tag}] Live {num}",'
             f'tvg-logo="{logo}",'
             f'group-title="{group}",'
-            f'tvg-id="{tag.lower()}",'
-            f'{name} [{tag}]'
+            f'tvg-id="{tag.lower()}-live{num}",'
+            f'{display}'
         )
         lines.append(extinf)
         lines.append(s["stream_url"])
@@ -290,7 +325,7 @@ def generate_m3u(streams):
 # ─── MAIN ────────────────────────────────────────────────────────
 async def main():
     print("=" * 55)
-    print("  STREAMEAST M3U SCRAPER v4 (2-level)")
+    print("  STREAMEAST M3U SCRAPER v5 (ALL + multi-stream)")
     print(f"  {datetime.now().strftime('%Y-%m-%d %H:%M')}")
     print("=" * 55)
 
@@ -301,22 +336,27 @@ async def main():
 
     print(f"\n  usDomain: {us_domain}")
     print(f"  Build:    {build}")
-    print(f"  Matches:  {len(all_matches)}")
+    print(f"  Total:    {len(all_matches)}")
 
     if not us_domain:
         print("  ❌ usDomain kosong.")
         return
 
+    # ✅ SEMUA match (bukan hanya live)
+    # Urutkan: live dulu, sisanya setelah
     live = [m for m in all_matches if m.get("is_live")]
-    print(f"  🔴 Live: {len(live)} / {len(all_matches)}")
+    upcoming = [m for m in all_matches if not m.get("is_live")]
+    targets = (live + upcoming)[:MAX_STREAMS]
 
-    if not live:
-        print("  ⚠ Tidak ada LIVE.")
+    print(f"  🔴 Live: {len(live)} | ⏳ Upcoming: {len(upcoming)}")
+    print(f"  📡 Target: {len(targets)}")
+
+    if not targets:
+        print("  ⚠ Tidak ada match.")
         return
 
-    targets = live[:MAX_STREAMS]
-    print(f"\n🎬 Intercepting {len(targets)} streams "
-          f"(L1=embed, L2=stream, wait={WAIT_EMBED}+{WAIT_STREAM}s)...")
+    print(f"\n🎬 Scraping {len(targets)} matches "
+          f"(semua stream per match)...")
     streams = await intercept_streams(us_domain, build, targets)
 
     print(f"\n{'═' * 55}")
@@ -326,7 +366,7 @@ async def main():
             f.write(m3u)
         print(f"  ✅ {OUTPUT_M3U} → {len(streams)} streams")
         print(f"{'═' * 55}")
-        print(f"\n{m3u[:500]}")
+        print(f"\n{m3u[:600]}")
     else:
         print(f"  ❌ 0 streams.")
         print(f"{'═' * 55}")
