@@ -8,3 +8,4 @@ pycryptodome
 yt-dlp
 selenium
 undetected-chromedriver
+httpx
