@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 """
 STREAMEAST M3U SCRAPER — v6 FINAL
-- 3-level intercept: watch → embed → framelatin.php → .m3u8
-- Semua kategori, semua stream per match
+- Semua kategori (live + upcoming)
+- Semua stream per match (Live 1, 2, 3...)
+- 3-level: watch → embed → framelatin/framestream → .m3u8
 """
 
 import asyncio
 import re
 import random
 from datetime import datetime, timezone
+from urllib.parse import urlparse, parse_qs
 from playwright.async_api import async_playwright
 
 SITE_URL = "https://gostreameast.one"
@@ -18,7 +20,6 @@ MAX_MATCHES = 50
 WAIT_STREAM = 12
 WAIT_TAB = 2
 
-# Edge servers (dari JS streamlat.html)
 EDGES = ['a11', 'a12', 'a13', 'a14', 'a15', 'a16']
 EDGE_DOMAIN = 'kora-plus.mov'
 
@@ -30,31 +31,16 @@ def se_ts():
 
 
 def build_final_url(embed_url):
-    """
-    Parse embed_url → bangun URL framelatin.php / framestream.php
-    Contoh:
-      streamlat.html?id=n2210-3d13bdefd5ec5ca0
-        → https://a14.kora-plus.mov/framelatin.php?ch=n2210-3d13bdefd5ec5ca0
-      framestream.php?id=60825
-        → https://a14.kora-plus.mov/framestream.php?id=60825
-    """
-    from urllib.parse import urlparse, parse_qs, unquote
-
     parsed = urlparse(embed_url)
     qs = parse_qs(parsed.query)
-
-    # Tentukan edge
     edge = random.choice(EDGES)
     domain = EDGE_DOMAIN
+    path = parsed.path
 
-    # Cek ?domain= param
     if 'domain' in qs:
         domain = qs['domain'][0]
 
-    # Tentukan path + ch
-    path = parsed.path  # /streamlat.html, /framelatin.php, /framestream.php
     ch = ''
-
     if 'id' in qs:
         ch = qs['id'][0]
     elif 'key' in qs:
@@ -63,7 +49,6 @@ def build_final_url(embed_url):
         n = qs.get('n', ['1'])[0]
         ch = qs['mid'][0] + '-' + n
 
-    # Kalau sudah framelatin/framestream → langsung pakai
     if 'framelatin' in path or 'framestream' in path:
         base = f"https://{edge}.{domain}{path}"
         if ch:
@@ -71,17 +56,20 @@ def build_final_url(embed_url):
             return f"{base}{sep}ch={ch}"
         return base
 
-    # streamlat.html → framelatin.php
     if 'streamlat' in path:
         if ch:
             return f"https://{edge}.{domain}/framelatin.php?ch={ch}"
         return f"https://{edge}.{domain}/framelatin.php"
 
-    # Fallback: pakai embed_url langsung
+    if 'streameast' in path:
+        if ch:
+            return f"https://{edge}.{domain}/framestream.php?id={ch}"
+        return f"https://{edge}.{domain}/framestream.php"
+
     return embed_url
 
 
-# ─── STAGE 1: Parse DOM (semua kategori) ─────────────────────────
+# ─── STAGE 1: Parse DOM ──────────────────────────────────────────
 async def extract_matches():
     print("📡 Stage 1: Parse DOM...")
     async with async_playwright() as p:
@@ -107,7 +95,7 @@ async def extract_matches():
         try:
             await page.wait_for_selector(".row", timeout=20000)
         except:
-            await pg.wait_for_timeout(5000) if False else await page.wait_for_timeout(5000)
+            await page.wait_for_timeout(5000)
 
         data = await page.evaluate("""
             () => {
@@ -143,7 +131,7 @@ async def extract_matches():
         return data
 
 
-# ─── STAGE 2: Ekstrak semua embed_url per match ──────────────────
+# ─── STAGE 2: Ekstrak semua embed_url ────────────────────────────
 async def get_all_embeds(ctx, us_domain, build, match):
     watch_url = match.get("watch_url", "")
     if not watch_url:
@@ -171,7 +159,6 @@ async def get_all_embeds(ctx, us_domain, build, match):
             "() => document.querySelectorAll('.se-tab-btn').length"
         )
 
-        # Tab 0
         embeds.append(await pg.evaluate("""
             () => {
                 const f = document.getElementById('liveIframe');
@@ -182,7 +169,6 @@ async def get_all_embeds(ctx, us_domain, build, match):
             }
         """))
 
-        # Tab 1..N
         for i in range(1, tab_count):
             try:
                 await pg.evaluate(f"""
@@ -216,9 +202,8 @@ async def get_all_embeds(ctx, us_domain, build, match):
     return [e for e in embeds if e]
 
 
-# ─── STAGE 3: Intercept .m3u8 dari URL final ─────────────────────
+# ─── STAGE 3: Intercept .m3u8 ────────────────────────────────────
 async def get_m3u8(ctx, final_url):
-    """Buka framelatin.php?ch=... → intercept .m3u8"""
     pg = await ctx.new_page()
     urls = []
 
@@ -251,7 +236,6 @@ async def get_m3u8(ctx, final_url):
                       timeout=30000)
         await pg.wait_for_timeout(3000)
 
-        # Klik play
         for sel in ["video", "[class*='player']",
                     "[class*='play']", "button",
                     ".vjs-big-play-button", ".jw-reset"]:
@@ -265,7 +249,6 @@ async def get_m3u8(ctx, final_url):
 
         await pg.wait_for_timeout(WAIT_STREAM)
 
-        # Cek semua frames
         for frame in pg.frames:
             try:
                 v_src = await frame.evaluate("""
@@ -282,7 +265,6 @@ async def get_m3u8(ctx, final_url):
             except:
                 continue
 
-        # Cek main frame extras
         extra = await pg.evaluate("""
             () => {
                 const r = [];
@@ -309,7 +291,6 @@ async def get_m3u8(ctx, final_url):
             if u and u not in urls:
                 urls.append(u)
 
-        # Fallback: regex
         if not urls:
             for frame in pg.frames:
                 try:
@@ -328,7 +309,6 @@ async def get_m3u8(ctx, final_url):
     finally:
         await pg.close()
 
-    # Prioritas
     for u in urls:
         if ".m3u8" in u:
             return u
@@ -367,7 +347,7 @@ def generate_m3u(streams):
 # ─── MAIN ────────────────────────────────────────────────────────
 async def main():
     print("=" * 55)
-    print("  STREAMEAST M3U SCRAPER v6 (3-level)")
+    print("  STREAMEAST M3U SCRAPER v6 FINAL")
     print(f"  {datetime.now().strftime('%Y-%m-%d %H:%M')}")
     print("=" * 55)
 
@@ -421,7 +401,6 @@ async def main():
         for batch_start in range(0, len(targets), MAX_WORKERS):
             batch = targets[batch_start:batch_start + MAX_WORKERS]
 
-            # A: ambil embeds
             embed_tasks = [
                 get_all_embeds(ctx, us_domain, build, m)
                 for m in batch
@@ -442,7 +421,6 @@ async def main():
                           f"❌ {match['name']} (no embeds)")
                     continue
 
-                # B: build final URL dari tiap embed
                 final_urls = []
                 for e in embeds:
                     fu = build_final_url(e)
@@ -453,7 +431,6 @@ async def main():
                       f"{match['name']} → "
                       f"{len(final_urls)} streams")
 
-                # C: intercept .m3u8 dari final URL
                 m3u8_tasks = [get_m3u8(ctx, fu) for fu in final_urls]
                 m3u8_results = await asyncio.gather(
                     *m3u8_tasks, return_exceptions=True
