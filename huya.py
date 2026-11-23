@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 """
-STREAMEAST M3U SCRAPER — FIXED
-- Playwright handles ALL site JS (decode __lxc, AES decrypt, API calls)
-- Intercept via request + video.src + hls.js state
-- Watch URL includes &t= cache-buster
+STREAMEAST M3U SCRAPER — v3 (DOM parsing)
+- Parse .row elements dari DOM (bukan closure variable)
+- Ekstrak usDomain + build dari href
+- Anti-detection args
 """
 
 import asyncio
 import re
-import json
 from datetime import datetime, timezone
 from playwright.async_api import async_playwright
 
@@ -16,109 +15,139 @@ SITE_URL = "https://gostreameast.one"
 OUTPUT_M3U = "playlist.m3u"
 MAX_WORKERS = 3
 MAX_STREAMS = 50
-WAIT_STREAM = 12  # detik tunggu stream load
+WAIT_STREAM = 12
 
 
 def se_ts():
-    """Cache-buster: YYmmddHHii (UTC)"""
     d = datetime.now(timezone.utc)
     return f"{d.year%100:02d}{d.month:02d}{d.day:02d}{d.hour:02d}{d.minute:02d}"
 
 
-# ─── STAGE 1: Ekstrak match data dari site JS ────────────────────
+# ─── STAGE 1: Parse DOM rendered ─────────────────────────────────
 async def extract_matches():
-    print("📡 Stage 1: Ekstrak match data (Playwright)...")
+    print("📡 Stage 1: Parse DOM (Playwright)...")
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True)
-        context = await browser.new_context(
-            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                       "AppleWebKit/537.36 (KHTML, like Gecko) "
-                       "Chrome/125.0.0.0 Safari/537.36",
-            viewport={"width": 1920, "height": 1080},
+        browser = await p.chromium.launch(
+            headless=True,
+            args=[
+                "--disable-blink-features=AutomationControlled",
+                "--no-first-run",
+                "--no-default-browser-check",
+                "--disable-dev-shm-usage",
+            ],
         )
+        context = await browser.new_context(
+            user_agent=(
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/125.0.0.0 Safari/537.36"
+            ),
+            viewport={"width": 1920, "height": 1080},
+            locale="en-US",
+        )
+        # Patch webdriver flag
+        await context.add_init_script("""
+            Object.defineProperty(navigator, 'webdriver', {get: () => undefined});
+        """)
+
         page = await context.new_page()
-        await page.goto(SITE_URL, wait_until="networkidle", timeout=30000)
+        await page.goto(SITE_URL, wait_until="domcontentloaded", timeout=30000)
 
-        # Tunggu sampai site JS selesai load semua data
+        # ✅ TUNGGU .row elements muncul di DOM
         try:
-            await page.wait_for_function(
-                "window.seAllMatches && window.seAllMatches.length > 0",
-                timeout=20000
-            )
+            await page.wait_for_selector(".row", timeout=20000)
         except:
-            await page.wait_for_timeout(10000)
+            print("  ⚠ .row tidak muncul dalam 20s")
+            # Coba scroll / tunggu lebih
+            await page.wait_for_timeout(5000)
 
-        # Ekstrak SEMUA dari variable JS site
+        # ✅ PARSE DOM — bukan closure variable
         data = await page.evaluate("""
-            () => ({
-                usDomain: window.seUsDomain || '',
-                build: window.SE_BUILD || '',
-                matches: (window.seAllMatches || []).map(m => ({
-                    id: m.id,
-                    name: m.name,
-                    tag: m.tag,
-                    color: m.color,
-                    is_live: m.is_live,
-                    page: m.page || 'us',
-                    category: m.category?.name || '',
-                    begin_at: m.begin_at || '',
-                })),
-                soccer: (window.seSoccer || []).map(m => ({
-                    id: m.id,
-                    name: m.name,
-                    tag: m.tag,
-                    color: m.color,
-                    is_live: m.is_live,
-                    page: 'soccer',
-                    category: m.category?.name || '',
-                    begin_at: m.begin_at || '',
-                })),
-                latin: (window.seLatin || []).map(m => ({
-                    id: m.id,
-                    name: m.name,
-                    tag: m.tag,
-                    color: m.color,
-                    is_live: m.is_live,
-                    page: 'latin',
-                    category: m.category?.name || '',
-                    begin_at: m.begin_at || '',
-                })),
-            })
+            () => {
+                const rows = document.querySelectorAll('li.row');
+                const matches = [];
+                let usDomain = '';
+                let build = '';
+
+                for (const row of rows) {
+                    const link = row.querySelector('a.row-link');
+                    const tag = row.querySelector('.tag')?.textContent?.trim() || '';
+                    const name = row.querySelector('.name')?.textContent?.trim() || '';
+                    const isLive = row.classList.contains('is-live');
+
+                    if (!link || !link.href) continue;
+
+                    // Ekstrak usDomain + build dari href
+                    const url = link.href;
+                    const domainMatch = url.match(/^https:\\/\\/([^/]+)\\/us\\//);
+                    if (domainMatch && !usDomain) usDomain = domainMatch[1];
+                    const buildMatch = url.match(/[?&]v=([^&]+)/);
+                    if (buildMatch && !build) build = buildMatch[1];
+
+                    // Ekstrak page + id dari query params
+                    const params = new URL(url).searchParams;
+                    const pageId = params.get('p') || 'us';
+                    const matchId = params.get('id') || params.get('m') || '';
+
+                    matches.push({
+                        id: matchId,
+                        name: name,
+                        tag: tag,
+                        is_live: isLive,
+                        page: pageId,
+                        watch_url: url,  // ✅ simpan URL lengkap
+                    });
+                }
+                return { usDomain, build, matches };
+            }
         """)
         await browser.close()
         return data
 
 
-# ─── STAGE 2: Intercept stream URL ───────────────────────────────
+# ─── STAGE 2: Intercept stream ───────────────────────────────────
 async def intercept_streams(us_domain, build, targets):
     streams = []
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True)
-        context = await browser.new_context(
-            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                       "AppleWebKit/537.36 (KHTML, like Gecko) "
-                       "Chrome/125.0.0.0 Safari/537.36",
-            viewport={"width": 1920, "height": 1080},
+        browser = await p.chromium.launch(
+            headless=True,
+            args=[
+                "--disable-blink-features=AutomationControlled",
+                "--no-first-run",
+                "--no-default-browser-check",
+                "--disable-dev-shm-usage",
+            ],
         )
+        context = await browser.new_context(
+            user_agent=(
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/125.0.0.0 Safari/537.36"
+            ),
+            viewport={"width": 1920, "height": 1080},
+            locale="en-US",
+        )
+        await context.add_init_script("""
+            Object.defineProperty(navigator, 'webdriver', {get: () => undefined});
+        """)
 
         async def get_stream(match, idx):
-            page_id = match.get("page", "us")
-            match_param = (
-                f"m={match['id']}" if page_id == "soccer"
-                else f"id={match['id']}"
-            )
-            # ✅ TAMBAHKAN &t= CACHE-BUSTER
-            watch_url = (
-                f"https://{us_domain}/us/{page_id}.html"
-                f"?p={page_id}&d={us_domain}&{match_param}"
-                f"&v={build}&ref=gostreameast.one"
-                f"&t={se_ts()}"
-            )
+            # ✅ Pakai watch_url langsung dari DOM (sudah lengkap)
+            watch_url = match.get("watch_url", "")
+            if not watch_url:
+                # Fallback: build manual
+                page_id = match.get("page", "us")
+                mp = (f"m={match['id']}" if page_id == "soccer"
+                      else f"id={match['id']}")
+                watch_url = (
+                    f"https://{us_domain}/us/{page_id}.html"
+                    f"?p={page_id}&d={us_domain}&{mp}"
+                    f"&v={build}&ref=gostreameast.one&t={se_ts()}"
+                )
 
             pg = await context.new_page()
             stream_urls = []
 
-            # ✅ INTERCEPT VIA REQUEST (bukan cuma response)
             def on_request(request):
                 url = request.url
                 if any(x in url for x in [".m3u8", "hls", "playlist", "manifest"]):
@@ -143,11 +172,9 @@ async def intercept_streams(us_domain, build, targets):
                               timeout=30000)
                 await pg.wait_for_timeout(3000)
 
-                # Klik play button jika ada
-                for sel in [
-                    "video", "[class*='player']", "[class*='play']",
-                    "button", ".play-btn", "[data-action='play']"
-                ]:
+                # Klik play
+                for sel in ["video", "[class*='player']",
+                            "[class*='play']", "button"]:
                     try:
                         el = await pg.query_selector(sel)
                         if el:
@@ -156,63 +183,36 @@ async def intercept_streams(us_domain, build, targets):
                     except:
                         continue
 
-                # ✅ TUNGGU LEBIH LAMA (stream load)
                 await pg.wait_for_timeout(WAIT_STREAM)
 
-                # ✅ CEK video.src langsung
-                video_src = await pg.evaluate("""
+                # Cek video.src + hls.js
+                extra = await pg.evaluate("""
                     () => {
+                        const urls = [];
                         const v = document.querySelector('video');
-                        if (!v) return '';
-                        // hls.js: cek via Hls instance
-                        if (v._hls && v._hls.url) return v._hls.url;
-                        return v.src || '';
-                    }
-                """)
-                if video_src and video_src not in stream_urls:
-                    stream_urls.append(video_src)
-
-                # ✅ CEK hls.js internal state
-                hls_url = await pg.evaluate("""
-                    () => {
-                        // Cari Hls instance di DOM
-                        const v = document.querySelector('video');
-                        if (v && v._hls) {
-                            try {
-                                return v._hls.url || '';
-                            } catch(e) {}
+                        if (v) {
+                            if (v._hls?.url) urls.push(v._hls.url);
+                            if (v.src) urls.push(v.src);
                         }
-                        // Cek window-level
-                        if (window.hls && window.hls.url) return window.hls.url;
-                        // Cek data attribute
+                        if (window.hls?.url) urls.push(window.hls.url);
                         const el = document.querySelector('[data-src]');
-                        if (el) return el.getAttribute('data-src') || '';
-                        return '';
+                        if (el) urls.push(el.dataset.src);
+                        return urls;
                     }
                 """)
-                if hls_url and hls_url not in stream_urls:
-                    stream_urls.append(hls_url)
+                for u in extra:
+                    if u and u not in stream_urls:
+                        stream_urls.append(u)
 
-                # ✅ Fallback: regex di HTML source
+                # Fallback: regex di HTML
                 if not stream_urls:
                     content = await pg.content()
-                    found = re.findall(
-                        r'(https?://[^"\'\\s]+\.m3u8[^"\'\\s]*)', content
+                    stream_urls.extend(
+                        re.findall(
+                            r'(https?://[^"\'\\s]+\.m3u8[^"\'\\s]*)',
+                            content
+                        )
                     )
-                    stream_urls.extend(found)
-
-                # ✅ Fallback 2: regex di JS variables
-                if not stream_urls:
-                    js_urls = await pg.evaluate("""
-                        () => {
-                            const html = document.documentElement.innerHTML;
-                            const matches = html.match(
-                                /https?:\\/\\/[\\w\\-./]+\\.m3u8[^"']*/g
-                            );
-                            return matches || [];
-                        }
-                    """)
-                    stream_urls.extend(js_urls)
 
             except Exception as e:
                 print(f"    ⚠ {match['name']}: {e}")
@@ -227,7 +227,6 @@ async def intercept_streams(us_domain, build, targets):
                 print(f"  [{idx+1}/{len(targets)}] ❌ {label}")
                 return None
 
-        # Batch processing
         for batch_start in range(0, len(targets), MAX_WORKERS):
             batch = targets[batch_start:batch_start + MAX_WORKERS]
             tasks = [
@@ -250,90 +249,62 @@ def generate_m3u(streams):
         name = s.get("name", "Unknown")
         tag = s.get("tag", "")
         is_live = s.get("is_live", False)
-        begin_at = s.get("begin_at", "")
-
         group = "LIVE" if is_live else "UPCOMING"
-
-        match_time = ""
-        if begin_at:
-            try:
-                dt = datetime.fromisoformat(
-                    begin_at.replace("Z", "+00:00"))
-                match_time = dt.strftime("%H:%M")
-            except:
-                pass
-
-        logo_url = "https://gostreameast.one/assets/images/favicon-32x32.png"
-        display_title = f"{name} [{tag}]"
-        if match_time:
-            display_title += f" ({match_time})"
+        logo = "https://gostreameast.one/assets/images/favicon-32x32.png"
 
         extinf = (
             f'#EXTINF:0,'
             f'tvg-name="{name} [{tag}]",'
-            f'tvg-logo="{logo_url}",'
+            f'tvg-logo="{logo}",'
             f'group-title="{group}",'
             f'tvg-id="{tag.lower()}",'
-            f'{display_title}'
+            f'{name} [{tag}]'
         )
         lines.append(extinf)
         lines.append(s["stream_url"])
-
     return "\n".join(lines)
 
 
 # ─── MAIN ────────────────────────────────────────────────────────
 async def main():
     print("=" * 60)
-    print("  STREAMEAST - M3U STREAM SCRAPER (FIXED)")
+    print("  STREAMEAST - M3U SCRAPER v3 (DOM)")
     print(f"  {datetime.now().strftime('%Y-%m-%d %H:%M')}")
     print("=" * 60)
 
-    # Stage 1: Playwright extract (site JS handles decode + AES)
-    pw_data = await extract_matches()
-
-    us_domain = pw_data.get("usDomain", "")
-    build = pw_data.get("build", "20260917a")
-    all_matches = (
-        pw_data.get("matches", []) +
-        pw_data.get("soccer", []) +
-        pw_data.get("latin", [])
-    )
+    data = await extract_matches()
+    us_domain = data.get("usDomain", "")
+    build = data.get("build", "")
+    all_matches = data.get("matches", [])
 
     print(f"\n  usDomain: {us_domain}")
     print(f"  Build:    {build}")
     print(f"  Matches:  {len(all_matches)}")
 
     if not us_domain:
-        print("  ❌ Tidak bisa dapatkan usDomain.")
+        print("  ❌ usDomain kosong. Coba headless=False")
         return
 
-    # Filter live only
-    live_matches = [m for m in all_matches if m.get("is_live")]
-    print(f"  🔴 Live: {len(live_matches)} / {len(all_matches)}")
+    live = [m for m in all_matches if m.get("is_live")]
+    print(f"  🔴 Live: {len(live)} / {len(all_matches)}")
 
-    if not live_matches:
-        print("  ⚠ Tidak ada match LIVE.")
+    if not live:
+        print("  ⚠ Tidak ada LIVE.")
         return
 
-    # Stage 2: Intercept
-    targets = live_matches[:MAX_STREAMS]
-    print(f"\n🎬 Intercepting {len(targets)} streams "
-          f"(wait={WAIT_STREAM}s each)...")
+    targets = live[:MAX_STREAMS]
+    print(f"\n🎬 Intercepting {len(targets)} streams...")
     streams = await intercept_streams(us_domain, build, targets)
 
-    # Output
     print(f"\n{'═' * 60}")
     if streams:
         m3u = generate_m3u(streams)
         with open(OUTPUT_M3U, "w", encoding="utf-8") as f:
             f.write(m3u)
         print(f"  ✅ {OUTPUT_M3U} → {len(streams)} streams")
-        print(f"{'═' * 60}")
-        print(f"\n{m3u[:600]}")
     else:
-        print(f"  ❌ 0 streams.")
-        print(f"{'═' * 60}")
+        print("  ❌ 0 streams.")
+    print(f"{'═' * 60}")
 
 
 if __name__ == "__main__":
