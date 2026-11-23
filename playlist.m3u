@@ -1,85 +1,83 @@
 #EXTM3U
-#EXTINF:0,tvg-name="Appalachian State vs St. Bonaventure [BKB] Live 1",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="bkb-live1",Appalachian State vs St. Bonaventure [BKB] — Live 1
-https://a14.kora-plus.mov/framestream.php?id=60825
 #EXTINF:0,tvg-name="Italia vs Costa de Marfil [CMS] Live 1",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="cms-live1",Italia vs Costa de Marfil [CMS] — Live 1
-https://a14.kora-plus.mov/framelatin.php?ch=n2203-f3ecdc1d0668d5b2
+https://golygoals.com/streamlat.html?id=n2203-f3ecdc1d0668d5b2
 #EXTINF:0,tvg-name="Italia vs Costa de Marfil [CMS] Live 2",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="cms-live2",Italia vs Costa de Marfil [CMS] — Live 2
-https://tvf90.com/5.php?stream=dsports
+https://5.ftlly.com/dsports/mono.m3u8?token=e45612ab024d9fe183bb1482330d7bb04ef672e8-53-1795471355-1795453355
 #EXTINF:0,tvg-name="Italia vs Costa de Marfil [CMS] Live 3",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="cms-live3",Italia vs Costa de Marfil [CMS] — Live 3
-https://a14.kora-plus.mov/framelatin.php?ch=n2203-9d1d381d82f28fad
+https://golygoals.com/streamlat.html?id=n2203-9d1d381d82f28fad
 #EXTINF:0,tvg-name="Italia vs Costa de Marfil [CMS] Live 4",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="cms-live4",Italia vs Costa de Marfil [CMS] — Live 4
 https://a49live-pv-ta-amazon.akamaized.net/gru-nitro/live/clients/dash/enc/p2uelx03f8/out/v1/6394db35d71a4f48bf34300ae9ec9889/cenc.mpd
 #EXTINF:0,tvg-name="Italia vs Costa de Marfil [CMS] Live 5",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="cms-live5",Italia vs Costa de Marfil [CMS] — Live 5
-https://a11.kora-plus.mov/framelatin.php?ch=n2203-c6391dcbcac3b7db
+https://golygoals.com/streamlat.html?id=n2203-c6391dcbcac3b7db
 #EXTINF:0,tvg-name="Italia vs Costa de Marfil [CMS] Live 6",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="cms-live6",Italia vs Costa de Marfil [CMS] — Live 6
-https://tvf90.com/5.php?stream=dsports
+https://9.ftlly.com/dsports/mono.m3u8?token=b59e802bdaf7950bb5c3b60329165b4775b6a07b-f-1795471355-1795453355
 #EXTINF:0,tvg-name="Italia vs Costa de Marfil [CMS] Live 7",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="cms-live7",Italia vs Costa de Marfil [CMS] — Live 7
-https://a11.kora-plus.mov/framelatin.php?ch=n2203-2078038efdb1035e
+https://golygoals.com/streamlat.html?id=n2203-2078038efdb1035e
 #EXTINF:0,tvg-name="Italia vs Costa de Marfil [CMS] Live 8",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="cms-live8",Italia vs Costa de Marfil [CMS] — Live 8
-https://tvf90.com/5.php?stream=dsports
+https://6.ftlly.com/dsports/mono.m3u8?token=eab35fba5a70765c62d0f4cb4100c2c749873552-b9-1795471355-1795453355
 #EXTINF:0,tvg-name="Italia vs Costa de Marfil [CMS] Live 9",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="cms-live9",Italia vs Costa de Marfil [CMS] — Live 9
-https://a15.kora-plus.mov/framelatin.php?ch=n2203-322bdc5623ae5d9a
+https://golygoals.com/streamlat.html?id=n2203-322bdc5623ae5d9a
 #EXTINF:0,tvg-name="Italia vs Costa de Marfil [CMS] Live 10",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="cms-live10",Italia vs Costa de Marfil [CMS] — Live 10
-https://tvf90.com/5.php?stream=foxsports2_usa
+https://6.ftlly.com/foxsports2_usa/mono.m3u8?token=c3c5f3c6ef953aeedbc74b56b028032e047b0681-3f-1795471355-1795453355
 #EXTINF:0,tvg-name="Italia vs Costa de Marfil [CMS] Live 11",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="cms-live11",Italia vs Costa de Marfil [CMS] — Live 11
-https://a12.kora-plus.mov/framelatin.php?ch=n2203-931d9c6af53eac4a
+https://golygoals.com/streamlat.html?id=n2203-931d9c6af53eac4a
 #EXTINF:0,tvg-name="Italia vs Costa de Marfil [CMS] Live 12",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="cms-live12",Italia vs Costa de Marfil [CMS] — Live 12
-https://tvf90.com/5.php?stream=foxsports2_usa
+https://2.ftlly.com/foxsports2_usa/mono.m3u8?token=8cab10360a27bf8a2fe34e5546549e6b53c54931-df-1795471355-1795453355
 #EXTINF:0,tvg-name="Marruecos vs China PR [CMS] Live 1",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="cms-live1",Marruecos vs China PR [CMS] — Live 1
-https://a16.kora-plus.mov/framelatin.php?ch=n2204-37957005e3652457
+https://golygoals.com/streamlat.html?id=n2204-37957005e3652457
 #EXTINF:0,tvg-name="Marruecos vs China PR [CMS] Live 2",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="cms-live2",Marruecos vs China PR [CMS] — Live 2
-https://tvf90.com/5.php?stream=tudn_mx
+https://10.ftlly.com/tudn_mx/mono.m3u8?token=35b237be3a8f0eb775b25bce7ed86283c33d0934-e1-1795471364-1795453364
 #EXTINF:0,tvg-name="Polo [P] Live 1",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="p-live1",Polo [P] — Live 1
-https://a13.kora-plus.mov/framelatin.php?ch=n2210-3d13bdefd5ec5ca0
+https://golygoals.com/streamlat.html?id=n2210-3d13bdefd5ec5ca0
 #EXTINF:0,tvg-name="Polo [P] Live 2",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="p-live2",Polo [P] — Live 2
-https://tvf90.com/5.php?stream=espn2
+https://4.ftlly.com/espn2/mono.m3u8?token=34ce8d3fe069c5f4c79c3902f8f9ebe7340b1604-fe-1795471367-1795453367
 #EXTINF:0,tvg-name="Polo [P] Live 3",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="p-live3",Polo [P] — Live 3
-https://a13.kora-plus.mov/framelatin.php?ch=n2210-4178015d5545dfc7
+https://golygoals.com/streamlat.html?id=n2210-4178015d5545dfc7
 #EXTINF:0,tvg-name="Polo [P] Live 4",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="p-live4",Polo [P] — Live 4
-https://tvf90.com/5.php?stream=espn2
+https://7.ftlly.com/espn2/mono.m3u8?token=a0e9b91dd7d44abc17034cb136cf7fbb2630e06d-66-1795471367-1795453367
 #EXTINF:0,tvg-name="Polo [P] Live 5",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="p-live5",Polo [P] — Live 5
-https://a13.kora-plus.mov/framelatin.php?ch=n2210-9c761bdebe114dce
+https://golygoals.com/streamlat.html?id=n2210-9c761bdebe114dce
 #EXTINF:0,tvg-name="Polo [P] Live 6",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="p-live6",Polo [P] — Live 6
-https://tvf90.com/5.php?stream=espn2
+https://10.ftlly.com/espn2/mono.m3u8?token=abd97572e59efe416a5c51d93586805d52407958-b5-1795471367-1795453367
 #EXTINF:0,tvg-name="Polo [P] Live 7",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="p-live7",Polo [P] — Live 7
-https://a11.kora-plus.mov/framelatin.php?ch=n2210-52a01e3ec03e4748
+https://golygoals.com/streamlat.html?id=n2210-52a01e3ec03e4748
 #EXTINF:0,tvg-name="Polo [P] Live 8",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="p-live8",Polo [P] — Live 8
-https://tvf90.com/5.php?stream=espn2
+https://2.ftlly.com/espn2/mono.m3u8?token=1848367d451848f62cec50ab1452618d958e75f7-13-1795471367-1795453367
 #EXTINF:0,tvg-name="Malí vs Bélgica [CMS] Live 1",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="cms-live1",Malí vs Bélgica [CMS] — Live 1
-https://a11.kora-plus.mov/framelatin.php?ch=n2193-4e6e8aa2b854e6ca
+https://golygoals.com/streamlat.html?id=n2193-4e6e8aa2b854e6ca
 #EXTINF:0,tvg-name="Malí vs Bélgica [CMS] Live 2",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="LIVE",tvg-id="cms-live2",Malí vs Bélgica [CMS] — Live 2
-https://tvf90.com/5.php?stream=foxsoccerplus
+https://11.ftlly.com/foxsoccerplus/mono.m3u8?token=1862b03d10a8cbd96c16a65b6ab3b50af5ec8e53-6c-1795471370-1795453370
 #EXTINF:0,tvg-name="Monza vs Fiorentina [SA] Live 1",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="UPCOMING",tvg-id="sa-live1",Monza vs Fiorentina [SA] — Live 1
-https://embedcenter.st/embed/ch9.php
+https://streamec.st/embed/ch9.php
 #EXTINF:0,tvg-name="Brentford vs Everton [EPL] Live 1",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="UPCOMING",tvg-id="epl-live1",Brentford vs Everton [EPL] — Live 1
-https://embedcenter.st/embed/ch1.php
+https://streamec.st/embed/ch1.php
 #EXTINF:0,tvg-name="Levante vs Elche [LIGA] Live 1",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="UPCOMING",tvg-id="liga-live1",Levante vs Elche [LIGA] — Live 1
-https://embedcenter.st/embed/ch6.php
+https://streamec.st/embed/ch6.php
 #EXTINF:0,tvg-name="Charlotte Hornets vs Memphis Grizzlies [NBA] Live 1",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="UPCOMING",tvg-id="nba-live1",Charlotte Hornets vs Memphis Grizzlies [NBA] — Live 1
-https://embedcenter.st/embed/ch65.php
+https://streamec.st/embed/ch65.php
 #EXTINF:0,tvg-name="Philadelphia 76ers vs Portland Trail Blazers [NBA] Live 1",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="UPCOMING",tvg-id="nba-live1",Philadelphia 76ers vs Portland Trail Blazers [NBA] — Live 1
-https://embedcenter.st/embed/ch66.php
+https://streamec.st/embed/ch66.php
 #EXTINF:0,tvg-name="New Jersey Devils vs Columbus Blue Jackets [NHL] Live 1",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="UPCOMING",tvg-id="nhl-live1",New Jersey Devils vs Columbus Blue Jackets [NHL] — Live 1
-https://embedcenter.st/embed/ch50.php
+https://streamec.st/embed/ch50.php
 #EXTINF:0,tvg-name="Indiana Pacers vs Oklahoma City Thunder [NBA] Live 1",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="UPCOMING",tvg-id="nba-live1",Indiana Pacers vs Oklahoma City Thunder [NBA] — Live 1
-https://embedcenter.st/embed/ch67.php
+https://streamec.st/embed/ch67.php
 #EXTINF:0,tvg-name="Toronto Raptors vs Milwaukee Bucks [NBA] Live 1",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="UPCOMING",tvg-id="nba-live1",Toronto Raptors vs Milwaukee Bucks [NBA] — Live 1
-https://embedcenter.st/embed/ch68.php
+https://streamec.st/embed/ch68.php
 #EXTINF:0,tvg-name="Minnesota Timberwolves vs Brooklyn Nets [NBA] Live 1",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="UPCOMING",tvg-id="nba-live1",Minnesota Timberwolves vs Brooklyn Nets [NBA] — Live 1
-https://embedcenter.st/embed/ch69.php
+https://streamec.st/embed/ch69.php
 #EXTINF:0,tvg-name="Montreal Canadiens vs Los Angeles Kings [NHL] Live 1",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="UPCOMING",tvg-id="nhl-live1",Montreal Canadiens vs Los Angeles Kings [NHL] — Live 1
-https://embedcenter.st/embed/ch51.php
+https://streamec.st/embed/ch51.php
 #EXTINF:0,tvg-name="Ottawa Senators vs Calgary Flames [NHL] Live 1",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="UPCOMING",tvg-id="nhl-live1",Ottawa Senators vs Calgary Flames [NHL] — Live 1
-https://embedcenter.st/embed/ch52.php
+https://streamec.st/embed/ch52.php
 #EXTINF:0,tvg-name="New York Islanders vs Toronto Maple Leafs [NHL] Live 1",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="UPCOMING",tvg-id="nhl-live1",New York Islanders vs Toronto Maple Leafs [NHL] — Live 1
-https://embedcenter.st/embed/ch53.php
+https://streamec.st/embed/ch53.php
 #EXTINF:0,tvg-name="Winnipeg Jets vs Utah Mammoth [NHL] Live 1",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="UPCOMING",tvg-id="nhl-live1",Winnipeg Jets vs Utah Mammoth [NHL] — Live 1
-https://embedcenter.st/embed/ch54.php
+https://streamec.st/embed/ch54.php
 #EXTINF:0,tvg-name="Chicago Bulls vs Cleveland Cavaliers [NBA] Live 1",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="UPCOMING",tvg-id="nba-live1",Chicago Bulls vs Cleveland Cavaliers [NBA] — Live 1
-https://embedcenter.st/embed/ch70.php
+https://streamec.st/embed/ch70.php
 #EXTINF:0,tvg-name="New Orleans Pelicans vs Phoenix Suns [NBA] Live 1",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="UPCOMING",tvg-id="nba-live1",New Orleans Pelicans vs Phoenix Suns [NBA] — Live 1
-https://embedcenter.st/embed/ch71.php
+https://streamec.st/embed/ch71.php
 #EXTINF:0,tvg-name="Washington Commanders vs Cincinnati Bengals [NFL] Live 1",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="UPCOMING",tvg-id="nfl-live1",Washington Commanders vs Cincinnati Bengals [NFL] — Live 1
-https://embedcenter.st/embed/ch30.php
+https://edgestream2.pro/hls/JHDAJBDnjdna30.m3u8?st=sNSFcg4vzQmd2r6Lap4pUH0oml-fbsNN_mVuBuu1hio&e=1795465332
 #EXTINF:0,tvg-name="Houston Rockets vs LA Clippers [NBA] Live 1",tvg-logo="https://gostreameast.one/assets/images/favicon-32x32.png",group-title="UPCOMING",tvg-id="nba-live1",Houston Rockets vs LA Clippers [NBA] — Live 1
-https://embedcenter.st/embed/ch72.php
+https://streamec.st/embed/ch72.php
