@@ -1,4 +1,4 @@
-name: NEW
+name: NEW1
 
 on:
   push:
@@ -29,13 +29,13 @@ jobs:
         with:
           packages: xvfb
 
-      - name: Install dependencies
+      - name: ✓
         run: |
           pip install -r requirements.txt
           playwright install chromium --with-deps
           playwright install chrome firefox   
 
-      - name: Install Google Chrome
+      - name: ✓
         run: |
           sudo apt-get update
 
@@ -47,7 +47,7 @@ jobs:
 
           google-chrome --version
 
-      - name: Install ChromeDriver
+      - name: ✓
         run: |
 
           CHROME_VERSION=$(google-chrome --version | awk '{print $3}')
@@ -81,7 +81,8 @@ jobs:
         run: |
           git config --local user.email "eyayq@users.noreply.github.com"
           git config --local user.name "eyayq"
-          git add playlist.m3u channel.conf
+          git add playlist.m3u
+          git add channel.conf
 
           if git diff --cached --quiet; then
             echo "no changes"
