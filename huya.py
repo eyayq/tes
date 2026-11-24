@@ -72,7 +72,7 @@ def extract_stream_url(html):
         if not any(s in d for s in SKIP_DOMAINS):
             valid.append(u)
     valid = list(dict.fromkeys(valid))
-    prio = {".m3u8": 0, ".mpd": 1, ".flv": 2, ".ts": 3, ".php": 4}
+    prio = {".m3u8": 0, ".mpd": 1, ".flv": 2, ".ts": 3}
     valid.sort(key=lambda u: min(
         (p for e, p in prio.items() if e in u), default=9))
     return valid
@@ -95,7 +95,7 @@ def scrape_channel(ch):
     if not streams:
         for ifr in soup.find_all("iframe"):
             src = ifr.get("src", "")
-            if src and (".php" in src or ".html" in src):
+            if src:
                 purl = urljoin(ch["page"], src)
                 try:
                     ps = get_soup(purl, referer=ch["page"])
@@ -158,4 +158,4 @@ if __name__ == "__main__":
     soup = get_soup(BASE_URL)
     channels = parse_categories(soup)
     print(f"Total channel: {len(channels)}\n")
-    build_m3u(channels, max_workers=5)   
+    build_m3u(channels, max_workers=50)   
