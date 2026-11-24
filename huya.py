@@ -1,145 +1,132 @@
-# huya.py
-import asyncio
-import logging
-import re
-from datetime import datetime, timezone
-from pathlib import Path
-from urllib.parse import urljoin
+import requests
+from bs4 import BeautifulSoup
+from urllib.parse import urlparse, parse_qs, unquote
+from datetime import datetime, timezone, timedelta
+import time
 
-import httpx
+BASE_URL = "https://jolightled.com"
+PLAYER_DOMAIN = "jlbfpc.jlbfyh.com"  # domain player (bukan web)
 
-logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
-log = logging.getLogger(__name__)
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) "
+                  "AppleWebKit/537.36 (KHTML, like Gecko) "
+                  "Chrome/157.0.0.0 Mobile Safari/537.36",
+    "Accept": "text/html,application/xhtml+xml,*/*;q=0.8",
+    "Accept-Language": "id-ID,id;q=0.5",
+}
 
-urls: dict[str, dict[str, str | float]] = {}
-
-TAG = "FUTBOLX"
-M3U_FILE = Path(__file__).parent / "playlist.m3u"
-BASE_URL = "https://www.futbol-x.top"
-VERCEL_URL = "https://futbolxs.vercel.app"
-USER_AGENT = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36"
-
-SPORTS = [
-    "americanfootball", "basketball", "darts", "fights",
-    "football", "motorsports", "nhl", "others", "tennis", "wrestling",
-]
-SPORT_URLS = [urljoin(BASE_URL, f"api/{s}.json") for s in SPORTS]
-API_247 = urljoin(BASE_URL, "api/stream-24-7")
+WIB = timezone(timedelta(hours=7))
+OUTPUT = "playlist.m3u"
 
 
-def write_m3u() -> None:
-    lines: list[str] = ["#EXTM3U"]
-    for key, info in urls.items():
-        m = re.match(r"^\[(.+?)\]", key)
-        group = m.group(1) if m else "Live"
-        attrs = f'#EXTINF:-1 tvg-id="{info.get("tvg-id","")}"'
-        if info.get("logo"):
-            attrs += f' tvg-logo="{info["logo"]}"'
-        attrs += f' group-title="{group}"'
-        attrs += f",{key}"
-        lines.append(attrs)
-        lines.append(f"#EXTVLCOPT:http-user-agent={USER_AGENT}")
-        lines.append(f"#EXTVLCOPT:http-referrer={info.get('refer','')}")
-        lines.append(info["source"])
-    M3U_FILE.write_text("\n".join(lines) + "\n", encoding="utf-8")
-    log.info(f"Playlist: {len(urls)} entries")
+def extract_stream_url(iframe_src):
+    """Ambil URL stream asli dari parameter url di iframe src"""
+    parsed = urlparse(iframe_src)
+    params = parse_qs(parsed.query)
+    url = params.get("url", [None])[0]
+    return unquote(url) if url else None
 
 
-async def get_sports(client: httpx.AsyncClient) -> None:
-    tasks = [client.get(u) for u in SPORT_URLS]
-    results = await asyncio.gather(*tasks, return_exceptions=True)
+def is_stream(url):
+    """Cek apakah URL valid (m3u8, flv, mpd, ts, php)"""
+    if not url:
+        return False
+    clean = url.split("?")[0].lower()
+    return any(ext in clean for ext in
+               [".m3u8", ".flv", ".mpd", ".ts", ".php"])
 
-    now = datetime.now(timezone.utc)
-    ptrn = re.compile(r"^(https?:\/\/)?(www\.)?.*\.m3u8$", re.I)
 
-    for resp in results:
-        if isinstance(resp, Exception) or resp.status_code != 200:
+def scrape_live_page():
+    """Scrape halaman /live untuk semua channel"""
+    resp = requests.get(f"{BASE_URL}/live", headers=HEADERS)
+    resp.raise_for_status()
+    soup = BeautifulSoup(resp.text, "html.parser")
+
+    channels = []
+    for card in soup.select(".channel-card"):
+        category = card.get("data-category", "Lainnya")
+        h2 = card.select_one("h2")
+        title = h2.get_text(strip=True) if h2 else "Unknown"
+
+        img = card.select_one("img[src]")
+        logo = img["src"] if img else ""
+
+        link = card.select_one("a.btn")
+        detail = (f"{BASE_URL}{link['href']}"
+                  if link and "href" in link.attrs else "")
+
+        channels.append({
+            "title": title,
+            "category": category,
+            "logo": logo,
+            "detail_url": detail,
+        })
+    return channels
+
+
+def get_stream(detail_url):
+    """Buka halaman detail, ambil stream URL dari iframe"""
+    try:
+        resp = requests.get(detail_url, headers=HEADERS, timeout=15)
+        soup = BeautifulSoup(resp.text, "html.parser")
+        iframe = soup.select_one("iframe[src]")
+        if not iframe:
+            return None, ""
+        stream = extract_stream_url(iframe["src"])
+        img = soup.select_one("img[src*='jalacos']")
+        logo = img["src"] if img else ""
+        return stream, logo
+    except Exception as e:
+        print(f"  ⚠ {e}")
+        return None, ""
+
+
+def main():
+    print("⏳ Scraping /live ...")
+    channels = scrape_live_page()
+    print(f"   Ditemukan {len(channels)} channel\n")
+
+    now = datetime.now(WIB)
+    t_str = now.strftime("%H:%M")
+    d_str = now.strftime("%d-%m-%Y")
+
+    final = []
+    for i, ch in enumerate(channels, 1):
+        print(f"[{i}/{len(channels)}] {ch['title']}")
+        if not ch["detail_url"]:
             continue
-        for event in resp.json().get("streams", []):
-            for ev in event.get("streams", []):
-                name, sport, starts = ev.get("name"), ev.get("tag"), ev.get("starts_at")
-                if not all([name, sport, starts]):
-                    continue
-                try:
-                    ev_dt = datetime.fromisoformat(starts.replace("Z", "+00:00"))
-                except ValueError:
-                    continue
-                if ev_dt.date() != now.date():
-                    continue
-                logo = ev.get("logo", "")
-                for s in ev.get("streams", []):
-                    src = s.get("url", "")
-                    if not ptrn.search(src):
-                        continue
-                    key = f"[{sport}] {name} | {s.get('title','')} ({TAG})"
-                    if key in urls:
-                        continue
-                    urls[key] = {
-                        "source": src,
-                        "tvg-id": "Live.Event.us",
-                        "logo": logo,
-                        "refer": BASE_URL,
-                    }
 
-
-async def get_247(client: httpx.AsyncClient) -> None:
-    resp = await client.get(API_247)
-    if resp.status_code != 200:
-        log.warning(f"24/7 list failed: {resp.status_code}")
-        return
-
-    data = resp.json()
-    streams = data.get("streams", data) if isinstance(data, dict) else {}
-    if not streams:
-        log.warning("24/7: no streams in response")
-        return
-
-    count = 0
-    for category, items in streams.items():
-        if not isinstance(items, list):
+        stream, d_logo = get_stream(ch["detail_url"])
+        if not stream or not is_stream(stream):
+            print("   ⚠ Tidak ada stream valid")
             continue
-        for stream in items:
-            name = stream.get("name", "")
-            slug = stream.get("uri_name") or stream.get("slug") or stream.get("name", "").lower().replace(" ", "-")
-            poster = stream.get("poster", "")
-            if not name or not slug:
-                continue
 
-            ch_url = f"{VERCEL_URL}/api/channel?name={slug}"
-            try:
-                ch_resp = await client.get(ch_url)
-                if ch_resp.status_code != 200:
-                    continue
-                src = ch_resp.json().get("url", "")
-            except Exception:
-                continue
+        final.append({
+            "title": ch["title"],
+            "group": ch["category"],
+            "logo": ch["logo"] or d_logo,
+            "url": stream,
+            "time": t_str,
+            "date": d_str,
+        })
+        time.sleep(0.5)
 
-            if not src:
-                continue
+    # Urutkan sesuai tanggal & jam
+    final.sort(key=lambda x: (x["date"], x["time"]))
 
-            key = f"[{category}] {name} ({TAG})"
-            if key in urls:
-                continue
-            urls[key] = {
-                "source": src,
-                "tvg-id": "Live.Event.us",
-                "logo": poster,
-                "refer": f"{VERCEL_URL}/?channel={slug}",
-            }
-            count += 1
+    with open(OUTPUT, "w", encoding="utf-8") as f:
+        f.write("#EXTM3U\n")
+        f.write(f"# Generated {now.strftime('%Y-%m-%d %H:%M WIB')}\n\n")
+        for c in final:
+            logo = f' tvg-logo="{c["logo"]}"' if c["logo"] else ""
+            title = f'{c["title"]} [{c["time"]} {c["date"]} WIB]'
+            f.write(f'#EXTINF:-1 group-title="{c["group"]}"{logo},{title}\n')
+            f.write(f'#EXTVLCOPT:http-user-agent="Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36"\n')
+            f.write(f'#EXTVLCOPT:http-referrer="https://{PLAYER_DOMAIN}/"\n')
+            f.write(c["url"] + "\n")
 
-    log.info(f"24/7: {count} streams")
-
-
-async def scrape() -> None:
-    headers = {"User-Agent": USER_AGENT, "Accept": "application/json"}
-    async with httpx.AsyncClient(timeout=20, headers=headers, follow_redirects=True) as client:
-        await get_sports(client)
-        await get_247(client)
-
-    log.info(f"Total: {len(urls)} events")
-    write_m3u()
+    print(f"\n✅ Total: {len(final)} stream → {OUTPUT}")
 
 
 if __name__ == "__main__":
-    asyncio.run(scrape())   
+    main()   
