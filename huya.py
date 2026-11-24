@@ -20,7 +20,7 @@ HEADERS = {
     "Accept-Language": "vi-VN,vi;q=0.9,en;q=0.8",
 }
 WIB = timezone(timedelta(hours=7))
-STREAM_EXT = (".m3u8", ".mpd", ".flv", ".ts", ".php")
+STREAM_EXT = (".m3u8", ".mpd", ".flv", ".ts")
 SKIP_DOMAINS = {"google", "facebook", "youtube", "cloudflare",
                 "adskeeper", "ahrefs", "googlesyndication"}
 
