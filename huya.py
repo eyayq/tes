@@ -2,7 +2,6 @@
 """Scrape hd1.xemtv.net -> playlist.m3u (ThreadPool)"""
 
 import re
-import time
 import requests
 import urllib3
 from bs4 import BeautifulSoup
@@ -20,7 +19,6 @@ HEADERS = {
     "Accept-Language": "vi-VN,vi;q=0.9,en;q=0.8",
 }
 WIB = timezone(timedelta(hours=7))
-STREAM_EXT = (".m3u8", ".mpd", ".flv", ".ts")
 SKIP_DOMAINS = {"google", "facebook", "youtube", "cloudflare",
                 "adskeeper", "ahrefs", "googlesyndication"}
 
@@ -64,7 +62,6 @@ def parse_categories(soup):
 def extract_stream_url(html):
     pats = [
         r'https?://[^\s"\'<>]+?\.(?:m3u8|mpd|flv|ts)[^\s"\'<>]*',
-        r'https?://[^\s"\'<>]+?\.php\?[^\s"\'<>]*',
     ]
     urls = []
     for p in pats:
@@ -138,18 +135,18 @@ def build_m3u(channels, out_file="playlist.m3u", max_workers=5):
         stream = streams[0]
         pd = get_player_domain(stream)
         ua = HEADERS["User-Agent"]
-        ref = f"{pd}/"
         full = f"{ch['name']} [{ts} WIB]"
         lines.append(
-            f'#EXTINF:-1,'
-            f'tvg-id="{ch["id"]}",'
-            f'tvg-name="{ch["name"]}",'
-            f'tvg-logo="{ch["logo"]}",'
-            f'group-title="{ch["group"]}" '
+            f'#EXTINF:-1 '
+            f'tvg-id="{ch["id"]}" '
+            f'tvg-name="{ch["name"]}" '
+            f'tvg-logo="{ch["logo"]}" '
+            f'group-title="{ch["group"]}",'
             f'{full}')
-        lines.append(f'{stream},'
-                     f'#EXTVLCOPT:http-user-agent={ua}')
-        lines.append(f'#EXTVLCOPT:http-referrer={ref}')
+        lines.append(f'#EXTVLCOPT:http-user-agent={ua}')
+        lines.append(f'#EXTVLCOPT:http-referrer={pd}/')
+        lines.append(f'#EXTVLCOPT:http-origin={pd}')
+        lines.append(stream)
 
     with open(out_file, "w", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
