@@ -17,7 +17,7 @@ CDN = "https://cdn.ovbstdn.com"
 OUTPUT_FILE = "playlist.m3u"
 TIMEOUT = 15
 WIB = timezone(timedelta(hours=7))
-MAX_WORKERS = 2  # threadpool size
+MAX_WORKERS = 7  # threadpool size
 
 DELAY_MIN = 0.5
 DELAY_MAX = 1.0
