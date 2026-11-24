@@ -17,12 +17,12 @@ CDN = "https://cdn.ovbstdn.com"
 OUTPUT_FILE = "playlist.m3u"
 TIMEOUT = 15
 WIB = timezone(timedelta(hours=7))
-MAX_WORKERS = 17  # threadpool size
+MAX_WORKERS = 70  # threadpool size
 
-DELAY_MIN = 0.5
-DELAY_MAX = 1.0
-RETRIES = 2
-BACKOFF = 2
+DELAY_MIN = 0.1
+DELAY_MAX = 0.1
+RETRIES = 1
+BACKOFF = 1
 
 HEADERS = {
     "User-Agent": ("Mozilla/5.0 (Linux; Android 10; K) "
