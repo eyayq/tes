@@ -20,15 +20,14 @@ OUTPUT = "playlist.m3u"
 
 
 def extract_stream_url(iframe_src):
-    """Ambil URL stream asli dari parameter url di iframe src"""
     parsed = urlparse(iframe_src)
     params = parse_qs(parsed.query)
-    url = params.get("url", [None])[0]
-    return unquote(url) if url else None
+    url = unquote(params.get("url", [""])[0])
+    cover = unquote(params.get("cover", [""])[0])
+    return url or None, cover or None
 
 
 def is_stream(url):
-    """Cek apakah URL valid (m3u8, flv, mpd, ts, php)"""
     if not url:
         return False
     clean = url.split("?")[0].lower()
@@ -37,7 +36,6 @@ def is_stream(url):
 
 
 def scrape_live_page():
-    """Scrape halaman /live untuk semua channel"""
     resp = requests.get(f"{BASE_URL}/live", headers=HEADERS)
     resp.raise_for_status()
     soup = BeautifulSoup(resp.text, "html.parser")
@@ -65,17 +63,17 @@ def scrape_live_page():
 
 
 def get_stream(detail_url):
-    """Buka halaman detail, ambil stream URL dari iframe"""
     try:
         resp = requests.get(detail_url, headers=HEADERS, timeout=15)
         soup = BeautifulSoup(resp.text, "html.parser")
         iframe = soup.select_one("iframe[src]")
         if not iframe:
             return None, ""
-        stream = extract_stream_url(iframe["src"])
-        img = soup.select_one("img[src*='jalacos']")
-        logo = img["src"] if img else ""
-        return stream, logo
+        stream, cover = extract_stream_url(iframe["src"])
+        if not cover:
+            img = soup.select_one("img[src*='jalacos']")
+            cover = img["src"] if img else ""
+        return stream, cover
     except Exception as e:
         print(f"  ⚠ {e}")
         return None, ""
@@ -101,17 +99,18 @@ def main():
             print("   ⚠ Tidak ada stream valid")
             continue
 
+        logo = ch["logo"] or d_logo
+
         final.append({
             "title": ch["title"],
             "group": ch["category"],
-            "logo": ch["logo"] or d_logo,
+            "logo": logo,
             "url": stream,
             "time": t_str,
             "date": d_str,
         })
         time.sleep(0.5)
 
-    # Urutkan sesuai tanggal & jam
     final.sort(key=lambda x: (x["date"], x["time"]))
 
     with open(OUTPUT, "w", encoding="utf-8") as f:
@@ -121,7 +120,7 @@ def main():
             logo = f' tvg-logo="{c["logo"]}"' if c["logo"] else ""
             title = f'{c["title"]} [{c["time"]} {c["date"]} WIB]'
             f.write(f'#EXTINF:-1 group-title="{c["group"]}"{logo},{title}\n')
-            f.write(f'#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36\n')
+            f.write('#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36\n')
             f.write(f'#EXTVLCOPT:http-referrer=https://{PLAYER_DOMAIN}/\n')
             f.write(c["url"] + "\n")
 
