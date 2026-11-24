@@ -1,12 +1,6 @@
 #!/usr/bin/env python3
 """
-SportPlus M3U Playlist Generator - COMPLETE
-Scrape semua kategori, buat playlist.m3u dengan:
-- tvg-logo (logo tim via CDN)
-- group-title (Sport - Tournament)
-- title, name (jam & tanggal WIB di akhir)
-- EXVLCOPT user-agent & referrer dari domain player
-- Hanya stream langsung dari ls[] (skip bookmaker redirect)
+SportPlus M3U Playlist Generator - THREADPOOL 2
 """
 
 import requests
@@ -14,6 +8,7 @@ import time
 import random
 from datetime import datetime, timezone, timedelta
 from urllib.parse import urlparse
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # ─── KONFIGURASI ───────────────────────────────────────────
 API_BASE = "https://apisplus.live"
@@ -22,12 +17,12 @@ CDN = "https://cdn.ovbstdn.com"
 OUTPUT_FILE = "playlist.m3u"
 TIMEOUT = 15
 WIB = timezone(timedelta(hours=7))
+MAX_WORKERS = 2  # threadpool size
 
-# Rate limiting
-DELAY_MIN = 0.1
-DELAY_MAX = 0.1
-RETRIES = 2
-BACKOFF = 2
+DELAY_MIN = 0.5
+DELAY_MAX = 1.0
+RETRIES = 4
+BACKOFF = 3
 
 HEADERS = {
     "User-Agent": ("Mozilla/5.0 (Linux; Android 10; K) "
@@ -46,12 +41,10 @@ UA_FOR_VLC = ("Mozilla/5.0 (Linux; Android 10; K) "
 
 # ─── HELPERS ───────────────────────────────────────────────
 def to_wib(dt_str: str) -> datetime:
-    dt = datetime.fromisoformat(dt_str)
-    return dt.astimezone(WIB)
+    return datetime.fromisoformat(dt_str).astimezone(WIB)
 
 
 def get_player_domain(url: str) -> str:
-    """Ekstrak domain dari URL stream (bukan web player)."""
     if url and url.startswith("http"):
         p = urlparse(url)
         return f"{p.scheme}://{p.netloc}"
@@ -70,7 +63,6 @@ def is_stream_url(url: str) -> bool:
 
 
 def safe_list(obj, key):
-    """Return list, handle None/missing key."""
     if not obj:
         return []
     v = obj.get(key)
@@ -83,7 +75,6 @@ def polite_sleep():
 
 # ─── HTTP dengan RETRY ────────────────────────────────────
 def http_get(session: requests.Session, url: str):
-    """GET dengan retry + exponential backoff."""
     for attempt in range(RETRIES):
         try:
             r = session.get(url, headers=HEADERS, timeout=TIMEOUT)
@@ -132,30 +123,93 @@ def fetch_match_view(session, match_id, sport_alias, t_alias) -> dict:
     return data.get("item", {}) if isinstance(data, dict) else {}
 
 
+# ─── WORKER: process 1 match (dipanggil threadpool) ───────
+def process_match(session, m, sport_alias, t_alias,
+                  sport_name, t_name) -> list:
+    """Fetch view + build entries untuk 1 match. Dipanggil paralel."""
+    mid = m["id"]
+    m_name = m.get("name", f"Match {mid}")
+    start_str = m.get("start", "")
+    status = m.get("status", "")
+
+    if not start_str:
+        return []
+    try:
+        start_wib = to_wib(start_str)
+    except Exception:
+        return []
+
+    view = fetch_match_view(session, mid, sport_alias, t_alias)
+
+    # Hanya dari ls[]
+    stream_urls = []
+    for ls_url in safe_list(view, "ls"):
+        if is_stream_url(ls_url):
+            stream_urls.append(ls_url)
+
+    if not stream_urls:
+        return []
+
+    # Logo tim
+    home_pk = m.get("home", {}).get("pk_id")
+    tvg_logo = (f"{CDN}/onexbet/pk{home_pk}.png"
+                if home_pk else "")
+
+    # Nama & waktu
+    time_str = start_wib.strftime("%H:%M")
+    date_str = start_wib.strftime("%d-%m-%Y")
+    home = m.get("home", {}).get("name", "")
+    away = m.get("away", {}).get("name", "")
+    title = f"{home} vs {away}" if home and away else m_name
+    group = f"{sport_name} - {t_name}"
+
+    results = []
+    for i, s_url in enumerate(stream_urls):
+        player_domain = get_player_domain(s_url)
+        mirror = f" M{i+1}" if len(stream_urls) > 1 else ""
+        name = f"{title}{mirror} ({time_str} {date_str})"
+        results.append({
+            "name": name,
+            "title": title,
+            "group_title": group,
+            "tvg_logo": tvg_logo,
+            "stream_url": s_url,
+            "start_wib": start_wib,
+            "player_domain": player_domain,
+            "status": status,
+        })
+    return results
+
+
 # ─── SCRAPE ────────────────────────────────────────────────
 def scrape_all() -> list:
-    session = requests.Session()
+    # Session terpisah per thread (requests.Session NOT thread-safe)
+    session_local = threading.local()
+
+    def get_session():
+        if not hasattr(session_local, 's'):
+            session_local.s = requests.Session()
+        return session_local.s
+
     entries = []
     total_t = 0
     done_t = 0
 
-    # 1. Ambil sidebar
     print("[1/3] Mengambil sidebar...")
-    sidebar = fetch_sidebar(session)
+    main_session = requests.Session()
+    sidebar = fetch_sidebar(main_session)
 
-    # Hitung total (skip collection)
     for sport in sidebar:
         if sport.get("type") == "collection":
             continue
         total_t += len(sport.get("tournaments", []))
 
     print(f"  Total: {total_t} tournament")
-    print(f"[2/3] Scrape matches & streams...\n")
+    print(f"[2/3] Scrape (threadpool={MAX_WORKERS})...\n")
 
-    # 2. Loop semua sport & tournament
     for sport in sidebar:
         if sport.get("type") == "collection":
-            continue  # skip "TOP streams"
+            continue
 
         sport_id = sport["id"]
         sport_name = sport["name"]
@@ -172,79 +226,35 @@ def scrape_all() -> list:
             print(f"  [{done_t}/{total_t}] {sport_name} → {t_name}")
             polite_sleep()
 
-            matches = fetch_matches(session, sport_id, t_id)
+            matches = fetch_matches(main_session, sport_id, t_id)
             if not matches:
                 continue
 
-            for m in matches:
-                mid = m["id"]
-                m_name = m.get("name", f"Match {mid}")
-                start_str = m.get("start", "")
-                status = m.get("status", "")
-
-                if not start_str:
-                    continue
-                try:
-                    start_wib = to_wib(start_str)
-                except Exception:
-                    continue
-
-                polite_sleep()
-                view = fetch_match_view(
-                    session, mid, sport_alias, t_alias
-                )
-
-                # ── Kumpulkan stream URLs HANYA dari ls[] ──
-                # streams[].url itu redirect bookmaker, BUKAN stream
-                stream_urls = []
-                for ls_url in safe_list(view, "ls"):
-                    if is_stream_url(ls_url):
-                        stream_urls.append(ls_url)
-
-                if not stream_urls:
-                    continue  # tidak ada stream langsung
-
-                # ── Logo tim ──
-                home_pk = m.get("home", {}).get("pk_id")
-                away_pk = m.get("away", {}).get("pk_id")
-                home_logo = (f"{CDN}/onexbet/pk{home_pk}.png"
-                             if home_pk else "")
-                # Pakai logo home sebagai tvg-logo
-                tvg_logo = home_logo
-
-                # ── Nama & waktu ──
-                time_str = start_wib.strftime("%H:%M")
-                date_str = start_wib.strftime("%d-%m-%Y")
-
-                home = m.get("home", {}).get("name", "")
-                away = m.get("away", {}).get("name", "")
-                title = f"{home} vs {away}" if home and away else m_name
-
-                group = f"{sport_name} - {t_name}"
-
-                # ── Buat entry per stream (mirror) ──
-                for i, s_url in enumerate(stream_urls):
-                    player_domain = get_player_domain(s_url)
-                    mirror = f" M{i+1}" if len(stream_urls) > 1 else ""
-                    name = f"{title}{mirror} ({time_str} {date_str})"
-
-                    entries.append({
-                        "name": name,
-                        "title": title,
-                        "group_title": group,
-                        "tvg_logo": tvg_logo,
-                        "stream_url": s_url,
-                        "start_wib": start_wib,
-                        "player_domain": player_domain,
-                        "status": status,
-                    })
+            # ── PARALEL: fetch view untuk semua match ──
+            with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
+                futures = {
+                    pool.submit(
+                        process_match,
+                        get_session(), m,
+                        sport_alias, t_alias,
+                        sport_name, t_name
+                    ): m["id"]
+                    for m in matches
+                }
+                for fut in as_completed(futures):
+                    try:
+                        res = fut.result()
+                        if res:
+                            entries.extend(res)
+                    except Exception as e:
+                        print(f"    [WARN] match "
+                              f"{futures[fut]}: {e}")
 
     return entries
 
 
 # ─── GENERATE M3U ──────────────────────────────────────────
 def generate_m3u(entries: list, output: str):
-    # Urutkan: live dulu, lalu not_started by waktu
     entries.sort(key=lambda e: (
         0 if e["status"] == "live" else 1,
         e["start_wib"],
@@ -272,10 +282,14 @@ def generate_m3u(entries: list, output: str):
     print(f"\n[3/3] [OK] {output} → {len(entries)} entry")
 
 
+# ─── IMPORT threading di atas ─────────────────────────────
+import threading
+
 # ─── MAIN ──────────────────────────────────────────────────
 if __name__ == "__main__":
     print("=" * 50)
     print(" SportPlus M3U Playlist Generator")
+    print(f" ThreadPool: {MAX_WORKERS}")
     print("=" * 50)
 
     entries = scrape_all()
