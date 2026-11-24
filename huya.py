@@ -24,10 +24,10 @@ TIMEOUT = 15
 WIB = timezone(timedelta(hours=7))
 
 # Rate limiting
-DELAY_MIN = 0.3
-DELAY_MAX = 0.3
-RETRIES = 4
-BACKOFF = 3
+DELAY_MIN = 0.1
+DELAY_MAX = 0.1
+RETRIES = 2
+BACKOFF = 2
 
 HEADERS = {
     "User-Agent": ("Mozilla/5.0 (Linux; Android 10; K) "
