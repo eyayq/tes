@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse, parse_qs, unquote
 from datetime import datetime, timezone, timedelta
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import time
 
 BASE_URL = "https://jolightled.com"
@@ -17,6 +18,7 @@ HEADERS = {
 
 WIB = timezone(timedelta(hours=7))
 OUTPUT = "playlist.m3u"
+MAX_WORKERS = 10
 
 
 def extract_stream_url(iframe_src):
@@ -79,6 +81,20 @@ def get_stream(detail_url):
         return None, ""
 
 
+def fetch_channel(ch, t_str, d_str):
+    stream, d_logo = get_stream(ch["detail_url"])
+    if not stream or not is_stream(stream):
+        return None
+    return {
+        "title": ch["title"],
+        "group": ch["category"],
+        "logo": ch["logo"] or d_logo,
+        "url": stream,
+        "time": t_str,
+        "date": d_str,
+    }
+
+
 def main():
     print("⏳ Scraping /live ...")
     channels = scrape_live_page()
@@ -89,27 +105,18 @@ def main():
     d_str = now.strftime("%d-%m-%Y")
 
     final = []
-    for i, ch in enumerate(channels, 1):
-        print(f"[{i}/{len(channels)}] {ch['title']}")
-        if not ch["detail_url"]:
-            continue
-
-        stream, d_logo = get_stream(ch["detail_url"])
-        if not stream or not is_stream(stream):
-            print("   ⚠ Tidak ada stream valid")
-            continue
-
-        logo = ch["logo"] or d_logo
-
-        final.append({
-            "title": ch["title"],
-            "group": ch["category"],
-            "logo": logo,
-            "url": stream,
-            "time": t_str,
-            "date": d_str,
-        })
-        time.sleep(0.5)
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
+        futures = {
+            pool.submit(fetch_channel, ch, t_str, d_str): ch
+            for ch in channels if ch["detail_url"]
+        }
+        for i, fut in enumerate(as_completed(futures), 1):
+            ch = futures[fut]
+            result = fut.result()
+            status = "✓" if result else "✗"
+            print(f"[{i}/{len(futures)}] {status} {ch['title']}")
+            if result:
+                final.append(result)
 
     final.sort(key=lambda x: (x["date"], x["time"]))
 
