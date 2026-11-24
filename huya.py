@@ -1,35 +1,48 @@
 #!/usr/bin/env python3
 """
-SportPlus M3U Playlist Generator (FIXED)
+SportPlus M3U Playlist Generator - COMPLETE
+Scrape semua kategori, buat playlist.m3u dengan:
+- tvg-logo (logo tim via CDN)
+- group-title (Sport - Tournament)
+- title, name (jam & tanggal WIB di akhir)
+- EXVLCOPT user-agent & referrer dari domain player
+- Hanya stream langsung dari ls[] (skip bookmaker redirect)
 """
 
 import requests
-import json
 import time
 import random
 from datetime import datetime, timezone, timedelta
-from urllib.parse import urlparse, urljoin
+from urllib.parse import urlparse
 
 # ─── KONFIGURASI ───────────────────────────────────────────
 API_BASE = "https://apisplus.live"
 WEB_PLAYER = "https://en97.sportplus.watch"
+CDN = "https://cdn.ovbstdn.com"
 OUTPUT_FILE = "playlist.m3u"
 TIMEOUT = 15
 WIB = timezone(timedelta(hours=7))
-DELAY_MIN = 0.5   # delay minimum antar request (detik)
-DELAY_MAX = 1.5   # delay maksimum
-RETRIES = 3       # jumlah retry untuk 429/5xx
-BACKOFF = 2       # backoff base (detik)
+
+# Rate limiting
+DELAY_MIN = 0.8
+DELAY_MAX = 2.0
+RETRIES = 4
+BACKOFF = 3
 
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) "
-                  "AppleWebKit/537.36 (KHTML, like Gecko) "
-                  "Chrome/157.0.0.0 Mobile Safari/537.36",
+    "User-Agent": ("Mozilla/5.0 (Linux; Android 10; K) "
+                   "AppleWebKit/537.36 (KHTML, like Gecko) "
+                   "Chrome/157.0.0.0 Mobile Safari/537.36"),
     "Accept": "application/json, text/plain, */*",
     "Origin": WEB_PLAYER,
     "Referer": WEB_PLAYER + "/",
     "Accept-Language": "id-ID,id;q=0.5",
 }
+
+UA_FOR_VLC = ("Mozilla/5.0 (Linux; Android 10; K) "
+              "AppleWebKit/537.36 (KHTML, like Gecko) "
+              "Chrome/157.0.0.0 Mobile Safari/537.36")
+
 
 # ─── HELPERS ───────────────────────────────────────────────
 def to_wib(dt_str: str) -> datetime:
@@ -38,6 +51,7 @@ def to_wib(dt_str: str) -> datetime:
 
 
 def get_player_domain(url: str) -> str:
+    """Ekstrak domain dari URL stream (bukan web player)."""
     if url and url.startswith("http"):
         p = urlparse(url)
         return f"{p.scheme}://{p.netloc}"
@@ -56,8 +70,10 @@ def is_stream_url(url: str) -> bool:
 
 
 def safe_list(obj, key):
-    """Return list, handle None/missing."""
-    v = obj.get(key) if obj else None
+    """Return list, handle None/missing key."""
+    if not obj:
+        return []
+    v = obj.get(key)
     return v if isinstance(v, list) else []
 
 
@@ -66,8 +82,8 @@ def polite_sleep():
 
 
 # ─── HTTP dengan RETRY ────────────────────────────────────
-def http_get(session: requests.Session, url: str) -> dict | list | None:
-    """GET dengan retry + backoff untuk 429/5xx."""
+def http_get(session: requests.Session, url: str):
+    """GET dengan retry + exponential backoff."""
     for attempt in range(RETRIES):
         try:
             r = session.get(url, headers=HEADERS, timeout=TIMEOUT)
@@ -80,7 +96,7 @@ def http_get(session: requests.Session, url: str) -> dict | list | None:
             r.raise_for_status()
             return r.json()
         except requests.exceptions.HTTPError as e:
-            if "429" in str(e) or "5" in str(e)[:3]:
+            if attempt < RETRIES - 1:
                 wait = BACKOFF ** (attempt + 1) + random.uniform(0, 1)
                 print(f"    [ERR] {e} → retry {attempt+1}/{RETRIES}")
                 time.sleep(wait)
@@ -89,7 +105,7 @@ def http_get(session: requests.Session, url: str) -> dict | list | None:
         except Exception as e:
             print(f"    [ERR] {e}")
             return None
-    return None  # habis retry
+    return None
 
 
 # ─── FETCH ─────────────────────────────────────────────────
@@ -123,19 +139,23 @@ def scrape_all() -> list:
     total_t = 0
     done_t = 0
 
-    # Hitung total tournament (skip "top" collection)
+    # 1. Ambil sidebar
+    print("[1/3] Mengambil sidebar...")
     sidebar = fetch_sidebar(session)
+
+    # Hitung total (skip collection)
     for sport in sidebar:
         if sport.get("type") == "collection":
-            continue  # lewati "TOP streams"
+            continue
         total_t += len(sport.get("tournaments", []))
 
     print(f"  Total: {total_t} tournament")
+    print(f"[2/3] Scrape matches & streams...\n")
 
+    # 2. Loop semua sport & tournament
     for sport in sidebar:
-        # SKIP collection (TOP streams)
         if sport.get("type") == "collection":
-            continue
+            continue  # skip "TOP streams"
 
         sport_id = sport["id"]
         sport_name = sport["name"]
@@ -170,65 +190,49 @@ def scrape_all() -> list:
                     continue
 
                 polite_sleep()
-                view = fetch_match_view(session, mid, sport_alias, t_alias)
+                view = fetch_match_view(
+                    session, mid, sport_alias, t_alias
+                )
 
-                # Kumpulkan stream URLs
+                # ── Kumpulkan stream URLs HANYA dari ls[] ──
+                # streams[].url itu redirect bookmaker, BUKAN stream
                 stream_urls = []
-
-                # FIX: safe_list handle None
                 for ls_url in safe_list(view, "ls"):
                     if is_stream_url(ls_url):
                         stream_urls.append(ls_url)
 
-                # Dari streams[]
-                streams_list = safe_list(view, "streams")
-                for i, s in enumerate(streams_list):
-                    s_url = s.get("url", "")
-                    if s_url and not s_url.startswith("http"):
-                        s_url = urljoin(WEB_PLAYER, s_url)
-                    if s_url and is_stream_url(s_url):
-                        stream_urls.append(s_url)
-
                 if not stream_urls:
-                    continue
+                    continue  # tidak ada stream langsung
 
+                # ── Logo tim ──
+                home_pk = m.get("home", {}).get("pk_id")
+                away_pk = m.get("away", {}).get("pk_id")
+                home_logo = (f"{CDN}/onexbet/pk{home_pk}.png"
+                             if home_pk else "")
+                # Pakai logo home sebagai tvg-logo
+                tvg_logo = home_logo
+
+                # ── Nama & waktu ──
+                time_str = start_wib.strftime("%H:%M")
+                date_str = start_wib.strftime("%d-%m-%Y")
+
+                home = m.get("home", {}).get("name", "")
+                away = m.get("away", {}).get("name", "")
+                title = f"{home} vs {away}" if home and away else m_name
+
+                group = f"{sport_name} - {t_name}"
+
+                # ── Buat entry per stream (mirror) ──
                 for i, s_url in enumerate(stream_urls):
                     player_domain = get_player_domain(s_url)
-
-                    # Logo
-                    logo = ""
-                    if i < len(streams_list):
-                        logo_path = streams_list[i].get("logo5", "")
-                        if logo_path:
-                            logo = urljoin(WEB_PLAYER, logo_path)
-                    elif not logo:
-                        logo = ""
-
-                    # Channel name
-                    if i < len(streams_list):
-                        chan_name = streams_list[i].get("name", f"Stream {i+1}")
-                    else:
-                        chan_name = f"Stream {i+1}"
-
-                    # Waktu
-                    time_str = start_wib.strftime("%H:%M")
-                    date_str = start_wib.strftime("%d-%m-%Y")
-
-                    # Title
-                    home = m.get("home", {}).get("name", "")
-                    away = m.get("away", {}).get("name", "")
-                    title = f"{home} vs {away}" if home and away else m_name
-
-                    # Name: title + channel + waktu di AKHIR
-                    name = f"{title} [{chan_name}] ({time_str} {date_str})"
-
-                    group = f"{sport_name} - {t_name}"
+                    mirror = f" M{i+1}" if len(stream_urls) > 1 else ""
+                    name = f"{title}{mirror} ({time_str} {date_str})"
 
                     entries.append({
                         "name": name,
                         "title": title,
                         "group_title": group,
-                        "tvg_logo": logo,
+                        "tvg_logo": tvg_logo,
                         "stream_url": s_url,
                         "start_wib": start_wib,
                         "player_domain": player_domain,
@@ -240,15 +244,11 @@ def scrape_all() -> list:
 
 # ─── GENERATE M3U ──────────────────────────────────────────
 def generate_m3u(entries: list, output: str):
-    # Urutkan: live dulu, lalu by waktu
+    # Urutkan: live dulu, lalu not_started by waktu
     entries.sort(key=lambda e: (
         0 if e["status"] == "live" else 1,
         e["start_wib"],
     ))
-
-    ua = ("Mozilla/5.0 (Linux; Android 10; K) "
-          "AppleWebKit/537.36 (KHTML, like Gecko) "
-          "Chrome/157.0.0.0 Mobile Safari/537.36")
 
     with open(output, "w", encoding="utf-8") as f:
         f.write("#EXTM3U\n")
@@ -262,11 +262,14 @@ def generate_m3u(entries: list, output: str):
             f.write(f"#EXTINF:-1,{attrs}\n")
             f.write(f"{e['name']}\n")
             f.write(f"{e['stream_url']}\n")
-            f.write(f'#EXTVLCOPT:http-user-agent="{ua}"\n')
-            f.write(f'#EXTVLCOPT:http-referrer="{e["player_domain"]}/"\n')
+            f.write(f'#EXTVLCOPT:http-user-agent="{UA_FOR_VLC}"\n')
+            f.write(
+                f'#EXTVLCOPT:http-referrer='
+                f'"{e["player_domain"]}/"\n'
+            )
             f.write("\n")
 
-    print(f"\n[OK] {output} → {len(entries)} entry")
+    print(f"\n[3/3] [OK] {output} → {len(entries)} entry")
 
 
 # ─── MAIN ──────────────────────────────────────────────────
