@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Scrape hd1.xemtv.net -> playlist.m3u (ThreadPool)"""
+"""Scrape hd1.xemtv.net -> playlist.m3u (ThreadPool)
+   Scrape semua Link 1, Link 2, ... dari halaman channel"""
 
 import re
 import requests
@@ -60,6 +61,7 @@ def parse_categories(soup):
 
 
 def extract_stream_url(html):
+    """Cari URL streaming .m3u8 .mpd .flv .ts"""
     pats = [
         r'https?://[^\s"\'<>]+?\.(?:m3u8|mpd|flv|ts)[^\s"\'<>]*',
     ]
@@ -83,30 +85,95 @@ def get_player_domain(url):
     return f"{p.scheme}://{p.netloc}"
 
 
+def get_embed_pages(soup, page_url):
+    """
+    Ambil semua embed page:
+    1. iframe utama (src="kenh/xxx.php")
+    2. Semua Link 1, Link 2, ... (configuratorc)
+    Return: list of (label, url)
+    """
+    pages = []
+
+    # 1. Iframe utama
+    iframe = soup.find("iframe", id="Myiframe")
+    if not iframe:
+        iframe = soup.find("iframe", class_="embed-responsive-item")
+    if iframe:
+        src = iframe.get("src", "")
+        if src:
+            pages.append(("Main", urljoin(page_url, src)))
+
+    # 2. Link 1, Link 2, ... (configuratorc)
+    for a in soup.find_all("a", onclick=re.compile(r"configuratorc")):
+        name = a.get("name", "")
+        text = a.get_text(strip=True)
+        if name:
+            pages.append((text or "Link", urljoin(page_url, name)))
+
+    # Dedup
+    seen = set()
+    unique = []
+    for label, url in pages:
+        if url not in seen:
+            seen.add(url)
+            unique.append((label, url))
+    return unique
+
+
+def scrape_embed_page(embed_url, referer):
+    """
+    Scrape 1 embed page -> cari stream URL.
+    Return: stream_url (m3u8/mpd/flv/ts) atau None
+    """
+    try:
+        soup = get_soup(embed_url, referer=referer)
+        raw = str(soup)
+    except Exception:
+        return None
+
+    streams = extract_stream_url(raw)
+    if streams:
+        return streams[0]
+
+    # Follow iframe di dalam embed page
+    for ifr in soup.find_all("iframe"):
+        src = ifr.get("src", "")
+        if src:
+            sub_url = urljoin(embed_url, src)
+            try:
+                ss = get_soup(sub_url, referer=embed_url)
+                streams = extract_stream_url(str(ss))
+                if streams:
+                    return streams[0]
+            except Exception:
+                pass
+    return None
+
+
 def scrape_channel(ch):
+    """Scrape 1 channel: semua embed page (Main, Link 1, Link 2, ...)"""
     try:
         soup = get_soup(ch["page"], referer=BASE_URL)
-        raw = str(soup)
     except Exception as e:
         return ch, f"FAIL ({e})", []
 
-    streams = extract_stream_url(raw)
+    embed_pages = get_embed_pages(soup, ch["page"])
+    if not embed_pages:
+        return ch, "NO EMBED", []
 
-    if not streams:
-        for ifr in soup.find_all("iframe"):
-            src = ifr.get("src", "")
-            if src:
-                purl = urljoin(ch["page"], src)
-                try:
-                    ps = get_soup(purl, referer=ch["page"])
-                    streams = extract_stream_url(str(ps))
-                except Exception:
-                    pass
-                if streams:
-                    break
+    results = []
+    for label, embed_url in embed_pages:
+        stream = scrape_embed_page(embed_url, ch["page"])
+        if stream:
+            results.append((label, stream))
+            print(f"    {label}: {stream[:60]}...")
+        else:
+            # Fallback: pakai URL embed PHP sendiri
+            results.append((label, embed_url))
+            print(f"    {label}: (embed) {embed_url[:60]}...")
 
-    status = f"OK -> {streams[0][:60]}..." if streams else "NO STREAM"
-    return ch, status, streams
+    status = f"{len(results)} link"
+    return ch, status, results
 
 
 def build_m3u(channels, out_file="playlist.m3u", max_workers=5):
@@ -116,7 +183,7 @@ def build_m3u(channels, out_file="playlist.m3u", max_workers=5):
                  "QUỐC TẾ": 6}
     channels.sort(key=lambda c: (cat_order.get(c["group"], 9), c["name"]))
 
-    results = []
+    all_results = []
     with ThreadPoolExecutor(max_workers=max_workers) as pool:
         futs = {pool.submit(scrape_channel, ch): ch for ch in channels}
         done = 0
@@ -125,32 +192,36 @@ def build_m3u(channels, out_file="playlist.m3u", max_workers=5):
             done += 1
             print(f"[{done}/{len(channels)}] {ch['name']}: {status}")
             if streams:
-                results.append((ch, streams))
+                all_results.append((ch, streams))
 
     order = {ch["id"]: i for i, ch in enumerate(channels)}
-    results.sort(key=lambda r: order.get(r[0]["id"], 999))
+    all_results.sort(key=lambda r: order.get(r[0]["id"], 999))
 
     lines = ["#EXTM3U"]
-    for ch, streams in results:
-        stream = streams[0]
-        pd = get_player_domain(stream)
-        ua = HEADERS["User-Agent"]
-        full = f"{ch['name']} [{ts} WIB]"
-        lines.append(
-            f'#EXTINF:-1 '
-            f'tvg-id="{ch["id"]}" '
-            f'tvg-name="{ch["name"]}" '
-            f'tvg-logo="{ch["logo"]}" '
-            f'group-title="{ch["group"]}",'
-            f'{full}')
-        lines.append(f'#EXTVLCOPT:http-user-agent={ua}')
-        lines.append(f'#EXTVLCOPT:http-referrer={pd}/')
-        lines.append(f'#EXTVLCOPT:http-origin={pd}')
-        lines.append(stream)
+    for ch, streams in all_results:
+        for label, stream in streams:
+            pd = get_player_domain(stream)
+            ua = HEADERS["User-Agent"]
+            if label == "Main":
+                full = f"{ch['name']} [{ts} WIB]"
+            else:
+                full = f"{ch['name']} {label} [{ts} WIB]"
+            lines.append(
+                f'#EXTINF:-1 '
+                f'tvg-id="{ch["id"]}" '
+                f'tvg-name="{ch["name"]}" '
+                f'tvg-logo="{ch["logo"]}" '
+                f'group-title="{ch["group"]}",'
+                f'{full}')
+            lines.append(f'#EXTVLCOPT:http-user-agent={ua}')
+            lines.append(f'#EXTVLCOPT:http-referrer=https://hd1.xemtv.net/')
+            lines.append(f'#EXTVLCOPT:http-origin=https://hd1.xemtv.net')
+            lines.append(stream)
 
     with open(out_file, "w", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
-    print(f"\n✅ {len(results)} channel -> {out_file}")
+    total_streams = sum(len(s) for _, s in all_results)
+    print(f"\n✅ {len(all_results)} channel, {total_streams} stream -> {out_file}")
 
 
 if __name__ == "__main__":
@@ -158,4 +229,4 @@ if __name__ == "__main__":
     soup = get_soup(BASE_URL)
     channels = parse_categories(soup)
     print(f"Total channel: {len(channels)}\n")
-    build_m3u(channels, max_workers=50)   
+    build_m3u(channels, max_workers=15)   
