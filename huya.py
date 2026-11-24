@@ -1,232 +1,332 @@
 #!/usr/bin/env python3
-"""Scrape hd1.xemtv.net -> playlist.m3u (ThreadPool)
-   Scrape semua Link 1, Link 2, ... dari halaman channel"""
+"""
+SportPlus M3U Playlist Generator
+Scrape semua kategori & pertandingan, buat playlist.m3u
+dengan tvg-logo, group-title, title, name, jam/tanggal WIB,
+EXVLCOPT user-agent & referrer dari domain player.
+"""
 
-import re
 import requests
-import urllib3
-from bs4 import BeautifulSoup
+import json
+import time
+import re
 from datetime import datetime, timezone, timedelta
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urlparse, urljoin
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-urllib3.disable_warnings()
-
-BASE_URL = "https://hd1.xemtv.net/"
-HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                  "AppleWebKit/537.36 (KHTML, like Gecko) "
-                  "Chrome/125.0.0.0 Safari/537.36",
-    "Accept-Language": "vi-VN,vi;q=0.9,en;q=0.8",
-}
+# ─── KONFIGURASI ───────────────────────────────────────────
+API_BASE = "https://apisplus.live"
+WEB_PLAYER = "https://en97.sportplus.watch"
+OUTPUT_FILE = "playlist.m3u"
+MAX_WORKERS = 8
+TIMEOUT = 15
 WIB = timezone(timedelta(hours=7))
-SKIP_DOMAINS = {"google", "facebook", "youtube", "cloudflare",
-                "adskeeper", "ahrefs", "googlesyndication"}
+
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36",
+    "Accept": "application/json, text/plain, */*",
+    "Origin": WEB_PLAYER,
+    "Referer": WEB_PLAYER + "/",
+    "Accept-Language": "id-ID,id;q=0.5",
+}
+
+# ─── HELPERS ───────────────────────────────────────────────
+def to_wib(dt_str: str) -> datetime:
+    """Parse ISO datetime (+0300) → WIB."""
+    dt = datetime.fromisoformat(dt_str)
+    return dt.astimezone(WIB)
 
 
-def get_soup(url, referer=None):
-    h = dict(HEADERS)
-    if referer:
-        h["Referer"] = referer
-    r = requests.get(url, headers=h, timeout=30, verify=False)
-    r.encoding = "utf-8"
-    return BeautifulSoup(r.text, "html.parser")
+def extract_domain(url: str) -> str:
+    """Ekstrak domain dari URL stream (player domain, bukan web player)."""
+    parsed = urlparse(url)
+    return f"{parsed.scheme}://{parsed.netloc}"
 
 
-def parse_categories(soup):
-    channels = []
-    cat_map = {
-        "1": "THỜI SỰ", "2": "ĐỊA PHƯƠNG", "3": "GIẢI TRÍ",
-        "4": "THIẾU NHI", "5": "FM-RADIO", "6": "QUỐC TẾ",
-        "7": "THỂ THAO",
+def get_player_domain(stream_url: str) -> str:
+    """
+    Dapatkan domain player dari URL stream.
+    Jika URL relative, coba deteksi dari context.
+    """
+    if stream_url.startswith("http"):
+        return extract_domain(stream_url)
+    return WEB_PLAYER  # fallback
+
+
+def escape_m3u(value: str) -> str:
+    """Escape karakter khusus untuk atribut M3U."""
+    return (
+        value.replace('"', "&quot;")
+        .replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+    )
+
+
+def is_stream_url(url: str) -> bool:
+    """Cek apakah URL adalah stream (m3u8, flv, mpd, ts, php)."""
+    if not url:
+        return False
+    lower = url.lower()
+    return any(ext in lower for ext in [".m3u8", ".flv", ".mpd", ".ts", ".php"])
+
+
+# ─── FETCH FUNCTIONS ───────────────────────────────────────
+def fetch_sidebar(session: requests.Session) -> list:
+    """Ambil semua sport & tournament dari sidebar."""
+    url = f"{API_BASE}/v3/en/sidebar.json"
+    r = session.get(url, headers=HEADERS, timeout=TIMEOUT)
+    r.raise_for_status()
+    return r.json()
+
+
+def fetch_matches(
+    session: requests.Session,
+    sport_id: int,
+    tournament_id: int,
+    tournament_alias: str,
+    sport_alias: str,
+) -> list:
+    """Ambil daftar match untuk satu tournament."""
+    url = (
+        f"{API_BASE}/v3.1/matches/index"
+        f"?fw=3.1&lang=en&lcfg=en&offset=25200"
+        f"&other_matches=1&sport_id={sport_id}"
+        f"&cur_tournament_id={tournament_id}"
+    )
+    r = session.get(url, headers=HEADERS, timeout=TIMEOUT)
+    r.raise_for_status()
+    data = r.json()
+    return data.get("items", [])
+
+
+def fetch_match_view(
+    session: requests.Session,
+    match_id: int,
+    sport_alias: str,
+    tournament_alias: str,
+) -> dict:
+    """Ambil detail match termasuk stream URLs."""
+    url = (
+        f"{API_BASE}/v3.1/matches/view"
+        f"?id={match_id}"
+        f"&sport_id={sport_alias}"
+        f"&tournament_id={tournament_alias}"
+        f"&lang=en&lcfg=en&fw=3.1&has_regions=1"
+    )
+    r = session.get(url, headers=HEADERS, timeout=TIMEOUT)
+    r.raise_for_status()
+    data = r.json()
+    return data.get("item", {})
+
+
+# ─── SCRAPE & PARSE ────────────────────────────────────────
+def scrape_all() -> list:
+    """
+    Scrape semua kategori, tournament, match, dan stream.
+    Return list of dicts:
+    {
+        'name': str,
+        'title': str,
+        'group_title': str,
+        'tvg_logo': str,
+        'stream_url': str,
+        'start_wib': datetime,
+        'player_domain': str,
     }
-    for tab in soup.select("div.tab-pane"):
-        tab_id = tab.get("id", "")
-        group = cat_map.get(tab_id, f"Tab {tab_id}")
-        for li in tab.select("li.channel"):
-            a = li.find("a")
-            img = li.find("img")
-            if not a:
-                continue
-            title = img.get("title", "").strip() if img else li.get("rel", "")
-            logo_src = img.get("src", "") if img else ""
-            channels.append({
-                "id": li.get("rel", ""),
-                "name": title,
-                "logo": urljoin(BASE_URL, logo_src) if logo_src else "",
-                "group": group,
-                "page": urljoin(BASE_URL, a.get("href", "")),
-            })
-    return channels
-
-
-def extract_stream_url(html):
-    """Cari URL streaming .m3u8 .mpd .flv .ts"""
-    pats = [
-        r'https?://[^\s"\'<>]+?\.(?:m3u8|mpd|flv|ts)[^\s"\'<>]*',
-    ]
-    urls = []
-    for p in pats:
-        urls.extend(re.findall(p, html))
-    valid = []
-    for u in urls:
-        d = urlparse(u).netloc.lower()
-        if not any(s in d for s in SKIP_DOMAINS):
-            valid.append(u)
-    valid = list(dict.fromkeys(valid))
-    prio = {".m3u8": 0, ".mpd": 1, ".flv": 2, ".ts": 3}
-    valid.sort(key=lambda u: min(
-        (p for e, p in prio.items() if e in u), default=9))
-    return valid
-
-
-def get_player_domain(url):
-    p = urlparse(url)
-    return f"{p.scheme}://{p.netloc}"
-
-
-def get_embed_pages(soup, page_url):
     """
-    Ambil semua embed page:
-    1. iframe utama (src="kenh/xxx.php")
-    2. Semua Link 1, Link 2, ... (configuratorc)
-    Return: list of (label, url)
-    """
-    pages = []
+    session = requests.Session()
+    entries = []
 
-    # 1. Iframe utama
-    iframe = soup.find("iframe", id="Myiframe")
-    if not iframe:
-        iframe = soup.find("iframe", class_="embed-responsive-item")
-    if iframe:
-        src = iframe.get("src", "")
-        if src:
-            pages.append(("Main", urljoin(page_url, src)))
+    # 1. Ambil sidebar
+    print("[1/3] Mengambil sidebar (kategori & tournament)...")
+    sidebar = fetch_sidebar(session)
 
-    # 2. Link 1, Link 2, ... (configuratorc)
-    for a in soup.find_all("a", onclick=re.compile(r"configuratorc")):
-        name = a.get("name", "")
-        text = a.get_text(strip=True)
-        if name:
-            pages.append((text or "Link", urljoin(page_url, name)))
+    for sport in sidebar:
+        sport_id = sport["id"]
+        sport_name = sport["name"]
+        sport_alias = sport.get("alias", str(sport_id))
 
-    # Dedup
-    seen = set()
-    unique = []
-    for label, url in pages:
-        if url not in seen:
-            seen.add(url)
-            unique.append((label, url))
-    return unique
+        tournaments = sport.get("tournaments", [])
+        if not tournaments:
+            continue
 
+        print(f"  Sport: {sport_name} ({len(tournaments)} tournament)")
 
-def scrape_embed_page(embed_url, referer):
-    """
-    Scrape 1 embed page -> cari stream URL.
-    Return: stream_url (m3u8/mpd/flv/ts) atau None
-    """
-    try:
-        soup = get_soup(embed_url, referer=referer)
-        raw = str(soup)
-    except Exception:
-        return None
+        for t in tournaments:
+            t_id = t["id"]
+            t_name = t["name"]
+            t_alias = t.get("alias", str(t_id))
+            if isinstance(t_alias, int):
+                t_alias = str(t_alias)
 
-    streams = extract_stream_url(raw)
-    if streams:
-        return streams[0]
-
-    # Follow iframe di dalam embed page
-    for ifr in soup.find_all("iframe"):
-        src = ifr.get("src", "")
-        if src:
-            sub_url = urljoin(embed_url, src)
+            # 2. Ambil matches
             try:
-                ss = get_soup(sub_url, referer=embed_url)
-                streams = extract_stream_url(str(ss))
-                if streams:
-                    return streams[0]
-            except Exception:
-                pass
-    return None
+                matches = fetch_matches(
+                    session, sport_id, t_id, t_alias, sport_alias
+                )
+            except Exception as e:
+                print(f"    [WARN] {t_name}: {e}")
+                continue
+
+            for m in matches:
+                mid = m["id"]
+                m_name = m.get("name", f"Match {mid}")
+                start_str = m.get("start", "")
+                status = m.get("status", "")
+
+                if not start_str:
+                    continue
+
+                try:
+                    start_wib = to_wib(start_str)
+                except Exception:
+                    continue
+
+                # 3. Ambil match view untuk stream
+                try:
+                    view = fetch_match_view(
+                        session, mid, sport_alias, t_alias
+                    )
+                except Exception as e:
+                    # Fallback: tanpa stream detail
+                    view = {}
+
+                # Kumpulkan semua stream URL
+                stream_urls = []
+
+                # Dari field 'ls' (m3u8 langsung)
+                for ls_url in view.get("ls", []):
+                    if is_stream_url(ls_url):
+                        stream_urls.append(ls_url)
+
+                # Dari field 'streams' → resolve relative URL
+                for s in view.get("streams", []):
+                    s_name = s.get("name", "")
+                    s_logo = s.get("logo5", "")
+                    s_url = s.get("url", "")
+
+                    # Resolve relative URL
+                    if s_url and not s_url.startswith("http"):
+                        full_url = urljoin(WEB_PLAYER, s_url)
+                    else:
+                        full_url = s_url
+
+                    if full_url and is_stream_url(full_url):
+                        stream_urls.append(full_url)
+
+                    # Jika URL stream tidak ada, coba dari ls
+                    # (ls sudah di atas)
+
+                # Jika tidak ada stream URL dari view, skip
+                if not stream_urls:
+                    # Coba buat entry tanpa stream (placeholder)
+                    continue
+
+                # Buat entry untuk setiap stream URL
+                for i, s_url in enumerate(stream_urls):
+                    player_domain = get_player_domain(s_url)
+
+                    # Logo: dari stream logo jika ada, else kosong
+                    if "streams" in view and i < len(view.get("streams", [])):
+                        logo = view["streams"][i].get("logo5", "")
+                        if logo:
+                            logo = urljoin(WEB_PLAYER, logo)
+                    else:
+                        logo = ""
+
+                    # Nama channel
+                    if "streams" in view and i < len(view.get("streams", [])):
+                        chan_name = view["streams"][i].get("name", f"Stream {i+1}")
+                    else:
+                        chan_name = f"Stream {i+1}"
+
+                    # Format waktu WIB
+                    time_str = start_wib.strftime("%H:%M")
+                    date_str = start_wib.strftime("%d-%m-%Y")
+
+                    # Title: "Home — Away"
+                    home = m.get("home", {}).get("name", "")
+                    away = m.get("away", {}).get("name", "")
+                    title = f"{home} vs {away}" if home and away else m_name
+
+                    # Name: "Title [Channel] (HH:MM DD-MM-YYYY)"
+                    name = f"{title} [{chan_name}] ({time_str} {date_str})"
+
+                    # Group: "Sport - Tournament"
+                    group = f"{sport_name} - {t_name}"
+
+                    entries.append({
+                        "name": name,
+                        "title": title,
+                        "group_title": group,
+                        "tvg_logo": logo,
+                        "stream_url": s_url,
+                        "start_wib": start_wib,
+                        "player_domain": player_domain,
+                        "status": status,
+                    })
+
+                time.sleep(0.1)  # rate limit
+
+    return entries
 
 
-def scrape_channel(ch):
-    """Scrape 1 channel: semua embed page (Main, Link 1, Link 2, ...)"""
-    try:
-        soup = get_soup(ch["page"], referer=BASE_URL)
-    except Exception as e:
-        return ch, f"FAIL ({e})", []
+# ─── GENERATE M3U ──────────────────────────────────────────
+def generate_m3u(entries: list, output: str):
+    """Generate file playlist.m3u, diurutkan berdasarkan waktu."""
+    # Urutkan: live dulu (by time), lalu not_started (by date+time)
+    entries.sort(key=lambda e: (
+        0 if e["status"] == "live" else 1,
+        e["start_wib"],
+    ))
 
-    embed_pages = get_embed_pages(soup, ch["page"])
-    if not embed_pages:
-        return ch, "NO EMBED", []
+    with open(output, "w", encoding="utf-8") as f:
+        f.write("#EXTM3U\n")
 
-    results = []
-    for label, embed_url in embed_pages:
-        stream = scrape_embed_page(embed_url, ch["page"])
-        if stream:
-            results.append((label, stream))
-            print(f"    {label}: {stream[:60]}...")
-        else:
-            # Fallback: pakai URL embed PHP sendiri
-            results.append((label, embed_url))
-            print(f"    {label}: (embed) {embed_url[:60]}...")
+        for e in entries:
+            tvg_logo = escape_m3u(e["tvg_logo"]) if e["tvg_logo"] else ""
+            group = escape_m3u(e["group_title"])
+            title = escape_m3u(e["title"])
+            name = escape_m3u(e["name"])
 
-    status = f"{len(results)} link"
-    return ch, status, results
+            attrs = (
+                f'tvg-logo="{tvg_logo}" '
+                f'group-title="{group}" '
+                f'title="{title}" '
+                f'name="{name}"'
+            )
 
+            f.write(f"#EXTINF:-1,{attrs}\n{name}\n")
+            f.write(f"{e['stream_url']}\n")
 
-def build_m3u(channels, out_file="playlist.m3u", max_workers=5):
-    ts = datetime.now(WIB).strftime("%d/%m/%Y %H:%M:%S")
-    cat_order = {"THỂ THAO": 0, "THỜI SỰ": 1, "ĐỊA PHƯƠNG": 2,
-                 "GIẢI TRÍ": 3, "THIẾU NHI": 4, "FM-RADIO": 5,
-                 "QUỐC TẾ": 6}
-    channels.sort(key=lambda c: (cat_order.get(c["group"], 9), c["name"]))
+            # EXVLCOPT: user-agent & referrer dari domain player
+            player_domain = e["player_domain"]
+            ua = (
+                "Mozilla/5.0 (Linux; Android 10; K) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/157.0.0.0 Mobile Safari/537.36"
+            )
+            f.write(
+                f'#EXTVLCOPT:http-user-agent="{ua}"\n'
+            )
+            f.write(
+                f'#EXTVLCOPT:http-referrer="{player_domain}/"\n'
+            )
+            f.write(f"\n")
 
-    all_results = []
-    with ThreadPoolExecutor(max_workers=max_workers) as pool:
-        futs = {pool.submit(scrape_channel, ch): ch for ch in channels}
-        done = 0
-        for fut in as_completed(futs):
-            ch, status, streams = fut.result()
-            done += 1
-            print(f"[{done}/{len(channels)}] {ch['name']}: {status}")
-            if streams:
-                all_results.append((ch, streams))
-
-    order = {ch["id"]: i for i, ch in enumerate(channels)}
-    all_results.sort(key=lambda r: order.get(r[0]["id"], 999))
-
-    lines = ["#EXTM3U"]
-    for ch, streams in all_results:
-        for label, stream in streams:
-            pd = get_player_domain(stream)
-            ua = HEADERS["User-Agent"]
-            if label == "Main":
-                full = f"{ch['name']} [{ts} WIB]"
-            else:
-                full = f"{ch['name']} {label} [{ts} WIB]"
-            lines.append(
-                f'#EXTINF:-1 '
-                f'tvg-id="{ch["id"]}" '
-                f'tvg-name="{ch["name"]}" '
-                f'tvg-logo="{ch["logo"]}" '
-                f'group-title="{ch["group"]}",'
-                f'{full}')
-            lines.append(f'#EXTVLCOPT:http-user-agent={ua}')
-            lines.append(f'#EXTVLCOPT:http-referrer=https://hd1.xemtv.net/')
-            lines.append(f'#EXTVLCOPT:http-origin=https://hd1.xemtv.net')
-            lines.append(stream)
-
-    with open(out_file, "w", encoding="utf-8") as f:
-        f.write("\n".join(lines) + "\n")
-    total_streams = sum(len(s) for _, s in all_results)
-    print(f"\n✅ {len(all_results)} channel, {total_streams} stream -> {out_file}")
+    print(f"\n[OK] {output} → {len(entries)} entry")
 
 
+# ─── MAIN ──────────────────────────────────────────────────
 if __name__ == "__main__":
-    print("=== Scrape hd1.xemtv.net ===")
-    soup = get_soup(BASE_URL)
-    channels = parse_categories(soup)
-    print(f"Total channel: {len(channels)}\n")
-    build_m3u(channels, max_workers=15)   
+    print("=" * 50)
+    print(" SportPlus M3U Playlist Generator")
+    print("=" * 50)
+
+    entries = scrape_all()
+
+    if entries:
+        generate_m3u(entries, OUTPUT_FILE)
+    else:
+        print("\n[WARN] Tidak ada stream ditemukan.")   
