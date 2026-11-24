@@ -24,8 +24,8 @@ TIMEOUT = 15
 WIB = timezone(timedelta(hours=7))
 
 # Rate limiting
-DELAY_MIN = 0.8
-DELAY_MAX = 2.0
+DELAY_MIN = 0.3
+DELAY_MAX = 0.3
 RETRIES = 4
 BACKOFF = 3
 
