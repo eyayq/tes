@@ -5,7 +5,7 @@ from datetime import datetime, timezone, timedelta
 import time
 
 BASE_URL = "https://jolightled.com"
-PLAYER_DOMAIN = "jlbfpc.jlbfyh.com"  # domain player (bukan web)
+PLAYER_DOMAIN = "jlbfpc.jlbfyh.com"
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) "
@@ -121,8 +121,8 @@ def main():
             logo = f' tvg-logo="{c["logo"]}"' if c["logo"] else ""
             title = f'{c["title"]} [{c["time"]} {c["date"]} WIB]'
             f.write(f'#EXTINF:-1 group-title="{c["group"]}"{logo},{title}\n')
-            f.write(f'#EXTVLCOPT:http-user-agent="Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36"\n')
-            f.write(f'#EXTVLCOPT:http-referrer="https://{PLAYER_DOMAIN}/"\n')
+            f.write(f'#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36\n')
+            f.write(f'#EXTVLCOPT:http-referrer=https://{PLAYER_DOMAIN}/\n')
             f.write(c["url"] + "\n")
 
     print(f"\n✅ Total: {len(final)} stream → {OUTPUT}")
