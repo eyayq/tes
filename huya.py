@@ -35,7 +35,7 @@ WANTED_SPORTS = {
     "football",
     "basketball",
     "volleyball",
-    "table-tennis",
+    "table_tennis",
     "ufc",
     "boxing",
     "tennis",
@@ -197,26 +197,27 @@ def fetch_matches(sport_id, t_id):
     return []
 
 
-def fetch_match_view(match_id, sport_alias, t_alias):
+def fetch_match_view(match_id, sport_id, t_id):
     url = (f"{API_BASE}/v3.1/matches/view"
-           f"?id={match_id}&sport_id={sport_alias}"
-           f"&tournament_id={t_alias}"
+           f"?id={match_id}&sport_id={sport_id}"
+           f"&tournament_id={t_id}"
            f"&lang=en&lcfg=en&fw=3.1&has_regions=1")
-    dbg(f"→ fetch_view(id={match_id})")
+    dbg(f"→ fetch_view(id={match_id}, sport={sport_id}, t={t_id})")
     data = http_get(url)
     if isinstance(data, dict):
-        item = data.get("item", {})
-        ls = item.get("ls")
-        has_chan = item.get("has_chan", 0)
-        dbg(f"  ← ls={'✅'+str(len(ls)) if ls else 'null'} "
-            f"has_chan={has_chan}")
-        return item
-    dbg("  ← FAILED (None)")
+        item = data.get("item")
+        if item:
+            ls = item.get("ls")
+            dbg(f"  ← ls={'✅'+str(len(ls)) if ls else 'null'}")
+            return item
+        dbg(f"  ← item=null, skip")
+        return {}
+    dbg(f"  ← FAILED (None)")
     return {}
 
 
 # ─── WORKER ────────────────────────────────────────────────
-def process_match(m, sport_alias, t_alias, sport_name, t_name):
+def process_match(m, sport_id, t_id, sport_name, t_name):
     mid = m["id"]
     m_name = m.get("name", f"Match {mid}")
     start_str = m.get("start", "")
@@ -236,7 +237,7 @@ def process_match(m, sport_alias, t_alias, sport_name, t_name):
         dbg(f"    ⚠ parse time: {e}")
         return []
 
-    view = fetch_match_view(mid, sport_alias, t_alias)
+    view = fetch_match_view(mid, sport_id, t_id)
     if not view:
         dbg(f"    ⚠ view empty, skip")
         return []
@@ -295,7 +296,6 @@ def scrape_all():
     print("[1/3] Sidebar...")
     sidebar = fetch_sidebar()
 
-    # Filter sport
     sidebar = [s for s in sidebar
                if s.get("type") != "collection"
                and s.get("alias") in WANTED_SPORTS]
@@ -310,15 +310,11 @@ def scrape_all():
     for sport in sidebar:
         sport_id = sport["id"]
         sport_name = sport["name"]
-        sport_alias = sport.get("alias", str(sport_id))
 
         for t in sport.get("tournaments", []):
             done_t += 1
             t_id = t["id"]
             t_name = t["name"]
-            t_alias = t.get("alias", str(t_id))
-            if isinstance(t_alias, int):
-                t_alias = str(t_alias)
 
             elapsed = time.time() - t_start
             print(f"\n  [{done_t}/{total_t}] "
@@ -342,7 +338,7 @@ def scrape_all():
                 futures = {
                     pool.submit(
                         process_match, m,
-                        sport_alias, t_alias,
+                        sport_id, t_id,
                         sport_name, t_name
                     ): m["id"]
                     for m in live_matches
