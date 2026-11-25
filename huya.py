@@ -22,7 +22,7 @@ MAX_WORKERS = 80
 DEBUG = True
 
 PROXY = "http://svr00000:bhns0000@64.137.96.74:6641"
-PROXY_BASE = "https://exsample.d-n-s.name/us.m3u8"  # ← GANTI
+PROXY_BASE = "https://exsample.d-n-s.name/us.m3u8"
 
 DELAY_MIN = 0
 DELAY_MAX = 0
@@ -30,6 +30,16 @@ RETRIES = 1
 BACKOFF = 1
 CB_THRESHOLD = 1
 CB_COOLDOWN = 1
+
+WANTED_SPORTS = {
+    "football",
+    "basketball",
+    "volleyball",
+    "table-tennis",
+    "ufc",
+    "boxing",
+    "tennis",
+}
 
 HEADERS = {
     "User-Agent": ("Mozilla/5.0 (Linux; Android 10; K) "
@@ -163,7 +173,9 @@ def fetch_sidebar():
         for s in data:
             n = len(s.get("tournaments", []))
             typ = s.get("type", "sport")
-            dbg(f"    {s['name']} ({n} t, {typ})")
+            mark = "✅" if s.get("alias") in WANTED_SPORTS else "  "
+            dbg(f"  {mark} {s.get('alias','?')} → {s['name']} "
+                f"({n} t, {typ})")
         return data
     dbg("  ← FAILED")
     return []
@@ -256,7 +268,6 @@ def process_match(m, sport_alias, t_alias, sport_name, t_name):
         mirror = f" M{i+1}" if len(stream_urls) > 1 else ""
         name = f"{title}{mirror} ({time_str} {date_str})"
 
-        # ← BUNGKUS DENGAN PHP PROXY
         proxied_url = f"{PROXY_BASE}?url={quote(s_url, safe='')}"
 
         results.append({
@@ -284,18 +295,19 @@ def scrape_all():
     print("[1/3] Sidebar...")
     sidebar = fetch_sidebar()
 
+    # Filter sport
+    sidebar = [s for s in sidebar
+               if s.get("type") != "collection"
+               and s.get("alias") in WANTED_SPORTS]
+
     for sport in sidebar:
-        if sport.get("type") == "collection":
-            continue
         total_t += len(sport.get("tournaments", []))
 
+    print(f"  Sport aktif: {', '.join(s['name'] for s in sidebar)}")
     print(f"  Total: {total_t} tournament")
     print(f"[2/3] Scrape LIVE (threadpool={MAX_WORKERS})...\n")
 
     for sport in sidebar:
-        if sport.get("type") == "collection":
-            continue
-
         sport_id = sport["id"]
         sport_name = sport["name"]
         sport_alias = sport.get("alias", str(sport_id))
@@ -383,6 +395,7 @@ if __name__ == "__main__":
     print(f" ✓ {MAX_WORKERS}")
     print(f" ✓: {PROXY_BASE}")
     print(f" ✓: {DEBUG}")
+    print(f" ✓ Sports: {', '.join(sorted(WANTED_SPORTS))}")
     print("=" * 50)
 
     t0 = time.time()
