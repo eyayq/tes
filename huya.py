@@ -358,14 +358,14 @@ def generate_m3u(entries, output):
         for i, e in enumerate(entries):
             attrs = (
                 f'tvg-logo="{escape_m3u(e["tvg_logo"])}" '
-                f'group-title="{escape_m3u(e["group_title"])}", '
-                f'name="{escape_m3u(e["name"])}"'
+                f'group-title="live sports us [tes vip]", '
+                f'{escape_m3u(e["name"])} [tes vip]"'
             )
             f.write(f"#EXTINF:-1 {attrs}\n")
             f.write(f"{e['name']}\n")
             f.write(f'#EXTVLCOPT:http-user-agent="{UA_FOR_VLC}"\n')
-            f.write(f'#EXTVLCOPT:http-referrer="https://en97.sportplus.watch/"\n')
-            f.write(f'#EXTVLCOPT:http-origin="https://en97.sportplus.watch"\n')
+            f.write(f'#EXTVLCOPT:http-referrer=https://en97.sportplus.watch/\n')
+            f.write(f'#EXTVLCOPT:http-origin=https://en97.sportplus.watch\n')
             f.write(f"{e['stream_url']}\n")
             f.write("\n")
 
@@ -380,10 +380,10 @@ def generate_m3u(entries, output):
 # ─── MAIN ──────────────────────────────────────────────────
 if __name__ == "__main__":
     print("=" * 50)
-    print(" SportPlus M3U Generator - LIVE ONLY + PROXY")
-    print(f" curl_cffi + proxy + threadpool {MAX_WORKERS}")
-    print(f" PHP Proxy: {PROXY_BASE}")
-    print(f" DEBUG: {DEBUG}")
+    print(" ✓")
+    print(f" ✓ {MAX_WORKERS}")
+    print(f" ✓: {PROXY_BASE}")
+    print(f" ✓: {DEBUG}")
     print("=" * 50)
 
     t0 = time.time()
