@@ -35,6 +35,7 @@ WANTED_SPORTS = {
     "football",
     "basketball",
     "volleyball",
+    "beach_volleyball",
     "table_tennis",
     "ufc",
     "boxing",
@@ -193,7 +194,7 @@ def fetch_matches(sport_id, t_id):
         live = sum(1 for i in items if i.get("status") == "live")
         dbg(f"  ← {len(items)} match ({live} live)")
         return items
-    dbg(f"  ← FAILED")
+    dbg("  ← FAILED")
     return []
 
 
@@ -224,9 +225,6 @@ def process_match(m, sport_id, t_id, sport_name, t_name):
     status = m.get("status", "")
 
     if status != "live":
-        return []
-
-    if not m.get("has_chan"):
         return []
 
     dbg(f"  ⚙ match {mid}: {m_name[:40]} [{status}]")
@@ -330,10 +328,9 @@ def scrape_all():
                 continue
 
             live_matches = [m for m in matches
-                            if m.get("status") == "live"
-                            and m.get("has_chan")]
+                            if m.get("status") == "live"]
             dbg(f"  matches: {len(matches)} total, "
-                f"{len(live_matches)} live+chan")
+                f"{len(live_matches)} live")
 
             if not live_matches:
                 continue
