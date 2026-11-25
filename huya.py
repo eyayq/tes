@@ -362,7 +362,6 @@ def generate_m3u(entries, output):
                 f'{escape_m3u(e["name"])} [tes vip]"'
             )
             f.write(f"#EXTINF:-1 {attrs}\n")
-            f.write(f"{e['name']}\n")
             f.write(f'#EXTVLCOPT:http-user-agent="{UA_FOR_VLC}"\n')
             f.write(f'#EXTVLCOPT:http-referrer=https://en97.sportplus.watch/\n')
             f.write(f'#EXTVLCOPT:http-origin=https://en97.sportplus.watch\n')
