@@ -359,7 +359,7 @@ def generate_m3u(entries, output):
             attrs = (
                 f'tvg-logo="{escape_m3u(e["tvg_logo"])}" '
                 f'group-title="live sports us [tes vip]", '
-                f'{escape_m3u(e["name"])} [tes vip]"'
+                f'{escape_m3u(e["name"])} [tes vip]'
             )
             f.write(f"#EXTINF:-1 {attrs}\n")
             f.write(f'#EXTVLCOPT:http-user-agent="{UA_FOR_VLC}"\n')
