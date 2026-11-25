@@ -19,7 +19,7 @@ CDN = "https://cdn.ovbstdn.com"
 OUTPUT_FILE = "playlist.m3u"
 TIMEOUT = 15
 WIB = timezone(timedelta(hours=7))
-MAX_WORKERS = 50
+MAX_WORKERS = 70
 DEBUG = True  # ← set False untuk production
 
 PROXY = "http://svr00000:bhns0000@64.137.96.74:6641"
@@ -360,15 +360,15 @@ def generate_m3u(entries, output):
         for i, e in enumerate(entries):
             attrs = (
                 f'tvg-logo="{escape_m3u(e["tvg_logo"])}" '
-                f'group-title="{escape_m3u(e["group_title"])}" '
-                f'title="{escape_m3u(e["title"])}" '
+                f'group-title="{escape_m3u(e["group_title"])}", '
                 f'name="{escape_m3u(e["name"])}"'
             )
-            f.write(f"#EXTINF:-1,{attrs}\n")
+            f.write(f"#EXTINF:-1 {attrs}\n")
             f.write(f"{e['name']}\n")
-            f.write(f"{e['stream_url']}\n")
             f.write(f'#EXTVLCOPT:http-user-agent="{UA_FOR_VLC}"\n')
-            f.write(f'#EXTVLCOPT:http-referrer="{e["player_domain"]}/"\n')
+            f.write(f'#EXTVLCOPT:http-referrer="https://en97.sportplus.watch/"\n')
+            f.write(f'#EXTVLCOPT:http-origin="https://en97.sportplus.watch"\n')
+            f.write(f"{e['stream_url']}\n")
             f.write("\n")
 
     # Summary
