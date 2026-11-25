@@ -18,11 +18,11 @@ CDN = "https://cdn.ovbstdn.com"
 OUTPUT_FILE = "playlist.m3u"
 TIMEOUT = 15
 WIB = timezone(timedelta(hours=7))
-MAX_WORKERS = 70
+MAX_WORKERS = 80
 DEBUG = True
 
 PROXY = "http://svr00000:bhns0000@64.137.96.74:6641"
-PROXY_BASE = "https://your-server.com/stream.php"  # ← GANTI
+PROXY_BASE = "https://exsample.d-n-s.name/us.m3u8"  # ← GANTI
 
 DELAY_MIN = 0
 DELAY_MAX = 0
