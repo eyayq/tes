@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-SportPlus M3U Playlist Generator - FINAL
+SportPlus M3U Playlist Generator - LIVE ONLY
 curl_cffi + proxy + threadpool 2 + DEBUG
 """
 
@@ -29,7 +29,7 @@ DELAY_MAX = 0
 RETRIES = 1
 BACKOFF = 1
 CB_THRESHOLD = 1
-CB_COOLDOWN = 5
+CB_COOLDOWN = 1
 
 HEADERS = {
     "User-Agent": ("Mozilla/5.0 (Linux; Android 10; K) "
@@ -51,7 +51,6 @@ _dbg_lock = threading.Lock()
 
 
 def dbg(msg):
-    """Thread-safe debug print."""
     if DEBUG:
         with _dbg_lock:
             ts = datetime.now().strftime("%H:%M:%S")
@@ -211,6 +210,10 @@ def process_match(m, sport_alias, t_alias, sport_name, t_name):
     start_str = m.get("start", "")
     status = m.get("status", "")
 
+    # ← GUARD: skip kalau bukan live
+    if status != "live":
+        return []
+
     dbg(f"  ⚙ match {mid}: {m_name[:40]} [{status}]")
 
     if not start_str:
@@ -288,7 +291,7 @@ def scrape_all():
         total_t += len(sport.get("tournaments", []))
 
     print(f"  Total: {total_t} tournament")
-    print(f"[2/3] Scrape (threadpool={MAX_WORKERS})...\n")
+    print(f"[2/3] Scrape LIVE (threadpool={MAX_WORKERS})...\n")
 
     for sport in sidebar:
         if sport.get("type") == "collection":
@@ -316,10 +319,14 @@ def scrape_all():
             if not matches:
                 continue
 
-            live_count = sum(1 for m in matches
-                             if m.get("status") == "live")
+            # ← HANYA match live
+            live_matches = [m for m in matches
+                            if m.get("status") == "live"]
             dbg(f"  matches: {len(matches)} total, "
-                f"{live_count} live → fetch view...")
+                f"{len(live_matches)} live")
+
+            if not live_matches:
+                continue  # skip tournament tanpa live
 
             with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
                 futures = {
@@ -328,7 +335,7 @@ def scrape_all():
                         sport_alias, t_alias,
                         sport_name, t_name
                     ): m["id"]
-                    for m in matches
+                    for m in live_matches  # ← hanya live
                 }
                 for fut in as_completed(futures):
                     try:
@@ -344,10 +351,7 @@ def scrape_all():
 
 # ─── GENERATE M3U ──────────────────────────────────────────
 def generate_m3u(entries, output):
-    entries.sort(key=lambda e: (
-        0 if e["status"] == "live" else 1,
-        e["start_wib"],
-    ))
+    entries.sort(key=lambda e: e["start_wib"])
 
     dbg(f"→ generate_m3u({len(entries)} entries)")
 
@@ -371,8 +375,7 @@ def generate_m3u(entries, output):
     live_n = sum(1 for e in entries if e["status"] == "live")
     groups = set(e["group_title"] for e in entries)
     print(f"\n[3/3] [OK] {output}")
-    print(f"  Total: {len(entries)} entry")
-    print(f"  Live: {live_n} | Not started: {len(entries)-live_n}")
+    print(f"  Total: {len(entries)} entry (semua live)")
     print(f"  Groups: {len(groups)}")
     print(f"  File size: "
           f"{sum(1 for _ in open(output))} lines")
@@ -381,7 +384,7 @@ def generate_m3u(entries, output):
 # ─── MAIN ──────────────────────────────────────────────────
 if __name__ == "__main__":
     print("=" * 50)
-    print(" SportPlus M3U Generator")
+    print(" SportPlus M3U Generator - LIVE ONLY")
     print(f" curl_cffi + proxy + threadpool {MAX_WORKERS}")
     print(f" DEBUG: {DEBUG}")
     print("=" * 50)
@@ -393,7 +396,7 @@ if __name__ == "__main__":
     if entries:
         generate_m3u(entries, OUTPUT_FILE)
     else:
-        print("\n[WARN] Tidak ada stream.")
+        print("\n[WARN] Tidak ada stream live saat ini.")
 
     print(f"\n⏱ Total time: {elapsed:.0f}s "
           f"({elapsed/60:.1f}m)")   
