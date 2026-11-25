@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
-SportPlus M3U Playlist Generator - LIVE ONLY
-curl_cffi + proxy + threadpool 2 + DEBUG
+SportPlus M3U Playlist Generator - LIVE ONLY + PHP PROXY
 """
 
 from curl_cffi import requests as cr
@@ -9,7 +8,7 @@ import time
 import random
 import threading
 from datetime import datetime, timezone, timedelta
-from urllib.parse import urlparse
+from urllib.parse import urlparse, quote
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # ─── KONFIGURASI ───────────────────────────────────────────
@@ -20,9 +19,10 @@ OUTPUT_FILE = "playlist.m3u"
 TIMEOUT = 15
 WIB = timezone(timedelta(hours=7))
 MAX_WORKERS = 70
-DEBUG = True  # ← set False untuk production
+DEBUG = True
 
 PROXY = "http://svr00000:bhns0000@64.137.96.74:6641"
+PROXY_BASE = "https://your-server.com/stream.php"  # ← GANTI
 
 DELAY_MIN = 0
 DELAY_MAX = 0
@@ -210,7 +210,6 @@ def process_match(m, sport_alias, t_alias, sport_name, t_name):
     start_str = m.get("start", "")
     status = m.get("status", "")
 
-    # ← GUARD: skip kalau bukan live
     if status != "live":
         return []
 
@@ -230,7 +229,6 @@ def process_match(m, sport_alias, t_alias, sport_name, t_name):
         dbg(f"    ⚠ view empty, skip")
         return []
 
-    # Kumpulkan stream
     stream_urls = []
     for ls_url in safe_list(view, "ls"):
         if is_stream_url(ls_url):
@@ -241,8 +239,6 @@ def process_match(m, sport_alias, t_alias, sport_name, t_name):
         return []
 
     dbg(f"    ✅ {len(stream_urls)} stream")
-    for u in stream_urls:
-        dbg(f"       {u[:60]}...")
 
     home_pk = m.get("home", {}).get("pk_id")
     tvg_logo = (f"{CDN}/onexbet/pk{home_pk}.png"
@@ -257,17 +253,20 @@ def process_match(m, sport_alias, t_alias, sport_name, t_name):
 
     results = []
     for i, s_url in enumerate(stream_urls):
-        player_domain = get_player_domain(s_url)
         mirror = f" M{i+1}" if len(stream_urls) > 1 else ""
         name = f"{title}{mirror} ({time_str} {date_str})"
+
+        # ← BUNGKUS DENGAN PHP PROXY
+        proxied_url = f"{PROXY_BASE}?url={quote(s_url, safe='')}"
+
         results.append({
             "name": name,
             "title": title,
             "group_title": group,
             "tvg_logo": tvg_logo,
-            "stream_url": s_url,
+            "stream_url": proxied_url,
             "start_wib": start_wib,
-            "player_domain": player_domain,
+            "player_domain": PROXY_BASE,
             "status": status,
         })
 
@@ -319,14 +318,13 @@ def scrape_all():
             if not matches:
                 continue
 
-            # ← HANYA match live
             live_matches = [m for m in matches
                             if m.get("status") == "live"]
             dbg(f"  matches: {len(matches)} total, "
                 f"{len(live_matches)} live")
 
             if not live_matches:
-                continue  # skip tournament tanpa live
+                continue
 
             with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
                 futures = {
@@ -335,7 +333,7 @@ def scrape_all():
                         sport_alias, t_alias,
                         sport_name, t_name
                     ): m["id"]
-                    for m in live_matches  # ← hanya live
+                    for m in live_matches
                 }
                 for fut in as_completed(futures):
                     try:
@@ -371,8 +369,6 @@ def generate_m3u(entries, output):
             f.write(f"{e['stream_url']}\n")
             f.write("\n")
 
-    # Summary
-    live_n = sum(1 for e in entries if e["status"] == "live")
     groups = set(e["group_title"] for e in entries)
     print(f"\n[3/3] [OK] {output}")
     print(f"  Total: {len(entries)} entry (semua live)")
@@ -384,8 +380,9 @@ def generate_m3u(entries, output):
 # ─── MAIN ──────────────────────────────────────────────────
 if __name__ == "__main__":
     print("=" * 50)
-    print(" SportPlus M3U Generator - LIVE ONLY")
+    print(" SportPlus M3U Generator - LIVE ONLY + PROXY")
     print(f" curl_cffi + proxy + threadpool {MAX_WORKERS}")
+    print(f" PHP Proxy: {PROXY_BASE}")
     print(f" DEBUG: {DEBUG}")
     print("=" * 50)
 
