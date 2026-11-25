@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-import requests, json
+"""Test: cek match live + ls[]"""
+import requests, time
 
 API = "https://apisplus.live"
 H = {
@@ -10,39 +11,66 @@ H = {
     "Referer": "https://en97.sportplus.watch/",
 }
 
-# Ambil 3 match pertama dari UCL
-r = requests.get(
-    f"{API}/v3.1/matches/index?fw=3.1&lang=en&lcfg=en"
-    f"&offset=25200&other_matches=1&sport_id=1&cur_tournament_id=118587",
-    headers=H, timeout=15
-)
-matches = r.json().get("items", [])[:5]
+# Tournament yang sering live
+tournaments = [
+    (1, 118587, "football", "champions-league"),
+    (1, 105759, "football", "championship"),
+    (1, 1256221, "football", "england-national-league"),
+    (10, 2222157, "table_tennis", "2222157"),
+    (10, 2365607, "table_tennis", "2365607"),
+    (10, 1691055, "table_tennis", "1691055"),
+    (10, 2685648, "table_tennis", "2685648"),
+    (10, 2685665, "table_tennis", "2685665"),
+    (1, 13521, "football", "scottish-premier-league"),
+]
 
-print(f"Dapat {len(matches)} match\n")
+total_found = 0
 
-for m in matches:
-    mid = m["id"]
-    name = m.get("name", "?")
-    status = m.get("status", "?")
-    print(f"  {name} [{status}]")
-
-    # Fetch view
-    r2 = requests.get(
-        f"{API}/v3.1/matches/view?id={mid}"
-        f"&sport_id=football&tournament_id=champions-league"
-        f"&lang=en&lcfg=en&fw=3.1&has_regions=1",
+for sport_id, t_id, sport_alias, t_alias in tournaments:
+    r = requests.get(
+        f"{API}/v3.1/matches/index?fw=3.1&lang=en&lcfg=en"
+        f"&offset=25200&other_matches=1"
+        f"&sport_id={sport_id}&cur_tournament_id={t_id}",
         headers=H, timeout=15
     )
-    item = r2.json().get("item", {})
-    ls = item.get("ls")
-    streams = item.get("streams", [])
+    if r.status_code != 200:
+        print(f"[{t_id}] HTTP {r.status_code}")
+        continue
 
-    if ls:
-        print(f"    ✅ ls: {len(ls)} URL")
-        for u in ls:
-            print(f"       {u[:80]}...")
-    else:
-        print(f"    ❌ ls: null")
-        if streams:
-            print(f"       streams: {len(streams)} (bookmaker redirect)")
-    print()   
+    items = r.json().get("items", [])
+    live = [m for m in items if m.get("status") == "live"]
+    print(f"\n{'='*50}")
+    print(f"[{t_id}] {len(live)} live / {len(items)} total")
+
+    for m in live[:3]:
+        mid = m["id"]
+        name = m.get("name", "?")
+        print(f"  {name}")
+
+        r2 = requests.get(
+            f"{API}/v3.1/matches/view?id={mid}"
+            f"&sport_id={sport_alias}&tournament_id={t_alias}"
+            f"&lang=en&lcfg=en&fw=3.1&has_regions=1",
+            headers=H, timeout=15
+        )
+        if r2.status_code != 200:
+            print(f"    view: HTTP {r2.status_code}")
+            time.sleep(2)
+            continue
+
+        item = r2.json().get("item", {})
+        ls = item.get("ls")
+        cc = item.get("resolve", {}).get("cc", "?")
+
+        if ls:
+            total_found += len(ls)
+            print(f"    ✅ cc={cc} | {len(ls)} stream")
+            for u in ls:
+                print(f"       {u[:75]}...")
+        else:
+            print(f"    ❌ cc={cc} | ls=null")
+
+        time.sleep(1)
+
+print(f"\n{'='*50}")
+print(f"TOTAL: {total_found} stream URL ditemukan")   
