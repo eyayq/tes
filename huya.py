@@ -3,7 +3,7 @@
 from curl_cffi import requests as cr
 
 mid = 8431507
-url = (f"https://apisplus.live/v3.1/matches/view?id={mid}"
+url = (f"https://pler.bhns.workers.dev/?bro=https://apisplus.live/v3.1/matches/view?id={mid}"
        f"&sport_id=football&tournament_id=copa-do-brasil-u20"
        f"&lang=en&lcfg=en&fw=3.1&has_regions=1")
 
