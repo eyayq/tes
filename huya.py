@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""VIPBox M3U Generator v6 (curl_cffi) - Fixed"""
+"""VIPBox M3U Generator v6.1 (curl_cffi)"""
 
 from curl_cffi import requests as cffi_requests
 import re
 import json
+import base64
 import logging
 import time
 import threading
@@ -242,7 +243,6 @@ class VIPBox:
                            headers={"Referer": f"{BASE_URL}/"})
             html = r.text
 
-            # Cari <script data-pldm="..." data-play="..." ...>
             pldm = re.search(r'data-pldm="([^"]+)"', html)
             play = re.search(r'data-play="([^"]+)"', html)
             pid = re.search(r'data-pid="([^"]+)"', html)
@@ -250,17 +250,15 @@ class VIPBox:
             gc = re.search(r'data-gc="([^"]+)"', html)
 
             if pldm and play:
-                # Ekstrak siteConfig dari halaman onair
                 soup = BeautifulSoup(html, "html.parser")
                 cfg = self._extract_site_config(soup) or {}
 
                 result = {
                     "pldm": pldm.group(1),
-                    "play": play.group(1),       # → vimg
+                    "play": play.group(1),
                     "pid": pid.group(1) if pid else "6",
                     "player": player.group(1) if player else "jw",
                     "gc": gc.group(1) if gc else "motorsports",
-                    # Dari siteConfig halaman onair:
                     "csrf": cfg.get("csrf", ""),
                     "csrf_ip": cfg.get("csrf_ip", ""),
                     "sec_expires": cfg.get("sec_expires", ""),
@@ -283,7 +281,7 @@ class VIPBox:
             if cache_key in self.play_cache:
                 return self.play_cache[cache_key]
 
-        # Rakit payload JSON sesuai yang dikirim browser
+        # Rakit payload JSON lalu base64-encode
         payload_dict = {
             "pid": params["pid"],
             "vimg": params["play"],
@@ -293,7 +291,9 @@ class VIPBox:
             "expires": params["sec_expires"],
             "sec_hash": params["sec_hash"],
         }
-        payload_b64 = json.dumps(payload_dict, separators=(",", ":"))
+        payload_b64 = base64.b64encode(
+            json.dumps(payload_dict, separators=(",", ":")).encode()
+        ).decode()
 
         post_url = f"https://{pldm}/vimpl/{gc}"
         stream_url = None
@@ -317,6 +317,12 @@ class VIPBox:
             html = r.text
             log.debug(f"    POST {post_url} → {r.status_code}, "
                       f"{len(html)}B")
+
+            if "STUDY_CONFIG" not in html:
+                log.warning(
+                    f"    No STUDY_CONFIG! "
+                    f"First 200: {html[:200]}"
+                )
 
             # Parse STUDY_CONFIG
             cfg = extract_json_block(html, "STUDY_CONFIG")
@@ -450,7 +456,7 @@ class VIPBox:
     # ── 6. MAIN ──────────────────────────────────────────
     def run(self):
         log.info("=" * 50)
-        log.info("  VIPBox M3U Generator v6")
+        log.info("  VIPBox M3U Generator v6.1")
         log.info(f"  Target : {BASE_URL}")
         log.info(f"  Output : {OUTPUT_FILE}")
         log.info("=" * 50)
