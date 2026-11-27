@@ -371,127 +371,100 @@ class VIPBox:
 
     # ── 4. RESOLVE ENTRY ─────────────────────────────────
     def resolve_entry(self, e):
-        params = self.get_play_params(e)
+    params = self.get_play_params(e)
 
-        if not params:
-            e["player_domain"] = "vipbox.ga"
-            e["resolved_url"] = f"{BASE_URL}{e['live_uri']}"
-            e["drm_key"] = None
-            return e
-
-        stream_url, domain, drm_key = self.get_stream_from_player(params)
-
-        e["player_domain"] = domain or params["pldm"]
-        e["resolved_url"] = stream_url or f"{BASE_URL}{e['live_uri']}"
-        e["drm_key"] = drm_key
+    if not params:
+        e["player_domain"] = "vipbox.ga"
+        e["resolved_url"] = f"https://bhns.bhns.workers.dev/?url=https://0.now1.tv/CC///CC.php"
+        e["manifest_type"] = "hls"
+        e["drm_key"] = None
         return e
+
+    stream_url, domain, drm_key = self.get_stream_from_player(params)
+
+    if stream_url:
+        e["resolved_url"] = stream_url
+        e["manifest_type"] = "dash" if ".mpd" in stream_url else "hls"
+    else:
+        e["resolved_url"] = "https://bhns.bhns.workers.dev/?url=https://0.now1.tv/CC///CC.php"
+        e["manifest_type"] = "hls"
+
+    e["player_domain"] = domain or params["pldm"]
+    e["drm_key"] = drm_key
+    return e   
 
     # ── 5. GENERATE M3U ──────────────────────────────────
     def write_m3u(self, entries):
-        seen = set()
-        unique = []
-        for e in entries:
-            key = (e["eid"], e["link_no"], e["group"])
-            if key not in seen:
-                seen.add(key)
-                unique.append(e)
+    seen = set()
+    unique = []
+    for e in entries:
+        key = (e["eid"], e["link_no"], e["group"])
+        if key not in seen:
+            seen.add(key)
+            unique.append(e)
 
-        def sk(e):
-            if e["time"]:
-                return (0, e["time"])
-            return (1, datetime.min.replace(tzinfo=timezone.utc))
-        unique.sort(key=sk)
+    def sk(e):
+        if e["time"]:
+            return (0, e["time"])
+        return (1, datetime.min.replace(tzinfo=timezone.utc))
+    unique.sort(key=sk)
 
-        lines = ["#EXTM3U"]
-        ua = HEADERS["User-Agent"]
-        resolved_count = 0
+    lines = ["#EXTM3U"]
+    ua = HEADERS["User-Agent"]
+    resolved_count = 0
 
-        for e in unique:
-            parts = [e["name"]]
-            if e["lang"]:
-                parts.append(f"[{e['lang']}]")
-            if e["hd"]:
-                parts.append("[HD]")
-            base_name = " ".join(parts)
+    for e in unique:
+        parts = [e["name"]]
+        if e["lang"]:
+            parts.append(f"[{e['lang']}]")
+        if e["hd"]:
+            parts.append("[HD]")
+        base_name = " ".join(parts)
 
-            if e["time"]:
-                wib = e["time"].astimezone(WIB)
-                ts = wib.strftime("%d-%m-%Y %H:%M")
-            else:
-                ts = "LIVE 24/7"
+        if e["time"]:
+            wib = e["time"].astimezone(WIB)
+            ts = wib.strftime("%d-%m-%Y %H:%M")
+        else:
+            ts = "LIVE 24/7"
 
-            full_name = f"{base_name} | {ts} WIB"
-            domain = e.get("player_domain", "vipbox.ga")
-            referrer = f"https://{domain}/"
-            final_url = e.get("resolved_url",
-                              f"{BASE_URL}{e['live_uri']}")
+        full_name = f"{base_name} | {ts} WIB"
+        domain = e.get("player_domain", "vipbox.ga")
+        referrer = f"https://{domain}/"
+        final_url = e.get("resolved_url",
+                          "https://0.now1.tv/CC///CC.php")
+        manifest_type = e.get("manifest_type", "dash")
 
-            if "vipbox.ga/live/" not in final_url:
-                resolved_count += 1
+        if "0.now1.tv" not in final_url:
+            resolved_count += 1
 
-            lines.append(f"#EXTVLCOPT:http-user-agent={ua}")
-            lines.append(f"#EXTVLCOPT:http-referrer={referrer}")
+        # ── Kodi headers ──
+        lines.append(f"#EXTVLCOPT:http-user-agent={ua}")
+        lines.append(f"#EXTVLCOPT:http-origin={BASE_URL}")
+        lines.append(f"#EXTVLCOPT:http-referrer={referrer}")
+        lines.append(
+            f"#KODIPROP:inputstream.adaptive.manifest_type={manifest_type}"
+        )
+        lines.append(
+            "#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey"
+        )
 
-            drm = e.get("drm_key")
-            if drm:
-                lines.append(
-                    f"#EXTVLCOPT:input-drm-clearkey={drm}"
-                )
-
+        drm = e.get("drm_key")
+        if drm:
             lines.append(
-                f'#EXTINF:-1 '
-                f'tvg-id="{e["group"].lower()}" '
-                f'tvg-name="{full_name}" '
-                f'tvg-logo="{e["logo"]}" '
-                f'group-title="{e["group"]}",{full_name}'
+                f"#KODIPROP:inputstream.adaptive.license_key={drm}"
             )
-            lines.append(final_url)
 
-        with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
-            f.write("\n".join(lines) + "\n")
+        lines.append(
+            f'#EXTINF:-1 '
+            f'tvg-id="{e["group"].lower()}" '
+            f'tvg-name="{full_name}" '
+            f'tvg-logo="{e["logo"]}" '
+            f'group-title="{e["group"]}",{full_name}'
+        )
+        lines.append(final_url)
 
-        log.info(f"\n  ✅ {OUTPUT_FILE} → {len(unique)} channel")
-        log.info(f"     Resolved: {resolved_count}/{len(unique)}")
+    with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
+        f.write("\n".join(lines) + "\n")
 
-    # ── 6. MAIN ──────────────────────────────────────────
-    def run(self):
-        log.info("=" * 50)
-        log.info("  VIPBox M3U Generator v6.1")
-        log.info(f"  Target : {BASE_URL}")
-        log.info(f"  Output : {OUTPUT_FILE}")
-        log.info("=" * 50)
-
-        all_entries = []
-        for slug, name in CATEGORIES:
-            entries = self.fetch_category(slug, name)
-            log.info(f"  {name}: {len(entries)} streams")
-            all_entries.extend(entries)
-            time.sleep(0.3)
-
-        log.info(f"\n  Total: {len(all_entries)} entries")
-        log.info("  Resolve stream URL...")
-
-        with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
-            futures = {
-                pool.submit(self.resolve_entry, e): e
-                for e in all_entries
-            }
-            done = 0
-            for fut in as_completed(futures):
-                done += 1
-                if done % 25 == 0:
-                    log.info(f"    {done}/{len(all_entries)}")
-                try:
-                    fut.result()
-                except Exception as ex:
-                    e = futures[fut]
-                    e["player_domain"] = "vipbox.ga"
-                    e["resolved_url"] = f"{BASE_URL}{e['live_uri']}"
-                    e["drm_key"] = None
-                    log.warning(f"    fail: {ex}")
-
-        self.write_m3u(all_entries)
-
-
-if __name__ == "__main__":
-    VIPBox().run()   
+    log.info(f"\n  ✅ {OUTPUT_FILE} → {len(unique)} channel")
+    log.info(f"     Resolved: {resolved_count}/{len(unique)}")   
