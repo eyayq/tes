@@ -8,13 +8,11 @@
 #EXTINF:-1 tvg-id="tennis" tvg-name="LIVE | Davis Cup: Italy vs Czech Republic [HD] | 27-11-2026 22:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/tennis.webp" group-title="Tennis",LIVE | Davis Cup: Italy vs Czech Republic [HD] | 27-11-2026 22:00 WIB
 https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/tpdofmrr84/out/v1/ad58961bd8fd48d2944e461c034b8914/cenc.mpd
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://otte.cache.aiv-cdn.net
-#EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=d3250252765347a0c2603c6cb4869f8c:0c19319460da7e9ed816db46ce839b37
 #EXTINF:-1 tvg-id="tennis" tvg-name="LIVE | Davis Cup: Italy vs Czech Republic [HD] | 27-11-2026 22:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/tennis.webp" group-title="Tennis",LIVE | Davis Cup: Italy vs Czech Republic [HD] | 27-11-2026 22:00 WIB
-https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/tpdofmrr84/out/v1/ad58961bd8fd48d2944e461c034b8914/cenc.mpd
+https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-origin=https://otte.cache.aiv-cdn.net
 #EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
@@ -176,21 +174,17 @@ https://0.now1.tv/CC///CC.php
 #EXTINF:-1 tvg-id="hockey" tvg-name="LIVE | Boston Bruins vs Toronto Maple Leafs [HD] | 28-11-2026 01:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/hockey.webp" group-title="Hockey",LIVE | Boston Bruins vs Toronto Maple Leafs [HD] | 28-11-2026 01:00 WIB
 https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/bcj3iscpd6/out/v1/fcd137b391214f7cb99dd4d7be90ca87/cenc.mpd
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://otte.cache.aiv-cdn.net
-#EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=1a5df53609ebc9857898c490f4724918:77f62980d582ec541280796acf8b2d19
 #EXTINF:-1 tvg-id="hockey" tvg-name="LIVE | Boston Bruins vs Toronto Maple Leafs [HD] | 28-11-2026 01:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/hockey.webp" group-title="Hockey",LIVE | Boston Bruins vs Toronto Maple Leafs [HD] | 28-11-2026 01:00 WIB
-https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/bcj3iscpd6/out/v1/fcd137b391214f7cb99dd4d7be90ca87/cenc.mpd
+https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://otte.cache.aiv-cdn.net
-#EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=1a5df53609ebc9857898c490f4724918:77f62980d582ec541280796acf8b2d19
 #EXTINF:-1 tvg-id="hockey" tvg-name="LIVE | Boston Bruins vs Toronto Maple Leafs [HD] | 28-11-2026 01:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/hockey.webp" group-title="Hockey",LIVE | Boston Bruins vs Toronto Maple Leafs [HD] | 28-11-2026 01:00 WIB
-https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/bcj3iscpd6/out/v1/fcd137b391214f7cb99dd4d7be90ca87/cenc.mpd
+https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-origin=https://otte.cache.aiv-cdn.net
 #EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
@@ -208,13 +202,11 @@ https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/bcj3iscpd6/out/v1
 #EXTINF:-1 tvg-id="hockey" tvg-name="LIVE | Boston Bruins vs Toronto Maple Leafs | 28-11-2026 01:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/hockey.webp" group-title="Hockey",LIVE | Boston Bruins vs Toronto Maple Leafs | 28-11-2026 01:00 WIB
 https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/bcj3iscpd6/out/v1/fcd137b391214f7cb99dd4d7be90ca87/cenc.mpd
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://otte.cache.aiv-cdn.net
-#EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=1a5df53609ebc9857898c490f4724918:77f62980d582ec541280796acf8b2d19
 #EXTINF:-1 tvg-id="hockey" tvg-name="LIVE | Boston Bruins vs Toronto Maple Leafs | 28-11-2026 01:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/hockey.webp" group-title="Hockey",LIVE | Boston Bruins vs Toronto Maple Leafs | 28-11-2026 01:00 WIB
-https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/bcj3iscpd6/out/v1/fcd137b391214f7cb99dd4d7be90ca87/cenc.mpd
+https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-origin=https://vipbox.ga
 #EXTVLCOPT:http-referrer=https://vipbox.ga/
@@ -254,37 +246,23 @@ https://0.now1.tv/CC///CC.php
 #EXTINF:-1 tvg-id="hockey" tvg-name="LIVE | New Jersey Devils vs Calgary Flames [HD] | 28-11-2026 01:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/hockey.webp" group-title="Hockey",LIVE | New Jersey Devils vs Calgary Flames [HD] | 28-11-2026 01:00 WIB
 https://otte.cache.aiv-cdn.net/iad-nitro/live/clients/dash/enc/lzphg2q9lg/out/v1/0d504a784fd9420b9d78329e1237240e/cenc.mpd
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://otte.cache.aiv-cdn.net
-#EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=451d417e2c3e09bfb36aeb56c99760f2:759d401cca37d7fdbde2916e618c412f
 #EXTINF:-1 tvg-id="hockey" tvg-name="LIVE | New Jersey Devils vs Calgary Flames [HD] | 28-11-2026 01:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/hockey.webp" group-title="Hockey",LIVE | New Jersey Devils vs Calgary Flames [HD] | 28-11-2026 01:00 WIB
-https://otte.cache.aiv-cdn.net/iad-nitro/live/clients/dash/enc/lzphg2q9lg/out/v1/0d504a784fd9420b9d78329e1237240e/cenc.mpd
+https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://otte.cache.aiv-cdn.net
-#EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=451d417e2c3e09bfb36aeb56c99760f2:759d401cca37d7fdbde2916e618c412f
 #EXTINF:-1 tvg-id="hockey" tvg-name="LIVE | New Jersey Devils vs Calgary Flames [HD] | 28-11-2026 01:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/hockey.webp" group-title="Hockey",LIVE | New Jersey Devils vs Calgary Flames [HD] | 28-11-2026 01:00 WIB
-https://otte.cache.aiv-cdn.net/iad-nitro/live/clients/dash/enc/lzphg2q9lg/out/v1/0d504a784fd9420b9d78329e1237240e/cenc.mpd
+https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://otte.cache.aiv-cdn.net
-#EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=451d417e2c3e09bfb36aeb56c99760f2:759d401cca37d7fdbde2916e618c412f
 #EXTINF:-1 tvg-id="hockey" tvg-name="LIVE | New Jersey Devils vs Calgary Flames [HD] | 28-11-2026 01:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/hockey.webp" group-title="Hockey",LIVE | New Jersey Devils vs Calgary Flames [HD] | 28-11-2026 01:00 WIB
-https://otte.cache.aiv-cdn.net/iad-nitro/live/clients/dash/enc/lzphg2q9lg/out/v1/0d504a784fd9420b9d78329e1237240e/cenc.mpd
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://otte.cache.aiv-cdn.net
-#EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
-#KODIPROP:inputstream.adaptive.manifest_type=dash
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=451d417e2c3e09bfb36aeb56c99760f2:759d401cca37d7fdbde2916e618c412f
-#EXTINF:-1 tvg-id="hockey" tvg-name="LIVE | New Jersey Devils vs Calgary Flames | 28-11-2026 01:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/hockey.webp" group-title="Hockey",LIVE | New Jersey Devils vs Calgary Flames | 28-11-2026 01:00 WIB
-https://otte.cache.aiv-cdn.net/iad-nitro/live/clients/dash/enc/lzphg2q9lg/out/v1/0d504a784fd9420b9d78329e1237240e/cenc.mpd
+https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-origin=https://otte.cache.aiv-cdn.net
 #EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
@@ -297,7 +275,7 @@ https://otte.cache.aiv-cdn.net/iad-nitro/live/clients/dash/enc/lzphg2q9lg/out/v1
 #EXTVLCOPT:http-origin=https://vipbox.ga
 #EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="hockey" tvg-name="LIVE | Herlev vs Esbjerg | 28-11-2026 01:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/denmark.webp" group-title="Hockey",LIVE | Herlev vs Esbjerg | 28-11-2026 01:00 WIB
+#EXTINF:-1 tvg-id="hockey" tvg-name="LIVE | New Jersey Devils vs Calgary Flames | 28-11-2026 01:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/hockey.webp" group-title="Hockey",LIVE | New Jersey Devils vs Calgary Flames | 28-11-2026 01:00 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-origin=https://vipbox.ga
@@ -309,25 +287,7 @@ https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-origin=https://vipbox.ga
 #EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="football" tvg-name="LIVE | Hansa Rostock vs TSV Havelse [Deutsch] [HD] | 28-11-2026 01:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/germany.webp" group-title="Football",LIVE | Hansa Rostock vs TSV Havelse [Deutsch] [HD] | 28-11-2026 01:00 WIB
-https://0.now1.tv/CC///CC.php
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://vipbox.ga
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="football" tvg-name="LIVE | Hansa Rostock vs TSV Havelse [Deutsch] | 28-11-2026 01:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/germany.webp" group-title="Football",LIVE | Hansa Rostock vs TSV Havelse [Deutsch] | 28-11-2026 01:00 WIB
-https://0.now1.tv/CC///CC.php
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://vipbox.ga
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="rugby" tvg-name="LIVE | US Dax vs US Oyonnax [HD] | 28-11-2026 01:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/france.webp" group-title="Rugby",LIVE | US Dax vs US Oyonnax [HD] | 28-11-2026 01:00 WIB
-https://0.now1.tv/CC///CC.php
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://vipbox.ga
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="rugby" tvg-name="LIVE | US Dax vs US Oyonnax | 28-11-2026 01:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/france.webp" group-title="Rugby",LIVE | US Dax vs US Oyonnax | 28-11-2026 01:00 WIB
+#EXTINF:-1 tvg-id="hockey" tvg-name="LIVE | Herlev vs Esbjerg | 28-11-2026 01:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/denmark.webp" group-title="Hockey",LIVE | Herlev vs Esbjerg | 28-11-2026 01:00 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-origin=https://vipbox.ga
@@ -1364,13 +1324,11 @@ https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/1wlv9dr4vx/out/v1
 #EXTINF:-1 tvg-id="football" tvg-name="LIVE | Nottingham Forest vs Chelsea [Português] [HD] | 28-11-2026 03:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/england.webp" group-title="Football",LIVE | Nottingham Forest vs Chelsea [Português] [HD] | 28-11-2026 03:00 WIB
 https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/1wlv9dr4vx/out/v1/632322be5f1047acb2472f90f8857182/cenc.mpd
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://otte.cache.aiv-cdn.net
-#EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=42f72c025dd53039244adc13b7e31dad:a7bd941a19f6dd14f3004a623a6ad3a1
 #EXTINF:-1 tvg-id="football" tvg-name="LIVE | Nottingham Forest vs Chelsea | 28-11-2026 03:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/england.webp" group-title="Football",LIVE | Nottingham Forest vs Chelsea | 28-11-2026 03:00 WIB
-https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/1wlv9dr4vx/out/v1/632322be5f1047acb2472f90f8857182/cenc.mpd
+https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-origin=https://otte.cache.aiv-cdn.net
 #EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
@@ -1396,13 +1354,11 @@ https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/1wlv9dr4vx/out/v1
 #EXTINF:-1 tvg-id="football" tvg-name="LIVE | Nottingham Forest vs Chelsea [Deutsch] | 28-11-2026 03:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/england.webp" group-title="Football",LIVE | Nottingham Forest vs Chelsea [Deutsch] | 28-11-2026 03:00 WIB
 https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/1wlv9dr4vx/out/v1/632322be5f1047acb2472f90f8857182/cenc.mpd
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://otte.cache.aiv-cdn.net
-#EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=42f72c025dd53039244adc13b7e31dad:a7bd941a19f6dd14f3004a623a6ad3a1
 #EXTINF:-1 tvg-id="football" tvg-name="LIVE | Nottingham Forest vs Chelsea [Italiano] | 28-11-2026 03:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/england.webp" group-title="Football",LIVE | Nottingham Forest vs Chelsea [Italiano] | 28-11-2026 03:00 WIB
-https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/1wlv9dr4vx/out/v1/632322be5f1047acb2472f90f8857182/cenc.mpd
+https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-origin=https://otte.cache.aiv-cdn.net
 #EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
@@ -1463,24 +1419,6 @@ https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-origin=https://vipbox.ga
 #EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="football" tvg-name="LIVE | France W vs Venezuela W | 28-11-2026 03:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/football.webp" group-title="Football",LIVE | France W vs Venezuela W | 28-11-2026 03:00 WIB
-https://0.now1.tv/CC///CC.php
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://vipbox.ga
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="football" tvg-name="LIVE | France W vs Venezuela W | 28-11-2026 03:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/football.webp" group-title="Football",LIVE | France W vs Venezuela W | 28-11-2026 03:00 WIB
-https://0.now1.tv/CC///CC.php
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://vipbox.ga
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="football" tvg-name="LIVE | France W vs Venezuela W | 28-11-2026 03:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/football.webp" group-title="Football",LIVE | France W vs Venezuela W | 28-11-2026 03:00 WIB
-https://0.now1.tv/CC///CC.php
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://vipbox.ga
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#KODIPROP:inputstream.adaptive.manifest_type=dash
 #EXTINF:-1 tvg-id="rugby" tvg-name="LIVE | Provence Rugby vs Montauban [HD] | 28-11-2026 03:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/france.webp" group-title="Rugby",LIVE | Provence Rugby vs Montauban [HD] | 28-11-2026 03:00 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
@@ -1522,21 +1460,17 @@ https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/z1mmauev4g/out/v1
 #EXTINF:-1 tvg-id="rugby" tvg-name="LIVE | Ireland vs Australia [HD] | 28-11-2026 03:10 WIB" tvg-logo="https://static.vipbox.ga/img/home/rugby.webp" group-title="Rugby",LIVE | Ireland vs Australia [HD] | 28-11-2026 03:10 WIB
 https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/z1mmauev4g/out/v1/40b826b7f7d449559a5e4e3c2ac3fca2/cenc.mpd
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://otte.cache.aiv-cdn.net
-#EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=63a084a354d126bcd099c9eabf0cbb93:bd2b00bce574c33af46d0538937b3ac3
 #EXTINF:-1 tvg-id="rugby" tvg-name="LIVE | Ireland vs Australia | 28-11-2026 03:10 WIB" tvg-logo="https://static.vipbox.ga/img/home/rugby.webp" group-title="Rugby",LIVE | Ireland vs Australia | 28-11-2026 03:10 WIB
-https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/z1mmauev4g/out/v1/40b826b7f7d449559a5e4e3c2ac3fca2/cenc.mpd
+https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://otte.cache.aiv-cdn.net
-#EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
-#KODIPROP:inputstream.adaptive.license_key=63a084a354d126bcd099c9eabf0cbb93:bd2b00bce574c33af46d0538937b3ac3
 #EXTINF:-1 tvg-id="rugby" tvg-name="LIVE | Ireland vs Australia | 28-11-2026 03:10 WIB" tvg-logo="https://static.vipbox.ga/img/home/rugby.webp" group-title="Rugby",LIVE | Ireland vs Australia | 28-11-2026 03:10 WIB
-https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/z1mmauev4g/out/v1/40b826b7f7d449559a5e4e3c2ac3fca2/cenc.mpd
+https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-origin=https://vipbox.ga
 #EXTVLCOPT:http-referrer=https://vipbox.ga/
@@ -6683,6 +6617,18 @@ https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-origin=https://vipbox.ga
 #EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
+#EXTINF:-1 tvg-id="football" tvg-name="UPCOMING | Salford City vs Gillingham | 28-11-2026 22:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/england.webp" group-title="Football",UPCOMING | Salford City vs Gillingham | 28-11-2026 22:00 WIB
+https://0.now1.tv/CC///CC.php
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#KODIPROP:inputstream.adaptive.manifest_type=dash
+#EXTINF:-1 tvg-id="football" tvg-name="UPCOMING | Shrewsbury Town vs Cheltenham Town | 28-11-2026 22:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/england.webp" group-title="Football",UPCOMING | Shrewsbury Town vs Cheltenham Town | 28-11-2026 22:00 WIB
+https://0.now1.tv/CC///CC.php
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#KODIPROP:inputstream.adaptive.manifest_type=dash
 #EXTINF:-1 tvg-id="boxing" tvg-name="UPCOMING | Agit Kabayel vs Nelson Hysa: Prelims | 28-11-2026 22:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/boxing.webp" group-title="Boxing",UPCOMING | Agit Kabayel vs Nelson Hysa: Prelims | 28-11-2026 22:00 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
@@ -6816,6 +6762,24 @@ https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #EXTINF:-1 tvg-id="others" tvg-name="UPCOMING | Puente Genil vs Puerto Sagunto | 28-11-2026 23:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/handball.webp" group-title="Others",UPCOMING | Puente Genil vs Puerto Sagunto | 28-11-2026 23:00 WIB
+https://0.now1.tv/CC///CC.php
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#KODIPROP:inputstream.adaptive.manifest_type=dash
+#EXTINF:-1 tvg-id="motorsports" tvg-name="UPCOMING | FIA Formula 2 2026: Qatar F2GP Sprint Race | 28-11-2026 23:10 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",UPCOMING | FIA Formula 2 2026: Qatar F2GP Sprint Race | 28-11-2026 23:10 WIB
+https://0.now1.tv/CC///CC.php
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#KODIPROP:inputstream.adaptive.manifest_type=dash
+#EXTINF:-1 tvg-id="motorsports" tvg-name="UPCOMING | FIA Formula 2 2026: Qatar F2GP Sprint Race [HD] | 28-11-2026 23:10 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",UPCOMING | FIA Formula 2 2026: Qatar F2GP Sprint Race [HD] | 28-11-2026 23:10 WIB
+https://0.now1.tv/CC///CC.php
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#KODIPROP:inputstream.adaptive.manifest_type=dash
+#EXTINF:-1 tvg-id="motorsports" tvg-name="UPCOMING | FIA Formula 2 2026: Qatar F2GP Sprint Race | 28-11-2026 23:10 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",UPCOMING | FIA Formula 2 2026: Qatar F2GP Sprint Race | 28-11-2026 23:10 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-origin=https://vipbox.ga
