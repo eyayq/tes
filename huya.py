@@ -36,7 +36,7 @@ STATIC_URL = "https://static.vipbox.ga"
 OUTPUT_FILE = "playlist.m3u"
 WIB = timezone(timedelta(hours=7))
 TIMEOUT = 30
-MAX_WORKERS = 2
+MAX_WORKERS = 20
 IMPERSONATE = "chrome"
 MAX_RETRIES = 3
 REQUEST_DELAY = 0.5
