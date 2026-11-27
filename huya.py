@@ -53,7 +53,11 @@ GC_TO_GROUP = {
     "darts": "Darts", "mma": "MMA", "boxing": "Boxing",
     "fighting": "Fighting", "motorsports": "Motorsports",
     "formula-1": "Motorsports", "motogp": "Motorsports",
+    "nascar": "Motorsports",
     "american-football": "NFL",
+    "wwe": "WWE",
+    "cycling": "Others", "handball": "Others", "snooker": "Others",
+    "volleyball": "Others", "sports": "Others",
     "others": "Others", "other-sports": "Others",
 }
 
@@ -196,7 +200,6 @@ class VIPBox:
             if not ev_links:
                 ev_links = [{"player": "?", "lang": "", "hd": 0}]
 
-            # ── PAKAI SLUG + LINK_APPENDS ──
             slug = slugs.get(ev_id, ev_id)
             append_gc = link_appends.get(ev_id, ev["gc"])
             group = GC_TO_GROUP.get(append_gc, name)
@@ -275,12 +278,13 @@ class VIPBox:
 
     def _icon_to_logo(self, icon_cls):
         m = {
-            "nascar": "nfl", "formula-1": "motorsports",
+            "nascar": "motorsports", "formula-1": "motorsports",
             "motogp": "motorsports", "college-football": "ncaaf",
             "soccer": "football", "other-sports": "other-sports",
             "college-basketball": "basketball",
             "nba": "basketball", "nfl": "nfl",
             "davis-cup": "tennis", "khl": "hockey",
+            "nhl": "hockey",
             "worldcup": "football", "bahrain": "football",
             "qatar": "football", "romania": "football",
             "serbia": "football", "slovenia": "football",
@@ -288,7 +292,6 @@ class VIPBox:
             "czech-republic": "hockey", "finland": "hockey",
             "australia": "basketball", "south-korea": "basketball",
             "italy": "basketball", "television": "nfl",
-            "nhl": "hockey",
         }
         key = m.get(icon_cls, icon_cls) if icon_cls else "football"
         return f"{STATIC_URL}/img/home/{key}.webp"
@@ -326,7 +329,7 @@ class VIPBox:
             html = r.text
             log.info(f"    GET {uri} → {r.status_code}, {len(html)}B")
 
-            # ── Coba data-* attributes ──
+            # ── data-* attributes ──
             all_pldm = re.findall(r'data-pldm="([^"]+)"', html)
             all_play = re.findall(r'data-play="([^"]+)"', html)
 
@@ -358,7 +361,7 @@ class VIPBox:
                         self.uri_cache[uri] = result
                     return result
 
-            # ── Ekstrak window['...'] obfuscated variable ──
+            # ── window['...'] obfuscated ──
             m = re.search(
                 r"window\[['\"]([A-Za-z0-9_\-]+)['\"]\]\s*=\s*['\"]([^'\"]+)['\"]",
                 html
@@ -372,13 +375,11 @@ class VIPBox:
             win_val = m.group(2)
             log.info(f"    window var len={len(win_val)}")
 
-            # ── Decode base64 ──
             try:
                 decoded = base64.b64decode(win_val)
             except Exception:
                 decoded = win_val.encode()
 
-            # ── Parse decoded content ──
             result = self._parse_decoded_player(decoded, win_val, html)
 
         except Exception as ex:
@@ -392,7 +393,6 @@ class VIPBox:
         result = []
         text = decoded_bytes.decode("utf-8", errors="ignore")
 
-        # ── Coba JSON ──
         try:
             data = json.loads(text)
             if isinstance(data, dict):
@@ -413,7 +413,6 @@ class VIPBox:
         except Exception:
             pass
 
-        # ── Coba parse sebagai URL langsung ──
         if not result:
             url_m = re.search(
                 r'(https?://[^\s"\'<>]+\.(?:mpd|m3u8|flv)[^\s"\'<>]*)',
@@ -436,7 +435,6 @@ class VIPBox:
                     "_direct_url": stream_url,
                 })
 
-        # ── Fallback: regex di raw HTML ──
         if not result:
             url_m = re.search(
                 r'(https?://[^\s"\'<>]+\.(?:mpd|m3u8|flv)[^\s"\'<>]*)',
@@ -559,7 +557,6 @@ class VIPBox:
     def resolve_entry(self, e):
         params_list = self.get_play_params(e)
 
-        # Retry 1x kalau event live tapi params kosong
         if not params_list and e.get("time") and \
                 e["time"] <= datetime.now(WIB):
             log.info(f"    Retry {e['name']} (5s delay)")
