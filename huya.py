@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """
-VIPBox M3U Generator v8.0
-Mode debug: python vipbox.py --debug
+VIPBox M3U Generator v8.1
+Usage:
+  python vipbox.py           # full run
+  python vipbox.py --debug   # debug football + 24/7
 """
 
 from curl_cffi import requests as cffi_requests
@@ -18,7 +20,7 @@ from datetime import datetime, timedelta, timezone
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from urllib.parse import urlparse
 
-# ── DEBUG MODE ──
+# ── CONFIG ───────────────────────────────────────────────
 DEBUG = "--debug" in sys.argv
 DEBUG_DIR = "debug_output"
 if DEBUG:
@@ -29,9 +31,10 @@ STATIC_URL = "https://static.vipbox.ga"
 OUTPUT_FILE = "playlist.m3u"
 WIB = timezone(timedelta(hours=7))
 TIMEOUT = 30
-MAX_WORKERS = 4
+MAX_WORKERS = 2
 IMPERSONATE = "chrome"
 MAX_RETRIES = 3
+REQUEST_DELAY = 0.5
 
 HEADERS = {
     "User-Agent": (
@@ -83,14 +86,12 @@ log = logging.getLogger("VIPBox")
 
 
 def debug_save(name, content):
-    """Simpan konten ke file debug."""
     if not DEBUG:
         return
-    safe_name = re.sub(r'[^a-zA-Z0-9_\-\.]', '_', name)
-    path = os.path.join(DEBUG_DIR, safe_name)
+    safe = re.sub(r'[^a-zA-Z0-9_\-\.]', '_', name)
+    path = os.path.join(DEBUG_DIR, safe)
     with open(path, "w", encoding="utf-8") as f:
         f.write(content if isinstance(content, str) else str(content))
-    log.debug(f"  [DEBUG] Saved: {path}")
 
 
 def extract_json_block(text, var_name):
@@ -128,42 +129,6 @@ def extract_json_block(text, var_name):
     return None
 
 
-def extract_all_json_blocks(text, var_pattern):
-    """FIX: Ekstrak SEMUA blok JSON yang match pattern (bukan cuma 1)."""
-    results = []
-    for m in re.finditer(var_pattern, text):
-        brace_start = text.find("{", m.start())
-        if brace_start == -1:
-            continue
-        depth = 0
-        in_str = False
-        esc = False
-        for i in range(brace_start, len(text)):
-            c = text[i]
-            if esc:
-                esc = False
-                continue
-            if c == '\\':
-                esc = True
-                continue
-            if c == '"' and not in_str:
-                in_str = True
-            elif c == '"' and in_str:
-                in_str = False
-            elif not in_str:
-                if c == '{':
-                    depth += 1
-                elif c == '}':
-                    depth -= 1
-                    if depth == 0:
-                        try:
-                            results.append(json.loads(text[brace_start:i+1]))
-                        except json.JSONDecodeError:
-                            pass
-                        break
-    return results
-
-
 class VIPBox:
     def __init__(self):
         self.s = cffi_requests.Session(impersonate=IMPERSONATE)
@@ -193,16 +158,12 @@ class VIPBox:
 
         sched_data = cfg.get("scheduleData", "")
         token = cfg.get("fetck_token", "")
-
         post_url = f"{BASE_URL}/schedule/{sched_data}/"
-        post_hdrs = {
-            "fetch-token": token,
-            "Referer": url,
-            "Origin": BASE_URL,
-            "Content-Type": "application/json",
-        }
         try:
-            r2 = self.s.post(post_url, headers=post_hdrs, timeout=TIMEOUT)
+            r2 = self.s.post(post_url, headers={
+                "fetch-token": token, "Referer": url,
+                "Origin": BASE_URL, "Content-Type": "application/json",
+            }, timeout=TIMEOUT)
             debug_save(f"schedule_{slug}_post.json", r2.text)
             data = r2.json()
         except Exception as e:
@@ -232,16 +193,14 @@ class VIPBox:
 
         sched_data = cfg.get("scheduleData", "")
         token = cfg.get("fetck_token", "")
-
-        post_url = f"{BASE_URL}/schedule/{sched_data}/"
-        post_hdrs = {
-            "fetch-token": token,
-            "Referer": url,
-            "Origin": BASE_URL,
-            "Content-Type": "application/json",
-        }
         try:
-            r2 = self.s.post(post_url, headers=post_hdrs, timeout=TIMEOUT)
+            r2 = self.s.post(
+                f"{BASE_URL}/schedule/{sched_data}/",
+                headers={
+                    "fetch-token": token, "Referer": url,
+                    "Origin": BASE_URL, "Content-Type": "application/json",
+                }, timeout=TIMEOUT
+            )
             debug_save("schedule_livenow_post.json", r2.text)
             data = r2.json()
         except Exception as e:
@@ -271,18 +230,13 @@ class VIPBox:
             for i, lk in enumerate(ev_links, 1):
                 live_uri = f"/live/{append_gc}/{slug}-{i}"
                 results.append({
-                    "name": ev["title"],
-                    "group": group,
-                    "logo": ev["logo"],
-                    "time": ev["time"],
+                    "name": ev["title"], "group": group,
+                    "logo": ev["logo"], "time": ev["time"],
                     "player": lk.get("player", "?"),
-                    "lang": lk.get("lang", ""),
-                    "hd": lk.get("hd", 0),
+                    "lang": lk.get("lang", ""), "hd": lk.get("hd", 0),
                     "live_uri": live_uri,
                     "onair_uri": ev["onair_uri"],
-                    "eid": ev_id,
-                    "link_no": i,
-                    "gc": append_gc,
+                    "eid": ev_id, "link_no": i, "gc": append_gc,
                 })
         return results
 
@@ -300,12 +254,10 @@ class VIPBox:
             a = d.find("a")
             if not a:
                 continue
-
             title = a.get("title", "").strip()
             eid = a.get("data-bs-target", "").lstrip("#")
             if not eid:
                 continue
-
             href = a.get("href", "")
             onair_uri = href
             gc = "others"
@@ -331,11 +283,8 @@ class VIPBox:
                         break
 
             events.append({
-                "title": title,
-                "id": eid,
-                "time": etime,
-                "onair_uri": onair_uri,
-                "gc": gc,
+                "title": title, "id": eid, "time": etime,
+                "onair_uri": onair_uri, "gc": gc,
                 "logo": self._icon_to_logo(icon_cls),
             })
         return events
@@ -347,8 +296,7 @@ class VIPBox:
             "soccer": "football", "other-sports": "other-sports",
             "college-basketball": "basketball",
             "nba": "basketball", "nfl": "nfl",
-            "davis-cup": "tennis", "khl": "hockey",
-            "nhl": "hockey",
+            "davis-cup": "tennis", "khl": "hockey", "nhl": "hockey",
             "worldcup": "football", "bahrain": "football",
             "qatar": "football", "romania": "football",
             "serbia": "football", "slovenia": "football",
@@ -362,13 +310,11 @@ class VIPBox:
 
     # ── 2. EKSTRAK PARAM VIDEO ───────────────────────────
     def get_play_params(self, e):
-        """Gabungkan hasil dari onair_uri DAN live_uri."""
         with self._lock:
             if e["eid"] in self.onair_cache:
                 return self.onair_cache[e["eid"]]
 
         all_params = []
-
         if e["onair_uri"]:
             params = self._extract_all_from_page(e["onair_uri"])
             if params:
@@ -389,7 +335,6 @@ class VIPBox:
         return all_params
 
     def _extract_all_from_page(self, uri):
-        """Kumpulkan SEMUA sumber player dari halaman."""
         with self._lock:
             if uri in self.uri_cache:
                 return self.uri_cache[uri]
@@ -400,33 +345,22 @@ class VIPBox:
             r = self.s.get(url, timeout=TIMEOUT,
                            headers={"Referer": f"{BASE_URL}/"})
             html = r.text
-            debug_save(f"player_{uri.strip('/').replace('/', '_')}.html", html)
+            debug_save(
+                f"player_{uri.strip('/').replace('/', '_')}.html", html
+            )
             log.info(f"    GET {uri} → {r.status_code}, {len(html)}B")
             soup = BeautifulSoup(html, "html.parser")
             cfg = self._extract_site_config(soup) or {}
 
-            # ── Sumber 1: data-* attributes (per-element) ──
             result.extend(self._extract_data_attrs(soup, cfg))
-
-            # ── Sumber 2: window['...'] obfuscated (SEMUA) ──
             result.extend(self._extract_window_vars(html, cfg))
-
-            # ── Sumber 3: iframe src ──
             result.extend(self._extract_iframe_players(soup, cfg))
-
-            # ── Sumber 4: URL stream langsung di HTML ──
             result.extend(self._extract_direct_urls(html))
-
-            # ── Sumber 5: data-src, data-url, data-href attributes ──
             result.extend(self._extract_data_url_attrs(soup, cfg))
-
-            # ── Sumber 6: fetch/XHR URL patterns ──
-            result.extend(self._extract_fetch_urls(html, cfg))
 
         except Exception as ex:
             log.debug(f"    GET fail {uri}: {ex}")
 
-        # Dedup
         seen = set()
         unique = []
         for p in result:
@@ -435,22 +369,15 @@ class VIPBox:
                 seen.add(key)
                 unique.append(p)
 
-        log.info(f"    Extracted {len(unique)} player params from {uri}")
+        log.info(f"    Extracted {len(unique)} params from {uri}")
         if not unique:
-            log.warning(f"    ⚠️ NO PLAYER DATA FOUND in {uri}")
-            if DEBUG:
-                # Tampilkan semua script tags untuk debugging
-                for sc in soup.find_all("script"):
-                    t = sc.string or sc.get_text()
-                    if t and len(t.strip()) > 10:
-                        log.debug(f"    [SCRIPT] {t[:200]}...")
+            log.warning(f"    ⚠️ NO PLAYER DATA in {uri}")
 
         with self._lock:
             self.uri_cache[uri] = unique
         return unique
 
     def _extract_data_attrs(self, soup, cfg):
-        """Parse per-element untuk pairing yang benar."""
         result = []
         for el in soup.find_all(attrs={"data-pldm": True}):
             pldm = el.get("data-pldm", "")
@@ -458,8 +385,7 @@ class VIPBox:
             if not pldm or not play:
                 continue
             result.append({
-                "pldm": pldm,
-                "play": play,
+                "pldm": pldm, "play": play,
                 "pid": el.get("data-pid", "6"),
                 "player": el.get("data-player", "jw"),
                 "gc": el.get("data-gc", "motorsports"),
@@ -471,58 +397,46 @@ class VIPBox:
         return result
 
     def _extract_window_vars(self, html, cfg):
-        """Ambil SEMUA window['...'] = '...' vars."""
         result = []
-        # Pattern 1: window['xxx'] = 'base64string'
-        all_matches = re.findall(
+        matches = re.findall(
             r"window\[['\"]([A-Za-z0-9_\-]+)['\"]\]\s*=\s*['\"]([^'\"]+)['\"]",
             html
         )
-        # Pattern 2: window.xxx = 'base64string'
-        all_matches2 = re.findall(
+        matches += re.findall(
             r"window\.([A-Za-z0-9_\-]+)\s*=\s*['\"]([^'\"]{20,})['\"]",
             html
         )
-        # Pattern 3: var xxx = 'base64string' (long strings)
-        all_matches3 = re.findall(
+        matches += re.findall(
             r"(?:var|let|const)\s+([A-Za-z0-9_\-]+)\s*=\s*['\"]([^'\"]{50,})['\"]",
             html
         )
 
         seen_vars = set()
-        for var_name, win_val in all_matches + all_matches2 + all_matches3:
-            if var_name in seen_vars:
+        for var_name, val in matches:
+            if var_name in seen_vars or len(val) < 20:
                 continue
             seen_vars.add(var_name)
-
-            if len(win_val) < 20:
-                continue
-
             try:
-                decoded = base64.b64decode(win_val)
+                decoded = base64.b64decode(val)
                 text = decoded.decode("utf-8", errors="ignore")
             except Exception:
-                text = win_val
-
-            parsed = self._parse_decoded_player(text, html, cfg)
-            result.extend(parsed)
-
+                text = val
+            result.extend(self._parse_decoded_player(text, html, cfg))
         return result
 
     def _extract_iframe_players(self, soup, cfg):
-        """Ekstrak player dari iframe."""
         result = []
         for iframe in soup.find_all("iframe"):
             src = iframe.get("src", "") or iframe.get("data-src", "")
             if not src:
                 continue
-            parsed = urlparse(src if "://" in src else f"https://{src}")
+            full = src if "://" in src else f"https://{src}"
+            parsed = urlparse(full)
             if parsed.netloc and "vipbox" not in parsed.netloc:
                 result.append({
                     "pldm": parsed.netloc,
-                    "play": f"{parsed.scheme}://{parsed.netloc}{parsed.path}",
-                    "pid": "6",
-                    "player": "iframe",
+                    "play": full,
+                    "pid": "6", "player": "iframe",
                     "gc": "motorsports",
                     "csrf": cfg.get("csrf", ""),
                     "csrf_ip": cfg.get("csrf_ip", ""),
@@ -532,9 +446,7 @@ class VIPBox:
         return result
 
     def _extract_direct_urls(self, html):
-        """Cari URL stream langsung di HTML."""
         result = []
-        # Cari semua URL yang terlihat seperti stream
         patterns = [
             r'(https?://[^\s"\'<>\\]+\.(?:m3u8|mpd|flv|ts)[^\s"\'<>\\]*)',
             r'(https?://[^\s"\'<>\\]*/live/[^\s"\'<>\\]+)',
@@ -544,42 +456,35 @@ class VIPBox:
         seen = set()
         for pat in patterns:
             for m in re.findall(pat, html):
-                if m in seen:
+                if "vipbox.ga" in m or m in seen:
                     continue
                 seen.add(m)
                 parsed = urlparse(m)
-                domain = parsed.netloc if parsed.netloc else "vipbox.ga"
                 result.append({
-                    "pldm": domain,
-                    "play": m,
-                    "pid": "6",
-                    "player": "direct",
+                    "pldm": parsed.netloc or "vipbox.ga",
+                    "play": m, "pid": "6", "player": "direct",
                     "gc": "motorsports",
-                    "csrf": "",
-                    "csrf_ip": "",
-                    "sec_expires": "",
-                    "sec_hash": "",
+                    "csrf": "", "csrf_ip": "",
+                    "sec_expires": "", "sec_hash": "",
                     "_direct_url": m,
                 })
         return result
 
     def _extract_data_url_attrs(self, soup, cfg):
-        """Cari data-src, data-url, data-href, data-stream attributes."""
         result = []
-        url_attrs = ["data-src", "data-url", "data-href", "data-stream",
-                     "data-video", "data-file"]
-        for attr in url_attrs:
+        for attr in ("data-src", "data-url", "data-href",
+                     "data-stream", "data-video", "data-file"):
             for el in soup.find_all(attrs={attr: True}):
                 url = el.get(attr, "")
                 if not url or not url.startswith("http"):
                     continue
+                if "vipbox.ga" in url:
+                    continue
                 parsed = urlparse(url)
                 if parsed.netloc:
                     result.append({
-                        "pldm": parsed.netloc,
-                        "play": url,
-                        "pid": "6",
-                        "player": "data_attr",
+                        "pldm": parsed.netloc, "play": url,
+                        "pid": "6", "player": "data_attr",
                         "gc": "motorsports",
                         "csrf": cfg.get("csrf", ""),
                         "csrf_ip": cfg.get("csrf_ip", ""),
@@ -589,36 +494,8 @@ class VIPBox:
                     })
         return result
 
-    def _extract_fetch_urls(self, html, cfg):
-        """Cari URL dari fetch()/axios patterns di JavaScript."""
-        result = []
-        # Cari fetch('url') atau fetch("url")
-        fetch_urls = re.findall(
-            r"""(?:fetch|axios\.(?:get|post))\(\s*['"]([^'"]+)['"]""",
-            html
-        )
-        for url in fetch_urls:
-            if any(ext in url for ext in (".m3u8", ".mpd", "/live/", "/hls/")):
-                parsed = urlparse(url if "://" in url else f"https://{url}")
-                domain = parsed.netloc if parsed.netloc else "vipbox.ga"
-                result.append({
-                    "pldm": domain,
-                    "play": url,
-                    "pid": "6",
-                    "player": "fetch",
-                    "gc": "motorsports",
-                    "csrf": cfg.get("csrf", ""),
-                    "csrf_ip": cfg.get("csrf_ip", ""),
-                    "sec_expires": cfg.get("sec_expires", ""),
-                    "sec_hash": cfg.get("sec_hash", ""),
-                    "_direct_url": url,
-                })
-        return result
-
     def _parse_decoded_player(self, text, html, cfg):
-        """Parse decoded player data - handle dict, list, nested."""
         result = []
-
         try:
             data = json.loads(text)
             if isinstance(data, list):
@@ -628,18 +505,14 @@ class VIPBox:
                         if p:
                             result.append(p)
             elif isinstance(data, dict):
-                if "players" in data and isinstance(data["players"], list):
-                    for item in data["players"]:
-                        if isinstance(item, dict):
-                            p = self._dict_to_params(item, cfg)
-                            if p:
-                                result.append(p)
-                elif "sources" in data and isinstance(data["sources"], list):
-                    for item in data["sources"]:
-                        if isinstance(item, dict):
-                            p = self._dict_to_params(item, cfg)
-                            if p:
-                                result.append(p)
+                for key in ("players", "sources", "streams"):
+                    if key in data and isinstance(data[key], list):
+                        for item in data[key]:
+                            if isinstance(item, dict):
+                                p = self._dict_to_params(item, cfg)
+                                if p:
+                                    result.append(p)
+                        break
                 else:
                     p = self._dict_to_params(data, cfg)
                     if p:
@@ -647,32 +520,26 @@ class VIPBox:
         except (json.JSONDecodeError, TypeError):
             pass
 
-        # Fallback: cari URL stream di text
         if not result:
             urls = re.findall(
                 r'(https?://[^\s"\'<>\\]+\.(?:m3u8|mpd|flv)[^\s"\'<>\\]*)',
                 text
             )
-            for stream_url in urls:
-                parsed = urlparse(stream_url)
-                domain = parsed.netloc if parsed.netloc else "vipbox.ga"
+            for u in urls:
+                if "vipbox.ga" in u:
+                    continue
+                parsed = urlparse(u)
                 result.append({
-                    "pldm": domain,
-                    "play": stream_url,
-                    "pid": "6",
-                    "player": "direct",
+                    "pldm": parsed.netloc or "vipbox.ga",
+                    "play": u, "pid": "6", "player": "direct",
                     "gc": "motorsports",
-                    "csrf": "",
-                    "csrf_ip": "",
-                    "sec_expires": "",
-                    "sec_hash": "",
-                    "_direct_url": stream_url,
+                    "csrf": "", "csrf_ip": "",
+                    "sec_expires": "", "sec_hash": "",
+                    "_direct_url": u,
                 })
-
         return result
 
     def _dict_to_params(self, data, cfg):
-        """Konversi dict player config ke params."""
         pldm = (data.get("pldm", "") or data.get("domain", "") or
                 data.get("server", "") or data.get("host", ""))
         play = (data.get("play", "") or data.get("vimg", "") or
@@ -681,8 +548,7 @@ class VIPBox:
         if not pldm or not play:
             return None
         return {
-            "pldm": pldm,
-            "play": play,
+            "pldm": pldm, "play": play,
             "pid": str(data.get("pid", "6")),
             "player": data.get("player", "jw"),
             "gc": data.get("gc", "motorsports"),
@@ -694,26 +560,21 @@ class VIPBox:
 
     # ── 3. POST KE PLAYER ────────────────────────────────
     def get_stream_from_player(self, params):
-        """Return list of (url, domain, drm_key)."""
         if params.get("_direct_url"):
             url = params["_direct_url"]
             parsed = urlparse(url)
-            domain = parsed.netloc if parsed.netloc else params["pldm"]
-            return [(url, domain, None)]
+            return [(url, parsed.netloc or params["pldm"], None)]
 
         pldm = params["pldm"]
         gc = params["gc"]
         cache_key = (pldm, params["play"])
-
         with self._lock:
             if cache_key in self.play_cache:
                 return self.play_cache[cache_key]
 
         payload_dict = {
-            "pid": params["pid"],
-            "vimg": params["play"],
-            "player": params["player"],
-            "csrf": params["csrf"],
+            "pid": params["pid"], "vimg": params["play"],
+            "player": params["player"], "csrf": params["csrf"],
             "csrf_ip": params["csrf_ip"],
             "expires": params["sec_expires"],
             "sec_hash": params["sec_hash"],
@@ -722,29 +583,24 @@ class VIPBox:
             json.dumps(payload_dict, separators=(",", ":")).encode()
         ).decode()
 
-        # FIX: Coba beberapa endpoint patterns
         post_urls = [
             f"https://{pldm}/vimpl/{gc}",
             f"https://{pldm}/vimpl",
             f"https://{pldm}/player/{gc}",
-            f"https://{pldm}/api/play",
         ]
 
         stream_urls = []
-        domain = pldm
-        drm_key = None
-
         for post_url in post_urls:
             if stream_urls:
                 break
-
             for attempt in range(MAX_RETRIES):
                 try:
                     r = self.s.post(
                         post_url,
                         data={"payload": payload_b64},
                         headers={
-                            "Content-Type": "application/x-www-form-urlencoded",
+                            "Content-Type":
+                                "application/x-www-form-urlencoded",
                             "Origin": BASE_URL,
                             "Referer": f"{BASE_URL}/",
                             "Sec-Fetch-Site": "cross-site",
@@ -756,30 +612,18 @@ class VIPBox:
                     )
                     html = r.text
                     debug_save(
-                        f"post_{pldm}_{gc}_attempt{attempt+1}.html",
+                        f"post_{pldm}_{gc}_a{attempt+1}.html",
                         f"URL: {post_url}\nStatus: {r.status_code}\n\n{html}"
                     )
                     log.debug(f"    POST {post_url} → {r.status_code}, "
                               f"{len(html)}B")
 
-                    # ── Ekstrak dari STUDY_CONFIG ──
-                    cfg = extract_json_block(html, "STUDY_CONFIG")
-                    if not cfg:
-                        # FIX: Coba nama config lain
-                        for alt_name in ("PLAYER_CONFIG", "playerConfig",
-                                         "JWPLAYER_CONFIG", "jwConfig",
-                                         "videoConfig", "VIDEO_CONFIG"):
-                            cfg = extract_json_block(html, alt_name)
-                            if cfg:
-                                break
-
+                    cfg = self._find_player_config(html)
                     if cfg:
                         stream_urls.extend(
                             self._extract_streams_from_config(cfg, pldm)
                         )
-                        drm_key = self._extract_drm(cfg)
 
-                    # ── Fallback: regex di HTML ──
                     if not stream_urls:
                         stream_urls.extend(
                             self._extract_streams_from_html(html, pldm)
@@ -789,14 +633,12 @@ class VIPBox:
                         break
                     if attempt < MAX_RETRIES - 1:
                         time.sleep(1)
-
                 except Exception as ex:
                     log.debug(f"    POST fail {post_url} "
-                              f"(attempt {attempt+1}): {ex}")
+                              f"a{attempt+1}: {ex}")
                     if attempt < MAX_RETRIES - 1:
                         time.sleep(1)
 
-        # ── FIX: Jika masih kosong, coba GET langsung ke pldm ──
         if not stream_urls:
             stream_urls = self._try_direct_get(pldm, params)
 
@@ -804,51 +646,63 @@ class VIPBox:
             self.play_cache[cache_key] = stream_urls
         return stream_urls
 
-    def _extract_streams_from_config(self, cfg, pldm):
-        """Ekstrak semua stream URL dari config object."""
-        results = []
-        source = cfg.get("source", cfg.get("sources", cfg.get("file", "")))
+    def _find_player_config(self, html):
+        for name in ("STUDY_CONFIG", "PLAYER_CONFIG", "playerConfig",
+                     "JWPLAYER_CONFIG", "jwConfig", "videoConfig",
+                     "VIDEO_CONFIG"):
+            cfg = extract_json_block(html, name)
+            if cfg:
+                return cfg
+        return None
 
-        # source bisa dict, list, atau string
+    def _extract_streams_from_config(self, cfg, pldm):
+        results = []
+        source = (cfg.get("source", "") or cfg.get("sources", "") or
+                  cfg.get("file", ""))
+
         if isinstance(source, str) and source.startswith("http"):
             parsed = urlparse(source)
-            d = parsed.netloc if parsed.netloc else pldm
-            results.append((source, d, None))
+            results.append(
+                (source, parsed.netloc or pldm, self._get_drm(cfg))
+            )
         elif isinstance(source, dict):
             for key in ("hls", "dash", "url", "file", "src", "mpd", "m3u8"):
                 if key in source and source[key]:
                     su = source[key]
                     if isinstance(su, str) and su.startswith("http"):
                         parsed = urlparse(su)
-                        d = parsed.netloc if parsed.netloc else pldm
-                        results.append((su, d, None))
+                        results.append(
+                            (su, parsed.netloc or pldm, self._get_drm(cfg))
+                        )
         elif isinstance(source, list):
             for item in source:
                 if isinstance(item, str) and item.startswith("http"):
                     parsed = urlparse(item)
-                    d = parsed.netloc if parsed.netloc else pldm
-                    results.append((item, d, None))
+                    results.append(
+                        (item, parsed.netloc or pldm, self._get_drm(cfg))
+                    )
                 elif isinstance(item, dict):
                     for key in ("src", "file", "url", "hls", "dash"):
                         if key in item and item[key]:
                             su = item[key]
                             if isinstance(su, str) and su.startswith("http"):
                                 parsed = urlparse(su)
-                                d = parsed.netloc if parsed.netloc else pldm
-                                results.append((su, d, None))
+                                results.append(
+                                    (su, parsed.netloc or pldm,
+                                     self._get_drm(cfg))
+                                )
 
-        # Cek juga di level atas config
         for key in ("hls", "dash", "url", "file", "src", "stream_url"):
-            if key in cfg and isinstance(cfg[key], str) and cfg[key].startswith("http"):
+            if key in cfg and isinstance(cfg[key], str) \
+                    and cfg[key].startswith("http"):
                 su = cfg[key]
                 parsed = urlparse(su)
-                d = parsed.netloc if parsed.netloc else pldm
-                results.append((su, d, None))
-
+                results.append(
+                    (su, parsed.netloc or pldm, self._get_drm(cfg))
+                )
         return results
 
-    def _extract_drm(self, cfg):
-        """Ekstrak DRM key dari config."""
+    def _get_drm(self, cfg):
         source = cfg.get("source", {})
         if isinstance(source, dict):
             drm = source.get("drm", cfg.get("drm", {}))
@@ -859,7 +713,6 @@ class VIPBox:
         return None
 
     def _extract_streams_from_html(self, html, pldm):
-        """Regex fallback untuk cari stream URL di HTML."""
         results = []
         patterns = [
             r'"(https?://[^"]+\.(?:m3u8|mpd|flv)[^"]*)"',
@@ -868,37 +721,27 @@ class VIPBox:
             r"'(https?://[^']*/live/[^']+)'",
             r'"(https?://[^"]*/hls/[^"]+)"',
             r'"(https?://[^"]*/stream/[^"]+)"',
-            r'src="(https?://[^"]+)"',
         ]
         seen = set()
         for pat in patterns:
             for m in re.findall(pat, html):
-                if m in seen:
+                if "vipbox.ga" in m or m in seen:
                     continue
                 seen.add(m)
                 parsed = urlparse(m)
-                d = parsed.netloc if parsed.netloc else pldm
-                results.append((m, d, None))
+                results.append((m, parsed.netloc or pldm, None))
         return results
 
     def _try_direct_get(self, pldm, params):
-        """Coba GET langsung ke player domain."""
         results = []
-        # Coba beberapa path
-        paths = [
-            f"/{params['gc']}",
-            f"/live/{params['gc']}",
-            f"/embed/{params['gc']}",
-            "/",
-        ]
-        for path in paths:
+        for path in (f"/{params['gc']}", f"/live/{params['gc']}",
+                     f"/embed/{params['gc']}", "/"):
             try:
-                url = f"https://{pldm}{path}"
-                r = self.s.get(url, timeout=10,
-                               headers={"Referer": f"{BASE_URL}/"})
+                r = self.s.get(
+                    f"https://{pldm}{path}", timeout=10,
+                    headers={"Referer": f"{BASE_URL}/"}
+                )
                 if r.status_code == 200 and len(r.text) > 100:
-                    debug_save(f"direct_get_{pldm}_{path.strip('/')}.html",
-                               r.text)
                     results = self._extract_streams_from_html(r.text, pldm)
                     if results:
                         break
@@ -912,7 +755,7 @@ class VIPBox:
 
         if not params_list and e.get("time") and \
                 e["time"] <= datetime.now(WIB):
-            log.info(f"    Retry {e['name']} (5s delay)")
+            log.info(f"    Retry {e['name']} (5s)")
             time.sleep(5)
             with self._lock:
                 self.onair_cache.pop(e["eid"], None)
@@ -939,6 +782,7 @@ class VIPBox:
                     "resolved_url": stream_url,
                     "drm_key": drm_key,
                 })
+            time.sleep(REQUEST_DELAY)
 
         if not e["videos"]:
             e["videos"] = [{
@@ -1053,91 +897,139 @@ class VIPBox:
         log.info(f"     Resolved: {resolved_count}/{total_videos}")
         log.info(f"     Fallback: {total_videos - resolved_count}/{total_videos}")
 
-    # ── 6. DEBUG: Cek 1 channel saja ─────────────────────
+    # ── 6. DEBUG MODE (FOOTBALL) ─────────────────────────
     def debug_single(self):
-        """Mode debug: ambil 1 channel 24/7 dan telusuri full chain."""
         log.info("=" * 50)
-        log.info("  DEBUG MODE: Telusuri 1 channel")
+        log.info("  DEBUG MODE: Football + 24/7")
         log.info("=" * 50)
 
-        # Ambil livenow
-        url = f"{BASE_URL}/livenow-schedule"
+        # ── FOOTBALL ──
+        url = f"{BASE_URL}/football-schedule"
         r = self.s.get(url, timeout=TIMEOUT)
-        debug_save("debug_livenow.html", r.text)
+        debug_save("debug_football.html", r.text)
         soup = BeautifulSoup(r.text, "html.parser")
         cfg = self._extract_site_config(soup)
         if not cfg:
-            log.error("No siteConfig found!")
+            log.error("No siteConfig!")
             return
 
-        log.info(f"  siteConfig keys: {list(cfg.keys())}")
         sched_data = cfg.get("scheduleData", "")
         token = cfg.get("fetck_token", "")
-
-        post_url = f"{BASE_URL}/schedule/{sched_data}/"
-        r2 = self.s.post(post_url, headers={
-            "fetch-token": token,
-            "Referer": url,
-            "Origin": BASE_URL,
-            "Content-Type": "application/json",
-        }, timeout=TIMEOUT)
-        debug_save("debug_livenow_post.json", r2.text)
+        r2 = self.s.post(
+            f"{BASE_URL}/schedule/{sched_data}/",
+            headers={
+                "fetch-token": token, "Referer": url,
+                "Origin": BASE_URL, "Content-Type": "application/json",
+            }, timeout=TIMEOUT
+        )
+        debug_save("debug_football_post.json", r2.text)
         data = r2.json()
-        log.info(f"  POST response keys: {list(data.keys())}")
-
         events = self._parse_events(soup)
         if not events:
-            log.error("No events parsed!")
+            log.error("No events!")
             return
 
-        # Ambil event pertama
-        ev = events[0]
-        log.info(f"\n  Event: {ev['title']}")
-        log.info(f"  ID: {ev['id']}")
-        log.info(f"  onair_uri: {ev['onair_uri']}")
-        log.info(f"  gc: {ev['gc']}")
+        now_wib = datetime.now(WIB)
+        live = [e for e in events if e["time"] and e["time"] <= now_wib]
+        ev = (live or events)[0]
 
-        # Build entry
-        links_map = data.get("links", {})
+        log.info(f"\n  [FOOTBALL] {ev['title']}")
+        log.info(f"  ID: {ev['id']}")
+        log.info(f"  onair: {ev['onair_uri']}")
+        log.info(f"  time: {ev['time']}")
+
         slugs = data.get("slugs", {})
-        link_appends = data.get("linkAppends", {})
-        ev_id = ev["id"]
-        slug = slugs.get(ev_id, ev_id)
-        append_gc = link_appends.get(ev_id, ev["gc"])
-        live_uri = f"/live/{append_gc}/{slug}-1"
+        appends = data.get("linkAppends", {})
+        slug = slugs.get(ev["id"], ev["id"])
+        gc = appends.get(ev["id"], ev["gc"])
+        live_uri = f"/live/{gc}/{slug}-1"
 
         entry = {
-            "name": ev["title"],
-            "group": "Debug",
-            "logo": ev["logo"],
-            "time": ev["time"],
-            "player": "?",
-            "lang": "",
-            "hd": 0,
-            "live_uri": live_uri,
-            "onair_uri": ev["onair_uri"],
-            "eid": ev_id,
-            "link_no": 1,
-            "gc": append_gc,
+            "name": ev["title"], "group": "Football",
+            "logo": ev["logo"], "time": ev["time"],
+            "player": "?", "lang": "", "hd": 0,
+            "live_uri": live_uri, "onair_uri": ev["onair_uri"],
+            "eid": ev["id"], "link_no": 1, "gc": gc,
         }
 
-        # Extract params
-        log.info(f"\n  --- Extracting from onair_uri: {ev['onair_uri']} ---")
+        log.info(f"\n  --- Extract params ---")
         params = self.get_play_params(entry)
-        log.info(f"  Params found: {len(params)}")
+        log.info(f"  Found: {len(params)}")
         for i, p in enumerate(params):
-            log.info(f"    [{i}] pldm={p['pldm']}, play={p['play'][:80]}")
+            log.info(f"    [{i}] {p['pldm']} | {p['play'][:60]}")
 
         if params:
-            log.info(f"\n  --- Resolving stream from player ---")
+            log.info(f"\n  --- Resolve stream ---")
             for i, p in enumerate(params):
                 results = self.get_stream_from_player(p)
-                log.info(f"    [{i}] → {len(results)} stream URLs:")
-                for url, domain, drm in results:
-                    log.info(f"       {url[:100]}")
+                log.info(f"    [{i}] → {len(results)} URLs:")
+                for u, d, drm in results:
+                    log.info(f"       {u[:100]}")
 
-        log.info(f"\n  Debug output di: {os.path.abspath(DEBUG_DIR)}/")
-        log.info("  Cek file HTML untuk lihat struktur player page.")
+        # ── 24/7 ──
+        log.info(f"\n{'='*50}")
+        log.info("  BONUS: Channel 24/7")
+        log.info(f"{'='*50}")
+
+        url2 = f"{BASE_URL}/livenow-schedule"
+        r3 = self.s.get(url2, timeout=TIMEOUT)
+        debug_save("debug_livenow2.html", r3.text)
+        soup2 = BeautifulSoup(r3.text, "html.parser")
+        cfg2 = self._extract_site_config(soup2)
+        if not cfg2:
+            log.error("No siteConfig (livenow)")
+            return
+
+        sd2 = cfg2.get("scheduleData", "")
+        tk2 = cfg2.get("fetck_token", "")
+        r4 = self.s.post(
+            f"{BASE_URL}/schedule/{sd2}/",
+            headers={
+                "fetch-token": tk2, "Referer": url2,
+                "Origin": BASE_URL, "Content-Type": "application/json",
+            }, timeout=TIMEOUT
+        )
+        debug_save("debug_livenow2_post.json", r4.text)
+        data2 = r4.json()
+        events2 = self._parse_events(soup2)
+
+        ev_247 = next(
+            (e for e in events2 if e["time"] is None), None
+        )
+        if not ev_247:
+            log.info("  Tidak ada channel 24/7")
+            return
+
+        log.info(f"\n  [24/7] {ev_247['title']}")
+        log.info(f"  onair: {ev_247['onair_uri']}")
+
+        slugs2 = data2.get("slugs", {})
+        appends2 = data2.get("linkAppends", {})
+        slug2 = slugs2.get(ev_247["id"], ev_247["id"])
+        gc2 = appends2.get(ev_247["id"], ev_247["gc"])
+        live_uri2 = f"/live/{gc2}/{slug2}-1"
+
+        entry2 = {
+            "name": ev_247["title"], "group": "24/7",
+            "logo": ev_247["logo"], "time": None,
+            "player": "?", "lang": "", "hd": 0,
+            "live_uri": live_uri2, "onair_uri": ev_247["onair_uri"],
+            "eid": ev_247["id"], "link_no": 1, "gc": gc2,
+        }
+
+        params2 = self.get_play_params(entry2)
+        log.info(f"  Params: {len(params2)}")
+        for i, p in enumerate(params2):
+            log.info(f"    [{i}] {p['pldm']} | {p['play'][:60]}")
+
+        if params2:
+            for i, p in enumerate(params2):
+                results2 = self.get_stream_from_player(p)
+                log.info(f"    [{i}] → {len(results2)} URLs:")
+                for u, d, drm in results2:
+                    log.info(f"       {u[:100]}")
+
+        log.info(f"\n  Output: {os.path.abspath(DEBUG_DIR)}/")
 
     # ── 7. MAIN ──────────────────────────────────────────
     def run(self):
@@ -1146,13 +1038,12 @@ class VIPBox:
             return
 
         log.info("=" * 50)
-        log.info("  VIPBox M3U Generator v8.0")
+        log.info("  VIPBox M3U Generator v8.1")
         log.info(f"  Target : {BASE_URL}")
         log.info(f"  Output : {OUTPUT_FILE}")
         log.info("=" * 50)
 
         all_entries = []
-
         for slug, name in CATEGORIES:
             entries = self.fetch_category(slug, name)
             log.info(f"  {name}: {len(entries)} streams")
