@@ -42,8 +42,8 @@ CATEGORIES = [
 GC_TO_GROUP = {
     "nfl": "NFL", "ncaaf": "NCAAF", "basketball": "Basketball",
     "nba": "Basketball", "college-basketball": "Basketball",
-    "hockey": "Hockey", "khl": "Hockey", "finland": "Hockey",
-    "russia": "Hockey", "czech-republic": "Hockey",
+    "hockey": "Hockey", "khl": "Hockey", "nhl": "Hockey",
+    "finland": "Hockey", "russia": "Hockey", "czech-republic": "Hockey",
     "tennis": "Tennis", "davis-cup": "Tennis",
     "golf": "Golf", "football": "Football", "soccer": "Football",
     "worldcup": "Football", "bahrain": "Football", "qatar": "Football",
@@ -182,16 +182,27 @@ class VIPBox:
 
         events = self._parse_events(soup)
         log.info(f"    {len(events)} events (livenow)")
+        return self._build_results(events, data, "Others")
 
+    def _build_results(self, events, data, name):
         results = []
         links_map = data.get("links", {})
+        slugs = data.get("slugs", {})
+        link_appends = data.get("linkAppends", {})
+
         for ev in events:
-            group = GC_TO_GROUP.get(ev["gc"], "Others")
-            ev_links = links_map.get(ev["id"], [])
+            ev_id = ev["id"]
+            ev_links = links_map.get(ev_id, [])
             if not ev_links:
                 ev_links = [{"player": "?", "lang": "", "hd": 0}]
+
+            # ── PAKAI SLUG + LINK_APPENDS ──
+            slug = slugs.get(ev_id, ev_id)
+            append_gc = link_appends.get(ev_id, ev["gc"])
+            group = GC_TO_GROUP.get(append_gc, name)
+
             for i, lk in enumerate(ev_links, 1):
-                live_uri = f"/live/{ev['gc']}/{ev['id']}-{i}"
+                live_uri = f"/live/{append_gc}/{slug}-{i}"
                 results.append({
                     "name": ev["title"],
                     "group": group,
@@ -202,34 +213,9 @@ class VIPBox:
                     "hd": lk.get("hd", 0),
                     "live_uri": live_uri,
                     "onair_uri": ev["onair_uri"],
-                    "eid": ev["id"],
+                    "eid": ev_id,
                     "link_no": i,
-                    "gc": ev["gc"],
-                })
-        return results
-
-    def _build_results(self, events, data, name):
-        results = []
-        links_map = data.get("links", {})
-        for ev in events:
-            ev_links = links_map.get(ev["id"], [])
-            if not ev_links:
-                ev_links = [{"player": "?", "lang": "", "hd": 0}]
-            for i, lk in enumerate(ev_links, 1):
-                live_uri = f"/live/{ev['gc']}/{ev['id']}-{i}"
-                results.append({
-                    "name": ev["title"],
-                    "group": name,
-                    "logo": ev["logo"],
-                    "time": ev["time"],
-                    "player": lk.get("player", "?"),
-                    "lang": lk.get("lang", ""),
-                    "hd": lk.get("hd", 0),
-                    "live_uri": live_uri,
-                    "onair_uri": ev["onair_uri"],
-                    "eid": ev["id"],
-                    "link_no": i,
-                    "gc": ev["gc"],
+                    "gc": append_gc,
                 })
         return results
 
@@ -302,6 +288,7 @@ class VIPBox:
             "czech-republic": "hockey", "finland": "hockey",
             "australia": "basketball", "south-korea": "basketball",
             "italy": "basketball", "television": "nfl",
+            "nhl": "hockey",
         }
         key = m.get(icon_cls, icon_cls) if icon_cls else "football"
         return f"{STATIC_URL}/img/home/{key}.webp"
@@ -337,8 +324,9 @@ class VIPBox:
             r = self.s.get(url, timeout=TIMEOUT,
                            headers={"Referer": f"{BASE_URL}/"})
             html = r.text
+            log.info(f"    GET {uri} → {r.status_code}, {len(html)}B")
 
-            # ── Coba data-* attributes dulu (mungkin ada di beberapa halaman)
+            # ── Coba data-* attributes ──
             all_pldm = re.findall(r'data-pldm="([^"]+)"', html)
             all_play = re.findall(r'data-play="([^"]+)"', html)
 
@@ -372,11 +360,14 @@ class VIPBox:
 
             # ── Ekstrak window['...'] obfuscated variable ──
             m = re.search(
-                r"window\['([A-Za-z0-9]+)'\]\s*=\s*'([^']+)'", html
+                r"window\[['\"]([A-Za-z0-9_\-]+)['\"]\]\s*=\s*['\"]([^'\"]+)['\"]",
+                html
             )
             if not m:
                 log.warning(f"    No player data in {uri}")
-                return []
+                with self._lock:
+                    self.uri_cache[uri] = result
+                return result
 
             win_val = m.group(2)
             log.info(f"    window var len={len(win_val)}")
@@ -386,14 +377,6 @@ class VIPBox:
                 decoded = base64.b64decode(win_val)
             except Exception:
                 decoded = win_val.encode()
-
-            # ── Simpan debug ──
-            dbg = f"debug_{uri.replace('/', '_')}.txt"
-            with open(dbg, "w") as f:
-                f.write(f"RAW_LEN: {len(win_val)}\n")
-                f.write(f"DECODED_LEN: {len(decoded)}\n")
-                f.write(f"DECODED: {decoded.decode('utf-8', errors='replace')}\n")
-            log.info(f"    DEBUG → {dbg}")
 
             # ── Parse decoded content ──
             result = self._parse_decoded_player(decoded, win_val, html)
@@ -406,7 +389,6 @@ class VIPBox:
         return result
 
     def _parse_decoded_player(self, decoded_bytes, raw_str, html):
-        """Parse decoded player data."""
         result = []
         text = decoded_bytes.decode("utf-8", errors="ignore")
 
@@ -456,7 +438,6 @@ class VIPBox:
 
         # ── Fallback: regex di raw HTML ──
         if not result:
-            # Cari URL streaming langsung di HTML
             url_m = re.search(
                 r'(https?://[^\s"\'<>]+\.(?:mpd|m3u8|flv)[^\s"\'<>]*)',
                 html
@@ -482,7 +463,6 @@ class VIPBox:
 
     # ── 3. POST KE PLAYER ────────────────────────────────
     def get_stream_from_player(self, params):
-        # Kalau sudah ada direct URL, langsung return
         if params.get("_direct_url"):
             url = params["_direct_url"]
             parsed = urlparse(url)
@@ -578,6 +558,15 @@ class VIPBox:
     # ── 4. RESOLVE ENTRY ─────────────────────────────────
     def resolve_entry(self, e):
         params_list = self.get_play_params(e)
+
+        # Retry 1x kalau event live tapi params kosong
+        if not params_list and e.get("time") and \
+                e["time"] <= datetime.now(WIB):
+            log.info(f"    Retry {e['name']} (5s delay)")
+            time.sleep(5)
+            with self._lock:
+                self.onair_cache.pop(e["eid"], None)
+            params_list = self.get_play_params(e)
 
         if not params_list:
             e["videos"] = [{
@@ -705,7 +694,7 @@ class VIPBox:
     # ── 6. MAIN ──────────────────────────────────────────
     def run(self):
         log.info("=" * 50)
-        log.info("  VIPBox M3U Generator v7.3")
+        log.info("  VIPBox M3U Generator v7.4")
         log.info(f"  Target : {BASE_URL}")
         log.info(f"  Output : {OUTPUT_FILE}")
         log.info("=" * 50)
