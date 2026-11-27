@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """
-VIPBox M3U Playlist Generator
-Scrape semua kategori → ekstrak stream m3u8/flv/mpd
-→ generate playlist.m3u (WIB, dedup, EXVLCOPT)
+VIPBox M3U Playlist Generator v3
+Alur: /onair/ → data-play → POST {pldm}/vimpl/ → STUDY_CONFIG → mpd/m3u8
 """
 
 import requests
@@ -13,16 +12,14 @@ import time
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta, timezone
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from urllib.parse import urlparse
+from urllib.parse import urlparse, quote
 
-# ═══════════════════════════════════════════════════════
-# KONFIGURASI
 # ═══════════════════════════════════════════════════════
 BASE_URL = "https://vipbox.ga"
 STATIC_URL = "https://static.vipbox.ga"
 OUTPUT_FILE = "playlist.m3u"
 WIB = timezone(timedelta(hours=7))
-TIMEOUT = 20
+TIMEOUT = 25
 MAX_WORKERS = 4
 
 HEADERS = {
@@ -33,6 +30,9 @@ HEADERS = {
     ),
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
     "Accept-Language": "id-ID,id;q=0.9",
+    "Sec-Ch-Ua": '"Chromium";v="158", "Not.A/Brand";v="24", "Brave";v="158"',
+    "Sec-Ch-Ua-Mobile": "?1",
+    "Sec-Ch-Ua-Platform": '"Android"',
 }
 
 CATEGORIES = [
@@ -52,21 +52,16 @@ logging.basicConfig(
 log = logging.getLogger("VIPBox")
 
 
-# ═══════════════════════════════════════════════════════
-# CLASS UTAMA
-# ═══════════════════════════════════════════════════════
 class VIPBox:
     def __init__(self):
         self.s = requests.Session()
         self.s.headers.update(HEADERS)
-        # Cache: player_name → (domain, [stream_urls])
-        self.player_cache = {}
-        # Cache: stream_url → domain
-        self.url_domain_cache = {}
-        # Cache: domain → [stream_urls]
-        self.domain_streams_cache = {}
+        # Cache: (pldm, data_play) → (stream_url, domain)
+        self.play_cache = {}
+        # Cache: stream_uri → (data_play, pldm, gc)
+        self.uri_cache = {}
 
-    # ── 1. FETCH KATEGORI ────────────────────────────────
+    # ── 1. FETCH SCHEDULE ────────────────────────────────
     def fetch_category(self, slug, name):
         url = f"{BASE_URL}/{slug}-schedule"
         log.info(f"  GET {url}")
@@ -87,7 +82,7 @@ class VIPBox:
         token = cfg.get("fetck_token", "")
         time_cls = cfg.get("timeCls", "vt_m0k0o3u5d1")
 
-        # POST untuk ambil JSON links
+        # POST schedule
         post_url = f"{BASE_URL}/schedule/{sched_data}/"
         post_hdrs = {
             "fetch-token": token,
@@ -102,14 +97,13 @@ class VIPBox:
             log.error(f"    POST FAIL: {e}")
             data = {"links": {}, "linkAppends": {}, "slugs": {}}
 
-        # Parse events dari HTML
         events = self._parse_events(soup, time_cls)
-        log.info(f"    {len(events)} events ditemukan")
+        log.info(f"    {len(events)} events")
 
-        # Merge HTML + JSON
         results = []
         appends = data.get("linkAppends", {})
         links_map = data.get("links", {})
+        slugs_map = data.get("slugs", {})
 
         for ev in events:
             eid = ev["id"]
@@ -119,8 +113,15 @@ class VIPBox:
             if not ev_links:
                 ev_links = [{"player": "?", "lang": "", "hd": 0}]
 
+            # Slug untuk /onair/ URL
+            ev_slug = slugs_map.get(eid, "")
+
             for i, lk in enumerate(ev_links, 1):
-                stream_url = f"{BASE_URL}/live/{append}/{eid}-{i}"
+                # /live/ URI untuk button
+                live_uri = f"/live/{append}/{eid}-{i}"
+                # /onair/ URI (untuk event pertama)
+                onair_uri = f"/onair/{append}/{ev_slug}" if ev_slug else ""
+
                 results.append({
                     "name": ev["title"],
                     "group": name,
@@ -129,9 +130,11 @@ class VIPBox:
                     "player": lk.get("player", "?"),
                     "lang": lk.get("lang", ""),
                     "hd": lk.get("hd", 0),
-                    "stream_url": stream_url,
+                    "live_uri": live_uri,
+                    "onair_uri": onair_uri,
                     "eid": eid,
                     "link_no": i,
+                    "gc": append,  # data-gc
                 })
         return results
 
@@ -146,7 +149,7 @@ class VIPBox:
                 if m:
                     try:
                         return json.loads(m.group(1))
-                    except json.JSONDecodeError:
+                    except:
                         pass
         return None
 
@@ -161,16 +164,14 @@ class VIPBox:
             if not eid:
                 continue
 
-            # Waktu
             t_el = d.find("time")
             etime = None
             if t_el and t_el.get("content"):
                 try:
                     etime = datetime.fromisoformat(t_el["content"])
-                except ValueError:
+                except:
                     pass
 
-            # Logo
             icon = d.find("i", class_=re.compile(r"vip-box-icon"))
             icon_cls = ""
             if icon:
@@ -188,157 +189,184 @@ class VIPBox:
         return events
 
     def _icon_to_logo(self, icon_cls):
-        mapping = {
-            "nascar": "nfl",
-            "formula-1": "motorsports",
-            "motogp": "motorsports",
-            "college-football": "ncaaf",
-            "soccer": "football",
-            "other-sports": "other-sports",
+        m = {
+            "nascar": "nfl", "formula-1": "motorsports",
+            "motogp": "motorsports", "college-football": "ncaaf",
+            "soccer": "football", "other-sports": "other-sports",
         }
-        key = mapping.get(icon_cls, icon_cls) if icon_cls else "football"
+        key = m.get(icon_cls, icon_cls) if icon_cls else "football"
         return f"{STATIC_URL}/img/home/{key}.webp"
 
-    # ── 2. DETEKSI PLAYER DOMAIN ─────────────────────────
-    def get_player_domain(self, stream_url):
+    # ── 2. EKSTRAK data-play DARI HALAMAN ────────────────
+    def extract_play_params(self, uri):
         """
-        Fetch halaman /live/... → cari <iframe src> → return domain.
-        Cache per stream_url.
+        GET vipbox.ga/{uri} → ekstrak data-play, data-pldm, data-gc
+        dari <script> embedv4.min.js
         """
-        if stream_url in self.url_domain_cache:
-            return self.url_domain_cache[stream_url]
+        cache_key = uri
+        if cache_key in self.uri_cache:
+            return self.uri_cache[cache_key]
 
-        domain = None
+        url = f"{BASE_URL}{uri}"
         try:
-            r = self.s.get(
-                stream_url,
-                timeout=TIMEOUT,
-                headers={"Referer": f"{BASE_URL}/"},
-            )
+            r = self.s.get(url, timeout=TIMEOUT,
+                           headers={"Referer": f"{BASE_URL}/"})
             html = r.text
 
-            # Pattern 1: <iframe src="...">
+            # Cari script embedv4
+            # Pattern: data-play="..." data-player="..." data-gc="..."
             m = re.search(
-                r'<iframe[^>]+src=["\']([^"\']+)["\']', html
+                r'data-pldm=["\']([^"\']+)["\]\'']\s*'
+                r'data-pid=["\']([^"\']+)["\]\'']\s*'
+                r'data-play=["\']([^"\']+)["\]\'']\s*'
+                r'data-player=["\']([^"\']+)["\]\'']\s*'
+                r'data-gc=["\']([^"\']+)["\]\'']',
+                html
             )
 
-            # Pattern 2: JS variable
             if not m:
-                m = re.search(
-                    r'(?:iframe|player|embed|video)[\s_]*'
-                    r'(?:src|url|href|srcUrl)?\s*[:=]\s*["\']'
-                    r'(https?://[^"\']+)',
-                    html, re.I
-                )
+                # Coba pattern alternatif (urutan atribut beda)
+                pldm = re.search(r'data-pldm=["\']([^"\']+)["\']', html)
+                play = re.search(r'data-play=["\']([^"\']+)["\']', html)
+                gc = re.search(r'data-gc=["\']([^"\']+)["\']', html)
 
-            # Pattern 3: data-src, data-url
-            if not m:
-                m = re.search(
-                    r'data-(?:src|url|embed)["\']\s*=\s*["\'](https?://[^"\']+)',
-                    html, re.I
-                )
-
-            # Pattern 4: window.location / redirect
-            if not m:
-                m = re.search(
-                    r'(?:location|redirect|url)\s*[=:]\s*["\'](https?://[^/"\'"]+)',
-                    html, re.I
-                )
-
-            if m:
-                src = m.group(1)
-                if src.startswith("//"):
-                    src = "https:" + src
-                domain = urlparse(src).netloc
+                if pldm and play:
+                    result = {
+                        "pldm": pldm.group(1),
+                        "play": play.group(1),
+                        "gc": gc.group(1) if gc else "motorsports",
+                    }
+                else:
+                    result = None
+            else:
+                result = {
+                    "pldm": m.group(1),
+                    "play": m.group(3),
+                    "gc": m.group(5),
+                }
 
         except Exception as e:
-            log.debug(f"    player detect fail: {e}")
+            log.debug(f"    extract fail {uri}: {e}")
+            result = None
 
-        if not domain:
-            domain = "vipbox.ga"
+        self.uri_cache[cache_key] = result
+        return result
 
-        self.url_domain_cache[stream_url] = domain
-        return domain
+    # ── 3. POST KE PLAYER → DAPAT STREAM URL ─────────────
+    def get_stream_from_player(self, pldm, data_play, gc):
+        """
+        POST https://{pldm}/vimpl/{gc} dengan payload=data_play
+        → parse STUDY_CONFIG → return (stream_url, domain)
+        """
+        cache_key = (pldm, data_play)
+        if cache_key in self.play_cache:
+            return self.play_cache[cache_key]
 
-    # ── 3. EKSTRAK STREAM URL DARI DOMAIN PLAYER ─────────
-    def get_stream_urls(self, domain):
-        """Fetch domain player → regex m3u8/flv/mpd"""
-        if domain in self.domain_streams_cache:
-            return self.domain_streams_cache[domain]
+        post_url = f"https://{pldm}/vimpl/{gc}"
+        stream_url = None
+        domain = pldm
 
-        urls = []
         try:
-            r = self.s.get(
-                f"https://{domain}/",
+            r = self.s.post(
+                post_url,
+                data={"payload": data_play},
                 headers={
-                    "Referer": f"https://{domain}/",
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Origin": BASE_URL,
+                    "Referer": f"{BASE_URL}/",
                     "User-Agent": HEADERS["User-Agent"],
-                    "Accept": "*/*",
+                    "Sec-Fetch-Site": "cross-site",
+                    "Sec-Fetch-Mode": "navigate",
+                    "Sec-Fetch-Dest": "iframe",
                 },
                 timeout=TIMEOUT,
             )
-            text = r.text
+            html = r.text
 
-            patterns = [
-                # Full URL dengan extension
-                r'(https?://[^\s"\'<>\\]+\.(?:m3u8|flv|mpd)(?:\?[^\s"\'<>\\]*)?)',
-                # URL di dalam quotes
-                r'["\']((?:https?:)?//[^"\']+\.(?:m3u8|flv|mpd))["\']',
-                # Path relatif
-                r'["\'](/[^"\']+\.(?:m3u8|flv|mpd))["\']',
-                # source src=
-                r'src=["\']([^"\']+\.(?:m3u8|flv|mpd))["\']',
-            ]
+            # Ekstrak STUDY_CONFIG
+            m = re.search(
+                r'window\.STUDY_CONFIG\s*=\s*(\{.+\})\s*;',
+                html, re.DOTALL
+            )
+            if m:
+                try:
+                    cfg = json.loads(m.group(1))
+                    source = cfg.get("source", {})
 
-            for pat in patterns:
-                found = re.findall(pat, text)
-                for u in found:
-                    if u.startswith("/"):
-                        u = f"https://{domain}{u}"
-                    elif u.startswith("//"):
-                        u = "https:" + u
-                    elif not u.startswith("http"):
-                        u = f"https://{domain}/{u}"
-                    if u not in urls:
-                        urls.append(u)
-                if urls:
-                    break
+                    # Prioritas: hls (m3u8) > dash (mpd)
+                    if "hls" in source:
+                        stream_url = source["hls"]
+                    elif "dash" in source:
+                        stream_url = source["dash"]
+                    elif "url" in source:
+                        stream_url = source["url"]
+
+                    # Domain dari URL stream
+                    if stream_url:
+                        parsed = urlparse(stream_url)
+                        if parsed.netloc:
+                            domain = parsed.netloc
+
+                except json.JSONDecodeError:
+                    pass
+
+            # Fallback: regex langsung
+            if not stream_url:
+                # Cari m3u8
+                m2 = re.search(
+                    r'["\'](https?://[^"\']+\.(?:m3u8|mpd|flv))["\']',
+                    html
+                )
+                if m2:
+                    stream_url = m2.group(1)
+                    parsed = urlparse(stream_url)
+                    if parsed.netloc:
+                        domain = parsed.netloc
 
         except Exception as e:
-            log.debug(f"    stream extract fail {domain}: {e}")
+            log.debug(f"    player POST fail {pldm}: {e}")
 
-        self.domain_streams_cache[domain] = urls
-        return urls
+        result = (stream_url, domain)
+        self.play_cache[cache_key] = result
+        return result
 
-    # ── 4. RESOLVE ENTRY ─────────────────────────────────
+    # ── 4. RESOLVE 1 ENTRY ───────────────────────────────
     def resolve_entry(self, e):
-        """Dapatkan domain player + stream URL terbaik"""
-        pname = e["player"]
+        """
+        1. GET /onair/ atau /live/ → data-play
+        2. POST ke player → stream URL
+        3. Set e['resolved_url'], e['player_domain']
+        """
+        # Langkah 1: Ambil data-play
+        # Coba /onair/ dulu (lebih cepat, 1 request untuk semua link)
+        # Tapi tiap link_no punya data-play berbeda → harus /live/
+        uri = e["live_uri"]  # /live/{cat}/{eid}-{n}
 
-        if pname in self.player_cache:
-            domain, stream_urls = self.player_cache[pname]
-        else:
-            domain = self.get_player_domain(e["stream_url"])
-            stream_urls = self.get_stream_urls(domain)
-            self.player_cache[pname] = (domain, stream_urls)
+        params = self.extract_play_params(uri)
+        if not params:
+            # Fallback: coba /onair/
+            if e["onair_uri"]:
+                params = self.extract_play_params(e["onair_uri"])
 
-        # Pilih best: m3u8 > mpd > flv
-        best = e["stream_url"]
-        for ext in ("m3u8", "mpd", "flv"):
-            for u in stream_urls:
-                if ext in u:
-                    best = u
-                    break
-            if best != e["stream_url"]:
-                break
+        if not params:
+            e["player_domain"] = "vipbox.ga"
+            e["resolved_url"] = f"{BASE_URL}{uri}"
+            return e
 
-        e["player_domain"] = domain
-        e["resolved_url"] = best
+        pldm = params["pldm"]
+        data_play = params["play"]
+        gc = params.get("gc", e["gc"])
+
+        # Langkah 2: POST ke player
+        stream_url, domain = self.get_stream_from_player(pldm, data_play, gc)
+
+        e["player_domain"] = domain or pldm
+        e["resolved_url"] = stream_url or f"{BASE_URL}{uri}"
         return e
 
     # ── 5. GENERATE M3U ──────────────────────────────────
     def write_m3u(self, entries):
-        # Dedup: (eid, link_no, group)
+        # Dedup
         seen = set()
         unique = []
         for e in entries:
@@ -348,18 +376,17 @@ class VIPBox:
                 unique.append(e)
 
         # Sort: ber-waktu asc, tanpa waktu di akhir
-        def sort_key(e):
+        def sk(e):
             if e["time"]:
                 return (0, e["time"])
             return (1, datetime.min.replace(tzinfo=timezone.utc))
-
-        unique.sort(key=sort_key)
+        unique.sort(key=sk)
 
         lines = ["#EXTM3U"]
         ua = HEADERS["User-Agent"]
 
         for e in unique:
-            # Nama channel
+            # Nama
             parts = [e["name"]]
             if e["lang"]:
                 parts.append(f"[{e['lang']}]")
@@ -387,17 +414,17 @@ class VIPBox:
                 f'tvg-logo="{e["logo"]}" '
                 f'group-title="{e["group"]}",{full_name}'
             )
-            lines.append(e.get("resolved_url", e["stream_url"]))
+            lines.append(e.get("resolved_url", f"{BASE_URL}{e['live_uri']}"))
 
         with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
             f.write("\n".join(lines) + "\n")
 
-        log.info(f"✅ {OUTPUT_FILE} → {len(unique)} channel")
+        log.info(f"\n✅ {OUTPUT_FILE} → {len(unique)} channel")
 
     # ── 6. MAIN ──────────────────────────────────────────
     def run(self):
         log.info("=" * 50)
-        log.info("  VIPBox M3U Playlist Generator")
+        log.info("  VIPBox M3U Generator v3")
         log.info(f"  Target : {BASE_URL}")
         log.info(f"  Output : {OUTPUT_FILE}")
         log.info("=" * 50)
@@ -410,9 +437,8 @@ class VIPBox:
             time.sleep(0.3)
 
         log.info(f"\n  Total: {len(all_entries)} entries")
-        log.info(f"  Resolve player domain + stream URL...")
+        log.info(f"  Resolve stream URL via player...")
 
-        # Resolve (threaded)
         with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
             futures = {
                 pool.submit(self.resolve_entry, e): e
@@ -421,21 +447,18 @@ class VIPBox:
             done = 0
             for fut in as_completed(futures):
                 done += 1
-                if done % 20 == 0:
-                    log.info(f"    Progress: {done}/{len(all_entries)}")
+                if done % 25 == 0:
+                    log.info(f"    {done}/{len(all_entries)}")
                 try:
                     fut.result()
                 except Exception as ex:
                     e = futures[fut]
                     e["player_domain"] = "vipbox.ga"
-                    e["resolved_url"] = e["stream_url"]
-                    log.warning(f"    resolve fail: {ex}")
+                    e["resolved_url"] = f"{BASE_URL}{e['live_uri']}"
+                    log.warning(f"    fail: {ex}")
 
         self.write_m3u(all_entries)
 
 
-# ═══════════════════════════════════════════════════════
-# ENTRY POINT
-# ═══════════════════════════════════════════════════════
 if __name__ == "__main__":
     VIPBox().run()   
