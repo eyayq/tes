@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 """
-VIPBox M3U Generator v9.1
-+ Playwright intercept JS network
+VIPBox M3U Generator v9.2
++ Decode window['...'] (multi-line safe)
++ Parse JW Player JS snippet (bukan hanya JSON)
++ Playwright page.request.post() (bypass CORS)
 + Scrape .ts streaming URLs
-+ Decode window['...'] di POST response
 
 Usage:
   python vipbox.py           # full run
   python vipbox.py --debug   # debug football + 24/7
-  python vipbox.py --pw      # paksa Playwright untuk semua
+  python vipbox.py --pw      # paksa Playwright
 """
 
 from curl_cffi import requests as cffi_requests
@@ -39,9 +40,9 @@ WIB = timezone(timedelta(hours=7))
 TIMEOUT = 30
 MAX_WORKERS = 2
 IMPERSONATE = "chrome"
-MAX_RETRIES = 3
+MAX_RETRIES = 2
 REQUEST_DELAY = 0.5
-PW_TIMEOUT = 15000
+PW_TIMEOUT = 20000
 
 HEADERS = {
     "User-Agent": (
@@ -74,8 +75,8 @@ GC_TO_GROUP = {
     "tennis": "Tennis", "davis-cup": "Tennis",
     "golf": "Golf", "football": "Football", "soccer": "Football",
     "worldcup": "Football", "bahrain": "Football", "qatar": "Football",
-    "romania": "Football", "serbia": "Football", "slovenia": "Football",
-    "bulgaria": "Football",
+    "romania": "Football", "serbia": "Football",
+    "slovenia": "Football", "bulgaria": "Football",
     "rugby": "Rugby", "afl": "AFL",
     "darts": "Darts", "mma": "MMA", "boxing": "Boxing",
     "fighting": "Fighting", "motorsports": "Motorsports",
@@ -140,7 +141,9 @@ def extract_json_block(text, var_name):
     return None
 
 
-# ── PLAYWRIGHT INTERCEPTOR ───────────────────────────────
+# ═══════════════════════════════════════════════════════════
+# PLAYWRIGHT INTERCEPTOR (fixed: use page.request for POST)
+# ═══════════════════════════════════════════════════════════
 class PlaywrightInterceptor:
     def __init__(self):
         self._pw = None
@@ -161,6 +164,7 @@ class PlaywrightInterceptor:
                 args=[
                     "--disable-blink-features=AutomationControlled",
                     "--no-sandbox",
+                    "--disable-web-security",
                 ]
             )
             self._initialized = True
@@ -173,6 +177,81 @@ class PlaywrightInterceptor:
             if self._pw:
                 self._pw.stop()
             self._initialized = False
+
+    def intercept_post(self, post_url, payload_b64, referer=None):
+        """
+        FIX: Gunakan page.request.post() (APIRequestContext)
+        yang bypass CORS, bukan page.evaluate(fetch()).
+        """
+        self._ensure_browser()
+        captured = []
+
+        context = self._browser.new_context(
+            user_agent=HEADERS["User-Agent"],
+            extra_http_headers={
+                "Referer": referer or f"{BASE_URL}/",
+                "Origin": BASE_URL,
+            },
+        )
+
+        try:
+            # FIX: page.request.post() — tidak terblokir CORS
+            resp = context.request.post(
+                post_url,
+                data=f"payload={payload_b64}",
+                headers={
+                    "Content-Type":
+                        "application/x-www-form-urlencoded",
+                    "Origin": BASE_URL,
+                    "Referer": referer or f"{BASE_URL}/",
+                },
+                timeout=PW_TIMEOUT,
+            )
+            body = resp.text()
+            log.debug(f"  [PW] POST {post_url} → "
+                      f"{resp.status}, {len(body)}B")
+
+            # Ekstrak dari body
+            # 1. window['...']
+            for var_name, val in re.findall(
+                r"window\[['\"]([A-Za-z0-9_\-]+)['\"]\]\s*=\s*"
+                r"['\"]([^'\"]+)['\"]", body
+            ):
+                if len(val) < 20:
+                    continue
+                try:
+                    decoded = base64.b64decode(val)
+                    text = decoded.decode("utf-8", errors="ignore")
+                except Exception:
+                    text = val
+                urls = self._extract_stream_urls(text)
+                captured.extend(urls)
+
+            # 2. Direct URLs
+            for u in re.findall(
+                r'(https?://[^\s"\'<>\\]+\.(?:'
+                r'm3u8|mpd|flv|ts)(?:[^\s"\'<>\\]*)?)', body
+            ):
+                if "vipbox.ga" not in u:
+                    captured.append(u)
+
+            # 3. STUDY_CONFIG
+            cfg = extract_json_block(body, "STUDY_CONFIG")
+            if cfg:
+                src = cfg.get("source", {})
+                if isinstance(src, dict):
+                    for k in ("hls", "dash", "url", "file"):
+                        if k in src and src[k]:
+                            captured.append(src[k])
+
+        except Exception as ex:
+            log.debug(f"  [PW] POST Error: {ex}")
+        finally:
+            context.close()
+
+        seen = set()
+        return [u for u in captured
+                if u not in seen and not seen.add(u)]
 
     def intercept_page(self, url, referer=None, wait_ms=5000):
         self._ensure_browser()
@@ -190,25 +269,29 @@ class PlaywrightInterceptor:
         def on_response(response):
             try:
                 ru = response.url
-                if re.search(r'\.(m3u8|mpd|flv|ts)(\?|$)', ru) \
-                        or re.search(r'/(live|hls|stream|vod)/', ru):
+                if re.search(
+                    r'\.(m3u8|mpd|flv|ts)(\?|$)', ru
+                ) or re.search(r'/(live|hls|stream|vod)/', ru):
                     if "vipbox.ga" not in ru:
                         captured.append(ru)
                 ct = response.headers.get("content-type", "")
-                if "json" in ct or "javascript" in ct:
+                if "json" in ct or "javascript" in ct \
+                        or "html" in ct:
                     body = response.text()
                     for u in re.findall(
                         r'(https?://[^\s"\'<>\\]+\.(?:'
-                        r'm3u8|mpd|flv|ts)[^\s"\'<>\\]*)', body
+                        r'm3u8|mpd|flv|ts)(?:[^\s"\'<>\\]*)?)',
+                        body
                     ):
                         if "vipbox.ga" not in u:
                             captured.append(u)
-                if ".m3u8" in ru or "#EXTM3U" in body[:200]:
-                    for u in re.findall(
-                        r'(https?://[^\s"\'<>\\]+\.ts[^\s"\'<>\\]*)',
-                        body
-                    ):
-                        captured.append(u)
+                    # Cek m3u8 playlist → .ts segments
+                    if "#EXTM3U" in body[:500]:
+                        for u in re.findall(
+                            r'(https?://[^\s"\'<>\\]+\.ts[^\s"\'<>\\]*)',
+                            body
+                        ):
+                            captured.append(u)
             except Exception:
                 pass
 
@@ -220,104 +303,72 @@ class PlaywrightInterceptor:
             html = page.content()
             for u in re.findall(
                 r'(https?://[^\s"\'<>\\]+\.(?:'
-                r'm3u8|mpd|flv|ts)[^\s"\'<>\\]*)', html
+                r'm3u8|mpd|flv|ts)(?:[^\s"\'<>\\]*)?)', html
             ):
                 if "vipbox.ga" not in u:
                     captured.append(u)
         except Exception as ex:
-            log.debug(f"  [PW] Error: {ex}")
+            log.debug(f"  [PW] Page Error: {ex}")
         finally:
             context.close()
 
         seen = set()
-        return [u for u in captured if u not in seen and not seen.add(u)]
+        return [u for u in captured
+                if u not in seen and not seen.add(u)]
 
-    def intercept_post(self, post_url, payload_b64, referer=None):
-        self._ensure_browser()
-        captured = []
-        context = self._browser.new_context(
-            user_agent=HEADERS["User-Agent"],
-            extra_http_headers={
-                "Referer": referer or f"{BASE_URL}/",
-                "Origin": BASE_URL,
-            },
-        )
-        page = context.new_page()
-
-        def on_response(response):
-            try:
-                ru = response.url
-                if re.search(r'\.(m3u8|mpd|flv|ts)(\?|$)', ru) \
-                        or re.search(r'/(live|hls|stream)/', ru):
-                    if "vipbox.ga" not in ru:
-                        captured.append(ru)
-                ct = response.headers.get("content-type", "")
-                if "html" in ct or "json" in ct:
-                    body = response.text()
-                    for u in re.findall(
-                        r'(https?://[^\s"\'<>\\]+\.(?:'
-                        r'm3u8|mpd|flv|ts)[^\s"\'<>\\]*)', body
-                    ):
-                        if "vipbox.ga" not in u:
-                            captured.append(u)
-                    cfg = extract_json_block(body, "STUDY_CONFIG")
-                    if cfg:
-                        src = cfg.get("source", {})
-                        if isinstance(src, dict):
-                            for k in ("hls", "dash", "url", "file"):
-                                if k in src and src[k]:
-                                    captured.append(src[k])
-            except Exception:
-                pass
-
-        page.on("response", on_response)
+    def _extract_stream_urls(self, text):
+        """Ekstrak URL dari decoded text (JSON atau JS snippet)."""
+        urls = []
+        # JSON
         try:
-            js_code = """
-            async (args) => {
-                const resp = await fetch(args.url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type':
-                            'application/x-www-form-urlencoded',
-                        'Origin': args.origin,
-                        'Referer': args.referer,
-                    },
-                    body: 'payload=' + args.payload,
-                });
-                return await resp.text();
-            }
-            """
-            page.goto("about:blank")
-            result = page.evaluate(js_code, {
-                "url": post_url,
-                "payload": payload_b64,
-                "origin": BASE_URL,
-                "referer": referer or f"{BASE_URL}/",
-            })
-            page.wait_for_timeout(2000)
-            if result:
-                cfg = extract_json_block(result, "STUDY_CONFIG")
-                if cfg:
-                    src = cfg.get("source", {})
-                    if isinstance(src, dict):
-                        for k in ("hls", "dash", "url", "file"):
-                            if k in src and src[k]:
-                                captured.append(src[k])
-                for u in re.findall(
-                    r'(https?://[^\s"\'<>\\]+\.(?:'
-                    r'm3u8|mpd|flv|ts)[^\s"\'<>\\]*)', result
+            data = json.loads(text)
+            urls.extend(self._urls_from_jw(data))
+        except (json.JSONDecodeError, TypeError):
+            pass
+        # JS snippet: file: "https://..."
+        for m in re.findall(
+            r'["\']?(?:file|src|url|hls|dash|source|manifest)'
+            r'["\']?\s*[:=]\s*["\'](https?://[^"\']+)["\']',
+            text, re.IGNORECASE
+        ):
+            if m not in urls:
+                urls.append(m)
+        # Direct
+        for m in re.findall(
+            r'(https?://[^\s"\'<>\\]+\.(?:m3u8|mpd|flv|ts)'
+            r'(?:[^\s"\'<>\\]*)?)', text
+        ):
+            if m not in urls:
+                urls.append(m)
+        return urls
+
+    def _urls_from_jw(self, data):
+        urls = []
+        def _c(obj):
+            if isinstance(obj, str):
+                if obj.startswith("http") and re.search(
+                    r'\.(m3u8|mpd|flv|ts)', obj
                 ):
-                    captured.append(u)
-        except Exception as ex:
-            log.debug(f"  [PW] POST Error: {ex}")
-        finally:
-            context.close()
+                    urls.append(obj)
+            elif isinstance(obj, dict):
+                for k in ("file", "src", "url", "hls", "dash",
+                          "source", "stream", "manifest", "m3u8"):
+                    if k in obj:
+                        _c(obj[k])
+                if "sources" in obj:
+                    _c(obj["sources"])
+                if "playlist" in obj:
+                    _c(obj["playlist"])
+            elif isinstance(obj, list):
+                for i in obj:
+                    _c(i)
+        _c(data)
+        return urls
 
-        seen = set()
-        return [u for u in captured if u not in seen and not seen.add(u)]
 
-
-# ── MAIN CLASS ───────────────────────────────────────────
+# ═══════════════════════════════════════════════════════════
+# MAIN CLASS
+# ═══════════════════════════════════════════════════════════
 class VIPBox:
     def __init__(self):
         self.s = cffi_requests.Session(impersonate=IMPERSONATE)
@@ -363,7 +414,7 @@ class VIPBox:
                     "Content-Type": "application/json",
                 }, timeout=TIMEOUT
             )
-            debug_save(f"schedule_{slug}_post.json", r.text)
+            debug_save(f"schedule_{slug}_post.json", r2.text)
             data = r2.json()
         except Exception as e:
             log.error(f"    POST FAIL: {e}")
@@ -574,7 +625,7 @@ class VIPBox:
 
         log.info(f"    Extracted {len(unique)} params from {uri}")
         if not unique:
-            log.warning(f"    ⚠️ NO PLAYER DATA in {uri}")
+            log.warning(f"    NO PLAYER DATA in {uri}")
 
         with self._lock:
             self.uri_cache[uri] = unique
@@ -601,19 +652,7 @@ class VIPBox:
 
     def _extract_window_vars(self, html, cfg):
         result = []
-        matches = re.findall(
-            r"window\[['\"]([A-Za-z0-9_\-]+)['\"]\]\s*=\s*"
-            r"['\"]([^'\"]+)['\"]", html
-        )
-        matches += re.findall(
-            r"window\.([A-Za-z0-9_\-]+)\s*=\s*"
-            r"['\"]([^'\"]{20,})['\"]", html
-        )
-        matches += re.findall(
-            r"(?:var|let|const)\s+([A-Za-z0-9_\-]+)\s*=\s*"
-            r"['\"]([^'\"]{50,})['\"]", html
-        )
-
+        matches = self._find_window_vars(html)
         seen_vars = set()
         for var_name, val in matches:
             if var_name in seen_vars or len(val) < 20:
@@ -626,6 +665,45 @@ class VIPBox:
                 text = val
             result.extend(self._parse_decoded_player(text, html, cfg))
         return result
+
+    def _find_window_vars(self, html):
+        """
+        FIX: Cari window['...'] = '...' dengan handle
+        multi-line dan berbagai format.
+        """
+        matches = []
+
+        # Pattern 1: window['xxx'] = 'value' (single line)
+        matches += re.findall(
+            r"window\[['\"]([A-Za-z0-9_\-]+)['\"]\]\s*=\s*"
+            r"['\"]([^'\"]+)['\"]", html
+        )
+
+        # Pattern 2: window.xxx = 'value'
+        matches += re.findall(
+            r"window\.([A-Za-z0-9_\-]+)\s*=\s*"
+            r"['\"]([^'\"]{20,})['\"]", html
+        )
+
+        # Pattern 3: Multi-line — value spans lines
+        # window['xxx'] = '\n base64data \n'
+        multi = re.findall(
+            r"window\[['\"]([A-Za-z0-9_\-]+)['\"]\]\s*=\s*"
+            r"['\"]((?:[^'\"\\]|\\.)*?)['\"]",
+            html, re.DOTALL
+        )
+        for name, val in multi:
+            val = val.strip()
+            if len(val) >= 20:
+                matches.append((name, val))
+
+        # Pattern 4: var/let/const xxx = 'long base64'
+        matches += re.findall(
+            r"(?:var|let|const)\s+([A-Za-z0-9_\-]+)\s*=\s*"
+            r"['\"]([^'\"]{50,})['\"]", html
+        )
+
+        return matches
 
     def _extract_iframe_players(self, soup, cfg):
         result = []
@@ -651,7 +729,7 @@ class VIPBox:
         result = []
         patterns = [
             r'(https?://[^\s"\'<>\\]+\.(?:m3u8|mpd|flv|ts)'
-            r'([^\s"\'<>\\]*)?)',
+            r'(?:[^\s"\'<>\\]*)?)',
             r'(https?://[^\s"\'<>\\]*/live/[^\s"\'<>\\]+)',
             r'(https?://[^\s"\'<>\\]*/hls/[^\s"\'<>\\]+)',
             r'(https?://[^\s"\'<>\\]*/stream/[^\s"\'<>\\]+)',
@@ -727,7 +805,7 @@ class VIPBox:
         if not result:
             urls = re.findall(
                 r'(https?://[^\s"\'<>\\]+\.(?:m3u8|mpd|flv|ts)'
-                r'([^\s"\'<>\\]*)?)', text
+                r'(?:[^\s"\'<>\\]*)?)', text
             )
             for u in urls:
                 if "vipbox.ga" in u:
@@ -822,19 +900,17 @@ class VIPBox:
                         f"Status: {r.status_code}\n\n{html}"
                     )
                     log.debug(
-                        f"    POST {post_url} → {r.status_code}, "
-                        f"{len(html)}B"
+                        f"    POST {post_url} → "
+                        f"{r.status_code}, {len(html)}B"
                     )
 
-                    # ══════════════════════════════════════
-                    # FIX UTAMA: Decode window['...'] di
-                    # response POST (JW Player config)
-                    # ══════════════════════════════════════
+                    # ═══ FIX UTAMA v9.2 ═══
+                    # 1. Decode window['...'] (multi-line safe)
                     stream_urls.extend(
                         self._extract_window_var_stream(html, pldm)
                     )
 
-                    # Cek STUDY_CONFIG / PLAYER_CONFIG
+                    # 2. Cek STUDY_CONFIG / PLAYER_CONFIG
                     if not stream_urls:
                         cfg = self._find_player_config(html)
                         if cfg:
@@ -844,10 +920,12 @@ class VIPBox:
                                 )
                             )
 
-                    # Fallback regex
+                    # 3. Fallback regex
                     if not stream_urls:
                         stream_urls.extend(
-                            self._extract_streams_from_html(html, pldm)
+                            self._extract_streams_from_html(
+                                html, pldm
+                            )
                         )
 
                     if stream_urls:
@@ -856,12 +934,13 @@ class VIPBox:
                         time.sleep(1)
                 except Exception as ex:
                     log.debug(
-                        f"    POST fail {post_url} a{attempt+1}: {ex}"
+                        f"    POST fail {post_url} "
+                        f"a{attempt+1}: {ex}"
                     )
                     if attempt < MAX_RETRIES - 1:
                         time.sleep(1)
 
-        # Playwright fallback
+        # Playwright fallback (FIX: page.request.post)
         if not stream_urls:
             log.info(f"    [PW] Fallback for {pldm}")
             for post_url in post_urls:
@@ -884,29 +963,20 @@ class VIPBox:
             self.play_cache[cache_key] = stream_urls
         return stream_urls
 
-    # ── FIX: Decode window['...'] dari response POST ─────
+    # ── FIX v9.2: Ekstrak window['...'] dari POST response ──
     def _extract_window_var_stream(self, html, pldm):
         """
         Decode window['XXX'] = 'base64...' di response POST.
-        Stream URL JW Player disembunyikan di sini.
+        Handle: JSON, JS snippet (jwplayer().setup), raw URL.
         """
         results = []
-        matches = re.findall(
-            r"window\[['\"]([A-Za-z0-9_\-]+)['\"]\]\s*=\s*"
-            r"['\"]([^'\"]+)['\"]",
-            html
-        )
-        matches += re.findall(
-            r"window\.([A-Za-z0-9_\-]+)\s*=\s*"
-            r"['\"]([^'\"]{20,})['\"]",
-            html
-        )
+        matches = self._find_window_vars(html)
 
         for var_name, val in matches:
             if len(val) < 20:
                 continue
 
-            log.debug(
+            log.info(
                 f"    [WIN] window['{var_name}'] len={len(val)}"
             )
 
@@ -917,8 +987,9 @@ class VIPBox:
                 text = val
 
             debug_save(f"post_decoded_{var_name}.txt", text)
+            log.debug(f"    [WIN] Decoded: {text[:200]}")
 
-            # Parse JSON (JW Player config)
+            # ── Parse: JSON ──
             try:
                 data = json.loads(text)
                 urls = self._extract_urls_from_jw_config(data)
@@ -927,7 +998,26 @@ class VIPBox:
                     domain = parsed.netloc or pldm
                     results.append((u, domain, None))
             except (json.JSONDecodeError, TypeError):
-                # Bukan JSON, regex langsung
+                pass
+
+            # ── Parse: JS snippet (jwplayer().setup) ──
+            if not results:
+                # file: "https://..."
+                js_urls = re.findall(
+                    r'["\']?(?:file|src|url|hls|dash|source)'
+                    r'["\']?\s*[:=]\s*'
+                    r'["\'](https?://[^"\']+)["\']',
+                    text, re.IGNORECASE
+                )
+                for u in js_urls:
+                    if "vipbox.ga" not in u:
+                        parsed = urlparse(u)
+                        results.append(
+                            (u, parsed.netloc or pldm, None)
+                        )
+
+            # ── Parse: direct URL di text ──
+            if not results:
                 found = re.findall(
                     r'(https?://[^\s"\'<>\\]+\.(?:'
                     r'm3u8|mpd|flv|ts)(?:[^\s"\'<>\\]*)?)',
@@ -943,40 +1033,27 @@ class VIPBox:
         return results
 
     def _extract_urls_from_jw_config(self, data):
-        """
-        Ekstrak stream URL dari JW Player config (decoded).
-        Handle:
-          {file: "https://...m3u8"}
-          {source: {file: "..."}}
-          {source: [{file: "...", type: "hls"}]}
-          {sources: [{src: "..."}]}
-          {playlist: [{file: "..."}]}
-          {hls: "https://..."}
-          {dash: "https://..."}
-        """
+        """Ekstrak stream URL dari JW Player config (JSON)."""
         urls = []
-
-        def _collect(obj):
+        def _c(obj):
             if isinstance(obj, str):
                 if obj.startswith("http") and re.search(
                     r'\.(m3u8|mpd|flv|ts)', obj
                 ):
                     urls.append(obj)
             elif isinstance(obj, dict):
-                for key in ("file", "src", "url", "hls", "dash",
-                            "source", "stream", "manifest",
-                            "m3u8", "mpd"):
-                    if key in obj:
-                        _collect(obj[key])
+                for k in ("file", "src", "url", "hls", "dash",
+                          "source", "stream", "manifest", "m3u8"):
+                    if k in obj:
+                        _c(obj[k])
                 if "sources" in obj:
-                    _collect(obj["sources"])
+                    _c(obj["sources"])
                 if "playlist" in obj:
-                    _collect(obj["playlist"])
+                    _c(obj["playlist"])
             elif isinstance(obj, list):
-                for item in obj:
-                    _collect(item)
-
-        _collect(data)
+                for i in obj:
+                    _c(i)
+        _c(data)
         return urls
 
     def _find_player_config(self, html):
@@ -1081,9 +1158,16 @@ class VIPBox:
                     headers={"Referer": f"{BASE_URL}/"}
                 )
                 if r.status_code == 200 and len(r.text) > 100:
-                    results = self._extract_streams_from_html(
-                        r.text, pldm
+                    # Cek window var di response GET
+                    results.extend(
+                        self._extract_window_var_stream(
+                            r.text, pldm
+                        )
                     )
+                    if not results:
+                        results = self._extract_streams_from_html(
+                            r.text, pldm
+                        )
                     if results:
                         break
             except Exception:
@@ -1125,7 +1209,9 @@ class VIPBox:
         params_list = self.get_play_params(e)
 
         if not params_list and (FORCE_PW or DEBUG):
-            log.info(f"    [PW] Trying Playwright for {e['live_uri']}")
+            log.info(
+                f"    [PW] Trying Playwright for {e['live_uri']}"
+            )
             if e["onair_uri"]:
                 params_list = self._pw_extract_page(e["onair_uri"])
             if not params_list:
@@ -1278,10 +1364,8 @@ class VIPBox:
         with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
             f.write("\n".join(lines) + "\n")
 
-        log.info(f"\n  ✅ {OUTPUT_FILE} → {total_videos} stream")
-        log.info(
-            f"     Resolved: {resolved_count}/{total_videos}"
-        )
+        log.info(f"\n  {OUTPUT_FILE} → {total_videos} stream")
+        log.info(f"     Resolved: {resolved_count}/{total_videos}")
         log.info(
             f"     Fallback: "
             f"{total_videos - resolved_count}/{total_videos}"
@@ -1290,7 +1374,7 @@ class VIPBox:
     # ── 7. DEBUG MODE ────────────────────────────────────
     def debug_single(self):
         log.info("=" * 50)
-        log.info("  DEBUG: Football + 24/7 + Playwright")
+        log.info("  DEBUG: Football + 24/7")
         log.info("=" * 50)
 
         # ── FOOTBALL ──
@@ -1347,7 +1431,7 @@ class VIPBox:
             "eid": ev["id"], "link_no": 1, "gc": gc,
         }
 
-        log.info(f"\n  --- Extract params (curl) ---")
+        log.info(f"\n  --- Extract params ---")
         params = self.get_play_params(entry)
         log.info(f"  Found: {len(params)}")
         for i, p in enumerate(params):
@@ -1361,9 +1445,9 @@ class VIPBox:
                 for u, d, drm in results:
                     log.info(f"       {u[:100]}")
         else:
-            log.info(f"\n  --- [PW] Playwright intercept ---")
+            log.info(f"\n  --- [PW] Playwright ---")
             pw_params = self._pw_extract_page(ev["onair_uri"])
-            log.info(f"  PW Found: {len(pw_params)}")
+            log.info(f"  PW: {len(pw_params)}")
             for i, p in enumerate(pw_params):
                 log.info(f"    [{i}] {p['pldm']} | {p['play'][:60]}")
                 results = self.get_stream_from_player(p)
@@ -1427,7 +1511,7 @@ class VIPBox:
         }
 
         params2 = self.get_play_params(entry2)
-        log.info(f"  Params (curl): {len(params2)}")
+        log.info(f"  Params: {len(params2)}")
         for i, p in enumerate(params2):
             log.info(f"    [{i}] {p['pldm']} | {p['play'][:60]}")
 
@@ -1440,7 +1524,7 @@ class VIPBox:
         else:
             log.info(f"\n  --- [PW] Playwright 24/7 ---")
             pw_params2 = self._pw_extract_page(ev_247["onair_uri"])
-            log.info(f"  PW Found: {len(pw_params2)}")
+            log.info(f"  PW: {len(pw_params2)}")
             for i, p in enumerate(pw_params2):
                 log.info(f"    [{i}] {p['pldm']} | {p['play'][:60]}")
                 results2 = self.get_stream_from_player(p)
@@ -1458,7 +1542,7 @@ class VIPBox:
             return
 
         log.info("=" * 50)
-        log.info("  VIPBox M3U Generator v9.1")
+        log.info("  VIPBox M3U Generator v9.2")
         log.info(f"  Target : {BASE_URL}")
         log.info(f"  Output : {OUTPUT_FILE}")
         log.info(
