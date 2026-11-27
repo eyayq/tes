@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""VIPBox M3U Generator v4"""
+"""VIPBox M3U Generator v5 (curl_cffi)"""
 
-import requests
+from curl_cffi import requests as cffi_requests
 import re
 import json
 import logging
@@ -17,6 +17,7 @@ OUTPUT_FILE = "playlist.m3u"
 WIB = timezone(timedelta(hours=7))
 TIMEOUT = 30
 MAX_WORKERS = 4
+IMPERSONATE = "chrome"  # TLS fingerprint Chrome
 
 HEADERS = {
     "User-Agent": (
@@ -26,9 +27,6 @@ HEADERS = {
     ),
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
     "Accept-Language": "id-ID,id;q=0.9",
-    "Sec-Ch-Ua": '"Chromium";v="158", "Not.A/Brand";v="24", "Brave";v="158"',
-    "Sec-Ch-Ua-Mobile": "?1",
-    "Sec-Ch-Ua-Platform": '"Android"',
 }
 
 CATEGORIES = [
@@ -50,7 +48,8 @@ log = logging.getLogger("VIPBox")
 
 class VIPBox:
     def __init__(self):
-        self.s = requests.Session()
+        # curl_cffi session dengan impersonate
+        self.s = cffi_requests.Session(impersonate=IMPERSONATE)
         self.s.headers.update(HEADERS)
         self.play_cache = {}
         self.uri_cache = {}
@@ -182,35 +181,24 @@ class VIPBox:
         key = m.get(icon_cls, icon_cls) if icon_cls else "football"
         return f"{STATIC_URL}/img/home/{key}.webp"
 
-    # ── 2. EKSTRAK data-play (Pakai /onair/ lebih reliable) ──
+    # ── 2. EKSTRAK data-play ─────────────────────────────
     def get_play_params(self, e):
-        """
-        Ambil data-play, data-pldm, data-gc.
-        Prioritas: /onair/ (1x per event) → /live/ (per link).
-        Cache per eid agar tidak fetch ulang.
-        """
-        # Cache per event (onair page sama untuk semua link event)
         if e["eid"] in self.onair_cache:
             return self.onair_cache[e["eid"]]
 
         params = None
-
-        # Coba /onair/ dulu
         if e["onair_uri"]:
             params = self._extract_from_page(e["onair_uri"])
             if params:
                 self.onair_cache[e["eid"]] = params
                 return params
 
-        # Fallback: /live/
         params = self._extract_from_page(e["live_uri"])
         if params:
             self.onair_cache[e["eid"]] = params
-
         return params
 
     def _extract_from_page(self, uri):
-        """GET page → ekstrak data-pldm, data-play, data-gc"""
         if uri in self.uri_cache:
             return self.uri_cache[uri]
 
@@ -231,19 +219,14 @@ class VIPBox:
                     "play": play.group(1),
                     "gc": gc.group(1) if gc else "motorsports",
                 }
-                log.debug(f"    OK {uri} → {result['pldm']}")
-            else:
-                log.debug(f"    No data-play in {uri}")
-
         except Exception as ex:
             log.debug(f"    GET fail {uri}: {ex}")
 
         self.uri_cache[uri] = result
         return result
 
-    # ── 3. POST KE PLAYER → STREAM URL ───────────────────
+    # ── 3. POST KE PLAYER (curl_cffi) ────────────────────
     def get_stream_from_player(self, pldm, data_play, gc):
-        """POST {pldm}/vimpl/{gc} → STUDY_CONFIG → mpd/m3u8"""
         cache_key = (pldm, data_play)
         if cache_key in self.play_cache:
             return self.play_cache[cache_key]
@@ -261,16 +244,16 @@ class VIPBox:
                     "Content-Type": "application/x-www-form-urlencoded",
                     "Origin": BASE_URL,
                     "Referer": f"{BASE_URL}/",
-                    "User-Agent": HEADERS["User-Agent"],
                     "Sec-Fetch-Site": "cross-site",
                     "Sec-Fetch-Mode": "navigate",
                     "Sec-Fetch-Dest": "iframe",
                 },
                 timeout=TIMEOUT,
+                impersonate=IMPERSONATE,
             )
             html = r.text
             log.debug(f"    POST {post_url} → {r.status_code}, "
-                      f"{len(html)} bytes")
+                      f"{len(html)}B")
 
             # Parse STUDY_CONFIG
             m = re.search(
@@ -289,30 +272,25 @@ class VIPBox:
                     elif "url" in source:
                         stream_url = source["url"]
 
-                    # DRM
                     drm = source.get("drm", {})
                     if drm:
                         ck = drm.get("clearkey", [])
                         if ck:
-                            drm_key = (
-                                f"{ck[0]['kid']}:{ck[0]['key']}"
-                            )
+                            drm_key = f"{ck[0]['kid']}:{ck[0]['key']}"
 
                     if stream_url:
                         parsed = urlparse(stream_url)
                         if parsed.netloc:
                             domain = parsed.netloc
-                        log.debug(f"    Stream: {stream_url[:60]}...")
 
                 except json.JSONDecodeError as je:
-                    log.warning(f"    JSON parse fail: {je}")
+                    log.warning(f"    JSON fail: {je}")
 
-            # Fallback: regex langsung di HTML
+            # Fallback regex
             if not stream_url:
                 pats = [
                     r'"(https?://[^"]+\.(?:m3u8|mpd|flv)[^"]*)"',
                     r'"(https?://[^"]*/live/[^"]+)"',
-                    r'src="(https?://[^"]+\.m3u8[^"]*)"',
                 ]
                 for p in pats:
                     m2 = re.search(p, html)
@@ -423,7 +401,7 @@ class VIPBox:
     # ── 6. MAIN ──────────────────────────────────────────
     def run(self):
         log.info("=" * 50)
-        log.info("  VIPBox M3U Generator v4")
+        log.info("  VIPBox M3U Generator v5 (curl_cffi)")
         log.info(f"  Target : {BASE_URL}")
         log.info(f"  Output : {OUTPUT_FILE}")
         log.info("=" * 50)
