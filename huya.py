@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-"""
-VIPBox M3U Playlist Generator v3 (FIXED)
-"""
+"""VIPBox M3U Generator v4"""
 
 import requests
 import re
@@ -13,12 +11,11 @@ from datetime import datetime, timedelta, timezone
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from urllib.parse import urlparse
 
-# ═══════════════════════════════════════════════════════
 BASE_URL = "https://vipbox.ga"
 STATIC_URL = "https://static.vipbox.ga"
 OUTPUT_FILE = "playlist.m3u"
 WIB = timezone(timedelta(hours=7))
-TIMEOUT = 25
+TIMEOUT = 30
 MAX_WORKERS = 4
 
 HEADERS = {
@@ -57,6 +54,7 @@ class VIPBox:
         self.s.headers.update(HEADERS)
         self.play_cache = {}
         self.uri_cache = {}
+        self.onair_cache = {}
 
     # ── 1. FETCH SCHEDULE ────────────────────────────────
     def fetch_category(self, slug, name):
@@ -105,16 +103,13 @@ class VIPBox:
             eid = ev["id"]
             append = appends.get(eid, slug)
             ev_links = links_map.get(eid, [])
-
             if not ev_links:
                 ev_links = [{"player": "?", "lang": "", "hd": 0}]
-
             ev_slug = slugs_map.get(eid, "")
 
             for i, lk in enumerate(ev_links, 1):
                 live_uri = f"/live/{append}/{eid}-{i}"
                 onair_uri = f"/onair/{append}/{ev_slug}" if ev_slug else ""
-
                 results.append({
                     "name": ev["title"],
                     "group": name,
@@ -148,7 +143,8 @@ class VIPBox:
 
     def _parse_events(self, soup, time_cls):
         events = []
-        for d in soup.find_all("details", attrs={"vt-data-events-row": True}):
+        for d in soup.find_all("details",
+                               attrs={"vt-data-events-row": True}):
             a = d.find("a")
             if not a:
                 continue
@@ -156,7 +152,6 @@ class VIPBox:
             eid = a.get("data-bs-target", "").lstrip("#")
             if not eid:
                 continue
-
             t_el = d.find("time")
             etime = None
             if t_el and t_el.get("content"):
@@ -164,7 +159,6 @@ class VIPBox:
                     etime = datetime.fromisoformat(t_el["content"])
                 except:
                     pass
-
             icon = d.find("i", class_=re.compile(r"vip-box-icon"))
             icon_cls = ""
             if icon:
@@ -172,10 +166,8 @@ class VIPBox:
                     if c not in ("align-bottom", "me-2", "vip-box-icon"):
                         icon_cls = c
                         break
-
             events.append({
-                "title": title,
-                "id": eid,
+                "title": title, "id": eid,
                 "time": etime,
                 "logo": self._icon_to_logo(icon_cls),
             })
@@ -190,9 +182,35 @@ class VIPBox:
         key = m.get(icon_cls, icon_cls) if icon_cls else "football"
         return f"{STATIC_URL}/img/home/{key}.webp"
 
-    # ── 2. EKSTRAK data-play DARI HALAMAN ────────────────
-    def extract_play_params(self, uri):
-        """GET /live/... → data-play, data-pldm, data-gc"""
+    # ── 2. EKSTRAK data-play (Pakai /onair/ lebih reliable) ──
+    def get_play_params(self, e):
+        """
+        Ambil data-play, data-pldm, data-gc.
+        Prioritas: /onair/ (1x per event) → /live/ (per link).
+        Cache per eid agar tidak fetch ulang.
+        """
+        # Cache per event (onair page sama untuk semua link event)
+        if e["eid"] in self.onair_cache:
+            return self.onair_cache[e["eid"]]
+
+        params = None
+
+        # Coba /onair/ dulu
+        if e["onair_uri"]:
+            params = self._extract_from_page(e["onair_uri"])
+            if params:
+                self.onair_cache[e["eid"]] = params
+                return params
+
+        # Fallback: /live/
+        params = self._extract_from_page(e["live_uri"])
+        if params:
+            self.onair_cache[e["eid"]] = params
+
+        return params
+
+    def _extract_from_page(self, uri):
+        """GET page → ekstrak data-pldm, data-play, data-gc"""
         if uri in self.uri_cache:
             return self.uri_cache[uri]
 
@@ -204,16 +222,8 @@ class VIPBox:
             html = r.text
 
             pldm = re.search(r'data-pldm="([^"]+)"', html)
-            if not pldm:
-                pldm = re.search(r"data-pldm='([^']+)'", html)
-
             play = re.search(r'data-play="([^"]+)"', html)
-            if not play:
-                play = re.search(r"data-play='([^']+)'", html)
-
             gc = re.search(r'data-gc="([^"]+)"', html)
-            if not gc:
-                gc = re.search(r"data-gc='([^']+)'", html)
 
             if pldm and play:
                 result = {
@@ -221,9 +231,12 @@ class VIPBox:
                     "play": play.group(1),
                     "gc": gc.group(1) if gc else "motorsports",
                 }
+                log.debug(f"    OK {uri} → {result['pldm']}")
+            else:
+                log.debug(f"    No data-play in {uri}")
 
-        except Exception as e:
-            log.debug(f"    extract fail {uri}: {e}")
+        except Exception as ex:
+            log.debug(f"    GET fail {uri}: {ex}")
 
         self.uri_cache[uri] = result
         return result
@@ -256,10 +269,12 @@ class VIPBox:
                 timeout=TIMEOUT,
             )
             html = r.text
+            log.debug(f"    POST {post_url} → {r.status_code}, "
+                      f"{len(html)} bytes")
 
             # Parse STUDY_CONFIG
             m = re.search(
-                r'window\.STUDY_CONFIG\s*=\s*(\{.+\})\s*;',
+                r'STUDY_CONFIG\s*=\s*(\{.+\})\s*;',
                 html, re.DOTALL
             )
             if m:
@@ -274,34 +289,42 @@ class VIPBox:
                     elif "url" in source:
                         stream_url = source["url"]
 
-                    # DRM clearkey
+                    # DRM
                     drm = source.get("drm", {})
                     if drm:
                         ck = drm.get("clearkey", [])
                         if ck:
-                            drm_key = f"{ck[0]['kid']}:{ck[0]['key']}"
+                            drm_key = (
+                                f"{ck[0]['kid']}:{ck[0]['key']}"
+                            )
 
                     if stream_url:
                         parsed = urlparse(stream_url)
                         if parsed.netloc:
                             domain = parsed.netloc
+                        log.debug(f"    Stream: {stream_url[:60]}...")
 
-                except json.JSONDecodeError:
-                    pass
+                except json.JSONDecodeError as je:
+                    log.warning(f"    JSON parse fail: {je}")
 
-            # Fallback regex
+            # Fallback: regex langsung di HTML
             if not stream_url:
-                m2 = re.search(
-                    r'"(https?://[^"]+\.(?:m3u8|mpd|flv))"', html
-                )
-                if m2:
-                    stream_url = m2.group(1)
-                    parsed = urlparse(stream_url)
-                    if parsed.netloc:
-                        domain = parsed.netloc
+                pats = [
+                    r'"(https?://[^"]+\.(?:m3u8|mpd|flv)[^"]*)"',
+                    r'"(https?://[^"]*/live/[^"]+)"',
+                    r'src="(https?://[^"]+\.m3u8[^"]*)"',
+                ]
+                for p in pats:
+                    m2 = re.search(p, html)
+                    if m2:
+                        stream_url = m2.group(1)
+                        parsed = urlparse(stream_url)
+                        if parsed.netloc:
+                            domain = parsed.netloc
+                        break
 
-        except Exception as e:
-            log.debug(f"    player POST fail {pldm}: {e}")
+        except Exception as ex:
+            log.warning(f"    POST fail {pldm}: {ex}")
 
         result = (stream_url, domain, drm_key)
         self.play_cache[cache_key] = result
@@ -309,9 +332,7 @@ class VIPBox:
 
     # ── 4. RESOLVE ENTRY ─────────────────────────────────
     def resolve_entry(self, e):
-        params = self.extract_play_params(e["live_uri"])
-        if not params and e["onair_uri"]:
-            params = self.extract_play_params(e["onair_uri"])
+        params = self.get_play_params(e)
 
         if not params:
             e["player_domain"] = "vipbox.ga"
@@ -350,6 +371,7 @@ class VIPBox:
 
         lines = ["#EXTM3U"]
         ua = HEADERS["User-Agent"]
+        resolved_count = 0
 
         for e in unique:
             parts = [e["name"]]
@@ -368,11 +390,15 @@ class VIPBox:
             full_name = f"{base_name} | {ts} WIB"
             domain = e.get("player_domain", "vipbox.ga")
             referrer = f"https://{domain}/"
+            final_url = e.get("resolved_url",
+                              f"{BASE_URL}{e['live_uri']}")
+
+            if "vipbox.ga/live/" not in final_url:
+                resolved_count += 1
 
             lines.append(f"#EXTVLCOPT:http-user-agent={ua}")
             lines.append(f"#EXTVLCOPT:http-referrer={referrer}")
 
-            # DRM clearkey (jika ada)
             drm = e.get("drm_key")
             if drm:
                 lines.append(
@@ -386,17 +412,18 @@ class VIPBox:
                 f'tvg-logo="{e["logo"]}" '
                 f'group-title="{e["group"]}",{full_name}'
             )
-            lines.append(e.get("resolved_url", f"{BASE_URL}{e['live_uri']}"))
+            lines.append(final_url)
 
         with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
             f.write("\n".join(lines) + "\n")
 
         log.info(f"\n  ✅ {OUTPUT_FILE} → {len(unique)} channel")
+        log.info(f"     Resolved: {resolved_count}/{len(unique)}")
 
     # ── 6. MAIN ──────────────────────────────────────────
     def run(self):
         log.info("=" * 50)
-        log.info("  VIPBox M3U Generator v3")
+        log.info("  VIPBox M3U Generator v4")
         log.info(f"  Target : {BASE_URL}")
         log.info(f"  Output : {OUTPUT_FILE}")
         log.info("=" * 50)
