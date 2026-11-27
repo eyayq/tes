@@ -39,6 +39,24 @@ CATEGORIES = [
     ("motorsports", "Motorsports"), ("others", "Others"),
 ]
 
+GC_TO_GROUP = {
+    "nfl": "NFL", "ncaaf": "NCAAF", "basketball": "Basketball",
+    "nba": "Basketball", "college-basketball": "Basketball",
+    "hockey": "Hockey", "khl": "Hockey", "finland": "Hockey",
+    "russia": "Hockey", "czech-republic": "Hockey",
+    "tennis": "Tennis", "davis-cup": "Tennis",
+    "golf": "Golf", "football": "Football", "soccer": "Football",
+    "worldcup": "Football", "bahrain": "Football", "qatar": "Football",
+    "romania": "Football", "serbia": "Football", "slovenia": "Football",
+    "bulgaria": "Football",
+    "rugby": "Rugby", "afl": "AFL",
+    "darts": "Darts", "mma": "MMA", "boxing": "Boxing",
+    "fighting": "Fighting", "motorsports": "Motorsports",
+    "formula-1": "Motorsports", "motogp": "Motorsports",
+    "american-football": "NFL",
+    "others": "Others", "other-sports": "Others",
+}
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s",
@@ -48,7 +66,6 @@ log = logging.getLogger("VIPBox")
 
 
 def extract_json_block(text, var_name):
-    """Extract JSON object assigned to a JS variable using brace counting."""
     idx = text.find(var_name)
     if idx == -1:
         return None
@@ -111,7 +128,6 @@ class VIPBox:
 
         sched_data = cfg.get("scheduleData", "")
         token = cfg.get("fetck_token", "")
-        time_cls = cfg.get("timeCls", "vt_m0k0o3u5d1")
 
         post_url = f"{BASE_URL}/schedule/{sched_data}/"
         post_hdrs = {
@@ -125,27 +141,82 @@ class VIPBox:
             data = r2.json()
         except Exception as e:
             log.error(f"    POST FAIL: {e}")
-            data = {"links": {}, "linkAppends": {}, "slugs": {}}
+            data = {"links": {}}
 
-        events = self._parse_events(soup, time_cls)
+        events = self._parse_events(soup)
         log.info(f"    {len(events)} events")
+        return self._build_results(events, data, name)
+
+    def fetch_livenow(self):
+        url = f"{BASE_URL}/livenow-schedule"
+        log.info(f"  GET {url}")
+        try:
+            r = self.s.get(url, timeout=TIMEOUT)
+            r.raise_for_status()
+        except Exception as e:
+            log.error(f"    FAIL: {e}")
+            return []
+
+        soup = BeautifulSoup(r.text, "html.parser")
+        cfg = self._extract_site_config(soup)
+        if not cfg:
+            log.warning("    No siteConfig")
+            return []
+
+        sched_data = cfg.get("scheduleData", "")
+        token = cfg.get("fetck_token", "")
+
+        post_url = f"{BASE_URL}/schedule/{sched_data}/"
+        post_hdrs = {
+            "fetch-token": token,
+            "Referer": url,
+            "Origin": BASE_URL,
+            "Content-Type": "application/json",
+        }
+        try:
+            r2 = self.s.post(post_url, headers=post_hdrs, timeout=TIMEOUT)
+            data = r2.json()
+        except Exception as e:
+            log.error(f"    POST FAIL: {e}")
+            data = {"links": {}}
+
+        events = self._parse_events(soup)
+        log.info(f"    {len(events)} events (livenow)")
 
         results = []
-        appends = data.get("linkAppends", {})
         links_map = data.get("links", {})
-        slugs_map = data.get("slugs", {})
-
         for ev in events:
-            eid = ev["id"]
-            append = appends.get(eid, slug)
-            ev_links = links_map.get(eid, [])
+            group = GC_TO_GROUP.get(ev["gc"], "Others")
+            ev_links = links_map.get(ev["id"], [])
             if not ev_links:
                 ev_links = [{"player": "?", "lang": "", "hd": 0}]
-            ev_slug = slugs_map.get(eid, "")
-
             for i, lk in enumerate(ev_links, 1):
-                live_uri = f"/live/{append}/{eid}-{i}"
-                onair_uri = f"/onair/{append}/{ev_slug}" if ev_slug else ""
+                live_uri = f"/live/{ev['gc']}/{ev['id']}-{i}"
+                results.append({
+                    "name": ev["title"],
+                    "group": group,
+                    "logo": ev["logo"],
+                    "time": ev["time"],
+                    "player": lk.get("player", "?"),
+                    "lang": lk.get("lang", ""),
+                    "hd": lk.get("hd", 0),
+                    "live_uri": live_uri,
+                    "onair_uri": ev["onair_uri"],
+                    "eid": ev["id"],
+                    "link_no": i,
+                    "gc": ev["gc"],
+                })
+        return results
+
+    def _build_results(self, events, data, name):
+        results = []
+        links_map = data.get("links", {})
+        for ev in events:
+            ev_links = links_map.get(ev["id"], [])
+            if not ev_links:
+                ev_links = [{"player": "?", "lang": "", "hd": 0}]
+            for i, lk in enumerate(ev_links, 1):
+                live_uri = f"/live/{ev['gc']}/{ev['id']}-{i}"
                 results.append({
                     "name": ev["title"],
                     "group": name,
@@ -155,10 +226,10 @@ class VIPBox:
                     "lang": lk.get("lang", ""),
                     "hd": lk.get("hd", 0),
                     "live_uri": live_uri,
-                    "onair_uri": onair_uri,
-                    "eid": eid,
+                    "onair_uri": ev["onair_uri"],
+                    "eid": ev["id"],
                     "link_no": i,
-                    "gc": append,
+                    "gc": ev["gc"],
                 })
         return results
 
@@ -169,24 +240,35 @@ class VIPBox:
                 return extract_json_block(t, "siteConfig")
         return None
 
-    def _parse_events(self, soup, time_cls):
+    def _parse_events(self, soup):
         events = []
         for d in soup.find_all("details",
                                attrs={"vt-data-events-row": True}):
             a = d.find("a")
             if not a:
                 continue
+
             title = a.get("title", "").strip()
             eid = a.get("data-bs-target", "").lstrip("#")
             if not eid:
                 continue
+
+            href = a.get("href", "")
+            onair_uri = href
+            gc = "others"
+            if href.startswith("/onair/"):
+                parts = href.strip("/").split("/")
+                if len(parts) >= 2:
+                    gc = parts[1]
+
             t_el = d.find("time")
             etime = None
             if t_el and t_el.get("content"):
                 try:
                     etime = datetime.fromisoformat(t_el["content"])
-                except:
+                except Exception:
                     pass
+
             icon = d.find("i", class_=re.compile(r"vip-box-icon"))
             icon_cls = ""
             if icon:
@@ -194,9 +276,13 @@ class VIPBox:
                     if c not in ("align-bottom", "me-2", "vip-box-icon"):
                         icon_cls = c.strip()
                         break
+
             events.append({
-                "title": title, "id": eid,
+                "title": title,
+                "id": eid,
                 "time": etime,
+                "onair_uri": onair_uri,
+                "gc": gc,
                 "logo": self._icon_to_logo(icon_cls),
             })
         return events
@@ -206,13 +292,22 @@ class VIPBox:
             "nascar": "nfl", "formula-1": "motorsports",
             "motogp": "motorsports", "college-football": "ncaaf",
             "soccer": "football", "other-sports": "other-sports",
+            "college-basketball": "basketball",
+            "nba": "basketball", "nfl": "nfl",
+            "davis-cup": "tennis", "khl": "hockey",
+            "worldcup": "football", "bahrain": "football",
+            "qatar": "football", "romania": "football",
+            "serbia": "football", "slovenia": "football",
+            "bulgaria": "football", "russia": "hockey",
+            "czech-republic": "hockey", "finland": "hockey",
+            "australia": "basketball", "south-korea": "basketball",
+            "italy": "basketball", "television": "nfl",
         }
         key = m.get(icon_cls, icon_cls) if icon_cls else "football"
         return f"{STATIC_URL}/img/home/{key}.webp"
 
-    # ── 2. EKSTRAK SEMUA PARAMS VIDEO DARI HALAMAN ──────
+    # ── 2. EKSTRAK PARAM VIDEO (OBFUSCATED) ──────────────
     def get_play_params(self, e):
-        """Return LIST of param dicts (satu per video)."""
         with self._lock:
             if e["eid"] in self.onair_cache:
                 return self.onair_cache[e["eid"]]
@@ -232,7 +327,6 @@ class VIPBox:
         return params_list
 
     def _extract_all_from_page(self, uri):
-        """Ekstrak SEMUA video player dari halaman."""
         with self._lock:
             if uri in self.uri_cache:
                 return self.uri_cache[uri]
@@ -244,50 +338,65 @@ class VIPBox:
                            headers={"Referer": f"{BASE_URL}/"})
             html = r.text
 
-            # Cari SEMUA elemen dengan data-pldm dan data-play
-            # Bisa berupa <iframe>, <div>, <a>, atau elemen lain
+            # ── Coba data-* attributes dulu (mungkin ada di beberapa halaman)
             all_pldm = re.findall(r'data-pldm="([^"]+)"', html)
             all_play = re.findall(r'data-play="([^"]+)"', html)
-            all_pid = re.findall(r'data-pid="([^"]+)"', html)
-            all_player = re.findall(r'data-player="([^"]+)"', html)
-            all_gc = re.findall(r'data-gc="([^"]+)"', html)
 
-            # Jika tidak ketemu via data-*, coba cari pattern lain
-            # (misal multiple iframe src, atau multiple config block)
-            if not all_pldm:
-                # Fallback: cari semua STUDY_CONFIG atau source URL langsung
-                all_pldm = [""]
-                all_play = [""]
+            if all_pldm and all_play:
+                all_pid = re.findall(r'data-pid="([^"]+)"', html)
+                all_player = re.findall(r'data-player="([^"]+)"', html)
+                all_gc = re.findall(r'data-gc="([^"]+)"', html)
+                max_videos = max(len(all_pldm), len(all_play), 1)
+                soup = BeautifulSoup(html, "html.parser")
+                cfg = self._extract_site_config(soup) or {}
+                for i in range(max_videos):
+                    pldm = all_pldm[i] if i < len(all_pldm) else ""
+                    play = all_play[i] if i < len(all_play) else ""
+                    if not pldm or not play:
+                        continue
+                    result.append({
+                        "pldm": pldm,
+                        "play": play,
+                        "pid": all_pid[i] if i < len(all_pid) else "6",
+                        "player": all_player[i] if i < len(all_player) else "jw",
+                        "gc": all_gc[i] if i < len(all_gc) else "motorsports",
+                        "csrf": cfg.get("csrf", ""),
+                        "csrf_ip": cfg.get("csrf_ip", ""),
+                        "sec_expires": cfg.get("sec_expires", ""),
+                        "sec_hash": cfg.get("sec_hash", ""),
+                    })
+                if result:
+                    with self._lock:
+                        self.uri_cache[uri] = result
+                    return result
 
-            # Tentukan jumlah video = max dari semua list
-            max_videos = max(
-                len(all_pldm), len(all_play), 1
+            # ── Ekstrak window['...'] obfuscated variable ──
+            m = re.search(
+                r"window\['([A-Za-z0-9]+)'\]\s*=\s*'([^']+)'", html
             )
+            if not m:
+                log.warning(f"    No player data in {uri}")
+                return []
 
-            soup = BeautifulSoup(html, "html.parser")
-            cfg = self._extract_site_config(soup) or {}
+            win_val = m.group(2)
+            log.info(f"    window var len={len(win_val)}")
 
-            for i in range(max_videos):
-                pldm = all_pldm[i] if i < len(all_pldm) else (
-                    all_pldm[0] if all_pldm else ""
-                )
-                play = all_play[i] if i < len(all_play) else (
-                    all_play[0] if all_play else ""
-                )
-                if not pldm or not play:
-                    continue
+            # ── Decode base64 ──
+            try:
+                decoded = base64.b64decode(win_val)
+            except Exception:
+                decoded = win_val.encode()
 
-                result.append({
-                    "pldm": pldm,
-                    "play": play,
-                    "pid": all_pid[i] if i < len(all_pid) else "6",
-                    "player": all_player[i] if i < len(all_player) else "jw",
-                    "gc": all_gc[i] if i < len(all_gc) else "motorsports",
-                    "csrf": cfg.get("csrf", ""),
-                    "csrf_ip": cfg.get("csrf_ip", ""),
-                    "sec_expires": cfg.get("sec_expires", ""),
-                    "sec_hash": cfg.get("sec_hash", ""),
-                })
+            # ── Simpan debug ──
+            dbg = f"debug_{uri.replace('/', '_')}.txt"
+            with open(dbg, "w") as f:
+                f.write(f"RAW_LEN: {len(win_val)}\n")
+                f.write(f"DECODED_LEN: {len(decoded)}\n")
+                f.write(f"DECODED: {decoded.decode('utf-8', errors='replace')}\n")
+            log.info(f"    DEBUG → {dbg}")
+
+            # ── Parse decoded content ──
+            result = self._parse_decoded_player(decoded, win_val, html)
 
         except Exception as ex:
             log.debug(f"    GET fail {uri}: {ex}")
@@ -296,8 +405,90 @@ class VIPBox:
             self.uri_cache[uri] = result
         return result
 
-    # ── 3. POST KE PLAYER (PER VIDEO) ────────────────────
+    def _parse_decoded_player(self, decoded_bytes, raw_str, html):
+        """Parse decoded player data."""
+        result = []
+        text = decoded_bytes.decode("utf-8", errors="ignore")
+
+        # ── Coba JSON ──
+        try:
+            data = json.loads(text)
+            if isinstance(data, dict):
+                pldm = data.get("pldm", "") or data.get("domain", "")
+                play = data.get("play", "") or data.get("vimg", "")
+                if pldm and play:
+                    result.append({
+                        "pldm": pldm,
+                        "play": play,
+                        "pid": data.get("pid", "6"),
+                        "player": data.get("player", "jw"),
+                        "gc": data.get("gc", "motorsports"),
+                        "csrf": data.get("csrf", ""),
+                        "csrf_ip": data.get("csrf_ip", ""),
+                        "sec_expires": data.get("sec_expires", ""),
+                        "sec_hash": data.get("sec_hash", ""),
+                    })
+        except Exception:
+            pass
+
+        # ── Coba parse sebagai URL langsung ──
+        if not result:
+            url_m = re.search(
+                r'(https?://[^\s"\'<>]+\.(?:mpd|m3u8|flv)[^\s"\'<>]*)',
+                text
+            )
+            if url_m:
+                stream_url = url_m.group(1)
+                parsed = urlparse(stream_url)
+                domain = parsed.netloc if parsed.netloc else "vipbox.ga"
+                result.append({
+                    "pldm": domain,
+                    "play": stream_url,
+                    "pid": "6",
+                    "player": "direct",
+                    "gc": "motorsports",
+                    "csrf": "",
+                    "csrf_ip": "",
+                    "sec_expires": "",
+                    "sec_hash": "",
+                    "_direct_url": stream_url,
+                })
+
+        # ── Fallback: regex di raw HTML ──
+        if not result:
+            # Cari URL streaming langsung di HTML
+            url_m = re.search(
+                r'(https?://[^\s"\'<>]+\.(?:mpd|m3u8|flv)[^\s"\'<>]*)',
+                html
+            )
+            if url_m:
+                stream_url = url_m.group(1)
+                parsed = urlparse(stream_url)
+                domain = parsed.netloc if parsed.netloc else "vipbox.ga"
+                result.append({
+                    "pldm": domain,
+                    "play": stream_url,
+                    "pid": "6",
+                    "player": "direct",
+                    "gc": "motorsports",
+                    "csrf": "",
+                    "csrf_ip": "",
+                    "sec_expires": "",
+                    "sec_hash": "",
+                    "_direct_url": stream_url,
+                })
+
+        return result
+
+    # ── 3. POST KE PLAYER ────────────────────────────────
     def get_stream_from_player(self, params):
+        # Kalau sudah ada direct URL, langsung return
+        if params.get("_direct_url"):
+            url = params["_direct_url"]
+            parsed = urlparse(url)
+            domain = parsed.netloc if parsed.netloc else params["pldm"]
+            return (url, domain, None)
+
         pldm = params["pldm"]
         gc = params["gc"]
         cache_key = (pldm, params["play"])
@@ -342,12 +533,6 @@ class VIPBox:
             log.debug(f"    POST {post_url} → {r.status_code}, "
                       f"{len(html)}B")
 
-            if "STUDY_CONFIG" not in html:
-                log.warning(
-                    f"    No STUDY_CONFIG! "
-                    f"First 200: {html[:200]}"
-                )
-
             cfg = extract_json_block(html, "STUDY_CONFIG")
             if cfg:
                 source = cfg.get("source", {})
@@ -382,7 +567,6 @@ class VIPBox:
                         if parsed.netloc:
                             domain = parsed.netloc
                         break
-
         except Exception as ex:
             log.warning(f"    POST fail {pldm}: {ex}")
 
@@ -391,9 +575,8 @@ class VIPBox:
             self.play_cache[cache_key] = result
         return result
 
-    # ── 4. RESOLVE ENTRY (SEMUA VIDEO) ───────────────────
+    # ── 4. RESOLVE ENTRY ─────────────────────────────────
     def resolve_entry(self, e):
-        """Resolve semua video → simpan list di e['videos']."""
         params_list = self.get_play_params(e)
 
         if not params_list:
@@ -413,7 +596,6 @@ class VIPBox:
                 "resolved_url": stream_url or f"{BASE_URL}{e['live_uri']}",
                 "drm_key": drm_key,
             })
-
         return e
 
     # ── 5. GENERATE M3U ──────────────────────────────────
@@ -466,15 +648,12 @@ class VIPBox:
                 "resolved_url": f"{BASE_URL}{e['live_uri']}",
                 "drm_key": None,
             }])
-
-            # Jika hanya 1 video, tanpa label "Video N"
-            # Jika >1 video, tambah "Video 1", "Video 2", dst.
             multi = len(videos) > 1
 
             for vi, v in enumerate(videos, 1):
                 if multi:
-                    v_label = f"Video {vi}"
-                    full_name = f"{status} | {base_name} | {v_label} | {ts} WIB"
+                    full_name = (f"{status} | {base_name} | "
+                                 f"Video {vi} | {ts} WIB")
                 else:
                     full_name = f"{status} | {base_name} | {ts} WIB"
 
@@ -484,12 +663,10 @@ class VIPBox:
                 final_url = v.get("resolved_url",
                                   f"{BASE_URL}{e['live_uri']}")
 
-                # Fallback jika belum mulai ATAU masih halaman vipbox
                 if not_started or "vipbox.ga" in final_url:
                     final_url = fallback_url
                 else:
                     resolved_count += 1
-
                 total_videos += 1
 
                 lines.append(f"#EXTVLCOPT:http-user-agent={ua}")
@@ -499,7 +676,6 @@ class VIPBox:
                     "#KODIPROP:inputstream.adaptive"
                     ".manifest_type=dash"
                 )
-
                 drm = v.get("drm_key")
                 if drm:
                     lines.append(
@@ -529,17 +705,22 @@ class VIPBox:
     # ── 6. MAIN ──────────────────────────────────────────
     def run(self):
         log.info("=" * 50)
-        log.info("  VIPBox M3U Generator v7.0")
+        log.info("  VIPBox M3U Generator v7.3")
         log.info(f"  Target : {BASE_URL}")
         log.info(f"  Output : {OUTPUT_FILE}")
         log.info("=" * 50)
 
         all_entries = []
+
         for slug, name in CATEGORIES:
             entries = self.fetch_category(slug, name)
             log.info(f"  {name}: {len(entries)} streams")
             all_entries.extend(entries)
             time.sleep(0.3)
+
+        livenow = self.fetch_livenow()
+        log.info(f"  Livenow: {len(livenow)} streams")
+        all_entries.extend(livenow)
 
         log.info(f"\n  Total: {len(all_entries)} entries")
         log.info("  Resolve stream URL...")
