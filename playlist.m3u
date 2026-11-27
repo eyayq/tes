@@ -1,5 +1,4 @@
 #EXTM3U
-#EXTM3U url-tvg="" tvg-shift="0"
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-referrer=https://vipbox.ga/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 2 2026: Qatar F2GP Practice Session [HD] | 27-11-2026 17:55 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 2 2026: Qatar F2GP Practice Session [HD] | 27-11-2026 17:55 WIB
@@ -5116,6 +5115,30 @@ https://vipbox.ga/live/football/461931372-2
 #EXTVLCOPT:http-referrer=https://vipbox.ga/
 #EXTINF:-1 tvg-id="football" tvg-name="Australia W vs Colombia W | 28-11-2026 15:35 WIB" tvg-logo="https://static.vipbox.ga/img/home/football.webp" group-title="Football",Australia W vs Colombia W | 28-11-2026 15:35 WIB
 https://vipbox.ga/live/football/461931372-3
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="football" tvg-name="Central Coast Mariners FC vs Auckland FC | 28-11-2026 15:40 WIB" tvg-logo="https://static.vipbox.ga/img/home/australia.webp" group-title="Football",Central Coast Mariners FC vs Auckland FC | 28-11-2026 15:40 WIB
+https://vipbox.ga/live/football/3768372752-1
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="football" tvg-name="Central Coast Mariners FC vs Auckland FC [HD] | 28-11-2026 15:40 WIB" tvg-logo="https://static.vipbox.ga/img/home/australia.webp" group-title="Football",Central Coast Mariners FC vs Auckland FC [HD] | 28-11-2026 15:40 WIB
+https://vipbox.ga/live/football/3768372752-2
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="football" tvg-name="Central Coast Mariners FC vs Auckland FC | 28-11-2026 15:40 WIB" tvg-logo="https://static.vipbox.ga/img/home/australia.webp" group-title="Football",Central Coast Mariners FC vs Auckland FC | 28-11-2026 15:40 WIB
+https://vipbox.ga/live/football/3768372752-3
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="football" tvg-name="Negeri Sembilan vs Terengganu | 28-11-2026 15:45 WIB" tvg-logo="https://static.vipbox.ga/img/home/malaysia.webp" group-title="Football",Negeri Sembilan vs Terengganu | 28-11-2026 15:45 WIB
+https://vipbox.ga/live/football/4192441236-1
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="football" tvg-name="Negeri Sembilan vs Terengganu | 28-11-2026 15:45 WIB" tvg-logo="https://static.vipbox.ga/img/home/malaysia.webp" group-title="Football",Negeri Sembilan vs Terengganu | 28-11-2026 15:45 WIB
+https://vipbox.ga/live/football/4192441236-2
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="football" tvg-name="Negeri Sembilan vs Terengganu | 28-11-2026 15:45 WIB" tvg-logo="https://static.vipbox.ga/img/home/malaysia.webp" group-title="Football",Negeri Sembilan vs Terengganu | 28-11-2026 15:45 WIB
+https://vipbox.ga/live/football/4192441236-3
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-referrer=https://vipbox.ga/
 #EXTINF:-1 tvg-id="nfl" tvg-name="ESPN [HD] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/television.webp" group-title="NFL",ESPN [HD] | LIVE 24/7 WIB
