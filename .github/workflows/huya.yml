@@ -75,7 +75,7 @@ jobs:
           chromedriver --version
 
       - name: ✓
-        run: xvfb-run python huya.py --pw 
+        run: xvfb-run python huya.py --debug
 
       - name: ✓
         run: |
