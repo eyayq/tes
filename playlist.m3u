@@ -1,74 +1,42 @@
 #EXTM3U
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTINF:-1 tvg-id="mma" tvg-name="ONE Friday Fights 180 [HD] | 27-11-2026 18:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/mma.webp" group-title="MMA",ONE Friday Fights 180 [HD] | 27-11-2026 18:30 WIB
 https://vipbox.ga/live/boxing/1573403589-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://dervlin.me/
+#EXTVLCOPT:http-referrer=https://lonpapil.eu/
 #EXTINF:-1 tvg-id="mma" tvg-name="ONE Friday Fights 180 | 27-11-2026 18:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/mma.webp" group-title="MMA",ONE Friday Fights 180 | 27-11-2026 18:30 WIB
 https://vipbox.ga/live/boxing/1573403589-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://dervlin.me/
+#EXTVLCOPT:http-referrer=https://lonpapil.eu/
 #EXTINF:-1 tvg-id="fighting" tvg-name="ONE Friday Fights 180 [HD] | 27-11-2026 18:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/mma.webp" group-title="Fighting",ONE Friday Fights 180 [HD] | 27-11-2026 18:30 WIB
 https://vipbox.ga/live/boxing/1573403589-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://dervlin.me/
+#EXTVLCOPT:http-referrer=https://lonpapil.eu/
 #EXTINF:-1 tvg-id="fighting" tvg-name="ONE Friday Fights 180 | 27-11-2026 18:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/mma.webp" group-title="Fighting",ONE Friday Fights 180 | 27-11-2026 18:30 WIB
 https://vipbox.ga/live/boxing/1573403589-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-referrer=https://posamari.me/
-#EXTINF:-1 tvg-id="basketball" tvg-name="Syria vs Philippines [HD] | 27-11-2026 19:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",Syria vs Philippines [HD] | 27-11-2026 19:00 WIB
-https://vipbox.ga/live/basketball/2755331267-1
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://dervlin.me/
-#EXTINF:-1 tvg-id="basketball" tvg-name="Syria vs Philippines | 27-11-2026 19:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",Syria vs Philippines | 27-11-2026 19:00 WIB
-https://vipbox.ga/live/basketball/2755331267-2
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://ninguno.cc/
-#EXTINF:-1 tvg-id="football" tvg-name="Maccabi Petah Tikva vs Hapoel Tel Aviv | 27-11-2026 19:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/israel.webp" group-title="Football",Maccabi Petah Tikva vs Hapoel Tel Aviv | 27-11-2026 19:00 WIB
-https://vipbox.ga/live/football/3616028579-1
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://ninguno.cc/
-#EXTINF:-1 tvg-id="football" tvg-name="Maccabi Petah Tikva vs Hapoel Tel Aviv | 27-11-2026 19:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/israel.webp" group-title="Football",Maccabi Petah Tikva vs Hapoel Tel Aviv | 27-11-2026 19:00 WIB
-https://vipbox.ga/live/football/3616028579-2
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://ninguno.cc/
 #EXTINF:-1 tvg-id="golf" tvg-name="Ladies Euro Tour Golf [HD] | 27-11-2026 20:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/golf.webp" group-title="Golf",Ladies Euro Tour Golf [HD] | 27-11-2026 20:00 WIB
 https://vipbox.ga/live/golf/2811899687-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://ninguno.cc/
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTINF:-1 tvg-id="golf" tvg-name="Ladies Euro Tour Golf | 27-11-2026 20:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/golf.webp" group-title="Golf",Ladies Euro Tour Golf | 27-11-2026 20:00 WIB
 https://vipbox.ga/live/golf/2811899687-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://fallafar.me/
-#EXTINF:-1 tvg-id="football" tvg-name="Honduras U17 vs Japan U17 [HD] | 27-11-2026 20:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/worldcup.webp" group-title="Football",Honduras U17 vs Japan U17 [HD] | 27-11-2026 20:00 WIB
-https://vipbox.ga/live/football/2294258856-1
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://fallafar.me/
-#EXTINF:-1 tvg-id="football" tvg-name="Honduras U17 vs Japan U17 | 27-11-2026 20:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/worldcup.webp" group-title="Football",Honduras U17 vs Japan U17 | 27-11-2026 20:00 WIB
-https://vipbox.ga/live/football/2294258856-2
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
-#EXTINF:-1 tvg-id="football" tvg-name="Azam FC vs Al Ahli Tripoli [HD] | 27-11-2026 20:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/caf.webp" group-title="Football",Azam FC vs Al Ahli Tripoli [HD] | 27-11-2026 20:00 WIB
-https://vipbox.ga/live/football/2936647958-1
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-referrer=https://ninguno.cc/
-#EXTINF:-1 tvg-id="football" tvg-name="Azam FC vs Al Ahli Tripoli | 27-11-2026 20:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/caf.webp" group-title="Football",Azam FC vs Al Ahli Tripoli | 27-11-2026 20:00 WIB
-https://vipbox.ga/live/football/2936647958-2
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTINF:-1 tvg-id="darts" tvg-name="Players Champ: Day 1 After Noon Session [HD] | 27-11-2026 20:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/darts.webp" group-title="Darts",Players Champ: Day 1 After Noon Session [HD] | 27-11-2026 20:00 WIB
 https://vipbox.ga/live/darts/4005120395-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://fallafar.me/
+#EXTVLCOPT:http-referrer=https://ninguno.cc/
 #EXTINF:-1 tvg-id="darts" tvg-name="Players Champ: Day 1 After Noon Session [Deutsch] [HD] | 27-11-2026 20:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/darts.webp" group-title="Darts",Players Champ: Day 1 After Noon Session [Deutsch] [HD] | 27-11-2026 20:00 WIB
 https://vipbox.ga/live/darts/4005120395-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://fallafar.me/
+#EXTVLCOPT:http-referrer=https://ninguno.cc/
 #EXTINF:-1 tvg-id="darts" tvg-name="Players Champ: Day 1 After Noon Session | 27-11-2026 20:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/darts.webp" group-title="Darts",Players Champ: Day 1 After Noon Session | 27-11-2026 20:00 WIB
 https://vipbox.ga/live/darts/4005120395-3
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://fallafar.me/
+#EXTVLCOPT:http-referrer=https://ninguno.cc/
 #EXTINF:-1 tvg-id="darts" tvg-name="Players Champ: Day 1 After Noon Session [Deutsch] | 27-11-2026 20:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/darts.webp" group-title="Darts",Players Champ: Day 1 After Noon Session [Deutsch] | 27-11-2026 20:00 WIB
 https://vipbox.ga/live/darts/4005120395-4
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
@@ -76,128 +44,97 @@ https://vipbox.ga/live/darts/4005120395-4
 #EXTINF:-1 tvg-id="hockey" tvg-name="Belye Medvedi vs Tolpar | 27-11-2026 20:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/russia.webp" group-title="Hockey",Belye Medvedi vs Tolpar | 27-11-2026 20:30 WIB
 https://vipbox.ga/live/hockey/1559832375-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTINF:-1 tvg-id="hockey" tvg-name="Belye Medvedi vs Tolpar | 27-11-2026 20:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/russia.webp" group-title="Hockey",Belye Medvedi vs Tolpar | 27-11-2026 20:30 WIB
 https://vipbox.ga/live/hockey/1559832375-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://otte.live.fly.ww.aiv-cdn.net/
-#EXTVLCOPT:input-drm-clearkey=0d7d09d646a2a4edd51b87563abe77a3:a1e63461298a129daa947f42cbad4aa2
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 1 [HD] | 27-11-2026 20:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 1 [HD] | 27-11-2026 20:30 WIB
-https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/l1pw9fzori/out/v1/68469cf8a4ba49608a0e0fab18d45aee/cenc.mpd
+https://vipbox.ga/live/motorsports/1862977731-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://otte.live.fly.ww.aiv-cdn.net/
-#EXTVLCOPT:input-drm-clearkey=0d7d09d646a2a4edd51b87563abe77a3:a1e63461298a129daa947f42cbad4aa2
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 1 [HD] | 27-11-2026 20:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 1 [HD] | 27-11-2026 20:30 WIB
-https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/l1pw9fzori/out/v1/68469cf8a4ba49608a0e0fab18d45aee/cenc.mpd
+https://vipbox.ga/live/motorsports/1862977731-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://otte.live.fly.ww.aiv-cdn.net/
-#EXTVLCOPT:input-drm-clearkey=0d7d09d646a2a4edd51b87563abe77a3:a1e63461298a129daa947f42cbad4aa2
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 1 [HD] | 27-11-2026 20:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 1 [HD] | 27-11-2026 20:30 WIB
-https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/l1pw9fzori/out/v1/68469cf8a4ba49608a0e0fab18d45aee/cenc.mpd
+https://vipbox.ga/live/motorsports/1862977731-3
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://otte.live.fly.ww.aiv-cdn.net/
-#EXTVLCOPT:input-drm-clearkey=0d7d09d646a2a4edd51b87563abe77a3:a1e63461298a129daa947f42cbad4aa2
-#EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 1 [HD] | 27-11-2026 20:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 1 [HD] | 27-11-2026 20:30 WIB
-https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/l1pw9fzori/out/v1/68469cf8a4ba49608a0e0fab18d45aee/cenc.mpd
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://otte.live.fly.ww.aiv-cdn.net/
-#EXTVLCOPT:input-drm-clearkey=0d7d09d646a2a4edd51b87563abe77a3:a1e63461298a129daa947f42cbad4aa2
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 1 [Español] [HD] | 27-11-2026 20:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 1 [Español] [HD] | 27-11-2026 20:30 WIB
-https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/l1pw9fzori/out/v1/68469cf8a4ba49608a0e0fab18d45aee/cenc.mpd
+https://vipbox.ga/live/motorsports/1862977731-4
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://otte.live.fly.ww.aiv-cdn.net/
-#EXTVLCOPT:input-drm-clearkey=0d7d09d646a2a4edd51b87563abe77a3:a1e63461298a129daa947f42cbad4aa2
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 1 [Español] [HD] | 27-11-2026 20:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 1 [Español] [HD] | 27-11-2026 20:30 WIB
-https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/l1pw9fzori/out/v1/68469cf8a4ba49608a0e0fab18d45aee/cenc.mpd
+https://vipbox.ga/live/motorsports/1862977731-5
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://otte.live.fly.ww.aiv-cdn.net/
-#EXTVLCOPT:input-drm-clearkey=0d7d09d646a2a4edd51b87563abe77a3:a1e63461298a129daa947f42cbad4aa2
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 1 [Deutsch] [HD] | 27-11-2026 20:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 1 [Deutsch] [HD] | 27-11-2026 20:30 WIB
-https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/l1pw9fzori/out/v1/68469cf8a4ba49608a0e0fab18d45aee/cenc.mpd
+https://vipbox.ga/live/motorsports/1862977731-6
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://otte.live.fly.ww.aiv-cdn.net/
-#EXTVLCOPT:input-drm-clearkey=0d7d09d646a2a4edd51b87563abe77a3:a1e63461298a129daa947f42cbad4aa2
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 1 [Français] [HD] | 27-11-2026 20:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 1 [Français] [HD] | 27-11-2026 20:30 WIB
-https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/l1pw9fzori/out/v1/68469cf8a4ba49608a0e0fab18d45aee/cenc.mpd
+https://vipbox.ga/live/motorsports/1862977731-7
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://otte.live.fly.ww.aiv-cdn.net/
-#EXTVLCOPT:input-drm-clearkey=0d7d09d646a2a4edd51b87563abe77a3:a1e63461298a129daa947f42cbad4aa2
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 1 [Italiano] [HD] | 27-11-2026 20:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 1 [Italiano] [HD] | 27-11-2026 20:30 WIB
-https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/l1pw9fzori/out/v1/68469cf8a4ba49608a0e0fab18d45aee/cenc.mpd
+https://vipbox.ga/live/motorsports/1862977731-8
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://otte.live.fly.ww.aiv-cdn.net/
-#EXTVLCOPT:input-drm-clearkey=0d7d09d646a2a4edd51b87563abe77a3:a1e63461298a129daa947f42cbad4aa2
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 1 [Português] [HD] | 27-11-2026 20:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 1 [Português] [HD] | 27-11-2026 20:30 WIB
-https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/l1pw9fzori/out/v1/68469cf8a4ba49608a0e0fab18d45aee/cenc.mpd
+https://vipbox.ga/live/motorsports/1862977731-9
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://otte.live.fly.ww.aiv-cdn.net/
-#EXTVLCOPT:input-drm-clearkey=0d7d09d646a2a4edd51b87563abe77a3:a1e63461298a129daa947f42cbad4aa2
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 1 | 27-11-2026 20:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 1 | 27-11-2026 20:30 WIB
-https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/l1pw9fzori/out/v1/68469cf8a4ba49608a0e0fab18d45aee/cenc.mpd
+https://vipbox.ga/live/motorsports/1862977731-10
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://otte.live.fly.ww.aiv-cdn.net/
-#EXTVLCOPT:input-drm-clearkey=0d7d09d646a2a4edd51b87563abe77a3:a1e63461298a129daa947f42cbad4aa2
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 1 | 27-11-2026 20:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 1 | 27-11-2026 20:30 WIB
-https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/l1pw9fzori/out/v1/68469cf8a4ba49608a0e0fab18d45aee/cenc.mpd
+https://vipbox.ga/live/motorsports/1862977731-11
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://otte.live.fly.ww.aiv-cdn.net/
-#EXTVLCOPT:input-drm-clearkey=0d7d09d646a2a4edd51b87563abe77a3:a1e63461298a129daa947f42cbad4aa2
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 1 | 27-11-2026 20:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 1 | 27-11-2026 20:30 WIB
-https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/l1pw9fzori/out/v1/68469cf8a4ba49608a0e0fab18d45aee/cenc.mpd
+https://vipbox.ga/live/motorsports/1862977731-12
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://otte.live.fly.ww.aiv-cdn.net/
-#EXTVLCOPT:input-drm-clearkey=0d7d09d646a2a4edd51b87563abe77a3:a1e63461298a129daa947f42cbad4aa2
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 1 [Español] | 27-11-2026 20:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 1 [Español] | 27-11-2026 20:30 WIB
-https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/l1pw9fzori/out/v1/68469cf8a4ba49608a0e0fab18d45aee/cenc.mpd
+https://vipbox.ga/live/motorsports/1862977731-13
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://otte.live.fly.ww.aiv-cdn.net/
-#EXTVLCOPT:input-drm-clearkey=0d7d09d646a2a4edd51b87563abe77a3:a1e63461298a129daa947f42cbad4aa2
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 1 [Español] | 27-11-2026 20:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 1 [Español] | 27-11-2026 20:30 WIB
-https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/l1pw9fzori/out/v1/68469cf8a4ba49608a0e0fab18d45aee/cenc.mpd
+https://vipbox.ga/live/motorsports/1862977731-14
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://otte.live.fly.ww.aiv-cdn.net/
-#EXTVLCOPT:input-drm-clearkey=0d7d09d646a2a4edd51b87563abe77a3:a1e63461298a129daa947f42cbad4aa2
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 1 [Deutsch] | 27-11-2026 20:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 1 [Deutsch] | 27-11-2026 20:30 WIB
-https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/l1pw9fzori/out/v1/68469cf8a4ba49608a0e0fab18d45aee/cenc.mpd
+https://vipbox.ga/live/motorsports/1862977731-15
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://otte.live.fly.ww.aiv-cdn.net/
-#EXTVLCOPT:input-drm-clearkey=0d7d09d646a2a4edd51b87563abe77a3:a1e63461298a129daa947f42cbad4aa2
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 1 [Français] | 27-11-2026 20:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 1 [Français] | 27-11-2026 20:30 WIB
-https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/l1pw9fzori/out/v1/68469cf8a4ba49608a0e0fab18d45aee/cenc.mpd
+https://vipbox.ga/live/motorsports/1862977731-16
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://otte.live.fly.ww.aiv-cdn.net/
-#EXTVLCOPT:input-drm-clearkey=0d7d09d646a2a4edd51b87563abe77a3:a1e63461298a129daa947f42cbad4aa2
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 1 [Italiano] | 27-11-2026 20:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 1 [Italiano] | 27-11-2026 20:30 WIB
-https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/l1pw9fzori/out/v1/68469cf8a4ba49608a0e0fab18d45aee/cenc.mpd
+https://vipbox.ga/live/motorsports/1862977731-17
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://otte.live.fly.ww.aiv-cdn.net/
-#EXTVLCOPT:input-drm-clearkey=0d7d09d646a2a4edd51b87563abe77a3:a1e63461298a129daa947f42cbad4aa2
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 1 [Português] | 27-11-2026 20:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 1 [Português] | 27-11-2026 20:30 WIB
-https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/l1pw9fzori/out/v1/68469cf8a4ba49608a0e0fab18d45aee/cenc.mpd
+https://vipbox.ga/live/motorsports/1862977731-18
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://dervlin.me/
+#EXTVLCOPT:http-referrer=https://lonpapil.eu/
 #EXTINF:-1 tvg-id="hockey" tvg-name="Perm vs Chelmet Chelyabinsk | 27-11-2026 21:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/russia.webp" group-title="Hockey",Perm vs Chelmet Chelyabinsk | 27-11-2026 21:00 WIB
 https://vipbox.ga/live/hockey/3948297338-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://dervlin.me/
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTINF:-1 tvg-id="hockey" tvg-name="Perm vs Chelmet Chelyabinsk | 27-11-2026 21:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/russia.webp" group-title="Hockey",Perm vs Chelmet Chelyabinsk | 27-11-2026 21:00 WIB
 https://vipbox.ga/live/hockey/3948297338-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-referrer=https://dervlin.me/
-#EXTINF:-1 tvg-id="hockey" tvg-name="Perm vs Chelmet Chelyabinsk | 27-11-2026 21:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/russia.webp" group-title="Hockey",Perm vs Chelmet Chelyabinsk | 27-11-2026 21:00 WIB
-https://vipbox.ga/live/hockey/3948297338-3
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTINF:-1 tvg-id="hockey" tvg-name="Toros Neftekamsk vs Magnitka Magnitogorsk | 27-11-2026 21:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/russia.webp" group-title="Hockey",Toros Neftekamsk vs Magnitka Magnitogorsk | 27-11-2026 21:00 WIB
 https://vipbox.ga/live/hockey/2622557420-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://fallafar.me/
+#EXTVLCOPT:http-referrer=https://lonpapil.eu/
 #EXTINF:-1 tvg-id="hockey" tvg-name="Toros Neftekamsk vs Magnitka Magnitogorsk | 27-11-2026 21:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/russia.webp" group-title="Hockey",Toros Neftekamsk vs Magnitka Magnitogorsk | 27-11-2026 21:00 WIB
 https://vipbox.ga/live/hockey/2622557420-2
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://ninguno.cc/
-#EXTINF:-1 tvg-id="hockey" tvg-name="Toros Neftekamsk vs Magnitka Magnitogorsk | 27-11-2026 21:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/russia.webp" group-title="Hockey",Toros Neftekamsk vs Magnitka Magnitogorsk | 27-11-2026 21:00 WIB
-https://vipbox.ga/live/hockey/2622557420-3
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTINF:-1 tvg-id="football" tvg-name="Costa Rica U17 vs Brazil U17 [HD] | 27-11-2026 21:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/worldcup.webp" group-title="Football",Costa Rica U17 vs Brazil U17 [HD] | 27-11-2026 21:00 WIB
@@ -211,253 +148,141 @@ https://vipbox.ga/live/football/4290292798-2
 #EXTINF:-1 tvg-id="football" tvg-name="Ireland U17 vs Tanzania U17 [HD] | 27-11-2026 21:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/worldcup.webp" group-title="Football",Ireland U17 vs Tanzania U17 [HD] | 27-11-2026 21:00 WIB
 https://vipbox.ga/live/football/1641822621-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://dervlin.me/
+#EXTVLCOPT:http-referrer=https://ninguno.cc/
 #EXTINF:-1 tvg-id="football" tvg-name="Ireland U17 vs Tanzania U17 | 27-11-2026 21:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/worldcup.webp" group-title="Football",Ireland U17 vs Tanzania U17 | 27-11-2026 21:00 WIB
 https://vipbox.ga/live/football/1641822621-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
-#EXTVLCOPT:input-drm-clearkey=f3df7843080ae743bf865dc5fdf64c68:567c863bc12eb74788ea74888c042e1b
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="MotoGP Valencia GP: MotoGP FP2 [HD] | 27-11-2026 21:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",MotoGP Valencia GP: MotoGP FP2 [HD] | 27-11-2026 21:00 WIB
-https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/puehlftk5j/out/v1/f7f0da1ee112481ca0024e6d4dd97f4a/cenc.mpd
+https://vipbox.ga/live/motorsports/1658534171-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
-#EXTVLCOPT:input-drm-clearkey=f3df7843080ae743bf865dc5fdf64c68:567c863bc12eb74788ea74888c042e1b
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="MotoGP Valencia GP: MotoGP FP2 [HD] | 27-11-2026 21:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",MotoGP Valencia GP: MotoGP FP2 [HD] | 27-11-2026 21:00 WIB
-https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/puehlftk5j/out/v1/f7f0da1ee112481ca0024e6d4dd97f4a/cenc.mpd
+https://vipbox.ga/live/motorsports/1658534171-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
-#EXTVLCOPT:input-drm-clearkey=f3df7843080ae743bf865dc5fdf64c68:567c863bc12eb74788ea74888c042e1b
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="MotoGP Valencia GP: MotoGP FP2 [HD] | 27-11-2026 21:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",MotoGP Valencia GP: MotoGP FP2 [HD] | 27-11-2026 21:00 WIB
-https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/puehlftk5j/out/v1/f7f0da1ee112481ca0024e6d4dd97f4a/cenc.mpd
+https://vipbox.ga/live/motorsports/1658534171-3
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
-#EXTVLCOPT:input-drm-clearkey=f3df7843080ae743bf865dc5fdf64c68:567c863bc12eb74788ea74888c042e1b
-#EXTINF:-1 tvg-id="motorsports" tvg-name="MotoGP Valencia GP: MotoGP FP2 [HD] | 27-11-2026 21:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",MotoGP Valencia GP: MotoGP FP2 [HD] | 27-11-2026 21:00 WIB
-https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/puehlftk5j/out/v1/f7f0da1ee112481ca0024e6d4dd97f4a/cenc.mpd
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
-#EXTVLCOPT:input-drm-clearkey=f3df7843080ae743bf865dc5fdf64c68:567c863bc12eb74788ea74888c042e1b
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="MotoGP Valencia GP: MotoGP FP2 [Español] [HD] | 27-11-2026 21:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",MotoGP Valencia GP: MotoGP FP2 [Español] [HD] | 27-11-2026 21:00 WIB
-https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/puehlftk5j/out/v1/f7f0da1ee112481ca0024e6d4dd97f4a/cenc.mpd
+https://vipbox.ga/live/motorsports/1658534171-4
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
-#EXTVLCOPT:input-drm-clearkey=f3df7843080ae743bf865dc5fdf64c68:567c863bc12eb74788ea74888c042e1b
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="MotoGP Valencia GP: MotoGP FP2 [Deutsch] [HD] | 27-11-2026 21:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",MotoGP Valencia GP: MotoGP FP2 [Deutsch] [HD] | 27-11-2026 21:00 WIB
-https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/puehlftk5j/out/v1/f7f0da1ee112481ca0024e6d4dd97f4a/cenc.mpd
+https://vipbox.ga/live/motorsports/1658534171-5
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
-#EXTVLCOPT:input-drm-clearkey=f3df7843080ae743bf865dc5fdf64c68:567c863bc12eb74788ea74888c042e1b
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="MotoGP Valencia GP: MotoGP FP2 [Français] [HD] | 27-11-2026 21:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",MotoGP Valencia GP: MotoGP FP2 [Français] [HD] | 27-11-2026 21:00 WIB
-https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/puehlftk5j/out/v1/f7f0da1ee112481ca0024e6d4dd97f4a/cenc.mpd
+https://vipbox.ga/live/motorsports/1658534171-6
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
-#EXTVLCOPT:input-drm-clearkey=f3df7843080ae743bf865dc5fdf64c68:567c863bc12eb74788ea74888c042e1b
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="MotoGP Valencia GP: MotoGP FP2 [Italiano] [HD] | 27-11-2026 21:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",MotoGP Valencia GP: MotoGP FP2 [Italiano] [HD] | 27-11-2026 21:00 WIB
-https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/puehlftk5j/out/v1/f7f0da1ee112481ca0024e6d4dd97f4a/cenc.mpd
+https://vipbox.ga/live/motorsports/1658534171-7
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
-#EXTVLCOPT:input-drm-clearkey=f3df7843080ae743bf865dc5fdf64c68:567c863bc12eb74788ea74888c042e1b
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="MotoGP Valencia GP: MotoGP FP2 [Português] [HD] | 27-11-2026 21:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",MotoGP Valencia GP: MotoGP FP2 [Português] [HD] | 27-11-2026 21:00 WIB
-https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/puehlftk5j/out/v1/f7f0da1ee112481ca0024e6d4dd97f4a/cenc.mpd
+https://vipbox.ga/live/motorsports/1658534171-8
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
-#EXTVLCOPT:input-drm-clearkey=f3df7843080ae743bf865dc5fdf64c68:567c863bc12eb74788ea74888c042e1b
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="MotoGP Valencia GP: MotoGP FP2 | 27-11-2026 21:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",MotoGP Valencia GP: MotoGP FP2 | 27-11-2026 21:00 WIB
-https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/puehlftk5j/out/v1/f7f0da1ee112481ca0024e6d4dd97f4a/cenc.mpd
+https://vipbox.ga/live/motorsports/1658534171-9
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
-#EXTVLCOPT:input-drm-clearkey=f3df7843080ae743bf865dc5fdf64c68:567c863bc12eb74788ea74888c042e1b
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="MotoGP Valencia GP: MotoGP FP2 | 27-11-2026 21:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",MotoGP Valencia GP: MotoGP FP2 | 27-11-2026 21:00 WIB
-https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/puehlftk5j/out/v1/f7f0da1ee112481ca0024e6d4dd97f4a/cenc.mpd
+https://vipbox.ga/live/motorsports/1658534171-10
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
-#EXTVLCOPT:input-drm-clearkey=f3df7843080ae743bf865dc5fdf64c68:567c863bc12eb74788ea74888c042e1b
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="MotoGP Valencia GP: MotoGP FP2 [Español] | 27-11-2026 21:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",MotoGP Valencia GP: MotoGP FP2 [Español] | 27-11-2026 21:00 WIB
-https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/puehlftk5j/out/v1/f7f0da1ee112481ca0024e6d4dd97f4a/cenc.mpd
+https://vipbox.ga/live/motorsports/1658534171-11
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
-#EXTVLCOPT:input-drm-clearkey=f3df7843080ae743bf865dc5fdf64c68:567c863bc12eb74788ea74888c042e1b
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="MotoGP Valencia GP: MotoGP FP2 [Deutsch] | 27-11-2026 21:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",MotoGP Valencia GP: MotoGP FP2 [Deutsch] | 27-11-2026 21:00 WIB
-https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/puehlftk5j/out/v1/f7f0da1ee112481ca0024e6d4dd97f4a/cenc.mpd
+https://vipbox.ga/live/motorsports/1658534171-12
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
-#EXTVLCOPT:input-drm-clearkey=f3df7843080ae743bf865dc5fdf64c68:567c863bc12eb74788ea74888c042e1b
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="MotoGP Valencia GP: MotoGP FP2 [Français] | 27-11-2026 21:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",MotoGP Valencia GP: MotoGP FP2 [Français] | 27-11-2026 21:00 WIB
-https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/puehlftk5j/out/v1/f7f0da1ee112481ca0024e6d4dd97f4a/cenc.mpd
+https://vipbox.ga/live/motorsports/1658534171-13
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
-#EXTVLCOPT:input-drm-clearkey=f3df7843080ae743bf865dc5fdf64c68:567c863bc12eb74788ea74888c042e1b
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="MotoGP Valencia GP: MotoGP FP2 [Italiano] | 27-11-2026 21:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",MotoGP Valencia GP: MotoGP FP2 [Italiano] | 27-11-2026 21:00 WIB
-https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/puehlftk5j/out/v1/f7f0da1ee112481ca0024e6d4dd97f4a/cenc.mpd
+https://vipbox.ga/live/motorsports/1658534171-14
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
-#EXTVLCOPT:input-drm-clearkey=f3df7843080ae743bf865dc5fdf64c68:567c863bc12eb74788ea74888c042e1b
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="MotoGP Valencia GP: MotoGP FP2 [Português] | 27-11-2026 21:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",MotoGP Valencia GP: MotoGP FP2 [Português] | 27-11-2026 21:00 WIB
-https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/puehlftk5j/out/v1/f7f0da1ee112481ca0024e6d4dd97f4a/cenc.mpd
+https://vipbox.ga/live/motorsports/1658534171-15
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://dervlin.me/
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTINF:-1 tvg-id="others" tvg-name="Ufa vs Dinamo-Lo | 27-11-2026 21:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/russia.webp" group-title="Others",Ufa vs Dinamo-Lo | 27-11-2026 21:00 WIB
 https://vipbox.ga/live/volleyball/271922282-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTVLCOPT:http-referrer=https://ninguno.cc/
 #EXTINF:-1 tvg-id="others" tvg-name="Ufa vs Dinamo-Lo | 27-11-2026 21:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/russia.webp" group-title="Others",Ufa vs Dinamo-Lo | 27-11-2026 21:00 WIB
 https://vipbox.ga/live/volleyball/271922282-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://ninguno.cc/
-#EXTINF:-1 tvg-id="others" tvg-name="Ufa vs Dinamo-Lo | 27-11-2026 21:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/russia.webp" group-title="Others",Ufa vs Dinamo-Lo | 27-11-2026 21:00 WIB
-https://vipbox.ga/live/volleyball/271922282-3
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://dervlin.me/
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTINF:-1 tvg-id="football" tvg-name="Al Qadsiah vs Al Fayha [Español] [HD] | 27-11-2026 21:20 WIB" tvg-logo="https://static.vipbox.ga/img/home/saudi-arabia.webp" group-title="Football",Al Qadsiah vs Al Fayha [Español] [HD] | 27-11-2026 21:20 WIB
 https://vipbox.ga/live/football/4203327011-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://ninguno.cc/
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTINF:-1 tvg-id="football" tvg-name="Al Qadsiah vs Al Fayha [Español] | 27-11-2026 21:20 WIB" tvg-logo="https://static.vipbox.ga/img/home/saudi-arabia.webp" group-title="Football",Al Qadsiah vs Al Fayha [Español] | 27-11-2026 21:20 WIB
 https://vipbox.ga/live/football/4203327011-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="hockey" tvg-name="Izhevsk vs Orsk | 27-11-2026 21:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/russia.webp" group-title="Hockey",Izhevsk vs Orsk | 27-11-2026 21:30 WIB
-https://vipbox.ga/live/hockey/89677142-1
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="hockey" tvg-name="Izhevsk vs Orsk | 27-11-2026 21:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/russia.webp" group-title="Hockey",Izhevsk vs Orsk | 27-11-2026 21:30 WIB
-https://vipbox.ga/live/hockey/89677142-2
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="hockey" tvg-name="Izhevsk vs Orsk | 27-11-2026 21:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/russia.webp" group-title="Hockey",Izhevsk vs Orsk | 27-11-2026 21:30 WIB
-https://vipbox.ga/live/hockey/89677142-3
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="mma" tvg-name="BWP1: John Mitchell vs Rander Junio | 27-11-2026 21:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/mma.webp" group-title="MMA",BWP1: John Mitchell vs Rander Junio | 27-11-2026 21:30 WIB
-https://vipbox.ga/live/boxing/3522578182-1
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="mma" tvg-name="BWP1: John Mitchell vs Rander Junio [HD] | 27-11-2026 21:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/mma.webp" group-title="MMA",BWP1: John Mitchell vs Rander Junio [HD] | 27-11-2026 21:30 WIB
-https://vipbox.ga/live/boxing/3522578182-2
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="mma" tvg-name="BWP1: John Mitchell vs Rander Junio | 27-11-2026 21:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/mma.webp" group-title="MMA",BWP1: John Mitchell vs Rander Junio | 27-11-2026 21:30 WIB
-https://vipbox.ga/live/boxing/3522578182-3
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="fighting" tvg-name="BWP1: John Mitchell vs Rander Junio | 27-11-2026 21:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/mma.webp" group-title="Fighting",BWP1: John Mitchell vs Rander Junio | 27-11-2026 21:30 WIB
-https://vipbox.ga/live/boxing/3522578182-1
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="fighting" tvg-name="BWP1: John Mitchell vs Rander Junio [HD] | 27-11-2026 21:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/mma.webp" group-title="Fighting",BWP1: John Mitchell vs Rander Junio [HD] | 27-11-2026 21:30 WIB
-https://vipbox.ga/live/boxing/3522578182-2
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="fighting" tvg-name="BWP1: John Mitchell vs Rander Junio | 27-11-2026 21:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/mma.webp" group-title="Fighting",BWP1: John Mitchell vs Rander Junio | 27-11-2026 21:30 WIB
-https://vipbox.ga/live/boxing/3522578182-3
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 2 2026: Qatar F2GP Qualifying Session | 27-11-2026 21:55 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 2 2026: Qatar F2GP Qualifying Session | 27-11-2026 21:55 WIB
+#EXTVLCOPT:http-referrer=https://ninguno.cc/
+#EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 2 2026: Qatar F2GP Qualifying Session [HD] | 27-11-2026 21:55 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 2 2026: Qatar F2GP Qualifying Session [HD] | 27-11-2026 21:55 WIB
 https://vipbox.ga/live/motorsports/3219801809-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 2 2026: Qatar F2GP Qualifying Session [HD] | 27-11-2026 21:55 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 2 2026: Qatar F2GP Qualifying Session [HD] | 27-11-2026 21:55 WIB
+#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 2 2026: Qatar F2GP Qualifying Session | 27-11-2026 21:55 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 2 2026: Qatar F2GP Qualifying Session | 27-11-2026 21:55 WIB
 https://vipbox.ga/live/motorsports/3219801809-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 2 2026: Qatar F2GP Qualifying Session | 27-11-2026 21:55 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 2 2026: Qatar F2GP Qualifying Session | 27-11-2026 21:55 WIB
-https://vipbox.ga/live/motorsports/3219801809-3
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="basketball" tvg-name="Kazakhstan vs Kuwait | 27-11-2026 22:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",Kazakhstan vs Kuwait | 27-11-2026 22:00 WIB
-https://vipbox.ga/live/basketball/1987211782-1
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="basketball" tvg-name="Kazakhstan vs Kuwait | 27-11-2026 22:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",Kazakhstan vs Kuwait | 27-11-2026 22:00 WIB
-https://vipbox.ga/live/basketball/1987211782-2
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="basketball" tvg-name="Kazakhstan vs Kuwait | 27-11-2026 22:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",Kazakhstan vs Kuwait | 27-11-2026 22:00 WIB
-https://vipbox.ga/live/basketball/1987211782-3
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTINF:-1 tvg-id="hockey" tvg-name="Lada vs Lokomotiv Yaroslavl | 27-11-2026 22:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/khl.webp" group-title="Hockey",Lada vs Lokomotiv Yaroslavl | 27-11-2026 22:00 WIB
 https://vipbox.ga/live/hockey/3704156240-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="hockey" tvg-name="Lada vs Lokomotiv Yaroslavl | 27-11-2026 22:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/khl.webp" group-title="Hockey",Lada vs Lokomotiv Yaroslavl | 27-11-2026 22:00 WIB
 https://vipbox.ga/live/hockey/3704156240-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="hockey" tvg-name="Lada vs Lokomotiv Yaroslavl | 27-11-2026 22:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/khl.webp" group-title="Hockey",Lada vs Lokomotiv Yaroslavl | 27-11-2026 22:00 WIB
-https://vipbox.ga/live/hockey/3704156240-3
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="tennis" tvg-name="Davis Cup: Italy vs Czech Republic | 27-11-2026 22:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/davis-cup.webp" group-title="Tennis",Davis Cup: Italy vs Czech Republic | 27-11-2026 22:00 WIB
+#EXTVLCOPT:http-referrer=https://ninguno.cc/
+#EXTINF:-1 tvg-id="tennis" tvg-name="Davis Cup: Italy vs Czech Republic [HD] | 27-11-2026 22:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/davis-cup.webp" group-title="Tennis",Davis Cup: Italy vs Czech Republic [HD] | 27-11-2026 22:00 WIB
 https://vipbox.ga/live/tennis/1422464427-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="tennis" tvg-name="Davis Cup: Italy vs Czech Republic [HD] | 27-11-2026 22:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/davis-cup.webp" group-title="Tennis",Davis Cup: Italy vs Czech Republic [HD] | 27-11-2026 22:00 WIB
+#EXTVLCOPT:http-referrer=https://dervlin.me/
+#EXTINF:-1 tvg-id="tennis" tvg-name="Davis Cup: Italy vs Czech Republic | 27-11-2026 22:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/davis-cup.webp" group-title="Tennis",Davis Cup: Italy vs Czech Republic | 27-11-2026 22:00 WIB
 https://vipbox.ga/live/tennis/1422464427-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="tennis" tvg-name="Davis Cup: Italy vs Czech Republic | 27-11-2026 22:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/davis-cup.webp" group-title="Tennis",Davis Cup: Italy vs Czech Republic | 27-11-2026 22:00 WIB
-https://vipbox.ga/live/tennis/1422464427-3
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTVLCOPT:http-referrer=https://ninguno.cc/
 #EXTINF:-1 tvg-id="football" tvg-name="East Riffa vs Al Ittifaq | 27-11-2026 22:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/bahrain.webp" group-title="Football",East Riffa vs Al Ittifaq | 27-11-2026 22:00 WIB
 https://vipbox.ga/live/football/3141325169-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTVLCOPT:http-referrer=https://ninguno.cc/
 #EXTINF:-1 tvg-id="football" tvg-name="East Riffa vs Al Ittifaq | 27-11-2026 22:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/bahrain.webp" group-title="Football",East Riffa vs Al Ittifaq | 27-11-2026 22:00 WIB
 https://vipbox.ga/live/football/3141325169-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="football" tvg-name="East Riffa vs Al Ittifaq | 27-11-2026 22:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/bahrain.webp" group-title="Football",East Riffa vs Al Ittifaq | 27-11-2026 22:00 WIB
-https://vipbox.ga/live/football/3141325169-3
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTVLCOPT:http-referrer=https://lonpapil.eu/
 #EXTINF:-1 tvg-id="football" tvg-name="Malkia vs Manama Club | 27-11-2026 22:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/bahrain.webp" group-title="Football",Malkia vs Manama Club | 27-11-2026 22:00 WIB
 https://vipbox.ga/live/football/3426476519-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTVLCOPT:http-referrer=https://lonpapil.eu/
 #EXTINF:-1 tvg-id="football" tvg-name="Malkia vs Manama Club | 27-11-2026 22:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/bahrain.webp" group-title="Football",Malkia vs Manama Club | 27-11-2026 22:00 WIB
 https://vipbox.ga/live/football/3426476519-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="football" tvg-name="Malkia vs Manama Club | 27-11-2026 22:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/bahrain.webp" group-title="Football",Malkia vs Manama Club | 27-11-2026 22:00 WIB
-https://vipbox.ga/live/football/3426476519-3
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="football" tvg-name="Algeria U17 vs Dominican Republic U17 | 27-11-2026 22:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/worldcup.webp" group-title="Football",Algeria U17 vs Dominican Republic U17 | 27-11-2026 22:00 WIB
+#EXTVLCOPT:http-referrer=https://dervlin.me/
+#EXTINF:-1 tvg-id="football" tvg-name="Algeria U17 vs Dominican Republic U17 [HD] | 27-11-2026 22:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/worldcup.webp" group-title="Football",Algeria U17 vs Dominican Republic U17 [HD] | 27-11-2026 22:00 WIB
 https://vipbox.ga/live/football/383453451-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="football" tvg-name="Algeria U17 vs Dominican Republic U17 [HD] | 27-11-2026 22:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/worldcup.webp" group-title="Football",Algeria U17 vs Dominican Republic U17 [HD] | 27-11-2026 22:00 WIB
+#EXTVLCOPT:http-referrer=https://ninguno.cc/
+#EXTINF:-1 tvg-id="football" tvg-name="Algeria U17 vs Dominican Republic U17 | 27-11-2026 22:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/worldcup.webp" group-title="Football",Algeria U17 vs Dominican Republic U17 | 27-11-2026 22:00 WIB
 https://vipbox.ga/live/football/383453451-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="football" tvg-name="Algeria U17 vs Dominican Republic U17 | 27-11-2026 22:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/worldcup.webp" group-title="Football",Algeria U17 vs Dominican Republic U17 | 27-11-2026 22:00 WIB
-https://vipbox.ga/live/football/383453451-3
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="football" tvg-name="Montenegro U17 vs Chile U17 | 27-11-2026 22:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/worldcup.webp" group-title="Football",Montenegro U17 vs Chile U17 | 27-11-2026 22:00 WIB
+#EXTVLCOPT:http-referrer=https://fallafar.me/
+#EXTINF:-1 tvg-id="football" tvg-name="Montenegro U17 vs Chile U17 [HD] | 27-11-2026 22:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/worldcup.webp" group-title="Football",Montenegro U17 vs Chile U17 [HD] | 27-11-2026 22:00 WIB
 https://vipbox.ga/live/football/2412927153-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="football" tvg-name="Montenegro U17 vs Chile U17 [HD] | 27-11-2026 22:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/worldcup.webp" group-title="Football",Montenegro U17 vs Chile U17 [HD] | 27-11-2026 22:00 WIB
-https://vipbox.ga/live/football/2412927153-2
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTINF:-1 tvg-id="football" tvg-name="Montenegro U17 vs Chile U17 | 27-11-2026 22:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/worldcup.webp" group-title="Football",Montenegro U17 vs Chile U17 | 27-11-2026 22:00 WIB
-https://vipbox.ga/live/football/2412927153-3
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="others" tvg-name="MGTU Moscow vs Zenit Kazan | 27-11-2026 22:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/russia.webp" group-title="Others",MGTU Moscow vs Zenit Kazan | 27-11-2026 22:00 WIB
-https://vipbox.ga/live/volleyball/1731331324-1
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="others" tvg-name="MGTU Moscow vs Zenit Kazan | 27-11-2026 22:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/russia.webp" group-title="Others",MGTU Moscow vs Zenit Kazan | 27-11-2026 22:00 WIB
-https://vipbox.ga/live/volleyball/1731331324-2
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="others" tvg-name="MGTU Moscow vs Zenit Kazan | 27-11-2026 22:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/russia.webp" group-title="Others",MGTU Moscow vs Zenit Kazan | 27-11-2026 22:00 WIB
-https://vipbox.ga/live/volleyball/1731331324-3
+https://vipbox.ga/live/football/2412927153-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-referrer=https://vipbox.ga/
 #EXTINF:-1 tvg-id="hockey" tvg-name="Lukko vs Jukurit | 27-11-2026 22:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/finland.webp" group-title="Hockey",Lukko vs Jukurit | 27-11-2026 22:30 WIB
@@ -651,27 +476,27 @@ https://vipbox.ga/live/football/4174735399-2
 #EXTINF:-1 tvg-id="football" tvg-name="Romania U17 vs Cameroon U17 | 27-11-2026 23:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/worldcup.webp" group-title="Football",Romania U17 vs Cameroon U17 | 27-11-2026 23:00 WIB
 https://vipbox.ga/live/football/4174735399-3
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTINF:-1 tvg-id="football" tvg-name="Venezuela U17 vs Mexico U17 | 27-11-2026 23:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/worldcup.webp" group-title="Football",Venezuela U17 vs Mexico U17 | 27-11-2026 23:00 WIB
 https://vipbox.ga/live/football/1751807414-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTVLCOPT:http-referrer=https://ninguno.cc/
 #EXTINF:-1 tvg-id="football" tvg-name="Venezuela U17 vs Mexico U17 [HD] | 27-11-2026 23:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/worldcup.webp" group-title="Football",Venezuela U17 vs Mexico U17 [HD] | 27-11-2026 23:00 WIB
 https://vipbox.ga/live/football/1751807414-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTINF:-1 tvg-id="football" tvg-name="Venezuela U17 vs Mexico U17 | 27-11-2026 23:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/worldcup.webp" group-title="Football",Venezuela U17 vs Mexico U17 | 27-11-2026 23:00 WIB
 https://vipbox.ga/live/football/1751807414-3
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTINF:-1 tvg-id="football" tvg-name="Brezice vs Triglav | 27-11-2026 23:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/slovenia.webp" group-title="Football",Brezice vs Triglav | 27-11-2026 23:00 WIB
 https://vipbox.ga/live/football/43233837-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTVLCOPT:http-referrer=https://dervlin.me/
 #EXTINF:-1 tvg-id="football" tvg-name="Brezice vs Triglav [HD] | 27-11-2026 23:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/slovenia.webp" group-title="Football",Brezice vs Triglav [HD] | 27-11-2026 23:00 WIB
 https://vipbox.ga/live/football/43233837-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="football" tvg-name="Brezice vs Triglav | 27-11-2026 23:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/slovenia.webp" group-title="Football",Brezice vs Triglav | 27-11-2026 23:00 WIB
 https://vipbox.ga/live/football/43233837-3
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
@@ -1183,81 +1008,77 @@ https://vipbox.ga/live/boxing/3642871223-2
 #EXTINF:-1 tvg-id="fighting" tvg-name="Kabayel vs Hysa: Weigh-In | 28-11-2026 00:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/boxing.webp" group-title="Fighting",Kabayel vs Hysa: Weigh-In | 28-11-2026 00:00 WIB
 https://vipbox.ga/live/boxing/3642871223-3
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTVLCOPT:http-referrer=https://dervlin.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 2 [HD] | 28-11-2026 00:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 2 [HD] | 28-11-2026 00:00 WIB
 https://vipbox.ga/live/motorsports/4050541920-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 2 [HD] | 28-11-2026 00:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 2 [HD] | 28-11-2026 00:00 WIB
 https://vipbox.ga/live/motorsports/4050541920-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 2 [HD] | 28-11-2026 00:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 2 [HD] | 28-11-2026 00:00 WIB
 https://vipbox.ga/live/motorsports/4050541920-3
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 2 [HD] | 28-11-2026 00:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 2 [HD] | 28-11-2026 00:00 WIB
+#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 2 [Español] [HD] | 28-11-2026 00:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 2 [Español] [HD] | 28-11-2026 00:00 WIB
 https://vipbox.ga/live/motorsports/4050541920-4
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 2 [Español] [HD] | 28-11-2026 00:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 2 [Español] [HD] | 28-11-2026 00:00 WIB
 https://vipbox.ga/live/motorsports/4050541920-5
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 2 [Español] [HD] | 28-11-2026 00:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 2 [Español] [HD] | 28-11-2026 00:00 WIB
+#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 2 [Deutsch] [HD] | 28-11-2026 00:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 2 [Deutsch] [HD] | 28-11-2026 00:00 WIB
 https://vipbox.ga/live/motorsports/4050541920-6
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 2 [Deutsch] [HD] | 28-11-2026 00:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 2 [Deutsch] [HD] | 28-11-2026 00:00 WIB
+#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 2 [Français] [HD] | 28-11-2026 00:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 2 [Français] [HD] | 28-11-2026 00:00 WIB
 https://vipbox.ga/live/motorsports/4050541920-7
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 2 [Français] [HD] | 28-11-2026 00:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 2 [Français] [HD] | 28-11-2026 00:00 WIB
+#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 2 [Italiano] [HD] | 28-11-2026 00:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 2 [Italiano] [HD] | 28-11-2026 00:00 WIB
 https://vipbox.ga/live/motorsports/4050541920-8
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 2 [Italiano] [HD] | 28-11-2026 00:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 2 [Italiano] [HD] | 28-11-2026 00:00 WIB
+#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 2 [Português] [HD] | 28-11-2026 00:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 2 [Português] [HD] | 28-11-2026 00:00 WIB
 https://vipbox.ga/live/motorsports/4050541920-9
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 2 [Português] [HD] | 28-11-2026 00:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 2 [Português] [HD] | 28-11-2026 00:00 WIB
+#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 2 | 28-11-2026 00:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 2 | 28-11-2026 00:00 WIB
 https://vipbox.ga/live/motorsports/4050541920-10
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 2 | 28-11-2026 00:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 2 | 28-11-2026 00:00 WIB
 https://vipbox.ga/live/motorsports/4050541920-11
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 2 | 28-11-2026 00:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 2 | 28-11-2026 00:00 WIB
 https://vipbox.ga/live/motorsports/4050541920-12
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 2 | 28-11-2026 00:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 2 | 28-11-2026 00:00 WIB
+#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 2 [Español] | 28-11-2026 00:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 2 [Español] | 28-11-2026 00:00 WIB
 https://vipbox.ga/live/motorsports/4050541920-13
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 2 [Español] | 28-11-2026 00:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 2 [Español] | 28-11-2026 00:00 WIB
 https://vipbox.ga/live/motorsports/4050541920-14
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 2 [Español] | 28-11-2026 00:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 2 [Español] | 28-11-2026 00:00 WIB
+#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 2 [Deutsch] | 28-11-2026 00:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 2 [Deutsch] | 28-11-2026 00:00 WIB
 https://vipbox.ga/live/motorsports/4050541920-15
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 2 [Deutsch] | 28-11-2026 00:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 2 [Deutsch] | 28-11-2026 00:00 WIB
+#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 2 [Français] | 28-11-2026 00:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 2 [Français] | 28-11-2026 00:00 WIB
 https://vipbox.ga/live/motorsports/4050541920-16
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 2 [Français] | 28-11-2026 00:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 2 [Français] | 28-11-2026 00:00 WIB
+#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 2 [Italiano] | 28-11-2026 00:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 2 [Italiano] | 28-11-2026 00:00 WIB
 https://vipbox.ga/live/motorsports/4050541920-17
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
-#EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 2 [Italiano] | 28-11-2026 00:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 2 [Italiano] | 28-11-2026 00:00 WIB
-https://vipbox.ga/live/motorsports/4050541920-18
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="FIA Formula 1 2026: Qatar F1GP Practice 2 [Português] | 28-11-2026 00:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",FIA Formula 1 2026: Qatar F1GP Practice 2 [Português] | 28-11-2026 00:00 WIB
-https://vipbox.ga/live/motorsports/4050541920-19
+https://vipbox.ga/live/motorsports/4050541920-18
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-referrer=https://vipbox.ga/
 #EXTINF:-1 tvg-id="others" tvg-name="Ostrava Women and men | 28-11-2026 00:05 WIB" tvg-logo="https://static.vipbox.ga/img/home/cycling.webp" group-title="Others",Ostrava Women and men | 28-11-2026 00:05 WIB
@@ -5075,11 +4896,151 @@ https://vipbox.ga/live/volleyball/2992370516-1
 #EXTINF:-1 tvg-id="others" tvg-name="Kemerovo vs Gorky N. Novgorod | 28-11-2026 17:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/russia.webp" group-title="Others",Kemerovo vs Gorky N. Novgorod | 28-11-2026 17:00 WIB
 https://vipbox.ga/live/volleyball/4265301318-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="motorsports" tvg-name="MotoGP Valencia GP: MotoGP Qualifying 2 [HD] | 28-11-2026 17:15 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",MotoGP Valencia GP: MotoGP Qualifying 2 [HD] | 28-11-2026 17:15 WIB
+https://vipbox.ga/live/motorsports/3804846560-1
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="motorsports" tvg-name="MotoGP Valencia GP: MotoGP Qualifying 2 [HD] | 28-11-2026 17:15 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",MotoGP Valencia GP: MotoGP Qualifying 2 [HD] | 28-11-2026 17:15 WIB
+https://vipbox.ga/live/motorsports/3804846560-2
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="motorsports" tvg-name="MotoGP Valencia GP: MotoGP Qualifying 2 [HD] | 28-11-2026 17:15 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",MotoGP Valencia GP: MotoGP Qualifying 2 [HD] | 28-11-2026 17:15 WIB
+https://vipbox.ga/live/motorsports/3804846560-3
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="motorsports" tvg-name="MotoGP Valencia GP: MotoGP Qualifying 2 [HD] | 28-11-2026 17:15 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",MotoGP Valencia GP: MotoGP Qualifying 2 [HD] | 28-11-2026 17:15 WIB
+https://vipbox.ga/live/motorsports/3804846560-4
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="motorsports" tvg-name="MotoGP Valencia GP: MotoGP Qualifying 2 [HD] | 28-11-2026 17:15 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",MotoGP Valencia GP: MotoGP Qualifying 2 [HD] | 28-11-2026 17:15 WIB
+https://vipbox.ga/live/motorsports/3804846560-5
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="motorsports" tvg-name="MotoGP Valencia GP: MotoGP Qualifying 2 [Español] [HD] | 28-11-2026 17:15 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",MotoGP Valencia GP: MotoGP Qualifying 2 [Español] [HD] | 28-11-2026 17:15 WIB
+https://vipbox.ga/live/motorsports/3804846560-6
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="motorsports" tvg-name="MotoGP Valencia GP: MotoGP Qualifying 2 [Deutsch] [HD] | 28-11-2026 17:15 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",MotoGP Valencia GP: MotoGP Qualifying 2 [Deutsch] [HD] | 28-11-2026 17:15 WIB
+https://vipbox.ga/live/motorsports/3804846560-7
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="motorsports" tvg-name="MotoGP Valencia GP: MotoGP Qualifying 2 [Français] [HD] | 28-11-2026 17:15 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",MotoGP Valencia GP: MotoGP Qualifying 2 [Français] [HD] | 28-11-2026 17:15 WIB
+https://vipbox.ga/live/motorsports/3804846560-8
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="motorsports" tvg-name="MotoGP Valencia GP: MotoGP Qualifying 2 [Italiano] [HD] | 28-11-2026 17:15 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",MotoGP Valencia GP: MotoGP Qualifying 2 [Italiano] [HD] | 28-11-2026 17:15 WIB
+https://vipbox.ga/live/motorsports/3804846560-9
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="motorsports" tvg-name="MotoGP Valencia GP: MotoGP Qualifying 2 [Português] [HD] | 28-11-2026 17:15 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",MotoGP Valencia GP: MotoGP Qualifying 2 [Português] [HD] | 28-11-2026 17:15 WIB
+https://vipbox.ga/live/motorsports/3804846560-10
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="motorsports" tvg-name="MotoGP Valencia GP: MotoGP Qualifying 2 [Dutch] [HD] | 28-11-2026 17:15 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",MotoGP Valencia GP: MotoGP Qualifying 2 [Dutch] [HD] | 28-11-2026 17:15 WIB
+https://vipbox.ga/live/motorsports/3804846560-11
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="motorsports" tvg-name="MotoGP Valencia GP: MotoGP Qualifying 2 | 28-11-2026 17:15 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",MotoGP Valencia GP: MotoGP Qualifying 2 | 28-11-2026 17:15 WIB
+https://vipbox.ga/live/motorsports/3804846560-12
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="motorsports" tvg-name="MotoGP Valencia GP: MotoGP Qualifying 2 | 28-11-2026 17:15 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",MotoGP Valencia GP: MotoGP Qualifying 2 | 28-11-2026 17:15 WIB
+https://vipbox.ga/live/motorsports/3804846560-13
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="motorsports" tvg-name="MotoGP Valencia GP: MotoGP Qualifying 2 [Español] | 28-11-2026 17:15 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",MotoGP Valencia GP: MotoGP Qualifying 2 [Español] | 28-11-2026 17:15 WIB
+https://vipbox.ga/live/motorsports/3804846560-14
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="motorsports" tvg-name="MotoGP Valencia GP: MotoGP Qualifying 2 [Deutsch] | 28-11-2026 17:15 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",MotoGP Valencia GP: MotoGP Qualifying 2 [Deutsch] | 28-11-2026 17:15 WIB
+https://vipbox.ga/live/motorsports/3804846560-15
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="motorsports" tvg-name="MotoGP Valencia GP: MotoGP Qualifying 2 [Français] | 28-11-2026 17:15 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",MotoGP Valencia GP: MotoGP Qualifying 2 [Français] | 28-11-2026 17:15 WIB
+https://vipbox.ga/live/motorsports/3804846560-16
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="motorsports" tvg-name="MotoGP Valencia GP: MotoGP Qualifying 2 [Italiano] | 28-11-2026 17:15 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",MotoGP Valencia GP: MotoGP Qualifying 2 [Italiano] | 28-11-2026 17:15 WIB
+https://vipbox.ga/live/motorsports/3804846560-17
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="motorsports" tvg-name="MotoGP Valencia GP: MotoGP Qualifying 2 [Português] | 28-11-2026 17:15 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",MotoGP Valencia GP: MotoGP Qualifying 2 [Português] | 28-11-2026 17:15 WIB
+https://vipbox.ga/live/motorsports/3804846560-18
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="motorsports" tvg-name="MotoGP Valencia GP: MotoGP Qualifying 2 [Dutch] | 28-11-2026 17:15 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",MotoGP Valencia GP: MotoGP Qualifying 2 [Dutch] | 28-11-2026 17:15 WIB
+https://vipbox.ga/live/motorsports/3804846560-19
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="football" tvg-name="Bandirmaspor vs Batman Petrolspor | 28-11-2026 17:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/turkey.webp" group-title="Football",Bandirmaspor vs Batman Petrolspor | 28-11-2026 17:30 WIB
+https://vipbox.ga/live/football/421344181-1
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="football" tvg-name="Sivasspor vs Bodrumspor | 28-11-2026 17:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/turkey.webp" group-title="Football",Sivasspor vs Bodrumspor | 28-11-2026 17:30 WIB
+https://vipbox.ga/live/football/162549471-1
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="football" tvg-name="Kuressaare vs Viimsi JK | 28-11-2026 17:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/football.webp" group-title="Football",Kuressaare vs Viimsi JK | 28-11-2026 17:30 WIB
+https://vipbox.ga/live/football/2237009382-1
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="football" tvg-name="FC Tallinn vs Tulevik | 28-11-2026 17:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/football.webp" group-title="Football",FC Tallinn vs Tulevik | 28-11-2026 17:30 WIB
+https://vipbox.ga/live/football/1800957130-1
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="football" tvg-name="Lok. Plovdiv vs Spartak Varna | 28-11-2026 17:45 WIB" tvg-logo="https://static.vipbox.ga/img/home/bulgaria.webp" group-title="Football",Lok. Plovdiv vs Spartak Varna | 28-11-2026 17:45 WIB
+https://vipbox.ga/live/football/546604735-1
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="basketball" tvg-name="United Arab Emirates vs Sri Lanka | 28-11-2026 18:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",United Arab Emirates vs Sri Lanka | 28-11-2026 18:00 WIB
+https://vipbox.ga/live/basketball/3893815205-1
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="hockey" tvg-name="Tractor Chelyabinsk vs Magnitogorsk | 28-11-2026 18:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/khl.webp" group-title="Hockey",Tractor Chelyabinsk vs Magnitogorsk | 28-11-2026 18:00 WIB
+https://vipbox.ga/live/hockey/3685037129-1
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="football" tvg-name="Rubin Kazan vs Akron Togliatti | 28-11-2026 18:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/russia.webp" group-title="Football",Rubin Kazan vs Akron Togliatti | 28-11-2026 18:00 WIB
+https://vipbox.ga/live/football/680113418-1
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="football" tvg-name="Pattani vs Chiangrai Utd | 28-11-2026 18:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/football.webp" group-title="Football",Pattani vs Chiangrai Utd | 28-11-2026 18:00 WIB
+https://vipbox.ga/live/football/715876246-1
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="football" tvg-name="Milsami vs Real Sireti | 28-11-2026 18:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/football.webp" group-title="Football",Milsami vs Real Sireti | 28-11-2026 18:00 WIB
+https://vipbox.ga/live/football/3434624271-1
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="football" tvg-name="AFS vs Leixoes | 28-11-2026 18:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/portugal.webp" group-title="Football",AFS vs Leixoes | 28-11-2026 18:00 WIB
+https://vipbox.ga/live/football/3083655723-1
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="others" tvg-name="Gebze vs Alanya Bld | 28-11-2026 18:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/turkey.webp" group-title="Others",Gebze vs Alanya Bld | 28-11-2026 18:00 WIB
+https://vipbox.ga/live/volleyball/1507179062-1
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="others" tvg-name="Sungurlu vs Sultanbeyli | 28-11-2026 18:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/turkey.webp" group-title="Others",Sungurlu vs Sultanbeyli | 28-11-2026 18:00 WIB
+https://vipbox.ga/live/volleyball/3379210151-1
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="others" tvg-name="Halkbank vs Fenerbahce | 28-11-2026 18:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/turkey.webp" group-title="Others",Halkbank vs Fenerbahce | 28-11-2026 18:00 WIB
+https://vipbox.ga/live/volleyball/3194853169-1
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="others" tvg-name="Kuzey Boru Genclik W vs Vakifbank W | 28-11-2026 18:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/turkey.webp" group-title="Others",Kuzey Boru Genclik W vs Vakifbank W | 28-11-2026 18:00 WIB
+https://vipbox.ga/live/volleyball/3089840007-1
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#EXTINF:-1 tvg-id="others" tvg-name="Slepsk Suwalki vs Belchatow | 28-11-2026 18:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/poland.webp" group-title="Others",Slepsk Suwalki vs Belchatow | 28-11-2026 18:00 WIB
+https://vipbox.ga/live/volleyball/1107500901-1
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://lonpapil.eu/
 #EXTINF:-1 tvg-id="nfl" tvg-name="ESPN [HD] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/television.webp" group-title="NFL",ESPN [HD] | LIVE 24/7 WIB
 https://vipbox.ga/live/american-football/2944839123-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://dervlin.me/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="nfl" tvg-name="ESPN | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/television.webp" group-title="NFL",ESPN | LIVE 24/7 WIB
 https://vipbox.ga/live/american-football/2944839123-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
@@ -5125,11 +5086,11 @@ https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/dash/enc/tppdoitn9n/out/v1/9
 #EXTINF:-1 tvg-id="nfl" tvg-name="NFL RedZone | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/nfl.webp" group-title="NFL",NFL RedZone | LIVE 24/7 WIB
 https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/dash/enc/tppdoitn9n/out/v1/9828b56372fb434fafdcf88c72052d01/cenc.mpd
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://ninguno.cc/
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTINF:-1 tvg-id="nfl" tvg-name="MNF: Monday Night Football [HD] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/nfl.webp" group-title="NFL",MNF: Monday Night Football [HD] | LIVE 24/7 WIB
 https://vipbox.ga/live/nfl/336913281-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://dervlin.me/
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTINF:-1 tvg-id="nfl" tvg-name="MNF: Monday Night Football | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/nfl.webp" group-title="NFL",MNF: Monday Night Football | LIVE 24/7 WIB
 https://vipbox.ga/live/nfl/336913281-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
@@ -5148,15 +5109,15 @@ https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/dx5hfbpk7u/out/v1
 #EXTINF:-1 tvg-id="nfl" tvg-name="TNF: Thursday Night Football | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/nfl.webp" group-title="NFL",TNF: Thursday Night Football | LIVE 24/7 WIB
 https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/dx5hfbpk7u/out/v1/c14185a397544650b9761d43ad2e8e91/cenc.mpd
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTINF:-1 tvg-id="nfl" tvg-name="SNF: Sunday Night Football [HD] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/nfl.webp" group-title="NFL",SNF: Sunday Night Football [HD] | LIVE 24/7 WIB
 https://vipbox.ga/live/nfl/2889884971-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTINF:-1 tvg-id="nfl" tvg-name="SNF: Sunday Night Football | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/nfl.webp" group-title="NFL",SNF: Sunday Night Football | LIVE 24/7 WIB
 https://vipbox.ga/live/nfl/2889884971-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTINF:-1 tvg-id="basketball" tvg-name="NBA TV [HD] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/nba.webp" group-title="Basketball",NBA TV [HD] | LIVE 24/7 WIB
 https://vipbox.ga/live/nba/3510096238-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
@@ -5164,23 +5125,23 @@ https://vipbox.ga/live/nba/3510096238-1
 #EXTINF:-1 tvg-id="basketball" tvg-name="NBA TV | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/nba.webp" group-title="Basketball",NBA TV | LIVE 24/7 WIB
 https://vipbox.ga/live/nba/3510096238-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://dervlin.me/
+#EXTVLCOPT:http-referrer=https://lonpapil.eu/
 #EXTINF:-1 tvg-id="basketball" tvg-name="ESPN First Take | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/nba.webp" group-title="Basketball",ESPN First Take | LIVE 24/7 WIB
 https://vipbox.ga/live/nba/1060745282-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://dervlin.me/
 #EXTINF:-1 tvg-id="basketball" tvg-name="ESPN First Take | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/nba.webp" group-title="Basketball",ESPN First Take | LIVE 24/7 WIB
 https://vipbox.ga/live/nba/1060745282-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://fallafar.me/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="hockey" tvg-name="NHL Network [HD] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/nhl.webp" group-title="Hockey",NHL Network [HD] | LIVE 24/7 WIB
 https://vipbox.ga/live/nhl/1988282576-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="hockey" tvg-name="NHL Network | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/nhl.webp" group-title="Hockey",NHL Network | LIVE 24/7 WIB
 https://vipbox.ga/live/nhl/1988282576-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://dervlin.me/
+#EXTVLCOPT:http-referrer=https://lonpapil.eu/
 #EXTINF:-1 tvg-id="tennis" tvg-name="Tennis Channel [HD] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/television.webp" group-title="Tennis",Tennis Channel [HD] | LIVE 24/7 WIB
 https://vipbox.ga/live/tennis/2520199309-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
@@ -5188,27 +5149,27 @@ https://vipbox.ga/live/tennis/2520199309-1
 #EXTINF:-1 tvg-id="tennis" tvg-name="Tennis Channel | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/television.webp" group-title="Tennis",Tennis Channel | LIVE 24/7 WIB
 https://vipbox.ga/live/tennis/2520199309-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://dervlin.me/
+#EXTVLCOPT:http-referrer=https://lonpapil.eu/
 #EXTINF:-1 tvg-id="golf" tvg-name="NBC Golf Channel [HD] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/golf.webp" group-title="Golf",NBC Golf Channel [HD] | LIVE 24/7 WIB
 https://vipbox.ga/live/golf/2212294583-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://dervlin.me/
+#EXTVLCOPT:http-referrer=https://ninguno.cc/
 #EXTINF:-1 tvg-id="golf" tvg-name="NBC Golf Channel | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/golf.webp" group-title="Golf",NBC Golf Channel | LIVE 24/7 WIB
 https://vipbox.ga/live/golf/2212294583-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTINF:-1 tvg-id="golf" tvg-name="Sky Sports Golf [HD] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/golf.webp" group-title="Golf",Sky Sports Golf [HD] | LIVE 24/7 WIB
 https://vipbox.ga/live/golf/2194905309-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTINF:-1 tvg-id="golf" tvg-name="Sky Sports Golf | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/golf.webp" group-title="Golf",Sky Sports Golf | LIVE 24/7 WIB
 https://vipbox.ga/live/golf/2194905309-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://dervlin.me/
 #EXTINF:-1 tvg-id="football" tvg-name="Sky Sports News | SSN Breaking Sports News [HD] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/england.webp" group-title="Football",Sky Sports News | SSN Breaking Sports News [HD] | LIVE 24/7 WIB
 https://vipbox.ga/live/football/1330857165-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://fallafar.me/
+#EXTVLCOPT:http-referrer=https://ninguno.cc/
 #EXTINF:-1 tvg-id="football" tvg-name="Sky Sports News | SSN Breaking Sports News | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/england.webp" group-title="Football",Sky Sports News | SSN Breaking Sports News | LIVE 24/7 WIB
 https://vipbox.ga/live/football/1330857165-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
@@ -5220,71 +5181,71 @@ https://vipbox.ga/live/football/1330857165-3
 #EXTINF:-1 tvg-id="football" tvg-name="Sky Sports Saturday Social | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/television.webp" group-title="Football",Sky Sports Saturday Social | LIVE 24/7 WIB
 https://vipbox.ga/live/football/1159954462-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTINF:-1 tvg-id="football" tvg-name="Sky Sports Saturday Social | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/television.webp" group-title="Football",Sky Sports Saturday Social | LIVE 24/7 WIB
 https://vipbox.ga/live/football/1159954462-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://fallafar.me/
+#EXTVLCOPT:http-referrer=https://dervlin.me/
 #EXTINF:-1 tvg-id="afl" tvg-name="Fox AFL TV [HD] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/australia.webp" group-title="AFL",Fox AFL TV [HD] | LIVE 24/7 WIB
 https://vipbox.ga/live/afl/3779621815-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://fallafar.me/
+#EXTVLCOPT:http-referrer=https://dervlin.me/
 #EXTINF:-1 tvg-id="afl" tvg-name="Fox AFL TV | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/australia.webp" group-title="AFL",Fox AFL TV | LIVE 24/7 WIB
 https://vipbox.ga/live/afl/3779621815-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://dervlin.me/
+#EXTVLCOPT:http-referrer=https://ninguno.cc/
 #EXTINF:-1 tvg-id="darts" tvg-name="Darts TV: All Darts Championship [HD] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/darts.webp" group-title="Darts",Darts TV: All Darts Championship [HD] | LIVE 24/7 WIB
 https://vipbox.ga/live/darts/2483454842-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTINF:-1 tvg-id="darts" tvg-name="Darts TV: All Darts Championship [Deutsch] [HD] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/darts.webp" group-title="Darts",Darts TV: All Darts Championship [Deutsch] [HD] | LIVE 24/7 WIB
 https://vipbox.ga/live/darts/2483454842-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTINF:-1 tvg-id="darts" tvg-name="Darts TV: All Darts Championship | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/darts.webp" group-title="Darts",Darts TV: All Darts Championship | LIVE 24/7 WIB
 https://vipbox.ga/live/darts/2483454842-3
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTINF:-1 tvg-id="darts" tvg-name="Darts TV: All Darts Championship | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/darts.webp" group-title="Darts",Darts TV: All Darts Championship | LIVE 24/7 WIB
 https://vipbox.ga/live/darts/2483454842-4
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://fallafar.me/
+#EXTVLCOPT:http-referrer=https://lonpapil.eu/
 #EXTINF:-1 tvg-id="darts" tvg-name="Sky Sports Darts [HD] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/darts.webp" group-title="Darts",Sky Sports Darts [HD] | LIVE 24/7 WIB
 https://vipbox.ga/live/darts/1846464001-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://fallafar.me/
+#EXTVLCOPT:http-referrer=https://lonpapil.eu/
 #EXTINF:-1 tvg-id="darts" tvg-name="Sky Sports Darts | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/darts.webp" group-title="Darts",Sky Sports Darts | LIVE 24/7 WIB
 https://vipbox.ga/live/darts/1846464001-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://dervlin.me/
+#EXTVLCOPT:http-referrer=https://ninguno.cc/
 #EXTINF:-1 tvg-id="mma" tvg-name="WWE Network [HD] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/wwe.webp" group-title="MMA",WWE Network [HD] | LIVE 24/7 WIB
 https://vipbox.ga/live/wwe/453896873-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTINF:-1 tvg-id="mma" tvg-name="WWE Network | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/wwe.webp" group-title="MMA",WWE Network | LIVE 24/7 WIB
 https://vipbox.ga/live/wwe/453896873-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://dervlin.me/
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTINF:-1 tvg-id="wwe" tvg-name="WWE Network [HD] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/wwe.webp" group-title="WWE",WWE Network [HD] | LIVE 24/7 WIB
 https://vipbox.ga/live/wwe/453896873-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://dervlin.me/
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTINF:-1 tvg-id="wwe" tvg-name="WWE Network | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/wwe.webp" group-title="WWE",WWE Network | LIVE 24/7 WIB
 https://vipbox.ga/live/wwe/453896873-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://dervlin.me/
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTINF:-1 tvg-id="fighting" tvg-name="WWE Network [HD] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/wwe.webp" group-title="Fighting",WWE Network [HD] | LIVE 24/7 WIB
 https://vipbox.ga/live/wwe/453896873-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://dervlin.me/
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTINF:-1 tvg-id="fighting" tvg-name="WWE Network | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/wwe.webp" group-title="Fighting",WWE Network | LIVE 24/7 WIB
 https://vipbox.ga/live/wwe/453896873-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://dervlin.me/
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="NASCAR Racehub | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/nfl.webp" group-title="Motorsports",NASCAR Racehub | LIVE 24/7 WIB
 https://vipbox.ga/live/nascar/2322626082-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://dervlin.me/
+#EXTVLCOPT:http-referrer=https://lonpapil.eu/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="NASCAR Racehub | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/nfl.webp" group-title="Motorsports",NASCAR Racehub | LIVE 24/7 WIB
 https://vipbox.ga/live/nascar/2322626082-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
@@ -5292,27 +5253,27 @@ https://vipbox.ga/live/nascar/2322626082-2
 #EXTINF:-1 tvg-id="motorsports" tvg-name="NASCAR Racehub | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/nfl.webp" group-title="Motorsports",NASCAR Racehub | LIVE 24/7 WIB
 https://vipbox.ga/live/nascar/2322626082-3
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="Sky Sports F1 | Sky F1 [HD] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",Sky Sports F1 | Sky F1 [HD] | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/3596227959-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="Sky Sports F1 | Sky F1 | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",Sky Sports F1 | Sky F1 | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/3596227959-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="DAZN Formula 1 | DAZN F1 [Español] [HD] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",DAZN Formula 1 | DAZN F1 [Español] [HD] | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/450211039-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://dervlin.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="DAZN Formula 1 | DAZN F1 [Español] [HD] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",DAZN Formula 1 | DAZN F1 [Español] [HD] | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/450211039-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="DAZN Formula 1 | DAZN F1 [Español] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",DAZN Formula 1 | DAZN F1 [Español] | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/450211039-3
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://fallafar.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="DAZN Formula 1 | DAZN F1 [Español] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",DAZN Formula 1 | DAZN F1 [Español] | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/450211039-4
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
@@ -5320,11 +5281,11 @@ https://vipbox.ga/live/motorsports/450211039-4
 #EXTINF:-1 tvg-id="motorsports" tvg-name="Apple TV F1 [HD] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",Apple TV F1 [HD] | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/1170538676-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTVLCOPT:http-referrer=https://ninguno.cc/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="Apple TV F1 [HD] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",Apple TV F1 [HD] | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/1170538676-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://ninguno.cc/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="Apple TV F1 | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",Apple TV F1 | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/1170538676-3
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
@@ -5332,131 +5293,131 @@ https://vipbox.ga/live/motorsports/1170538676-3
 #EXTINF:-1 tvg-id="motorsports" tvg-name="Apple TV F1 | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",Apple TV F1 | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/1170538676-4
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="F1 Qualifying | F1 Main Race [HD] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",F1 Qualifying | F1 Main Race [HD] | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/4252452532-1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="F1 Qualifying | F1 Main Race [HD] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",F1 Qualifying | F1 Main Race [HD] | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/4252452532-2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="F1 Qualifying | F1 Main Race [HD] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",F1 Qualifying | F1 Main Race [HD] | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/4252452532-3
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="F1 Qualifying | F1 Main Race [HD] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",F1 Qualifying | F1 Main Race [HD] | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/4252452532-4
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="F1 Qualifying | F1 Main Race [Español] [HD] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",F1 Qualifying | F1 Main Race [Español] [HD] | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/4252452532-5
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="F1 Qualifying | F1 Main Race [Español] [HD] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",F1 Qualifying | F1 Main Race [Español] [HD] | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/4252452532-6
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="F1 Qualifying | F1 Main Race [Deutsch] [HD] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",F1 Qualifying | F1 Main Race [Deutsch] [HD] | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/4252452532-7
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="F1 Qualifying | F1 Main Race [Français] [HD] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",F1 Qualifying | F1 Main Race [Français] [HD] | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/4252452532-8
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="F1 Qualifying | F1 Main Race [Italiano] [HD] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",F1 Qualifying | F1 Main Race [Italiano] [HD] | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/4252452532-9
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="F1 Qualifying | F1 Main Race [Português] [HD] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",F1 Qualifying | F1 Main Race [Português] [HD] | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/4252452532-10
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="F1 Qualifying | F1 Main Race [日本語] [HD] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",F1 Qualifying | F1 Main Race [日本語] [HD] | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/4252452532-11
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="F1 Qualifying | F1 Main Race [Dutch] [HD] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",F1 Qualifying | F1 Main Race [Dutch] [HD] | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/4252452532-12
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="F1 Qualifying | F1 Main Race [Türkçe] [HD] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",F1 Qualifying | F1 Main Race [Türkçe] [HD] | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/4252452532-13
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="F1 Qualifying | F1 Main Race [ελληνικά] [HD] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",F1 Qualifying | F1 Main Race [ελληνικά] [HD] | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/4252452532-14
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="F1 Qualifying | F1 Main Race [Polski] [HD] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",F1 Qualifying | F1 Main Race [Polski] [HD] | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/4252452532-15
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="F1 Qualifying | F1 Main Race [العربية] [HD] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",F1 Qualifying | F1 Main Race [العربية] [HD] | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/4252452532-16
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="F1 Qualifying | F1 Main Race | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",F1 Qualifying | F1 Main Race | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/4252452532-17
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="F1 Qualifying | F1 Main Race | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",F1 Qualifying | F1 Main Race | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/4252452532-18
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="F1 Qualifying | F1 Main Race | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",F1 Qualifying | F1 Main Race | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/4252452532-19
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="F1 Qualifying | F1 Main Race | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",F1 Qualifying | F1 Main Race | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/4252452532-20
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="F1 Qualifying | F1 Main Race [Español] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",F1 Qualifying | F1 Main Race [Español] | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/4252452532-21
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="F1 Qualifying | F1 Main Race [Español] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",F1 Qualifying | F1 Main Race [Español] | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/4252452532-22
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="F1 Qualifying | F1 Main Race [Deutsch] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",F1 Qualifying | F1 Main Race [Deutsch] | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/4252452532-23
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="F1 Qualifying | F1 Main Race [Français] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",F1 Qualifying | F1 Main Race [Français] | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/4252452532-24
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="F1 Qualifying | F1 Main Race [Italiano] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",F1 Qualifying | F1 Main Race [Italiano] | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/4252452532-25
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="F1 Qualifying | F1 Main Race [Português] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",F1 Qualifying | F1 Main Race [Português] | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/4252452532-26
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="F1 Qualifying | F1 Main Race [日本語] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",F1 Qualifying | F1 Main Race [日本語] | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/4252452532-27
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="F1 Qualifying | F1 Main Race [Dutch] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",F1 Qualifying | F1 Main Race [Dutch] | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/4252452532-28
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="F1 Qualifying | F1 Main Race [Türkçe] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",F1 Qualifying | F1 Main Race [Türkçe] | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/4252452532-29
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="F1 Qualifying | F1 Main Race [ελληνικά] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",F1 Qualifying | F1 Main Race [ελληνικά] | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/4252452532-30
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="F1 Qualifying | F1 Main Race [Polski] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",F1 Qualifying | F1 Main Race [Polski] | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/4252452532-31
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-referrer=https://posamari.me/
 #EXTINF:-1 tvg-id="motorsports" tvg-name="F1 Qualifying | F1 Main Race [العربية] | LIVE 24/7 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",F1 Qualifying | F1 Main Race [العربية] | LIVE 24/7 WIB
 https://vipbox.ga/live/motorsports/4252452532-32
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
