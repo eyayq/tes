@@ -19,6 +19,7 @@ WIB = timezone(timedelta(hours=7))
 TIMEOUT = 30
 MAX_WORKERS = 4
 IMPERSONATE = "chrome"
+MAX_RETRIES = 3  # FIX: retry untuk POST player
 
 HEADERS = {
     "User-Agent": (
@@ -298,25 +299,37 @@ class VIPBox:
 
     # ── 2. EKSTRAK PARAM VIDEO (OBFUSCATED) ──────────────
     def get_play_params(self, e):
+        """FIX: Gabungkan hasil dari onair_uri DAN live_uri."""
         with self._lock:
             if e["eid"] in self.onair_cache:
                 return self.onair_cache[e["eid"]]
 
-        params_list = None
-        if e["onair_uri"]:
-            params_list = self._extract_all_from_page(e["onair_uri"])
-            if params_list:
-                with self._lock:
-                    self.onair_cache[e["eid"]] = params_list
-                return params_list
+        all_params = []
 
-        params_list = self._extract_all_from_page(e["live_uri"])
-        if params_list:
+        # Coba onair_uri dulu
+        if e["onair_uri"]:
+            params = self._extract_all_from_page(e["onair_uri"])
+            if params:
+                all_params.extend(params)
+
+        # FIX: Juga coba live_uri untuk player tambahan
+        params_live = self._extract_all_from_page(e["live_uri"])
+        if params_live:
+            # Dedup berdasarkan (pldm, play)
+            existing = {(p["pldm"], p["play"]) for p in all_params}
+            for p in params_live:
+                key = (p["pldm"], p["play"])
+                if key not in existing:
+                    all_params.append(p)
+                    existing.add(key)
+
+        if all_params:
             with self._lock:
-                self.onair_cache[e["eid"]] = params_list
-        return params_list
+                self.onair_cache[e["eid"]] = all_params
+        return all_params
 
     def _extract_all_from_page(self, uri):
+        """FIX: Kumpulkan SEMUA sumber player (data-*, window vars, iframes)."""
         with self._lock:
             if uri in self.uri_cache:
                 return self.uri_cache[uri]
@@ -328,98 +341,136 @@ class VIPBox:
                            headers={"Referer": f"{BASE_URL}/"})
             html = r.text
             log.info(f"    GET {uri} → {r.status_code}, {len(html)}B")
+            soup = BeautifulSoup(html, "html.parser")
+            cfg = self._extract_site_config(soup) or {}
 
-            # ── data-* attributes ──
-            all_pldm = re.findall(r'data-pldm="([^"]+)"', html)
-            all_play = re.findall(r'data-play="([^"]+)"', html)
+            # ── FIX: Ekstrak data-* per-ELEMENT (bukan by index) ──
+            result.extend(self._extract_data_attrs(soup, cfg))
 
-            if all_pldm and all_play:
-                all_pid = re.findall(r'data-pid="([^"]+)"', html)
-                all_player = re.findall(r'data-player="([^"]+)"', html)
-                all_gc = re.findall(r'data-gc="([^"]+)"', html)
-                max_videos = max(len(all_pldm), len(all_play), 1)
-                soup = BeautifulSoup(html, "html.parser")
-                cfg = self._extract_site_config(soup) or {}
-                for i in range(max_videos):
-                    pldm = all_pldm[i] if i < len(all_pldm) else ""
-                    play = all_play[i] if i < len(all_play) else ""
-                    if not pldm or not play:
-                        continue
-                    result.append({
-                        "pldm": pldm,
-                        "play": play,
-                        "pid": all_pid[i] if i < len(all_pid) else "6",
-                        "player": all_player[i] if i < len(all_player) else "jw",
-                        "gc": all_gc[i] if i < len(all_gc) else "motorsports",
-                        "csrf": cfg.get("csrf", ""),
-                        "csrf_ip": cfg.get("csrf_ip", ""),
-                        "sec_expires": cfg.get("sec_expires", ""),
-                        "sec_hash": cfg.get("sec_hash", ""),
-                    })
-                if result:
-                    with self._lock:
-                        self.uri_cache[uri] = result
-                    return result
+            # ── FIX: Ekstrak SEMUA window['...'] vars (bukan cuma 1) ──
+            result.extend(self._extract_window_vars(html, cfg))
 
-            # ── window['...'] obfuscated ──
-            m = re.search(
-                r"window\[['\"]([A-Za-z0-9_\-]+)['\"]\]\s*=\s*['\"]([^'\"]+)['\"]",
-                html
-            )
-            if not m:
-                log.warning(f"    No player data in {uri}")
-                with self._lock:
-                    self.uri_cache[uri] = result
-                return result
+            # ── FIX: Ekstrak iframe src yang mengandung player ──
+            result.extend(self._extract_iframe_players(soup, cfg))
 
-            win_val = m.group(2)
-            log.info(f"    window var len={len(win_val)}")
+        except Exception as ex:
+            log.debug(f"    GET fail {uri}: {ex}")
 
+        # Dedup
+        seen = set()
+        unique = []
+        for p in result:
+            key = (p.get("pldm", ""), p.get("play", ""))
+            if key and key not in seen:
+                seen.add(key)
+                unique.append(p)
+
+        with self._lock:
+            self.uri_cache[uri] = unique
+        return unique
+
+    def _extract_data_attrs(self, soup, cfg):
+        """FIX: Parse per-element agar pairing data-* benar."""
+        result = []
+        # Cari semua element yang punya data-pldm
+        for el in soup.find_all(attrs={"data-pldm": True}):
+            pldm = el.get("data-pldm", "")
+            play = el.get("data-play", "")
+            if not pldm or not play:
+                continue
+            result.append({
+                "pldm": pldm,
+                "play": play,
+                "pid": el.get("data-pid", "6"),
+                "player": el.get("data-player", "jw"),
+                "gc": el.get("data-gc", "motorsports"),
+                "csrf": cfg.get("csrf", ""),
+                "csrf_ip": cfg.get("csrf_ip", ""),
+                "sec_expires": cfg.get("sec_expires", ""),
+                "sec_hash": cfg.get("sec_hash", ""),
+            })
+        return result
+
+    def _extract_window_vars(self, html, cfg):
+        """FIX: Ambil SEMUA window['...'] = '...' (findall, bukan search)."""
+        result = []
+        # FIX: re.findall untuk semua match
+        all_matches = re.findall(
+            r"window\[['\"]([A-Za-z0-9_\-]+)['\"]\]\s*=\s*['\"]([^'\"]+)['\"]",
+            html
+        )
+        for var_name, win_val in all_matches:
             try:
                 decoded = base64.b64decode(win_val)
             except Exception:
                 decoded = win_val.encode()
 
-            result = self._parse_decoded_player(decoded, win_val, html)
-
-        except Exception as ex:
-            log.debug(f"    GET fail {uri}: {ex}")
-
-        with self._lock:
-            self.uri_cache[uri] = result
+            parsed = self._parse_decoded_player(decoded, html, cfg)
+            result.extend(parsed)
         return result
 
-    def _parse_decoded_player(self, decoded_bytes, raw_str, html):
+    def _extract_iframe_players(self, soup, cfg):
+        """FIX: Ekstrak player dari iframe src / data-src."""
+        result = []
+        for iframe in soup.find_all("iframe"):
+            src = iframe.get("src", "") or iframe.get("data-src", "")
+            if not src:
+                continue
+            # Jika src mengandung player domain
+            parsed = urlparse(src)
+            if parsed.netloc and parsed.netloc != "vipbox.ga":
+                result.append({
+                    "pldm": parsed.netloc,
+                    "play": src,
+                    "pid": "6",
+                    "player": "iframe",
+                    "gc": "motorsports",
+                    "csrf": cfg.get("csrf", ""),
+                    "csrf_ip": cfg.get("csrf_ip", ""),
+                    "sec_expires": cfg.get("sec_expires", ""),
+                    "sec_hash": cfg.get("sec_hash", ""),
+                })
+        return result
+
+    def _parse_decoded_player(self, decoded_bytes, html, cfg):
+        """FIX: Handle dict, list, dan nested structure."""
         result = []
         text = decoded_bytes.decode("utf-8", errors="ignore")
 
+        # Coba parse JSON
         try:
             data = json.loads(text)
-            if isinstance(data, dict):
-                pldm = data.get("pldm", "") or data.get("domain", "")
-                play = data.get("play", "") or data.get("vimg", "")
-                if pldm and play:
-                    result.append({
-                        "pldm": pldm,
-                        "play": play,
-                        "pid": data.get("pid", "6"),
-                        "player": data.get("player", "jw"),
-                        "gc": data.get("gc", "motorsports"),
-                        "csrf": data.get("csrf", ""),
-                        "csrf_ip": data.get("csrf_ip", ""),
-                        "sec_expires": data.get("sec_expires", ""),
-                        "sec_hash": data.get("sec_hash", ""),
-                    })
-        except Exception:
+
+            # FIX: Handle LIST of player configs
+            if isinstance(data, list):
+                for item in data:
+                    if isinstance(item, dict):
+                        p = self._dict_to_params(item, cfg)
+                        if p:
+                            result.append(p)
+            # Handle single dict
+            elif isinstance(data, dict):
+                # FIX: Cek nested "players" key
+                if "players" in data and isinstance(data["players"], list):
+                    for item in data["players"]:
+                        if isinstance(item, dict):
+                            p = self._dict_to_params(item, cfg)
+                            if p:
+                                result.append(p)
+                else:
+                    p = self._dict_to_params(data, cfg)
+                    if p:
+                        result.append(p)
+        except (json.JSONDecodeError, TypeError):
             pass
 
+        # Fallback: cari URL stream langsung di decoded text
         if not result:
-            url_m = re.search(
-                r'(https?://[^\s"\'<>]+\.(?:mpd|m3u8|flv)[^\s"\'<>]*)',
+            urls = re.findall(
+                r'(https?://[^\s"\'<>\\]+\.(?:mpd|m3u8|flv)[^\s"\'<>\\]*)',
                 text
             )
-            if url_m:
-                stream_url = url_m.group(1)
+            for stream_url in urls:
                 parsed = urlparse(stream_url)
                 domain = parsed.netloc if parsed.netloc else "vipbox.ga"
                 result.append({
@@ -435,13 +486,13 @@ class VIPBox:
                     "_direct_url": stream_url,
                 })
 
+        # Fallback: cari URL di HTML page
         if not result:
-            url_m = re.search(
+            urls = re.findall(
                 r'(https?://[^\s"\'<>]+\.(?:mpd|m3u8|flv)[^\s"\'<>]*)',
                 html
             )
-            if url_m:
-                stream_url = url_m.group(1)
+            for stream_url in urls:
                 parsed = urlparse(stream_url)
                 domain = parsed.netloc if parsed.netloc else "vipbox.ga"
                 result.append({
@@ -459,13 +510,32 @@ class VIPBox:
 
         return result
 
+    def _dict_to_params(self, data, cfg):
+        """Helper: konversi dict player config ke params."""
+        pldm = data.get("pldm", "") or data.get("domain", "") or data.get("server", "")
+        play = data.get("play", "") or data.get("vimg", "") or data.get("source", "")
+        if not pldm or not play:
+            return None
+        return {
+            "pldm": pldm,
+            "play": play,
+            "pid": str(data.get("pid", "6")),
+            "player": data.get("player", "jw"),
+            "gc": data.get("gc", "motorsports"),
+            "csrf": data.get("csrf", cfg.get("csrf", "")),
+            "csrf_ip": data.get("csrf_ip", cfg.get("csrf_ip", "")),
+            "sec_expires": data.get("sec_expires", cfg.get("sec_expires", "")),
+            "sec_hash": data.get("sec_hash", cfg.get("sec_hash", "")),
+        }
+
     # ── 3. POST KE PLAYER ────────────────────────────────
     def get_stream_from_player(self, params):
+        """FIX: Return SEMUA stream URL (hls + dash + url), bukan cuma 1."""
         if params.get("_direct_url"):
             url = params["_direct_url"]
             parsed = urlparse(url)
             domain = parsed.netloc if parsed.netloc else params["pldm"]
-            return (url, domain, None)
+            return [(url, domain, None)]
 
         pldm = params["pldm"]
         gc = params["gc"]
@@ -489,69 +559,79 @@ class VIPBox:
         ).decode()
 
         post_url = f"https://{pldm}/vimpl/{gc}"
-        stream_url = None
+        stream_urls = []  # FIX: list, bukan single
         domain = pldm
         drm_key = None
 
-        try:
-            r = self.s.post(
-                post_url,
-                data={"payload": payload_b64},
-                headers={
-                    "Content-Type": "application/x-www-form-urlencoded",
-                    "Origin": BASE_URL,
-                    "Referer": f"{BASE_URL}/",
-                    "Sec-Fetch-Site": "cross-site",
-                    "Sec-Fetch-Mode": "navigate",
-                    "Sec-Fetch-Dest": "iframe",
-                },
-                timeout=TIMEOUT,
-            )
-            html = r.text
-            log.debug(f"    POST {post_url} → {r.status_code}, "
-                      f"{len(html)}B")
+        # FIX: Retry logic
+        for attempt in range(MAX_RETRIES):
+            try:
+                r = self.s.post(
+                    post_url,
+                    data={"payload": payload_b64},
+                    headers={
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        "Origin": BASE_URL,
+                        "Referer": f"{BASE_URL}/",
+                        "Sec-Fetch-Site": "cross-site",
+                        "Sec-Fetch-Mode": "navigate",
+                        "Sec-Fetch-Dest": "iframe",
+                    },
+                    timeout=TIMEOUT,
+                )
+                html = r.text
+                log.debug(f"    POST {post_url} → {r.status_code}, "
+                          f"{len(html)}B (attempt {attempt+1})")
 
-            cfg = extract_json_block(html, "STUDY_CONFIG")
-            if cfg:
-                source = cfg.get("source", {})
-                if "hls" in source:
-                    stream_url = source["hls"]
-                elif "dash" in source:
-                    stream_url = source["dash"]
-                elif "url" in source:
-                    stream_url = source["url"]
+                # FIX: Ekstrak SEMUA source dari STUDY_CONFIG
+                cfg = extract_json_block(html, "STUDY_CONFIG")
+                if cfg:
+                    source = cfg.get("source", {})
+                    # FIX: Ambil hls, dash, DAN url
+                    for key in ("hls", "dash", "url"):
+                        if key in source and source[key]:
+                            su = source[key]
+                            parsed = urlparse(su)
+                            d = parsed.netloc if parsed.netloc else pldm
+                            stream_urls.append((su, d, drm_key))
 
-                drm = source.get("drm", {})
-                if drm:
-                    ck = drm.get("clearkey", [])
-                    if ck:
-                        drm_key = f"{ck[0]['kid']}:{ck[0]['key']}"
+                    drm = source.get("drm", {})
+                    if drm:
+                        ck = drm.get("clearkey", [])
+                        if ck:
+                            drm_key = f"{ck[0]['kid']}:{ck[0]['key']}"
+                            # Update existing entries with drm
+                            stream_urls = [(u, d, drm_key)
+                                           for u, d, _ in stream_urls]
 
-                if stream_url:
-                    parsed = urlparse(stream_url)
-                    if parsed.netloc:
-                        domain = parsed.netloc
+                # Fallback: regex untuk semua URL stream
+                if not stream_urls:
+                    pats = [
+                        r'"(https?://[^"]+\.(?:m3u8|mpd|flv)[^"]*)"',
+                        r'"(https?://[^"]*/live/[^"]+)"',
+                    ]
+                    for p in pats:
+                        # FIX: findall untuk semua match
+                        for m2 in re.findall(p, html):
+                            parsed = urlparse(m2)
+                            d = parsed.netloc if parsed.netloc else pldm
+                            stream_urls.append((m2, d, drm_key))
 
-            if not stream_url:
-                pats = [
-                    r'"(https?://[^"]+\.(?:m3u8|mpd|flv)[^"]*)"',
-                    r'"(https?://[^"]*/live/[^"]+)"',
-                ]
-                for p in pats:
-                    m2 = re.search(p, html)
-                    if m2:
-                        stream_url = m2.group(1)
-                        parsed = urlparse(stream_url)
-                        if parsed.netloc:
-                            domain = parsed.netloc
-                        break
-        except Exception as ex:
-            log.warning(f"    POST fail {pldm}: {ex}")
+                # Jika berhasil, break
+                if stream_urls:
+                    break
+                # Jika gagal, retry
+                if attempt < MAX_RETRIES - 1:
+                    time.sleep(2)
 
-        result = (stream_url, domain, drm_key)
+            except Exception as ex:
+                log.warning(f"    POST fail {pldm} (attempt {attempt+1}): {ex}")
+                if attempt < MAX_RETRIES - 1:
+                    time.sleep(2)
+
         with self._lock:
-            self.play_cache[cache_key] = result
-        return result
+            self.play_cache[cache_key] = stream_urls
+        return stream_urls
 
     # ── 4. RESOLVE ENTRY ─────────────────────────────────
     def resolve_entry(self, e):
@@ -573,15 +653,28 @@ class VIPBox:
             }]
             return e
 
+        # FIX: Setiap params bisa menghasilkan MULTIPLE stream URLs
         e["videos"] = []
+        seen_urls = set()
         for params in params_list:
-            stream_url, domain, drm_key = \
-                self.get_stream_from_player(params)
-            e["videos"].append({
-                "player_domain": domain or params["pldm"],
-                "resolved_url": stream_url or f"{BASE_URL}{e['live_uri']}",
-                "drm_key": drm_key,
-            })
+            stream_results = self.get_stream_from_player(params)
+            for stream_url, domain, drm_key in stream_results:
+                if stream_url in seen_urls:
+                    continue
+                seen_urls.add(stream_url)
+                e["videos"].append({
+                    "player_domain": domain or params["pldm"],
+                    "resolved_url": stream_url or f"{BASE_URL}{e['live_uri']}",
+                    "drm_key": drm_key,
+                })
+
+        # Fallback jika tidak ada yang resolved
+        if not e["videos"]:
+            e["videos"] = [{
+                "player_domain": "vipbox.ga",
+                "resolved_url": f"{BASE_URL}{e['live_uri']}",
+                "drm_key": None,
+            }]
         return e
 
     # ── 5. GENERATE M3U ──────────────────────────────────
@@ -691,7 +784,7 @@ class VIPBox:
     # ── 6. MAIN ──────────────────────────────────────────
     def run(self):
         log.info("=" * 50)
-        log.info("  VIPBox M3U Generator v7.4")
+        log.info("  VIPBox M3U Generator v7.5")
         log.info(f"  Target : {BASE_URL}")
         log.info(f"  Output : {OUTPUT_FILE}")
         log.info("=" * 50)
