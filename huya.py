@@ -210,59 +210,85 @@ class VIPBox:
         key = m.get(icon_cls, icon_cls) if icon_cls else "football"
         return f"{STATIC_URL}/img/home/{key}.webp"
 
-    # ── 2. EKSTRAK PARAMS DARI HALAMAN ONAIR ─────────────
+    # ── 2. EKSTRAK SEMUA PARAMS VIDEO DARI HALAMAN ──────
     def get_play_params(self, e):
+        """Return LIST of param dicts (satu per video)."""
         with self._lock:
             if e["eid"] in self.onair_cache:
                 return self.onair_cache[e["eid"]]
 
-        params = None
+        params_list = None
         if e["onair_uri"]:
-            params = self._extract_from_page(e["onair_uri"])
-            if params:
+            params_list = self._extract_all_from_page(e["onair_uri"])
+            if params_list:
                 with self._lock:
-                    self.onair_cache[e["eid"]] = params
-                return params
+                    self.onair_cache[e["eid"]] = params_list
+                return params_list
 
-        params = self._extract_from_page(e["live_uri"])
-        if params:
+        params_list = self._extract_all_from_page(e["live_uri"])
+        if params_list:
             with self._lock:
-                self.onair_cache[e["eid"]] = params
-        return params
+                self.onair_cache[e["eid"]] = params_list
+        return params_list
 
-    def _extract_from_page(self, uri):
+    def _extract_all_from_page(self, uri):
+        """Ekstrak SEMUA video player dari halaman."""
         with self._lock:
             if uri in self.uri_cache:
                 return self.uri_cache[uri]
 
         url = f"{BASE_URL}{uri}"
-        result = None
+        result = []
         try:
             r = self.s.get(url, timeout=TIMEOUT,
                            headers={"Referer": f"{BASE_URL}/"})
             html = r.text
 
-            pldm = re.search(r'data-pldm="([^"]+)"', html)
-            play = re.search(r'data-play="([^"]+)"', html)
-            pid = re.search(r'data-pid="([^"]+)"', html)
-            player = re.search(r'data-player="([^"]+)"', html)
-            gc = re.search(r'data-gc="([^"]+)"', html)
+            # Cari SEMUA elemen dengan data-pldm dan data-play
+            # Bisa berupa <iframe>, <div>, <a>, atau elemen lain
+            all_pldm = re.findall(r'data-pldm="([^"]+)"', html)
+            all_play = re.findall(r'data-play="([^"]+)"', html)
+            all_pid = re.findall(r'data-pid="([^"]+)"', html)
+            all_player = re.findall(r'data-player="([^"]+)"', html)
+            all_gc = re.findall(r'data-gc="([^"]+)"', html)
 
-            if pldm and play:
-                soup = BeautifulSoup(html, "html.parser")
-                cfg = self._extract_site_config(soup) or {}
+            # Jika tidak ketemu via data-*, coba cari pattern lain
+            # (misal multiple iframe src, atau multiple config block)
+            if not all_pldm:
+                # Fallback: cari semua STUDY_CONFIG atau source URL langsung
+                all_pldm = [""]
+                all_play = [""]
 
-                result = {
-                    "pldm": pldm.group(1),
-                    "play": play.group(1),
-                    "pid": pid.group(1) if pid else "6",
-                    "player": player.group(1) if player else "jw",
-                    "gc": gc.group(1) if gc else "motorsports",
+            # Tentukan jumlah video = max dari semua list
+            max_videos = max(
+                len(all_pldm), len(all_play), 1
+            )
+
+            soup = BeautifulSoup(html, "html.parser")
+            cfg = self._extract_site_config(soup) or {}
+
+            for i in range(max_videos):
+                pldm = all_pldm[i] if i < len(all_pldm) else (
+                    all_pldm[0] if all_pldm else ""
+                )
+                play = all_play[i] if i < len(all_play) else (
+                    all_play[0] if all_play else ""
+                )
+                if not pldm or not play:
+                    continue
+
+                result.append({
+                    "pldm": pldm,
+                    "play": play,
+                    "pid": all_pid[i] if i < len(all_pid) else "6",
+                    "player": all_player[i] if i < len(all_player) else "jw",
+                    "gc": all_gc[i] if i < len(all_gc) else "motorsports",
                     "csrf": cfg.get("csrf", ""),
                     "csrf_ip": cfg.get("csrf_ip", ""),
                     "sec_expires": cfg.get("sec_expires", ""),
                     "sec_hash": cfg.get("sec_hash", ""),
-                }
+                })
+
         except Exception as ex:
             log.debug(f"    GET fail {uri}: {ex}")
 
@@ -270,7 +296,7 @@ class VIPBox:
             self.uri_cache[uri] = result
         return result
 
-    # ── 3. POST KE PLAYER ────────────────────────────────
+    # ── 3. POST KE PLAYER (PER VIDEO) ────────────────────
     def get_stream_from_player(self, params):
         pldm = params["pldm"]
         gc = params["gc"]
@@ -365,21 +391,29 @@ class VIPBox:
             self.play_cache[cache_key] = result
         return result
 
-    # ── 4. RESOLVE ENTRY ─────────────────────────────────
+    # ── 4. RESOLVE ENTRY (SEMUA VIDEO) ───────────────────
     def resolve_entry(self, e):
-        params = self.get_play_params(e)
+        """Resolve semua video → simpan list di e['videos']."""
+        params_list = self.get_play_params(e)
 
-        if not params:
-            e["player_domain"] = "vipbox.ga"
-            e["resolved_url"] = f"{BASE_URL}{e['live_uri']}"
-            e["drm_key"] = None
+        if not params_list:
+            e["videos"] = [{
+                "player_domain": "vipbox.ga",
+                "resolved_url": f"{BASE_URL}{e['live_uri']}",
+                "drm_key": None,
+            }]
             return e
 
-        stream_url, domain, drm_key = self.get_stream_from_player(params)
+        e["videos"] = []
+        for params in params_list:
+            stream_url, domain, drm_key = \
+                self.get_stream_from_player(params)
+            e["videos"].append({
+                "player_domain": domain or params["pldm"],
+                "resolved_url": stream_url or f"{BASE_URL}{e['live_uri']}",
+                "drm_key": drm_key,
+            })
 
-        e["player_domain"] = domain or params["pldm"]
-        e["resolved_url"] = stream_url or f"{BASE_URL}{e['live_uri']}"
-        e["drm_key"] = drm_key
         return e
 
     # ── 5. GENERATE M3U ──────────────────────────────────
@@ -402,6 +436,7 @@ class VIPBox:
         ua = HEADERS["User-Agent"]
         fallback_url = "https://0.now1.tv/CC///CC.php"
         resolved_count = 0
+        total_videos = 0
 
         for e in unique:
             parts = [e["name"]]
@@ -414,60 +449,87 @@ class VIPBox:
             if e["time"]:
                 wib = e["time"].astimezone(WIB)
                 ts = wib.strftime("%d-%m-%Y %H:%M")
-                not_started = e["time"] > datetime.now(WIB)
+                now_wib = datetime.now(WIB)
+                if e["time"] <= now_wib:
+                    status = "LIVE"
+                    not_started = False
+                else:
+                    status = "UPCOMING"
+                    not_started = True
             else:
                 ts = "LIVE 24/7"
+                status = "LIVE"
                 not_started = False
 
-            full_name = f"{base_name} | {ts} WIB"
-            domain = e.get("player_domain", "vipbox.ga")
-            origin = f"https://{domain}"
-            referrer = f"{origin}/"
-            final_url = e.get("resolved_url",
-                              f"{BASE_URL}{e['live_uri']}")
+            videos = e.get("videos", [{
+                "player_domain": "vipbox.ga",
+                "resolved_url": f"{BASE_URL}{e['live_uri']}",
+                "drm_key": None,
+            }])
 
-            if not_started or "vipbox.ga/live/" in final_url:
-                final_url = fallback_url
-            else:
-                resolved_count += 1
+            # Jika hanya 1 video, tanpa label "Video N"
+            # Jika >1 video, tambah "Video 1", "Video 2", dst.
+            multi = len(videos) > 1
 
-            lines.append(f"#EXTVLCOPT:http-user-agent={ua}")
-            lines.append(f"#EXTVLCOPT:http-origin={origin}")
-            lines.append(f"#EXTVLCOPT:http-referrer={referrer}")
+            for vi, v in enumerate(videos, 1):
+                if multi:
+                    v_label = f"Video {vi}"
+                    full_name = f"{status} | {base_name} | {v_label} | {ts} WIB"
+                else:
+                    full_name = f"{status} | {base_name} | {ts} WIB"
 
-            lines.append(
-                "#KODIPROP:inputstream.adaptive.manifest_type=dash"
-            )
-            drm = e.get("drm_key")
-            if drm:
+                domain = v.get("player_domain", "vipbox.ga")
+                origin = f"https://{domain}"
+                referrer = f"{origin}/"
+                final_url = v.get("resolved_url",
+                                  f"{BASE_URL}{e['live_uri']}")
+
+                # Fallback jika belum mulai ATAU masih halaman vipbox
+                if not_started or "vipbox.ga" in final_url:
+                    final_url = fallback_url
+                else:
+                    resolved_count += 1
+
+                total_videos += 1
+
+                lines.append(f"#EXTVLCOPT:http-user-agent={ua}")
+                lines.append(f"#EXTVLCOPT:http-origin={origin}")
+                lines.append(f"#EXTVLCOPT:http-referrer={referrer}")
                 lines.append(
                     "#KODIPROP:inputstream.adaptive"
-                    ".license_type=org.w3.clearkey"
-                )
-                lines.append(
-                    "#KODIPROP:inputstream.adaptive"
-                    f".license_key={drm}"
+                    ".manifest_type=dash"
                 )
 
-            lines.append(
-                f'#EXTINF:-1 '
-                f'tvg-id="{e["group"].lower()}" '
-                f'tvg-name="{full_name}" '
-                f'tvg-logo="{e["logo"]}" '
-                f'group-title="{e["group"]}",{full_name}'
-            )
-            lines.append(final_url)
+                drm = v.get("drm_key")
+                if drm:
+                    lines.append(
+                        "#KODIPROP:inputstream.adaptive"
+                        ".license_type=org.w3.clearkey"
+                    )
+                    lines.append(
+                        "#KODIPROP:inputstream.adaptive"
+                        f".license_key={drm}"
+                    )
+
+                lines.append(
+                    f'#EXTINF:-1 '
+                    f'tvg-id="{e["group"].lower()}" '
+                    f'tvg-name="{full_name}" '
+                    f'tvg-logo="{e["logo"]}" '
+                    f'group-title="{e["group"]}",{full_name}'
+                )
+                lines.append(final_url)
 
         with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
             f.write("\n".join(lines) + "\n")
 
-        log.info(f"\n  ✅ {OUTPUT_FILE} → {len(unique)} channel")
-        log.info(f"     Resolved: {resolved_count}/{len(unique)}")
+        log.info(f"\n  ✅ {OUTPUT_FILE} → {total_videos} stream")
+        log.info(f"     Resolved: {resolved_count}/{total_videos}")
 
     # ── 6. MAIN ──────────────────────────────────────────
     def run(self):
         log.info("=" * 50)
-        log.info("  VIPBox M3U Generator v6.1")
+        log.info("  VIPBox M3U Generator v7.0")
         log.info(f"  Target : {BASE_URL}")
         log.info(f"  Output : {OUTPUT_FILE}")
         log.info("=" * 50)
@@ -496,9 +558,11 @@ class VIPBox:
                     fut.result()
                 except Exception as ex:
                     e = futures[fut]
-                    e["player_domain"] = "vipbox.ga"
-                    e["resolved_url"] = f"{BASE_URL}{e['live_uri']}"
-                    e["drm_key"] = None
+                    e["videos"] = [{
+                        "player_domain": "vipbox.ga",
+                        "resolved_url": f"{BASE_URL}{e['live_uri']}",
+                        "drm_key": None,
+                    }]
                     log.warning(f"    fail: {ex}")
 
         self.write_m3u(all_entries)
