@@ -177,7 +177,7 @@ class Scraper:
 
     # ── 1. Fetch schedule ────────────────────────────────
     def fetch_schedule(self):
-        url = f"{BASE_URL}/live-schedule"
+        url = f"{BASE_URL}/livenow-schedule"
         log.info(f"GET {url}")
         r = self.s.get(url, timeout=TIMEOUT)
         r.raise_for_status()
