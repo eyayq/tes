@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-VIPBox M3U Generator v9.6
+VIPBox M3U Generator v9.7
++ Livenow only
 + Filter waktu ±2 jam (WIB)
 + Per-domain throttle
 + Response size check
@@ -36,7 +37,7 @@ STATIC_URL = "https://static.vipbox.ga"
 OUTPUT_FILE = "playlist.m3u"
 WIB = timezone(timedelta(hours=7))
 TIMEOUT = 30
-MAX_WORKERS = 2
+MAX_WORKERS = 4
 IMPERSONATE = "chrome"
 DOMAIN_COOLDOWN = 3
 RESP_SIZE_LIMIT = 5000
@@ -54,17 +55,6 @@ HEADERS = {
     ),
     "Accept-Language": "id-ID,id;q=0.6",
 }
-
-CATEGORIES = [
-    ("nfl", "NFL"), ("ncaaf", "NCAAF"),
-    ("basketball", "Basketball"), ("hockey", "Hockey"),
-    ("tennis", "Tennis"), ("golf", "Golf"),
-    ("football", "Football"), ("rugby", "Rugby"),
-    ("afl", "AFL"), ("darts", "Darts"),
-    ("mma", "MMA"), ("wwe", "WWE"),
-    ("boxing", "Boxing"), ("fighting", "Fighting"),
-    ("motorsports", "Motorsports"), ("others", "Others"),
-]
 
 GC_TO_GROUP = {
     "nfl": "NFL", "ncaaf": "NCAAF",
@@ -400,45 +390,7 @@ class VIPBox:
                 time.sleep(DOMAIN_COOLDOWN - elapsed)
             self.domain_last_req[domain] = time.time()
 
-    # ── 1. FETCH SCHEDULE ────────────────────────────────
-    def fetch_category(self, slug, name):
-        url = f"{BASE_URL}/{slug}-schedule"
-        log.info(f"  GET {url}")
-        try:
-            r = self.s.get(url, timeout=TIMEOUT)
-            r.raise_for_status()
-        except Exception as e:
-            log.error(f"    FAIL: {e}")
-            return []
-
-        debug_save(f"schedule_{slug}.html", r.text)
-        soup = BeautifulSoup(r.text, "html.parser")
-        cfg = self._extract_site_config(soup)
-        if not cfg:
-            log.warning("    No siteConfig")
-            return []
-
-        sched_data = cfg.get("scheduleData", "")
-        token = cfg.get("fetck_token", "")
-        try:
-            r2 = self.s.post(
-                f"{BASE_URL}/schedule/{sched_data}/",
-                headers={
-                    "fetch-token": token, "Referer": url,
-                    "Origin": BASE_URL,
-                    "Content-Type": "application/json",
-                }, timeout=TIMEOUT
-            )
-            debug_save(f"schedule_{slug}_post.json", r2.text)
-            data = r2.json()
-        except Exception as e:
-            log.error(f"    POST FAIL: {e}")
-            data = {"links": {}}
-
-        events = self._parse_events(soup)
-        log.info(f"    {len(events)} events")
-        return self._build_results(events, data, name)
-
+    # ── 1. FETCH LIVENOW ─────────────────────────────────
     def fetch_livenow(self):
         url = f"{BASE_URL}/livenow-schedule"
         log.info(f"  GET {url}")
@@ -1412,12 +1364,12 @@ class VIPBox:
     # ── 6. DEBUG MODE ────────────────────────────────────
     def debug_single(self):
         log.info("=" * 50)
-        log.info("  DEBUG: Football + 24/7")
+        log.info("  DEBUG: Livenow")
         log.info("=" * 50)
 
-        url = f"{BASE_URL}/football-schedule"
+        url = f"{BASE_URL}/livenow-schedule"
         r = self.s.get(url, timeout=TIMEOUT)
-        debug_save("debug_football.html", r.text)
+        debug_save("debug_livenow.html", r.text)
         soup = BeautifulSoup(r.text, "html.parser")
         cfg = self._extract_site_config(soup)
         if not cfg:
@@ -1434,7 +1386,7 @@ class VIPBox:
                 "Content-Type": "application/json",
             }, timeout=TIMEOUT
         )
-        debug_save("debug_football_post.json", r2.text)
+        debug_save("debug_livenow_post.json", r2.text)
         data = r2.json()
         events = self._parse_events(soup)
         if not events:
@@ -1448,7 +1400,7 @@ class VIPBox:
         ]
         ev = (live or events)[0]
 
-        log.info(f"\n  [FOOTBALL] {ev['title']}")
+        log.info(f"\n  [LIVENOW] {ev['title']}")
         log.info(f"  onair: {ev['onair_uri']}")
 
         slugs = data.get("slugs", {})
@@ -1458,7 +1410,7 @@ class VIPBox:
         live_uri = f"/live/{gc}/{slug}-1"
 
         entry = {
-            "name": ev["title"], "group": "Football",
+            "name": ev["title"], "group": "Others",
             "logo": ev["logo"], "time": ev["time"],
             "player": "?", "lang": "", "hd": 0,
             "live_uri": live_uri,
@@ -1481,70 +1433,8 @@ class VIPBox:
                     log.info(f"       {u[:100]}")
 
         log.info(f"\n{'='*50}")
-        log.info("  BONUS: Channel 24/7")
-        log.info(f"{'='*50}")
-
-        url2 = f"{BASE_URL}/livenow-schedule"
-        r3 = self.s.get(url2, timeout=TIMEOUT)
-        debug_save("debug_livenow2.html", r3.text)
-        soup2 = BeautifulSoup(r3.text, "html.parser")
-        cfg2 = self._extract_site_config(soup2)
-        if not cfg2:
-            log.error("No siteConfig (livenow)")
-            return
-
-        sd2 = cfg2.get("scheduleData", "")
-        tk2 = cfg2.get("fetck_token", "")
-        r4 = self.s.post(
-            f"{BASE_URL}/schedule/{sd2}/",
-            headers={
-                "fetch-token": tk2, "Referer": url2,
-                "Origin": BASE_URL,
-                "Content-Type": "application/json",
-            }, timeout=TIMEOUT
-        )
-        debug_save("debug_livenow2_post.json", r4.text)
-        data2 = r4.json()
-        events2 = self._parse_events(soup2)
-
-        ev_247 = next(
-            (e for e in events2
-             if e["time"] is None), None
-        )
-        if not ev_247:
-            log.info("  Tidak ada channel 24/7")
-            return
-
-        log.info(f"\n  [24/7] {ev_247['title']}")
-        slugs2 = data2.get("slugs", {})
-        appends2 = data2.get("linkAppends", {})
-        slug2 = slugs2.get(ev_247["id"], ev_247["id"])
-        gc2 = appends2.get(ev_247["id"], ev_247["gc"])
-        live_uri2 = f"/live/{gc2}/{slug2}-1"
-
-        entry2 = {
-            "name": ev_247["title"], "group": "24/7",
-            "logo": ev_247["logo"], "time": None,
-            "player": "?", "lang": "", "hd": 0,
-            "live_uri": live_uri2,
-            "onair_uri": ev_247["onair_uri"],
-            "eid": ev_247["id"], "link_no": 1, "gc": gc2,
-        }
-
-        params2 = self.get_play_params(entry2)
-        log.info(f"  Params: {len(params2)}")
-        if params2:
-            for i, p in enumerate(params2):
-                results2 = self.get_stream_from_player(p)
-                log.info(
-                    f"    [{i}] → {len(results2)} URLs:"
-                )
-                for u, d, drm in results2:
-                    log.info(f"       {u[:100]}")
-
-        log.info(
-            f"\n  Output: {os.path.abspath(DEBUG_DIR)}/"
-        )
+        log.info("  Output: "
+                 f"{os.path.abspath(DEBUG_DIR)}/")
 
     # ── 7. MAIN ──────────────────────────────────────────
     def run(self):
@@ -1557,8 +1447,8 @@ class VIPBox:
             return
 
         log.info("=" * 50)
-        log.info("  VIPBox M3U Generator v9.6")
-        log.info(f"  Target : {BASE_URL}")
+        log.info("  VIPBox M3U Generator v9.7")
+        log.info(f"  Target : {BASE_URL}/livenow-schedule")
         log.info(f"  Output : {OUTPUT_FILE}")
         log.info(
             f"  Window : -{TIME_WINDOW_HOURS}h s/d "
@@ -1567,16 +1457,8 @@ class VIPBox:
         log.info(f"  Workers: {MAX_WORKERS}")
         log.info("=" * 50)
 
-        all_entries = []
-        for slug, name in CATEGORIES:
-            entries = self.fetch_category(slug, name)
-            log.info(f"  {name}: {len(entries)} streams")
-            all_entries.extend(entries)
-            time.sleep(0.3)
-
-        livenow = self.fetch_livenow()
-        log.info(f"  Livenow: {len(livenow)} streams")
-        all_entries.extend(livenow)
+        all_entries = self.fetch_livenow()
+        log.info(f"  Livenow: {len(all_entries)} streams")
 
         log.info(f"\n  Total: {len(all_entries)} entries")
 
