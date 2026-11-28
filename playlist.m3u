@@ -1,469 +1,553 @@
 #EXTM3U
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://posamari.me
-#EXTVLCOPT:http-referrer=https://posamari.me/
-#KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="ncaaf" tvg-name="LIVE | Air Force vs New Mexico [HD] | 28-11-2026 04:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/ncaaf.webp" group-title="NCAAF",LIVE | Air Force vs New Mexico [HD] | 28-11-2026 04:30 WIB
-https://0.now1.tv/CC///CC.php
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://ninguno.cc
-#EXTVLCOPT:http-referrer=https://ninguno.cc/
-#KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="ncaaf" tvg-name="LIVE | Air Force vs New Mexico | 28-11-2026 04:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/ncaaf.webp" group-title="NCAAF",LIVE | Air Force vs New Mexico | 28-11-2026 04:30 WIB
-https://0.now1.tv/CC///CC.php
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://lonpapil.eu
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
-#KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Cincinnati vs Boston College [HD] | 28-11-2026 04:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Cincinnati vs Boston College [HD] | 28-11-2026 04:30 WIB
-https://0.now1.tv/CC///CC.php
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://ninguno.cc
-#EXTVLCOPT:http-referrer=https://ninguno.cc/
-#KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Cincinnati vs Boston College | 28-11-2026 04:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Cincinnati vs Boston College | 28-11-2026 04:30 WIB
-https://0.now1.tv/CC///CC.php
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://dervlin.me
-#EXTVLCOPT:http-referrer=https://dervlin.me/
-#KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | 7 Texas vs Saint Mary's [HD] | 28-11-2026 05:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | 7 Texas vs Saint Mary's [HD] | 28-11-2026 05:00 WIB
-https://0.now1.tv/CC///CC.php
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://posamari.me
-#EXTVLCOPT:http-referrer=https://posamari.me/
-#KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | 7 Texas vs Saint Mary's | 28-11-2026 05:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | 7 Texas vs Saint Mary's | 28-11-2026 05:00 WIB
-https://0.now1.tv/CC///CC.php
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://posamari.me
-#EXTVLCOPT:http-referrer=https://posamari.me/
-#KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Villanova vs 12 Kansas [HD] | 28-11-2026 05:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Villanova vs 12 Kansas [HD] | 28-11-2026 05:00 WIB
-https://0.now1.tv/CC///CC.php
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://posamari.me
-#EXTVLCOPT:http-referrer=https://posamari.me/
-#KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Villanova vs 12 Kansas | 28-11-2026 05:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Villanova vs 12 Kansas | 28-11-2026 05:00 WIB
-https://0.now1.tv/CC///CC.php
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://dervlin.me
-#EXTVLCOPT:http-referrer=https://dervlin.me/
-#KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Marquette vs Texas A&M [HD] | 28-11-2026 05:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Marquette vs Texas A&M [HD] | 28-11-2026 05:00 WIB
-https://0.now1.tv/CC///CC.php
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://lonpapil.eu
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
-#KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Marquette vs Texas A&M | 28-11-2026 05:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Marquette vs Texas A&M | 28-11-2026 05:00 WIB
-https://0.now1.tv/CC///CC.php
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://posamari.me
-#EXTVLCOPT:http-referrer=https://posamari.me/
-#KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="hockey" tvg-name="LIVE | Chicago Blackhawks vs New York Rangers [HD] | 28-11-2026 05:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/hockey.webp" group-title="Hockey",LIVE | Chicago Blackhawks vs New York Rangers [HD] | 28-11-2026 05:30 WIB
-https://0.now1.tv/CC///CC.php
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://dervlin.me
-#EXTVLCOPT:http-referrer=https://dervlin.me/
-#KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="hockey" tvg-name="LIVE | Chicago Blackhawks vs New York Rangers [HD] | 28-11-2026 05:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/hockey.webp" group-title="Hockey",LIVE | Chicago Blackhawks vs New York Rangers [HD] | 28-11-2026 05:30 WIB
-https://0.now1.tv/CC///CC.php
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://dervlin.me
-#EXTVLCOPT:http-referrer=https://dervlin.me/
-#KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="hockey" tvg-name="LIVE | Chicago Blackhawks vs New York Rangers [HD] | 28-11-2026 05:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/hockey.webp" group-title="Hockey",LIVE | Chicago Blackhawks vs New York Rangers [HD] | 28-11-2026 05:30 WIB
-https://0.now1.tv/CC///CC.php
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://dervlin.me
-#EXTVLCOPT:http-referrer=https://dervlin.me/
-#KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="hockey" tvg-name="LIVE | Chicago Blackhawks vs New York Rangers | 28-11-2026 05:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/hockey.webp" group-title="Hockey",LIVE | Chicago Blackhawks vs New York Rangers | 28-11-2026 05:30 WIB
-https://0.now1.tv/CC///CC.php
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://dervlin.me
-#EXTVLCOPT:http-referrer=https://dervlin.me/
-#KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="hockey" tvg-name="LIVE | Chicago Blackhawks vs New York Rangers | 28-11-2026 05:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/hockey.webp" group-title="Hockey",LIVE | Chicago Blackhawks vs New York Rangers | 28-11-2026 05:30 WIB
-https://0.now1.tv/CC///CC.php
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://lonpapil.eu
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
-#KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="motorsports" tvg-name="LIVE | Supercars [HD] | 28-11-2026 05:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",LIVE | Supercars [HD] | 28-11-2026 05:30 WIB
-https://0.now1.tv/CC///CC.php
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://lonpapil.eu
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
-#KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="motorsports" tvg-name="LIVE | Supercars | 28-11-2026 05:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/motorsports.webp" group-title="Motorsports",LIVE | Supercars | 28-11-2026 05:30 WIB
-https://0.now1.tv/CC///CC.php
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://fallafar.me
-#EXTVLCOPT:http-referrer=https://fallafar.me/
-#KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Michigan vs Kansas State [HD] | 28-11-2026 05:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Michigan vs Kansas State [HD] | 28-11-2026 05:30 WIB
-https://0.now1.tv/CC///CC.php
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://dervlin.me
-#EXTVLCOPT:http-referrer=https://dervlin.me/
-#KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Michigan vs Kansas State | 28-11-2026 05:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Michigan vs Kansas State | 28-11-2026 05:30 WIB
-https://0.now1.tv/CC///CC.php
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://posamari.me
-#EXTVLCOPT:http-referrer=https://posamari.me/
-#KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Chile vs Mexico [HD] | 28-11-2026 05:40 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Chile vs Mexico [HD] | 28-11-2026 05:40 WIB
-https://0.now1.tv/CC///CC.php
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://dervlin.me
-#EXTVLCOPT:http-referrer=https://dervlin.me/
-#KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Chile vs Mexico | 28-11-2026 05:40 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Chile vs Mexico | 28-11-2026 05:40 WIB
-https://0.now1.tv/CC///CC.php
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://ninguno.cc
-#EXTVLCOPT:http-referrer=https://ninguno.cc/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #EXTINF:-1 tvg-id="football" tvg-name="LIVE | Sp. Luqueno vs Olimpia Asuncion | 28-11-2026 06:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/paraguay.webp" group-title="Football",LIVE | Sp. Luqueno vs Olimpia Asuncion | 28-11-2026 06:00 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://dervlin.me
-#EXTVLCOPT:http-referrer=https://dervlin.me/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #EXTINF:-1 tvg-id="football" tvg-name="LIVE | Sp. Luqueno vs Olimpia Asuncion | 28-11-2026 06:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/paraguay.webp" group-title="Football",LIVE | Sp. Luqueno vs Olimpia Asuncion | 28-11-2026 06:00 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://ninguno.cc
-#EXTVLCOPT:http-referrer=https://ninguno.cc/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #EXTINF:-1 tvg-id="football" tvg-name="LIVE | Fluminense vs Cruzeiro | 28-11-2026 06:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/brazil.webp" group-title="Football",LIVE | Fluminense vs Cruzeiro | 28-11-2026 06:00 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://fallafar.me
-#EXTVLCOPT:http-referrer=https://fallafar.me/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #EXTINF:-1 tvg-id="football" tvg-name="LIVE | Fluminense vs Cruzeiro | 28-11-2026 06:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/brazil.webp" group-title="Football",LIVE | Fluminense vs Cruzeiro | 28-11-2026 06:00 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://ninguno.cc
-#EXTVLCOPT:http-referrer=https://ninguno.cc/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #EXTINF:-1 tvg-id="football" tvg-name="LIVE | Vila Nova vs Atletico Goianiense | 28-11-2026 06:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/brazil.webp" group-title="Football",LIVE | Vila Nova vs Atletico Goianiense | 28-11-2026 06:00 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://ninguno.cc
-#EXTVLCOPT:http-referrer=https://ninguno.cc/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #EXTINF:-1 tvg-id="football" tvg-name="LIVE | Vila Nova vs Atletico Goianiense | 28-11-2026 06:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/brazil.webp" group-title="Football",LIVE | Vila Nova vs Atletico Goianiense | 28-11-2026 06:00 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://posamari.me
-#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Western Kentucky vs 4 Illinois [HD] | 28-11-2026 06:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Western Kentucky vs 4 Illinois [HD] | 28-11-2026 06:00 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://posamari.me
-#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Western Kentucky vs 4 Illinois | 28-11-2026 06:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Western Kentucky vs 4 Illinois | 28-11-2026 06:00 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://posamari.me
-#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Bowling Green vs 23 Indiana [HD] | 28-11-2026 06:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Bowling Green vs 23 Indiana [HD] | 28-11-2026 06:00 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://ninguno.cc
-#EXTVLCOPT:http-referrer=https://ninguno.cc/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Bowling Green vs 23 Indiana | 28-11-2026 06:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Bowling Green vs 23 Indiana | 28-11-2026 06:00 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://posamari.me
-#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Towson vs Penn [HD] | 28-11-2026 06:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Towson vs Penn [HD] | 28-11-2026 06:00 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://dervlin.me
-#EXTVLCOPT:http-referrer=https://dervlin.me/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Towson vs Penn | 28-11-2026 06:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Towson vs Penn | 28-11-2026 06:00 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://ninguno.cc
-#EXTVLCOPT:http-referrer=https://ninguno.cc/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Southern Wesleyan vs USC Upstate [HD] | 28-11-2026 06:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Southern Wesleyan vs USC Upstate [HD] | 28-11-2026 06:00 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://fallafar.me
-#EXTVLCOPT:http-referrer=https://fallafar.me/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Southern Wesleyan vs USC Upstate | 28-11-2026 06:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Southern Wesleyan vs USC Upstate | 28-11-2026 06:00 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://posamari.me
-#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Brazil vs USA [HD] | 28-11-2026 06:10 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Brazil vs USA [HD] | 28-11-2026 06:10 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://ninguno.cc
-#EXTVLCOPT:http-referrer=https://ninguno.cc/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Brazil vs USA | 28-11-2026 06:10 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Brazil vs USA | 28-11-2026 06:10 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://fallafar.me
-#EXTVLCOPT:http-referrer=https://fallafar.me/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #EXTINF:-1 tvg-id="football" tvg-name="LIVE | Deportivo Cali vs Atletico Bucaramanga | 28-11-2026 06:35 WIB" tvg-logo="https://static.vipbox.ga/img/home/colombia.webp" group-title="Football",LIVE | Deportivo Cali vs Atletico Bucaramanga | 28-11-2026 06:35 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://posamari.me
-#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #EXTINF:-1 tvg-id="football" tvg-name="LIVE | Deportivo Cali vs Atletico Bucaramanga | 28-11-2026 06:35 WIB" tvg-logo="https://static.vipbox.ga/img/home/colombia.webp" group-title="Football",LIVE | Deportivo Cali vs Atletico Bucaramanga | 28-11-2026 06:35 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://lonpapil.eu
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #EXTINF:-1 tvg-id="others" tvg-name="LIVE | Sada Cruzeiro vs Minas | 28-11-2026 07:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/brazil.webp" group-title="Others",LIVE | Sada Cruzeiro vs Minas | 28-11-2026 07:00 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://fallafar.me
-#EXTVLCOPT:http-referrer=https://fallafar.me/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #EXTINF:-1 tvg-id="others" tvg-name="LIVE | Sada Cruzeiro vs Minas | 28-11-2026 07:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/brazil.webp" group-title="Others",LIVE | Sada Cruzeiro vs Minas | 28-11-2026 07:00 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://dervlin.me
-#EXTVLCOPT:http-referrer=https://dervlin.me/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | New York Knicks vs Miami Heat [HD] | 28-11-2026 07:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | New York Knicks vs Miami Heat [HD] | 28-11-2026 07:00 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://dervlin.me
-#EXTVLCOPT:http-referrer=https://dervlin.me/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | New York Knicks vs Miami Heat [HD] | 28-11-2026 07:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | New York Knicks vs Miami Heat [HD] | 28-11-2026 07:00 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://dervlin.me
-#EXTVLCOPT:http-referrer=https://dervlin.me/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | New York Knicks vs Miami Heat | 28-11-2026 07:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | New York Knicks vs Miami Heat | 28-11-2026 07:00 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://dervlin.me
-#EXTVLCOPT:http-referrer=https://dervlin.me/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | West Virginia vs North Carolina [HD] | 28-11-2026 07:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | West Virginia vs North Carolina [HD] | 28-11-2026 07:00 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://ninguno.cc
-#EXTVLCOPT:http-referrer=https://ninguno.cc/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | West Virginia vs North Carolina | 28-11-2026 07:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | West Virginia vs North Carolina | 28-11-2026 07:00 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://posamari.me
-#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | UCF vs Georgia [HD] | 28-11-2026 07:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | UCF vs Georgia [HD] | 28-11-2026 07:00 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://posamari.me
-#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | UCF vs Georgia | 28-11-2026 07:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | UCF vs Georgia | 28-11-2026 07:00 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://posamari.me
-#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Charleston Southern vs ETSU [HD] | 28-11-2026 07:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Charleston Southern vs ETSU [HD] | 28-11-2026 07:00 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://posamari.me
-#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Charleston Southern vs ETSU | 28-11-2026 07:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Charleston Southern vs ETSU | 28-11-2026 07:00 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://lonpapil.eu
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="ncaaf" tvg-name="UPCOMING | 3 Texas vs Texas A&M [HD] | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/ncaaf.webp" group-title="NCAAF",UPCOMING | 3 Texas vs Texas A&M [HD] | 28-11-2026 07:30 WIB
+#EXTINF:-1 tvg-id="ncaaf" tvg-name="LIVE | 3 Texas vs Texas A&M [HD] | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/ncaaf.webp" group-title="NCAAF",LIVE | 3 Texas vs Texas A&M [HD] | 28-11-2026 07:30 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://fallafar.me
-#EXTVLCOPT:http-referrer=https://fallafar.me/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="ncaaf" tvg-name="UPCOMING | 3 Texas vs Texas A&M [HD] | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/ncaaf.webp" group-title="NCAAF",UPCOMING | 3 Texas vs Texas A&M [HD] | 28-11-2026 07:30 WIB
+#EXTINF:-1 tvg-id="ncaaf" tvg-name="LIVE | 3 Texas vs Texas A&M [HD] | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/ncaaf.webp" group-title="NCAAF",LIVE | 3 Texas vs Texas A&M [HD] | 28-11-2026 07:30 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://fallafar.me
-#EXTVLCOPT:http-referrer=https://fallafar.me/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="ncaaf" tvg-name="UPCOMING | 3 Texas vs Texas A&M | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/ncaaf.webp" group-title="NCAAF",UPCOMING | 3 Texas vs Texas A&M | 28-11-2026 07:30 WIB
+#EXTINF:-1 tvg-id="ncaaf" tvg-name="LIVE | 3 Texas vs Texas A&M | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/ncaaf.webp" group-title="NCAAF",LIVE | 3 Texas vs Texas A&M | 28-11-2026 07:30 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://fallafar.me
-#EXTVLCOPT:http-referrer=https://fallafar.me/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="ncaaf" tvg-name="UPCOMING | 3 Texas vs Texas A&M | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/ncaaf.webp" group-title="NCAAF",UPCOMING | 3 Texas vs Texas A&M | 28-11-2026 07:30 WIB
+#EXTINF:-1 tvg-id="ncaaf" tvg-name="LIVE | 3 Texas vs Texas A&M | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/ncaaf.webp" group-title="NCAAF",LIVE | 3 Texas vs Texas A&M | 28-11-2026 07:30 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://posamari.me
-#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="ncaaf" tvg-name="UPCOMING | Minnesota vs Wisconsin [HD] | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/ncaaf.webp" group-title="NCAAF",UPCOMING | Minnesota vs Wisconsin [HD] | 28-11-2026 07:30 WIB
+#EXTINF:-1 tvg-id="ncaaf" tvg-name="LIVE | Minnesota vs Wisconsin [HD] | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/ncaaf.webp" group-title="NCAAF",LIVE | Minnesota vs Wisconsin [HD] | 28-11-2026 07:30 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://posamari.me
-#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="ncaaf" tvg-name="UPCOMING | Minnesota vs Wisconsin | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/ncaaf.webp" group-title="NCAAF",UPCOMING | Minnesota vs Wisconsin | 28-11-2026 07:30 WIB
+#EXTINF:-1 tvg-id="ncaaf" tvg-name="LIVE | Minnesota vs Wisconsin | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/ncaaf.webp" group-title="NCAAF",LIVE | Minnesota vs Wisconsin | 28-11-2026 07:30 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://dervlin.me
-#EXTVLCOPT:http-referrer=https://dervlin.me/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="hockey" tvg-name="UPCOMING | New York Islanders vs Winnipeg Jets [HD] | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/hockey.webp" group-title="Hockey",UPCOMING | New York Islanders vs Winnipeg Jets [HD] | 28-11-2026 07:30 WIB
+#EXTINF:-1 tvg-id="hockey" tvg-name="LIVE | New York Islanders vs Winnipeg Jets [HD] | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/hockey.webp" group-title="Hockey",LIVE | New York Islanders vs Winnipeg Jets [HD] | 28-11-2026 07:30 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://posamari.me
-#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="hockey" tvg-name="UPCOMING | New York Islanders vs Winnipeg Jets [HD] | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/hockey.webp" group-title="Hockey",UPCOMING | New York Islanders vs Winnipeg Jets [HD] | 28-11-2026 07:30 WIB
+#EXTINF:-1 tvg-id="hockey" tvg-name="LIVE | New York Islanders vs Winnipeg Jets [HD] | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/hockey.webp" group-title="Hockey",LIVE | New York Islanders vs Winnipeg Jets [HD] | 28-11-2026 07:30 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://lonpapil.eu
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="hockey" tvg-name="UPCOMING | New York Islanders vs Winnipeg Jets [HD] | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/hockey.webp" group-title="Hockey",UPCOMING | New York Islanders vs Winnipeg Jets [HD] | 28-11-2026 07:30 WIB
+#EXTINF:-1 tvg-id="hockey" tvg-name="LIVE | New York Islanders vs Winnipeg Jets [HD] | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/hockey.webp" group-title="Hockey",LIVE | New York Islanders vs Winnipeg Jets [HD] | 28-11-2026 07:30 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://dervlin.me
-#EXTVLCOPT:http-referrer=https://dervlin.me/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="hockey" tvg-name="UPCOMING | New York Islanders vs Winnipeg Jets | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/hockey.webp" group-title="Hockey",UPCOMING | New York Islanders vs Winnipeg Jets | 28-11-2026 07:30 WIB
+#EXTINF:-1 tvg-id="hockey" tvg-name="LIVE | New York Islanders vs Winnipeg Jets | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/hockey.webp" group-title="Hockey",LIVE | New York Islanders vs Winnipeg Jets | 28-11-2026 07:30 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://lonpapil.eu
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="hockey" tvg-name="UPCOMING | New York Islanders vs Winnipeg Jets | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/hockey.webp" group-title="Hockey",UPCOMING | New York Islanders vs Winnipeg Jets | 28-11-2026 07:30 WIB
+#EXTINF:-1 tvg-id="hockey" tvg-name="LIVE | New York Islanders vs Winnipeg Jets | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/hockey.webp" group-title="Hockey",LIVE | New York Islanders vs Winnipeg Jets | 28-11-2026 07:30 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://ninguno.cc
-#EXTVLCOPT:http-referrer=https://ninguno.cc/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="basketball" tvg-name="UPCOMING | Detroit Pistons vs Milwaukee Bucks [HD] | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",UPCOMING | Detroit Pistons vs Milwaukee Bucks [HD] | 28-11-2026 07:30 WIB
+#EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Detroit Pistons vs Milwaukee Bucks [HD] | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Detroit Pistons vs Milwaukee Bucks [HD] | 28-11-2026 07:30 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://ninguno.cc
-#EXTVLCOPT:http-referrer=https://ninguno.cc/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="basketball" tvg-name="UPCOMING | Detroit Pistons vs Milwaukee Bucks [HD] | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",UPCOMING | Detroit Pistons vs Milwaukee Bucks [HD] | 28-11-2026 07:30 WIB
+#EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Detroit Pistons vs Milwaukee Bucks [HD] | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Detroit Pistons vs Milwaukee Bucks [HD] | 28-11-2026 07:30 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://ninguno.cc
-#EXTVLCOPT:http-referrer=https://ninguno.cc/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="basketball" tvg-name="UPCOMING | Detroit Pistons vs Milwaukee Bucks [HD] | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",UPCOMING | Detroit Pistons vs Milwaukee Bucks [HD] | 28-11-2026 07:30 WIB
+#EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Detroit Pistons vs Milwaukee Bucks [HD] | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Detroit Pistons vs Milwaukee Bucks [HD] | 28-11-2026 07:30 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://ninguno.cc
-#EXTVLCOPT:http-referrer=https://ninguno.cc/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="basketball" tvg-name="UPCOMING | Detroit Pistons vs Milwaukee Bucks | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",UPCOMING | Detroit Pistons vs Milwaukee Bucks | 28-11-2026 07:30 WIB
+#EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Detroit Pistons vs Milwaukee Bucks | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Detroit Pistons vs Milwaukee Bucks | 28-11-2026 07:30 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://ninguno.cc
-#EXTVLCOPT:http-referrer=https://ninguno.cc/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="basketball" tvg-name="UPCOMING | Detroit Pistons vs Milwaukee Bucks | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",UPCOMING | Detroit Pistons vs Milwaukee Bucks | 28-11-2026 07:30 WIB
+#EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Detroit Pistons vs Milwaukee Bucks | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Detroit Pistons vs Milwaukee Bucks | 28-11-2026 07:30 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://dervlin.me
-#EXTVLCOPT:http-referrer=https://dervlin.me/
+#EXTVLCOPT:http-origin=https://lpnba.akamaized.net
+#EXTVLCOPT:http-referrer=https://lpnba.akamaized.net/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="basketball" tvg-name="UPCOMING | Indiana Pacers vs Philadelphia 76ers [HD] | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",UPCOMING | Indiana Pacers vs Philadelphia 76ers [HD] | 28-11-2026 07:30 WIB
+#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
+#KODIPROP:inputstream.adaptive.license_key=d00e0aa2a055c9f36688deccf0e4bcf2:69d2fd0042b7fdfb927b2cbaea54f242
+#EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Indiana Pacers vs Philadelphia 76ers [HD] | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Indiana Pacers vs Philadelphia 76ers [HD] | 28-11-2026 07:30 WIB
+https://lpnba.akamaized.net/live-pz/p/hls-wvpr/g0022600066phi1000809ind/index.m3u8?vpmute=0&addUserInfo=1&State=GP&PostalCode=&Zip=&LatLongRadius=&ISO3166=&ads=mr&csid=nba.com_live_nba-tv_web&afid=&prof=%3Anba_web_video&pcaid=nba-tv_live_default_asset&mcaid=&bo=no&_fw_vcid2=&_fw_gdpr=1&_fw_gdpr_consent=&_fw_us_privacy=1---&_fw_is_lat=0&_is_lat=0&_fw_ae=&_fw_h_user_agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F135.0.0.0+Safari%2F537.36+Edg%2F135.0.0.0&dai-debug=false&sessionId=03c3422a-8e34-438c-9714-85f4ed02b329
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-origin=https://lpnba.akamaized.net
+#EXTVLCOPT:http-referrer=https://lpnba.akamaized.net/
+#KODIPROP:inputstream.adaptive.manifest_type=dash
+#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
+#KODIPROP:inputstream.adaptive.license_key=d00e0aa2a055c9f36688deccf0e4bcf2:69d2fd0042b7fdfb927b2cbaea54f242
+#EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Indiana Pacers vs Philadelphia 76ers [HD] | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Indiana Pacers vs Philadelphia 76ers [HD] | 28-11-2026 07:30 WIB
+https://lpnba.akamaized.net/live-pz/p/hls-wvpr/g0022600066phi1000809ind/index.m3u8?vpmute=0&addUserInfo=1&State=GP&PostalCode=&Zip=&LatLongRadius=&ISO3166=&ads=mr&csid=nba.com_live_nba-tv_web&afid=&prof=%3Anba_web_video&pcaid=nba-tv_live_default_asset&mcaid=&bo=no&_fw_vcid2=&_fw_gdpr=1&_fw_gdpr_consent=&_fw_us_privacy=1---&_fw_is_lat=0&_is_lat=0&_fw_ae=&_fw_h_user_agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F135.0.0.0+Safari%2F537.36+Edg%2F135.0.0.0&dai-debug=false&sessionId=03c3422a-8e34-438c-9714-85f4ed02b329
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-origin=https://lpnba.akamaized.net
+#EXTVLCOPT:http-referrer=https://lpnba.akamaized.net/
+#KODIPROP:inputstream.adaptive.manifest_type=dash
+#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
+#KODIPROP:inputstream.adaptive.license_key=d00e0aa2a055c9f36688deccf0e4bcf2:69d2fd0042b7fdfb927b2cbaea54f242
+#EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Indiana Pacers vs Philadelphia 76ers [HD] | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Indiana Pacers vs Philadelphia 76ers [HD] | 28-11-2026 07:30 WIB
+https://lpnba.akamaized.net/live-pz/p/hls-wvpr/g0022600066phi1000809ind/index.m3u8?vpmute=0&addUserInfo=1&State=GP&PostalCode=&Zip=&LatLongRadius=&ISO3166=&ads=mr&csid=nba.com_live_nba-tv_web&afid=&prof=%3Anba_web_video&pcaid=nba-tv_live_default_asset&mcaid=&bo=no&_fw_vcid2=&_fw_gdpr=1&_fw_gdpr_consent=&_fw_us_privacy=1---&_fw_is_lat=0&_is_lat=0&_fw_ae=&_fw_h_user_agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F135.0.0.0+Safari%2F537.36+Edg%2F135.0.0.0&dai-debug=false&sessionId=03c3422a-8e34-438c-9714-85f4ed02b329
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-origin=https://lpnba.akamaized.net
+#EXTVLCOPT:http-referrer=https://lpnba.akamaized.net/
+#KODIPROP:inputstream.adaptive.manifest_type=dash
+#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
+#KODIPROP:inputstream.adaptive.license_key=d00e0aa2a055c9f36688deccf0e4bcf2:69d2fd0042b7fdfb927b2cbaea54f242
+#EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Indiana Pacers vs Philadelphia 76ers | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Indiana Pacers vs Philadelphia 76ers | 28-11-2026 07:30 WIB
+https://lpnba.akamaized.net/live-pz/p/hls-wvpr/g0022600066phi1000809ind/index.m3u8?vpmute=0&addUserInfo=1&State=GP&PostalCode=&Zip=&LatLongRadius=&ISO3166=&ads=mr&csid=nba.com_live_nba-tv_web&afid=&prof=%3Anba_web_video&pcaid=nba-tv_live_default_asset&mcaid=&bo=no&_fw_vcid2=&_fw_gdpr=1&_fw_gdpr_consent=&_fw_us_privacy=1---&_fw_is_lat=0&_is_lat=0&_fw_ae=&_fw_h_user_agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F135.0.0.0+Safari%2F537.36+Edg%2F135.0.0.0&dai-debug=false&sessionId=03c3422a-8e34-438c-9714-85f4ed02b329
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-origin=https://lpnba.akamaized.net
+#EXTVLCOPT:http-referrer=https://lpnba.akamaized.net/
+#KODIPROP:inputstream.adaptive.manifest_type=dash
+#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
+#KODIPROP:inputstream.adaptive.license_key=d00e0aa2a055c9f36688deccf0e4bcf2:69d2fd0042b7fdfb927b2cbaea54f242
+#EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Indiana Pacers vs Philadelphia 76ers | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Indiana Pacers vs Philadelphia 76ers | 28-11-2026 07:30 WIB
+https://lpnba.akamaized.net/live-pz/p/hls-wvpr/g0022600066phi1000809ind/index.m3u8?vpmute=0&addUserInfo=1&State=GP&PostalCode=&Zip=&LatLongRadius=&ISO3166=&ads=mr&csid=nba.com_live_nba-tv_web&afid=&prof=%3Anba_web_video&pcaid=nba-tv_live_default_asset&mcaid=&bo=no&_fw_vcid2=&_fw_gdpr=1&_fw_gdpr_consent=&_fw_us_privacy=1---&_fw_is_lat=0&_is_lat=0&_fw_ae=&_fw_h_user_agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F135.0.0.0+Safari%2F537.36+Edg%2F135.0.0.0&dai-debug=false&sessionId=03c3422a-8e34-438c-9714-85f4ed02b329
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#KODIPROP:inputstream.adaptive.manifest_type=dash
+#EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Toronto Raptors vs Brooklyn Nets [HD] | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Toronto Raptors vs Brooklyn Nets [HD] | 28-11-2026 07:30 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://fallafar.me
-#EXTVLCOPT:http-referrer=https://fallafar.me/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="basketball" tvg-name="UPCOMING | Indiana Pacers vs Philadelphia 76ers [HD] | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",UPCOMING | Indiana Pacers vs Philadelphia 76ers [HD] | 28-11-2026 07:30 WIB
+#EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Toronto Raptors vs Brooklyn Nets [HD] | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Toronto Raptors vs Brooklyn Nets [HD] | 28-11-2026 07:30 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://fallafar.me
-#EXTVLCOPT:http-referrer=https://fallafar.me/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="basketball" tvg-name="UPCOMING | Indiana Pacers vs Philadelphia 76ers [HD] | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",UPCOMING | Indiana Pacers vs Philadelphia 76ers [HD] | 28-11-2026 07:30 WIB
+#EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Toronto Raptors vs Brooklyn Nets [HD] | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Toronto Raptors vs Brooklyn Nets [HD] | 28-11-2026 07:30 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://fallafar.me
-#EXTVLCOPT:http-referrer=https://fallafar.me/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="basketball" tvg-name="UPCOMING | Indiana Pacers vs Philadelphia 76ers | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",UPCOMING | Indiana Pacers vs Philadelphia 76ers | 28-11-2026 07:30 WIB
+#EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Toronto Raptors vs Brooklyn Nets | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Toronto Raptors vs Brooklyn Nets | 28-11-2026 07:30 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://fallafar.me
-#EXTVLCOPT:http-referrer=https://fallafar.me/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="basketball" tvg-name="UPCOMING | Indiana Pacers vs Philadelphia 76ers | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",UPCOMING | Indiana Pacers vs Philadelphia 76ers | 28-11-2026 07:30 WIB
+#EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Toronto Raptors vs Brooklyn Nets | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Toronto Raptors vs Brooklyn Nets | 28-11-2026 07:30 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://posamari.me
-#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="basketball" tvg-name="UPCOMING | Toronto Raptors vs Brooklyn Nets [HD] | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",UPCOMING | Toronto Raptors vs Brooklyn Nets [HD] | 28-11-2026 07:30 WIB
+#EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Oakland vs 1 Houston [HD] | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Oakland vs 1 Houston [HD] | 28-11-2026 07:30 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://fallafar.me
-#EXTVLCOPT:http-referrer=https://fallafar.me/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="basketball" tvg-name="UPCOMING | Toronto Raptors vs Brooklyn Nets [HD] | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",UPCOMING | Toronto Raptors vs Brooklyn Nets [HD] | 28-11-2026 07:30 WIB
+#EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Oakland vs 1 Houston | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Oakland vs 1 Houston | 28-11-2026 07:30 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://ninguno.cc
-#EXTVLCOPT:http-referrer=https://ninguno.cc/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="basketball" tvg-name="UPCOMING | Toronto Raptors vs Brooklyn Nets [HD] | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",UPCOMING | Toronto Raptors vs Brooklyn Nets [HD] | 28-11-2026 07:30 WIB
+#EXTINF:-1 tvg-id="wwe" tvg-name="LIVE | WWE Friday Night Smackdown [HD] | 28-11-2026 08:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/wwe.webp" group-title="WWE",LIVE | WWE Friday Night Smackdown [HD] | 28-11-2026 08:00 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://lonpapil.eu
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="basketball" tvg-name="UPCOMING | Toronto Raptors vs Brooklyn Nets | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",UPCOMING | Toronto Raptors vs Brooklyn Nets | 28-11-2026 07:30 WIB
+#EXTINF:-1 tvg-id="wwe" tvg-name="LIVE | WWE Friday Night Smackdown [HD] | 28-11-2026 08:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/wwe.webp" group-title="WWE",LIVE | WWE Friday Night Smackdown [HD] | 28-11-2026 08:00 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://posamari.me
-#EXTVLCOPT:http-referrer=https://posamari.me/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="basketball" tvg-name="UPCOMING | Toronto Raptors vs Brooklyn Nets | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",UPCOMING | Toronto Raptors vs Brooklyn Nets | 28-11-2026 07:30 WIB
+#EXTINF:-1 tvg-id="wwe" tvg-name="LIVE | WWE Friday Night Smackdown | 28-11-2026 08:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/wwe.webp" group-title="WWE",LIVE | WWE Friday Night Smackdown | 28-11-2026 08:00 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://lonpapil.eu
-#EXTVLCOPT:http-referrer=https://lonpapil.eu/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="basketball" tvg-name="UPCOMING | Oakland vs 1 Houston [HD] | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",UPCOMING | Oakland vs 1 Houston [HD] | 28-11-2026 07:30 WIB
+#EXTINF:-1 tvg-id="wwe" tvg-name="LIVE | WWE Friday Night Smackdown | 28-11-2026 08:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/wwe.webp" group-title="WWE",LIVE | WWE Friday Night Smackdown | 28-11-2026 08:00 WIB
 https://0.now1.tv/CC///CC.php
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
-#EXTVLCOPT:http-origin=https://dervlin.me
-#EXTVLCOPT:http-referrer=https://dervlin.me/
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
 #KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-id="basketball" tvg-name="UPCOMING | Oakland vs 1 Houston | 28-11-2026 07:30 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",UPCOMING | Oakland vs 1 Houston | 28-11-2026 07:30 WIB
+#EXTINF:-1 tvg-id="football" tvg-name="LIVE | Columbus Crew vs Inter Miami CF [HD] | 28-11-2026 08:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/united-states.webp" group-title="Football",LIVE | Columbus Crew vs Inter Miami CF [HD] | 28-11-2026 08:00 WIB
+https://0.now1.tv/CC///CC.php
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#KODIPROP:inputstream.adaptive.manifest_type=dash
+#EXTINF:-1 tvg-id="football" tvg-name="LIVE | Columbus Crew vs Inter Miami CF [HD] | 28-11-2026 08:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/united-states.webp" group-title="Football",LIVE | Columbus Crew vs Inter Miami CF [HD] | 28-11-2026 08:00 WIB
+https://0.now1.tv/CC///CC.php
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#KODIPROP:inputstream.adaptive.manifest_type=dash
+#EXTINF:-1 tvg-id="football" tvg-name="LIVE | Columbus Crew vs Inter Miami CF [Español] [HD] | 28-11-2026 08:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/united-states.webp" group-title="Football",LIVE | Columbus Crew vs Inter Miami CF [Español] [HD] | 28-11-2026 08:00 WIB
+https://0.now1.tv/CC///CC.php
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#KODIPROP:inputstream.adaptive.manifest_type=dash
+#EXTINF:-1 tvg-id="football" tvg-name="LIVE | Columbus Crew vs Inter Miami CF | 28-11-2026 08:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/united-states.webp" group-title="Football",LIVE | Columbus Crew vs Inter Miami CF | 28-11-2026 08:00 WIB
+https://0.now1.tv/CC///CC.php
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#KODIPROP:inputstream.adaptive.manifest_type=dash
+#EXTINF:-1 tvg-id="football" tvg-name="LIVE | Columbus Crew vs Inter Miami CF | 28-11-2026 08:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/united-states.webp" group-title="Football",LIVE | Columbus Crew vs Inter Miami CF | 28-11-2026 08:00 WIB
+https://0.now1.tv/CC///CC.php
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#KODIPROP:inputstream.adaptive.manifest_type=dash
+#EXTINF:-1 tvg-id="football" tvg-name="LIVE | Columbus Crew vs Inter Miami CF [Español] | 28-11-2026 08:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/united-states.webp" group-title="Football",LIVE | Columbus Crew vs Inter Miami CF [Español] | 28-11-2026 08:00 WIB
+https://0.now1.tv/CC///CC.php
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#KODIPROP:inputstream.adaptive.manifest_type=dash
+#EXTINF:-1 tvg-id="golf" tvg-name="LIVE | The BMW Australian PGA Championship SKY [HD] | 28-11-2026 08:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/golf.webp" group-title="Golf",LIVE | The BMW Australian PGA Championship SKY [HD] | 28-11-2026 08:00 WIB
+https://0.now1.tv/CC///CC.php
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#KODIPROP:inputstream.adaptive.manifest_type=dash
+#EXTINF:-1 tvg-id="golf" tvg-name="LIVE | The BMW Australian PGA Championship SKY | 28-11-2026 08:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/golf.webp" group-title="Golf",LIVE | The BMW Australian PGA Championship SKY | 28-11-2026 08:00 WIB
+https://0.now1.tv/CC///CC.php
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#KODIPROP:inputstream.adaptive.manifest_type=dash
+#EXTINF:-1 tvg-id="boxing" tvg-name="LIVE | Pro Panja Poonawalla Gold Edition II | 28-11-2026 08:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/wrestling.webp" group-title="Boxing",LIVE | Pro Panja Poonawalla Gold Edition II | 28-11-2026 08:00 WIB
+https://0.now1.tv/CC///CC.php
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#KODIPROP:inputstream.adaptive.manifest_type=dash
+#EXTINF:-1 tvg-id="boxing" tvg-name="LIVE | Pro Panja Poonawalla Gold Edition II [HD] | 28-11-2026 08:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/wrestling.webp" group-title="Boxing",LIVE | Pro Panja Poonawalla Gold Edition II [HD] | 28-11-2026 08:00 WIB
+https://0.now1.tv/CC///CC.php
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#KODIPROP:inputstream.adaptive.manifest_type=dash
+#EXTINF:-1 tvg-id="boxing" tvg-name="LIVE | Pro Panja Poonawalla Gold Edition II | 28-11-2026 08:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/wrestling.webp" group-title="Boxing",LIVE | Pro Panja Poonawalla Gold Edition II | 28-11-2026 08:00 WIB
+https://0.now1.tv/CC///CC.php
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-origin=https://otte.cache.aiv-cdn.net
+#EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
+#KODIPROP:inputstream.adaptive.manifest_type=dash
+#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
+#KODIPROP:inputstream.adaptive.license_key=1444f4235529f183f0a5a486befe9cdb:e5e3fec67a1bb3472a2089c8a0a2557f
+#EXTINF:-1 tvg-id="hockey" tvg-name="LIVE | Buffalo Sabres vs Pittsburgh Penguins [HD] | 28-11-2026 08:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/hockey.webp" group-title="Hockey",LIVE | Buffalo Sabres vs Pittsburgh Penguins [HD] | 28-11-2026 08:00 WIB
+https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/m6sqanvm2m/out/v1/f6beb46c6e9a4132ad739f3ca27df6aa/cenc.mpd
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-origin=https://otte.cache.aiv-cdn.net
+#EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
+#KODIPROP:inputstream.adaptive.manifest_type=dash
+#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
+#KODIPROP:inputstream.adaptive.license_key=1444f4235529f183f0a5a486befe9cdb:e5e3fec67a1bb3472a2089c8a0a2557f
+#EXTINF:-1 tvg-id="hockey" tvg-name="LIVE | Buffalo Sabres vs Pittsburgh Penguins [HD] | 28-11-2026 08:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/hockey.webp" group-title="Hockey",LIVE | Buffalo Sabres vs Pittsburgh Penguins [HD] | 28-11-2026 08:00 WIB
+https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/m6sqanvm2m/out/v1/f6beb46c6e9a4132ad739f3ca27df6aa/cenc.mpd
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-origin=https://otte.cache.aiv-cdn.net
+#EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
+#KODIPROP:inputstream.adaptive.manifest_type=dash
+#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
+#KODIPROP:inputstream.adaptive.license_key=1444f4235529f183f0a5a486befe9cdb:e5e3fec67a1bb3472a2089c8a0a2557f
+#EXTINF:-1 tvg-id="hockey" tvg-name="LIVE | Buffalo Sabres vs Pittsburgh Penguins [HD] | 28-11-2026 08:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/hockey.webp" group-title="Hockey",LIVE | Buffalo Sabres vs Pittsburgh Penguins [HD] | 28-11-2026 08:00 WIB
+https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/m6sqanvm2m/out/v1/f6beb46c6e9a4132ad739f3ca27df6aa/cenc.mpd
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-origin=https://otte.cache.aiv-cdn.net
+#EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
+#KODIPROP:inputstream.adaptive.manifest_type=dash
+#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
+#KODIPROP:inputstream.adaptive.license_key=1444f4235529f183f0a5a486befe9cdb:e5e3fec67a1bb3472a2089c8a0a2557f
+#EXTINF:-1 tvg-id="hockey" tvg-name="LIVE | Buffalo Sabres vs Pittsburgh Penguins | 28-11-2026 08:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/hockey.webp" group-title="Hockey",LIVE | Buffalo Sabres vs Pittsburgh Penguins | 28-11-2026 08:00 WIB
+https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/m6sqanvm2m/out/v1/f6beb46c6e9a4132ad739f3ca27df6aa/cenc.mpd
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-origin=https://otte.cache.aiv-cdn.net
+#EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
+#KODIPROP:inputstream.adaptive.manifest_type=dash
+#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
+#KODIPROP:inputstream.adaptive.license_key=1444f4235529f183f0a5a486befe9cdb:e5e3fec67a1bb3472a2089c8a0a2557f
+#EXTINF:-1 tvg-id="hockey" tvg-name="LIVE | Buffalo Sabres vs Pittsburgh Penguins | 28-11-2026 08:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/hockey.webp" group-title="Hockey",LIVE | Buffalo Sabres vs Pittsburgh Penguins | 28-11-2026 08:00 WIB
+https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/m6sqanvm2m/out/v1/f6beb46c6e9a4132ad739f3ca27df6aa/cenc.mpd
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-origin=https://otte.cache.aiv-cdn.net
+#EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
+#KODIPROP:inputstream.adaptive.manifest_type=dash
+#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
+#KODIPROP:inputstream.adaptive.license_key=cc238a9294fe3730baaea6fb55753d9a:8abf7da1afc21fa08bdb22b87d26a766
+#EXTINF:-1 tvg-id="hockey" tvg-name="LIVE | Edmonton Oilers vs Seattle Kraken [HD] | 28-11-2026 08:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/hockey.webp" group-title="Hockey",LIVE | Edmonton Oilers vs Seattle Kraken [HD] | 28-11-2026 08:00 WIB
+https://otte.cache.aiv-cdn.net/pdx-nitro/live/clients/dash/enc/axitdqmbme/out/v1/b0bb291821274dfa835e42947618e1a3/cenc.mpd
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-origin=https://otte.cache.aiv-cdn.net
+#EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
+#KODIPROP:inputstream.adaptive.manifest_type=dash
+#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
+#KODIPROP:inputstream.adaptive.license_key=cc238a9294fe3730baaea6fb55753d9a:8abf7da1afc21fa08bdb22b87d26a766
+#EXTINF:-1 tvg-id="hockey" tvg-name="LIVE | Edmonton Oilers vs Seattle Kraken [HD] | 28-11-2026 08:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/hockey.webp" group-title="Hockey",LIVE | Edmonton Oilers vs Seattle Kraken [HD] | 28-11-2026 08:00 WIB
+https://otte.cache.aiv-cdn.net/pdx-nitro/live/clients/dash/enc/axitdqmbme/out/v1/b0bb291821274dfa835e42947618e1a3/cenc.mpd
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-origin=https://otte.cache.aiv-cdn.net
+#EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
+#KODIPROP:inputstream.adaptive.manifest_type=dash
+#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
+#KODIPROP:inputstream.adaptive.license_key=cc238a9294fe3730baaea6fb55753d9a:8abf7da1afc21fa08bdb22b87d26a766
+#EXTINF:-1 tvg-id="hockey" tvg-name="LIVE | Edmonton Oilers vs Seattle Kraken [HD] | 28-11-2026 08:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/hockey.webp" group-title="Hockey",LIVE | Edmonton Oilers vs Seattle Kraken [HD] | 28-11-2026 08:00 WIB
+https://otte.cache.aiv-cdn.net/pdx-nitro/live/clients/dash/enc/axitdqmbme/out/v1/b0bb291821274dfa835e42947618e1a3/cenc.mpd
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-origin=https://otte.cache.aiv-cdn.net
+#EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
+#KODIPROP:inputstream.adaptive.manifest_type=dash
+#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
+#KODIPROP:inputstream.adaptive.license_key=cc238a9294fe3730baaea6fb55753d9a:8abf7da1afc21fa08bdb22b87d26a766
+#EXTINF:-1 tvg-id="hockey" tvg-name="LIVE | Edmonton Oilers vs Seattle Kraken | 28-11-2026 08:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/hockey.webp" group-title="Hockey",LIVE | Edmonton Oilers vs Seattle Kraken | 28-11-2026 08:00 WIB
+https://otte.cache.aiv-cdn.net/pdx-nitro/live/clients/dash/enc/axitdqmbme/out/v1/b0bb291821274dfa835e42947618e1a3/cenc.mpd
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-origin=https://otte.cache.aiv-cdn.net
+#EXTVLCOPT:http-referrer=https://otte.cache.aiv-cdn.net/
+#KODIPROP:inputstream.adaptive.manifest_type=dash
+#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
+#KODIPROP:inputstream.adaptive.license_key=cc238a9294fe3730baaea6fb55753d9a:8abf7da1afc21fa08bdb22b87d26a766
+#EXTINF:-1 tvg-id="hockey" tvg-name="LIVE | Edmonton Oilers vs Seattle Kraken | 28-11-2026 08:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/hockey.webp" group-title="Hockey",LIVE | Edmonton Oilers vs Seattle Kraken | 28-11-2026 08:00 WIB
+https://otte.cache.aiv-cdn.net/pdx-nitro/live/clients/dash/enc/axitdqmbme/out/v1/b0bb291821274dfa835e42947618e1a3/cenc.mpd
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#KODIPROP:inputstream.adaptive.manifest_type=dash
+#EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Boston Celtics vs Atlanta Hawks [HD] | 28-11-2026 08:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Boston Celtics vs Atlanta Hawks [HD] | 28-11-2026 08:00 WIB
+https://0.now1.tv/CC///CC.php
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#KODIPROP:inputstream.adaptive.manifest_type=dash
+#EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Boston Celtics vs Atlanta Hawks [HD] | 28-11-2026 08:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Boston Celtics vs Atlanta Hawks [HD] | 28-11-2026 08:00 WIB
+https://0.now1.tv/CC///CC.php
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#KODIPROP:inputstream.adaptive.manifest_type=dash
+#EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Boston Celtics vs Atlanta Hawks [HD] | 28-11-2026 08:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Boston Celtics vs Atlanta Hawks [HD] | 28-11-2026 08:00 WIB
+https://0.now1.tv/CC///CC.php
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#KODIPROP:inputstream.adaptive.manifest_type=dash
+#EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Boston Celtics vs Atlanta Hawks | 28-11-2026 08:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Boston Celtics vs Atlanta Hawks | 28-11-2026 08:00 WIB
+https://0.now1.tv/CC///CC.php
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-origin=https://vipbox.ga
+#EXTVLCOPT:http-referrer=https://vipbox.ga/
+#KODIPROP:inputstream.adaptive.manifest_type=dash
+#EXTINF:-1 tvg-id="basketball" tvg-name="LIVE | Boston Celtics vs Atlanta Hawks | 28-11-2026 08:00 WIB" tvg-logo="https://static.vipbox.ga/img/home/basketball.webp" group-title="Basketball",LIVE | Boston Celtics vs Atlanta Hawks | 28-11-2026 08:00 WIB
 https://0.now1.tv/CC///CC.php
