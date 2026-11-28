@@ -1,28 +1,21 @@
 #!/usr/bin/env python3
 """
 Test: GET .ts → 302 → m3u8
-Jalankan: python test_ts.py
+python test_ts.py
 """
 
 from curl_cffi import requests
-import sys
+from urllib.parse import urlparse
 
-# ── ISI MANUAL dari hasil POST ──────────────────────────
-# Copy dari log debug atau debug_output/
-PLDM = "fallafar.me"
+# ── ISI DARI HASIL POST ────────────────────────────────
+PLDM = "dervlin.me"
 TS_URL = (
-    "https://s-c5.ragice.autos/pavel/"
-    "kixeme20dofo1esuzoti_f06o30s0girak08owiyi/"
-    "1795900750/"
-    "sv2.0d166098c0be738bb8c753358a57326a65ade7e6fd6526e44d801a3e0fd92a3d/"
-    "2a6ab53189a3be178690107951679603/"
-    "manifest.ts?u_id=stlev-23a886239ad1279569fcf6a953a1971002ed7122d08cecd390ef8140a9ef0561"
-)
-CSRF_TOKEN = (
-    "c3YyLmV5SmhkWFJvWDNOb1lYSmtJam9pUWlKOS5ZVE5pTWpNNU1ESXpObVZtTk"
-    "RobFpESTFOamRtWlRBd1pXRmxPR05pWkRnLjE3OTU4OTM0NTEuOGRlMGQxY2Nl"
-    "MTJiYTI4MDIxMzQxMTBjOGIyYmJlMTY2MGRkNTRjYjYzNDYyNDRlMzRlYTg2Mz"
-    "RjOWUzYjE5Nw=="
+    "https://s-a3.mhys.ink/pavel/"
+    "1az0rawos0robu4ozigi_1i5uvovojopaku606um0/"
+    "1795904976/"
+    "sv2.f4ff37086f6b4e41e1ccef0476f01f557e4b9ef4ea2e67e59efcedcc5a0cbec6/"
+    "0ccae93ecc4e6502db140bf7fc7ff377/"
+    "manifest.ts?u_id=stlev-91d9e2834fd49835932cdba7088e56bf313bc4ab3976a2935def0bb072048eab"
 )
 # ────────────────────────────────────────────────────────
 
@@ -32,97 +25,58 @@ UA = (
     "Chrome/158.0.0.0 Mobile Safari/537.36"
 )
 
-def main():
+def resolve_redirect(url, pldm):
+    """GET .ts → 302 → absolute m3u8 URL"""
     s = requests.Session(impersonate="chrome")
-    s.headers.update({
-        "User-Agent": UA,
-        "Accept": (
-            "text/html,application/xhtml+xml,application/xml;q=0.9,"
-            "*/*;q=0.8"
-        ),
-    })
+    s.headers.update({"User-Agent": UA})
 
-    print(f"Domain : {PLDM}")
-    print(f"URL    : {TS_URL[:80]}...")
-    print(f"Token  : {CSRF_TOKEN[:40]}...")
-    print()
-
-    # ── Pre-GET untuk cookie ──
-    pre = f"https://{PLDM}/"
-    print(f"[1] GET {pre}")
-    try:
-        r0 = s.get(pre, timeout=10,
-                    headers={"Referer": f"https://vipbox.ga/"})
-        print(f"    → {r0.status_code}, cookies={dict(r0.cookies)}")
-    except Exception as e:
-        print(f"    → FAIL: {e}")
-
-    print()
-
-    # ── GET .ts dengan auth ──
     hdrs = {
-        "X-CSRF-Auth": CSRF_TOKEN,
-        "Origin": f"https://{PLDM}",
-        "Referer": f"https://{PLDM}/",
+        "Origin": f"https://{pldm}",
+        "Referer": f"https://{pldm}/",
+        "Accept": "*/*",
+        "sec-fetch-site": "cross-site",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-dest": "empty",
     }
 
-    # Test tanpa follow redirect dulu
-    print(f"[2] GET {TS_URL[:60]}... (no redirect)")
-    print(f"    Headers: {hdrs}")
-    r1 = s.get(TS_URL, headers=hdrs,
-               timeout=10, allow_redirects=False)
-    print(f"    Status : {r1.status_code}")
-    print(f"    Location: {r1.headers.get('Location', 'N/A')}")
-    print(f"    Content-Type: {r1.headers.get('content-type', 'N/A')}")
+    print(f"GET {url[:70]}...")
+    print(f"  Origin:  https://{pldm}")
+    print(f"  Referer: https://{pldm}/")
     print()
 
-    if r1.status_code in (301, 302, 307, 308):
-        loc = r1.headers["Location"]
-        print(f"[3] REDIRECT OK → {loc[:80]}")
+    r = s.get(url, headers=hdrs, timeout=15,
+              allow_redirects=False)
 
-        # Follow redirect
-        print(f"[4] GET {loc[:60]}... (final)")
-        r2 = s.get(loc, timeout=10, stream=True,
-                   headers={"Origin": f"https://{PLDM}",
-                            "Referer": f"https://{PLDM}/"})
-        print(f"    Status : {r2.status_code}")
-        print(f"    CT     : {r2.headers.get('content-type', 'N/A')}")
-        print(f"    Size   : {r2.headers.get('content-length', 'streaming')}")
+    print(f"Status: {r.status_code}")
 
-        # Baca beberapa baris pertama
-        first_lines = []
-        for line in r2.iter_lines():
-            first_lines.append(line.decode("utf-8", errors="ignore"))
-            if len(first_lines) >= 5:
-                break
-        r2.close()
-        print(f"    First lines:")
-        for l in first_lines:
-            print(f"      {l[:100]}")
+    if r.status_code in (301, 302, 307, 308):
+        loc = r.headers["Location"]
+        print(f"Location: {loc[:100]}")
 
-        print()
-        print("✓ SUKSES — URL m3u8:")
-        print(f"  {loc}")
+        # Resolve relative → absolute
+        if loc.startswith("/"):
+            parsed = urlparse(url)
+            final = f"{parsed.scheme}://{parsed.netloc}{loc}"
+        else:
+            final = loc
 
-    elif r1.status_code == 200:
-        ct = r1.headers.get("content-type", "")
-        print(f"[3] 200 (no redirect), CT={ct}")
-        body = r1.text[:500]
-        print(f"    Body: {body[:200]}")
-        if "m3u8" in body:
-            import re
-            m = re.search(r'(https?://\S+\.m3u8\S*)', body)
-            if m:
-                print(f"    Found m3u8: {m.group(1)}")
+        print(f"\n✓ M3U8: {final}")
+        return final
 
-    elif r1.status_code == 403:
-        print("[3] 403 — Auth ditolak")
-        print("    Cek: token expired? cookie hilang?")
+    elif r.status_code == 200:
+        ct = r.headers.get("content-type", "")
+        print(f"200, CT={ct}")
+        print(f"Body: {r.text[:200]}")
+        return url
 
     else:
-        print(f"[3] Unexpected: {r1.status_code}")
-        print(f"    Body: {r1.text[:200]}")
+        print(f"FAIL: {r.status_code}")
+        print(f"Body: {r.text[:200]}")
+        return None
 
 
 if __name__ == "__main__":
-    main()   
+    result = resolve_redirect(TS_URL, PLDM)
+    if result:
+        print(f"\n\n=== FINAL URL untuk M3U ===")
+        print(result)   
