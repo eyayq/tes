@@ -2,12 +2,11 @@
 """
 VIPBox M3U Generator v10.2
 + SecKeyPlayerConfig brace-matching
-+ .ts → 302 → m3u8 (resolve via GET + auth)
++ .ts → 302 → m3u8 (GET + auth + Origin/Referer dari pldm)
 + .mpd → direct DASH + DRM
-+ M3U: only UA/Origin/Referrer (no http-headers)
++ M3U: only UA/Origin/Referrer
 + Playwright fallback
 + _domain_only handling
-+ Retry logic
 """
 
 from curl_cffi import requests as cffi_requests
@@ -756,21 +755,30 @@ class VIPBox:
     # ── 3. RESOLVE .ts → m3u8 ────────────────────────────
     def _resolve_ts_url(self, url, auth_headers, pldm):
         """
-        .ts → GET + auth → 302 → m3u8 (final)
-        .mpd → langsung return (DASH + DRM)
+        .ts → GET + auth + Origin/Referer dari pldm → 302 → m3u8
+        .mpd → langsung return (DASH)
         """
         if url.lower().endswith(".mpd"):
             return url, pldm, None
 
         try:
+            hdrs = dict(auth_headers or {})
+            hdrs["Origin"] = f"https://{pldm}"
+            hdrs["Referer"] = f"https://{pldm}/"
+
             r = self._get_session().get(
                 url,
-                headers=auth_headers or {},
+                headers=hdrs,
                 timeout=10,
                 allow_redirects=True,
                 stream=True,
             )
             final_url = str(r.url)
+            ct = r.headers.get("content-type", "")
+            log.info(
+                f"    [TS] {r.status_code} ct={ct} "
+                f"redirected={final_url != url}"
+            )
             r.close()
 
             if ".m3u8" in final_url and final_url != url:
@@ -887,14 +895,14 @@ class VIPBox:
 
                         # Resolve .ts → m3u8
                         for url, domain, drm, auth in raw_urls:
-                            if url and url.lower().endswith(".ts"):
+                            if not url:
+                                continue
+                            if url.lower().endswith(".ts"):
                                 final, dom, _ = self._resolve_ts_url(
                                     url, auth, domain
                                 )
                                 stream_urls.append((final, dom, drm))
-                            elif url and url.lower().endswith(".mpd"):
-                                stream_urls.append((url, domain, drm))
-                            elif url:
+                            else:
                                 stream_urls.append((url, domain, drm))
 
                         if stream_urls:
@@ -967,9 +975,7 @@ class VIPBox:
         return list(stream_urls)
 
     def _extract_stream_from_post(self, html, pldm):
-        """
-        Return: list of (url, domain, drm_key, auth_headers)
-        """
+        """Return: list of (url, domain, drm_key, auth_headers)"""
         results = []
 
         # 1. SecKeyPlayerConfig (brace-matching)
@@ -1228,12 +1234,14 @@ class VIPBox:
                 if r.status_code == 200 and len(r.text) > 100:
                     raw = self._extract_stream_from_post(r.text, pldm)
                     for url, domain, drm, auth in raw:
-                        if url and url.lower().endswith(".ts"):
+                        if not url:
+                            continue
+                        if url.lower().endswith(".ts"):
                             final, dom, _ = self._resolve_ts_url(
                                 url, auth, domain
                             )
                             results.append((final, dom, drm))
-                        elif url:
+                        else:
                             results.append((url, domain, drm))
                     if results:
                         break
